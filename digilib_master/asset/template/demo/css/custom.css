@@ -1,0 +1,276 @@
+/* 
+    Document   : custom
+    Created on : Jan 5, 2012, 2:06:15 AM
+    Author     : WS
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+ul#navigation {
+    margin: 0;
+    padding: 0;
+}
+
+ul#navigation li {
+    list-style:none;
+    float:left;
+    border-right: 1px solid #fff;
+}
+
+ul#navigation li:hover {
+    background:#fff;
+    background-position:0px -30px;
+
+}
+
+ul#navigation li a {
+    display: block;
+    padding: 12px 25px;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    color: #00102d;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+ul#navigation li ul {
+    margin: 0;
+    background-color: #fff;
+    padding: 6px 13px 6px 0;
+    border: 1px solid #b2b2b2;
+}
+
+ul#navigation li ul li {
+    width: 100%;
+    background: #ffffff;
+    padding: 0 6px;
+
+}
+
+ul#navigation li ul li:hover {
+}
+
+ul#navigation li ul li a {
+    display: block;
+    padding: 9px 25px;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    color: #7c7c7c;
+    background-color: #f0f0f0;
+    border-bottom: 1px dashed #cccccc;
+}
+
+ul#navigation li ul li a:hover {
+    color: #00102d;
+    background-color: #f7f7f7;
+}
+
+table.list thead tr{
+    background: url('../images/bg_top.png') repeat-x;
+    background-position: 0 -84px;
+}
+
+table.list thead tr th{
+    border-right: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    color: #00102d;
+    padding: 9px 6px;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+table.list thead tr th.first {
+    border-left: 1px solid #ccc;
+}
+
+table.list tbody tr{
+    border-bottom: 1px solid #ccc;
+}
+
+table.list tbody tr td {
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    text-decoration: none;
+    font-size: 12px;
+    color: #00102d;
+    padding: 6px;
+}
+
+table.list tbody tr td.first {
+    border-left: 1px solid #ccc;
+}
+
+table.list tbody tr.selected {
+    background-color: #ececec;
+}
+
+table.list tbody tr.genap {
+    background-color: #f8f8f8;
+}
+
+table.list tbody tr.ganjil {
+    background-color: #fff;
+}
+
+table.list tbody tr:hover{
+    background-color: #ececec;
+}
+
+table.list tbody tr.pagging{
+    background-color: #ececec;
+}
+
+label.error {
+    color: red;
+    font-style: italic;
+    font-size: 12px;
+    font-family: Arial,Helvetica,sans-serif;
+}
+
+input[type=text], input[type=password], select, textarea {
+    border: 1px solid #ccc;
+    padding: 5px;
+    color: #00102d;
+    
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover{
+    background-color: #f4f4f4;
+}
+
+input[type=button], input[type=submit], input[type=reset] {
+    border: 1px solid #ccc;
+    padding: 5px 10px 5px 24px;
+    color: #00102d;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #fff;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 14px;
+    -moz-box-shadow:    0px 0px 2px 0px #000;
+    -webkit-box-shadow: 0px 0px 2px 0px #000;
+    box-shadow:         0px 0px 2px 0px #000;
+}
+
+input[class=action_add] {
+    background: url('../images/03.png') no-repeat;
+    background-position: 5px 5px;
+    background-color: #e6e6e6;
+}
+
+input[class=action_delete] {
+    background: url('../images/01.png') no-repeat;
+    background-position: 5px 5px;
+    background-color: #e6e6e6;
+}
+
+input[class=action_save] {
+    background: url('../images/45.png') no-repeat;
+    background-position: 5px 5px;
+    background-color: #e6e6e6;
+}
+
+input[class=action_cancel] {
+    background: url('../images/50.png') no-repeat;
+    background-position: 5px 5px;
+    background-color: #e6e6e6;
+}
+
+input[class=action_back] {
+    background: url('../images/18.png') no-repeat;
+    background-position: 5px 5px;
+    background-color: #e6e6e6;
+}
+
+input[class=action_login] {
+    background: url('../images/13.png') no-repeat;
+    background-position: 5px 5px;
+    background-color: #e6e6e6;
+}
+
+input[class=action_search] {
+    background: url('../images/49.png') no-repeat;
+    background-position: 5px 5px;
+    background-color: #e6e6e6;
+}
+
+input[class=action_next] {
+    padding: 5px 24px 5px 10px;
+    background: url('../images/35.png') no-repeat;
+    background-position: 46px 5px;
+    background-color: #e6e6e6;
+}
+
+input[class=action_prev] {
+    background: url('../images/36.png') no-repeat;
+    background-position: 5px 5px;
+    background-color: #e6e6e6;
+}
+
+div.box_message {
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    padding: 5px 5px 5px 70px;
+    min-height: 50px;
+    margin: 5px 0;
+}
+
+div.error {
+    border: 1px solid #e8aaad;
+    background: url('../images/comment_error.png') no-repeat;
+    background-color: #f9e5e6;
+}
+
+div.error div.title_message_error {
+    color: #b50007;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+div.error div.description_message_error {
+    color: #b50007;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+div.succes {
+    border: 1px solid #b4e8aa;
+    background: url('../images/comment_add.png') no-repeat;
+    background-color: #e9f9e5;
+}
+
+div.succes div.title_message_sucess {
+    color: #1c8400;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+div.succes div.description_message_succes {
+    color: #1c8400;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px #fff;
+}

@@ -1,0 +1,151 @@
+/* 
+    Document   : custom
+    Created on : Jan 5, 2012, 2:06:15 AM
+    Author     : WS
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+
+body {
+    background: #ffffff;
+    padding: 0;
+    margin: 0;
+    font-family: Arial,Helvetica,sans-serif;
+}
+
+#bound {
+    min-width: 850px;
+    background: url('../images/bg_top.png') repeat-x;
+}
+
+#info_user {
+    text-align: right;
+    color:#fff;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    padding: 6px 4px 0 0;
+    height: 21px;
+}
+
+#header {
+    padding: 17px;
+    text-shadow: 1px 1px 1px #00102d;
+    color: #fff;
+    height: 18px;
+    font-weight: bold;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 16px;
+}
+
+#page_menu {
+    clear: both;
+    height: 40px;
+}
+
+#content {
+    clear: both;
+    padding: 10px;
+    background: #fff;
+}
+
+#filter_box {
+    clear: both;
+    padding: 5px 0;
+    height: 32px;
+}
+
+#filter_box div.left {
+    float: left;
+}
+
+#filter_box div.right {
+    float: right;
+}
+
+#border_content {
+    clear: both;
+    border: 1px solid #ccc;
+    padding: 6px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+#board_content {
+    clear: both;
+    padding-top: 5px;
+}
+
+#title_content {
+    padding: 0;
+    height: 34px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-weight: bold;
+    border-bottom: 1px dashed #ccc;
+}
+
+#title_content div.left {
+    float: left;
+    padding-top: 7px;
+}
+
+#title_content div.right {
+    float: right;
+}
+
+#box {
+    clear: both;
+    border: 1px solid #ccc;
+    padding: 6px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+#box div#box_title {
+    background-color: #dddddd;
+    height: 32px;
+    padding: 2px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #fff;
+    background: url('../images/bg_top.png') repeat-x;
+    background-position: 0 -80px;
+}
+
+#box div#box_content {
+    clear: both;
+    padding-top: 5px;
+}
+
+#box div#box_title div.left {
+    float: left;
+    margin-top: 7px;
+    margin-left: 6px;
+}
+
+#box div#box_title div.right {
+    float: right;
+}
+
+#footer {
+    padding: 20px;
+    background: url('../images/bg_bottom.png') repeat-x;
+    color: #fff;
+    text-align: right;
+}
+
+#message {
+    clear: both;
+    display: none;
+}
