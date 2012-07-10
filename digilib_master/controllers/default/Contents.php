@@ -4,6 +4,7 @@ class Contents extends Controller {
 
     public function __construct() {
         $this->model = Content::loadModel();
+        $this->url = new URL();
         Session::init();
     }
 
