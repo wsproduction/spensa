@@ -131,6 +131,18 @@ table.list tbody tr.pagging{
     background-color: #ececec;
 }
 
+table.list tbody tr.pagging div.left{
+    float:left;
+    text-align: left;
+}
+
+table.list tbody tr.pagging div.right{
+    float: right;
+    text-align: right;
+    padding-top: 10px;
+    padding-right: 5px;
+}
+
 label.error {
     color: red;
     font-style: italic;

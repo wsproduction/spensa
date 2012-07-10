@@ -66,14 +66,17 @@ $(function(){
     
     /* CHECKBOX ACTION */
     $('#cbSelectAll').live('click',function(){
+        var hiddenID = $('#hiddenID').val();
+        var splitID = hiddenID.split(',');
+        var i;
+        
         if($(this).is(':checked')){
-            $('tbody.content tr').removeClass().addClass('selected');
+            for (i=1; i<=splitID.length;i++) {
+                $('#row_' + splitID[i]).removeClass().addClass('selected');
+            }
             $('.cbList').attr('checked', true);
-        } else {
-            var hiddenID = $('#hiddenID').val();
-            var splitID = hiddenID.split(',');
-            
-            for (var i=0; i<splitID.length;i++) {
+        } else {            
+            for (i=1; i<splitID.length;i++) {
                 $('#row_' + splitID[i]).removeClass().addClass($('#row_' + splitID[i]).attr('temp'));
             }
             $('.cbList').attr('checked', false);

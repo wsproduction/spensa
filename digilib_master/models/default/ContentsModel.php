@@ -6,11 +6,17 @@ class ContentsModel extends Model {
         parent::__construct();
     }
 
-    public function tes() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_ddc WHERE ddc_level=1');
+    public function selectMenu($web = 0, $group = 0) {
+        $sth = $this->db->prepare('SELECT *
+                                    FROM
+                                   public_menu
+                                    WHERE
+                                   public_menu.web_id = :web AND 
+                                   public_menu.menu_group = :group AND 
+                                   public_menu.is_active = 1');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return 'Content : '.$sth->rowCount();
+        $sth->execute(array(':web' => $web, ':group' => $group));
+        return $sth->fetchAll();
     }
 
 }

@@ -6,8 +6,8 @@ class DdcModel extends Model {
         parent::__construct();
     }
 
-    public function selectAll($start=1, $stop=100) {
-        $sth = $this->db->prepare('SELECT * FROM digilib_ddc WHERE ddc_level=1 ORDER BY ddc_call_number LIMIT ' . $start .',' . $stop);
+    public function selectAll($start=1, $count=100) {
+        $sth = $this->db->prepare('SELECT * FROM digilib_ddc WHERE ddc_level=1 ORDER BY ddc_call_number LIMIT ' . $start .',' . $count);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -40,8 +40,7 @@ class DdcModel extends Model {
         $sth = $this->db->prepare('SELECT * FROM digilib_ddc WHERE ddc_level=2 AND ddc_parent=:parent');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array(':parent' => $_GET['id']));
-        $data = $sth->fetchAll();
-        return $data;
+        return $sth->fetchAll();
     }
 
     public function addSave() {

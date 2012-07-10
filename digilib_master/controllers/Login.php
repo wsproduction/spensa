@@ -4,13 +4,6 @@ class Login extends Controller {
 
     public function __construct() {
         parent::__construct();
-
-        Session::init();
-        Src::plugin()->poshytip();
-    }
-
-    public function index() {
-        $this->url->redirect('index');
     }
 
     public function run() {
@@ -31,7 +24,7 @@ class Login extends Controller {
 
     public function stop() {
         Session::destroy();
-        $this->url->redirect('../index');
+        $this->url->redirect('http://' . Web::$host . '/' . Web::$webAlias . '/index');
     }
 
 }

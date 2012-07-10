@@ -4,14 +4,8 @@ class Ddc extends Controller {
 
     public function __construct() {
         parent::__construct();
+        $this->content->accessRight();
         $this->view->topMenu = $this->content->topMenu();
-
-        Session::init();
-        if (!Session::get('loginStatus')) {
-            Session::destroy();
-            $this->url->redirect('index');
-            exit;
-        }
 
         Src::plugin()->jQueryValidation();
         Src::plugin()->jQueryAlphaNumeric();
@@ -68,10 +62,11 @@ class Ddc extends Controller {
         $maxRows = 10;
         $countList = $this->model->countAll();
         $countPage = ceil($countList / $maxRows);
-
-        $ddcList = $this->model->selectAll((($page * $maxRows) - $maxRows) + 1 , $page * $maxRows);
-        $html = '';
         $jumlah_kolom = 4;
+        
+        $ddcList = $this->model->selectAll(($page * $maxRows) - $maxRows , $maxRows);
+        $html = '';
+        
         if ($countList > 0) {
 
             $idx = 1;
@@ -100,7 +95,7 @@ class Ddc extends Controller {
                 $idx++;
             }
 
-            $html .= $this->paging($countPage, $page);
+            $html .= $this->content->paging($jumlah_kolom, $countPage, $page);
 
             Form::create('hidden', 'hiddenID');
             Form::value($id);
@@ -110,38 +105,6 @@ class Ddc extends Controller {
             $html .= '   <th colspan="' . $jumlah_kolom . '">Data Not Found</th>';
             $html .= '</tr>';
         }
-        return $html;
-    }
-
-    public function paging($count = 1, $current = 1) {
-        $html = '<tr class="pagging">';
-        $html .= '  <td colspan="4" class="first">';
-
-        Form::create('button');
-        Form::value('Prev');
-        Form::style('action_prev');
-        $html .= Form::commit('attach');
-
-        $num = array();
-        for ($i = 1; $i <= $count; $i++) {
-            $num[$i] = $i;
-        }
-
-        Form::create('select','paging');
-        Form::option($num, '', $current);
-        $html .= Form::commit('attach');
-        
-        Form::create('hidden','maxPaging');
-        Form::value($i);
-        $html .= Form::commit('attach');
-
-        Form::create('button');
-        Form::value('Next');
-        Form::style('action_next');
-        $html .= Form::commit('attach');
-
-        $html .= '  </td>';
-        $html .= '</tr>';
         return $html;
     }
 

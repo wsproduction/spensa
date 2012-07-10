@@ -4,9 +4,9 @@ class Dashboard extends Controller {
 
     public function __construct() {
         parent::__construct();
-        
         $this->content->accessRight();
         $this->view->topMenu = $this->content->topMenu();
+        
         Src::plugin()->poshytip();
     }
 
