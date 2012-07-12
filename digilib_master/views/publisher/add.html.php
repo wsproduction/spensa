@@ -14,73 +14,83 @@
     <div id="box_content">
         <div id="message"></div>
         <?php
-        Form::begin('fAdd', 'ddc/create', 'post');
+        Form::begin('fAdd', 'publisher/create', 'post');
         ?>
         <div>
             <table>
                 <tr>
-                    <td style="width: 200px;">Call Number</td>
+                    <td style="width: 200px;">Name</td>
                     <td>:</td>
                     <td>
                         <?php
-                        Form::create('text', 'callNumber');
-                        Form::tips('Enter Call Number');
+                        Form::create('text', 'name');
+                        Form::tips('Enter Publisher Name');
+                        Form::size(40);
                         Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>
                 </tr>        
                 <tr>
-                    <td>Level</td>
+                    <td>Address</td>
                     <td>:</td>
                     <td>
                         <?php
-                        Form::create('select', 'level');
-                        Form::tips('Chose Level DDC');
-                        Form::validation()->requaired();
-                        Form::option($ddcLevel, ' ');
-                        Form::properties(array('link'=>$link_sub1));
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr>
-                <tr class="sub1" style="display: none;">
-                    <td>Main Class</td>
-                    <td>:</td>
-                    <td class="sub1">
-                        <?php
-                        Form::create('select', 'sub1');
-                        Form::tips('Chose Level DDC');
-                        Form::validation()->requaired();
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr>
-                <tr class="sub2" style="display: none;">
-                    <td>Sub Class</td>
-                    <td>:</td>
-                    <td class="sub2">
-                        <?php
-                        Form::create('select', 'sub2');
-                        Form::tips('Chose Level DDC');
-                        Form::validation()->requaired();
+                        Form::create('textarea', 'address');
+                        Form::tips('Enter Publisher Address');
+                        Form::size(40,4);
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Title</td>
+                    <td style="width: 200px;">Phone Number</td>
                     <td>:</td>
                     <td>
                         <?php
-                        Form::create('textarea', 'title');
-                        Form::tips('Enter titel DDC');
-                        Form::size(40,4);
-                        Form::validation()->requaired();
+                        Form::create('text', 'phoneNumber');
+                        Form::tips('Enter Phone Number');
+                        Form::inputType()->numeric(' ');
                         Form::commit();
                         ?>
                     </td>
-                </tr>
+                </tr>  
+                <tr>
+                    <td style="width: 200px;">Fax.</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'fax');
+                        Form::tips('Enter Fax.');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>  
+                <tr>
+                    <td style="width: 200px;">Email</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'email');
+                        Form::tips('Enter Publisher Email<br><i>example: myemail@domain.com</i>');
+                        Form::size(50);
+                        Form::validation()->email();
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>  
+                <tr>
+                    <td style="width: 200px;">Website</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'website');
+                        Form::size(50);
+                        Form::tips('Enter Pubisher Website<br><i>example: www.domain.com</i>');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>  
                 <tr>
                     <td valign="top">Description</td>
                     <td valign="top">:</td>
@@ -88,7 +98,6 @@
                         <?php
                         Form::create('textarea', 'description');
                         Form::tips('Enter Description');
-                        Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>

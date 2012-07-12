@@ -50,9 +50,8 @@
                         Form::commit();
                         ?>
                     </th>
-                    <th style="width: 200px;">Name</th>
-                    <th style="width: 300px;">Address</th>
-                    <th>Description</th>
+                    <th style="width: 250px;">Name</th>
+                    <th>Profile</th>
                     <th style="width: 100px;">Action</th>
                 </tr>
             </thead>

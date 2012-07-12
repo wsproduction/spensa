@@ -30,9 +30,6 @@ $(function(){
     }
     $('#description').elrte(opts);
     
-    /* LOAD DATA */
-    Set_Cookie('_page', 1, '', '/', '', '');
-    
     /* BUTTON ACTION */
     $('#btnAddData').live('click',function(){
         window.location = $(this).attr('link');
@@ -190,6 +187,9 @@ $(function(){
             });
         }, 'json');
     });
+    
+    /* SET COOKIE */
+    Set_Cookie('_page', 1, '', '/', '', '');
     
     /* PAGING */
     $('#paging').live('change',function(){

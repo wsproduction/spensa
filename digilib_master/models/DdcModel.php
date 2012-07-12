@@ -85,7 +85,7 @@ class DdcModel extends Model {
                 :parent)
                 ');
 
-        $callNumber = trim($_POST['callNumber'], ' ');
+        $callNumber = trim($_POST['callNumber']);
         $title = trim($_POST['title']);
         $description = trim($_POST['description']);
         $level = trim($_POST['level']);
@@ -121,7 +121,7 @@ class DdcModel extends Model {
                     digilib_ddc.ddc_id = :id
                 ');
 
-        $callNumber = trim($_POST['callNumber'], ' ');
+        $callNumber = trim($_POST['callNumber']);
         $title = trim($_POST['title']);
         $description = trim($_POST['description']);
         $level = trim($_POST['level']);

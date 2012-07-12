@@ -1,6 +1,6 @@
 <?php
 
-class Publisher extends Controller {
+class Writer extends Controller {
 
     public function __construct() {
         parent::__construct();
@@ -14,27 +14,27 @@ class Publisher extends Controller {
     }
     
     public function index() {
-        Web::setTitle('List Publisher');
-        $this->view->link_add = $this->content->setLink('publisher/add');
+        Web::setTitle('List Writer');
+        $this->view->link_add = $this->content->setLink('writer/add');
         $this->view->listData = $this->listData();
-        $this->view->render('publisher/index');
+        $this->view->render('writer/index');
     }
     
     public function add() {
-        Web::setTitle('Add Publisher');
-        $this->view->link_back = $this->content->setLink('publisher');
-        $this->view->render('publisher/add');
+        Web::setTitle('Add Writer');
+        $this->view->link_back = $this->content->setLink('writer');
+        $this->view->render('writer/add');
     }
     
     public function edit($id = 0) {
-        Web::setTitle('Edit Publisher');
+        Web::setTitle('Edit Writer');
         $this->view->id = $id;
-        $this->view->link_back = $this->content->setLink('publisher');
+        $this->view->link_back = $this->content->setLink('writer');
         $data = $this->model->selectByID($id);
         if ($data) {
             $listData = $data[0];
             $this->view->dataEdit = $listData;
-            $this->view->render('publisher/edit');
+            $this->view->render('writer/edit');
         } else {
             $this->view->render('default/message/pnf');
         }
@@ -44,7 +44,7 @@ class Publisher extends Controller {
         $maxRows = 10;
         $countList = $this->model->countAll();
         $countPage = ceil($countList / $maxRows);
-        $jumlah_kolom = 5;
+        $jumlah_kolom = 4;
 
         $ddcList = $this->model->selectAll(($page * $maxRows) - $maxRows, $maxRows);
         $html = '';
@@ -54,7 +54,7 @@ class Publisher extends Controller {
             $idx = 1;
             $id = '0';
             foreach ($ddcList as $value) {
-                $tmpID = $value['publisher_id'];
+                $tmpID = $value['writer_id'];
                 $id .= ',' . $tmpID;
 
                 $tr_class = 'ganjil';
@@ -69,12 +69,11 @@ class Publisher extends Controller {
                 Form::value($tmpID);
                 $html .= Form::commit('attach');
                 $html .= '  </td>';
-                $html .= '  <td style="text-align: left;">' . $value['publisher_name'] . '</td>';
-                $html .= '  <td>' . $value['publisher_address'] . '</td>';
-                $html .= '  <td>' . $value['publisher_description'] . '</td>';
+                $html .= '  <td style="text-align: left;">' . $value['writer_name'] . '</td>';
+                $html .= '  <td>' . $value['writer_profile'] . '</td>';
                 $html .= '  <td style="text-align: center;">';
-                $html .= URL::link($this->content->setLink('publisher/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
-                $html .= URL::link($this->content->setLink('publisher/edit/' . $tmpID), 'Detail', 'attach');
+                $html .= URL::link($this->content->setLink('writer/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
+                $html .= URL::link($this->content->setLink('writer/edit/' . $tmpID), 'Detail', 'attach');
                 $html .= '  </td>';
                 $html .= '</tr>';
 
