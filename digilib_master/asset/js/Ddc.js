@@ -4,6 +4,14 @@
  */
 
 $(function(){    
+    
+    if ($('#level').val()==2) {
+        $('tr.sub1').fadeIn('slow');
+    } else if ($('#level').val()==3) {
+        $('tr.sub1').fadeIn('slow');
+        $('tr.sub2').fadeIn('slow');
+    }
+    
     /* WYSIWYG elRTE */
     elRTE.prototype.options.panels.web2pyPanel = [
     'bold', 'italic', 'underline', 'forecolor', 'justifyleft', 'justifyright',
@@ -27,10 +35,10 @@ $(function(){
     
     /* BUTTON ACTION */
     $('#btnAddData').live('click',function(){
-        window.location = 'ddc/add'
+        window.location = $(this).attr('link');
     });
     $('#btnBack').live('click',function(){
-        window.location = '../ddc'
+        window.location = $(this).attr('link');
     });
     $('#btnDeleteData').live('click',function(){
         var hiddenID = $('#hiddenID').val();
@@ -101,9 +109,11 @@ $(function(){
         $(msgID).fadeOut('slow');
         $.post(url, data, function(o){
             if (o[0]) {
-                $(frmID)[0].reset();
+                if (o[1]) {
+                    $(frmID)[0].reset();
+                }
             }
-            $(msgID).html(o[1]).fadeIn('slow');
+            $(msgID).html(o[2]).fadeIn('slow');
         }, 'json');
         
         return false;
@@ -127,19 +137,10 @@ $(function(){
     
     /* CHANGE VALUE ACTIONS */  
     $('#level').live('change',function(){
-        var sub1;
-        var sub2;
+        var url = $(this).attr('link');
         if ($(this).val()==2) {
-            $.get('getSub1', function(o){
-                sub1  = '<select id="sub1" name="sub1" tips="Chose Level DDC">';
-                sub1 += '   <option value="" selected></option>';
-                
-                for (var i=0;i<o.length;i++) {
-                    sub1 += '   <option value="' + o[i].ddc_id + '">' + o[i].ddc_call_number + ' ' + o[i].ddc_title + '</option>';
-                }
-                
-                sub1 += '</select>';
-                $('tr.sub1 td.sub1').html(sub1);
+            $.get(url, function(o){
+                $('tr.sub1 td.sub1').html(o);
                 form_tips('sub1');
                 $("#fAdd #sub1").rules("add",{
                     required : true
@@ -147,23 +148,15 @@ $(function(){
             }, 'json');
             $('tr.sub1').fadeIn('slow');
         } else if ($(this).val()==3) {
-            $.get('getSub1', function(o){
-                sub1  = '<select id="sub1" name="sub1" tips="Chose Level DDC">';
-                sub1 += '   <option value="" selected></option>';
-                
-                for (var i=0;i<o.length;i++) {
-                    sub1 += '   <option value="' + o[i].ddc_id + '">' + o[i].ddc_call_number + ' ' + o[i].ddc_title + '</option>';
-                }
-                
-                sub1 += '</select>';
-                $('tr.sub1 td.sub1').html(sub1);
+            $.get(url, function(o){
+                $('tr.sub1 td.sub1').html(o);
                 form_tips('sub1');
                 $("#fAdd #sub1").rules("add",{
                     required : true
                 });
             }, 'json');
             
-            sub2  = '<select id="sub2" name="sub2" tips="Chose Level DDC">';
+            var sub2  = '<select id="sub2" name="sub2" tips="Chose Level DDC">';
             sub2 += '   <option value="" selected></option>';
             sub2 += '</select>';
             $('tr.sub2 td.sub2').html(sub2);
@@ -186,18 +179,11 @@ $(function(){
         }
     });
     $('#sub1').live('change',function(){
-        $.get('getSub2',{
+        var url = $(this).attr('link');
+        $.get(url,{
             id:$(this).val()
         }, function(o){
-            sub1  = '<select id="sub2" name="sub2" tips="Chose Level DDC">';
-            sub1 += '   <option value="" selected></option>';
-                
-            for (var i=0;i<o.length;i++) {
-                sub1 += '   <option value="' + o[i].ddc_id + '">' + o[i].ddc_call_number + ' ' + o[i].ddc_title + '</option>';
-            }
-                
-            sub1 += '</select>';
-            $('tr.sub2 td.sub2').html(sub1);
+            $('tr.sub2 td.sub2').html(o);
             form_tips('sub2');
             $("#fAdd #sub2").rules("add",{
                 required : true

@@ -1,11 +1,12 @@
 <div id="box">
     <div id="box_title">
-        <div class="left">Tambah Data DDC</div>
+        <div class="left"><?php echo Web::getTitle(); ?></div>
         <div class="right">
             <?php            
             Form::create('button', 'btnBack');
             Form::value('Back');
             Form::style('action_back');
+            Form::properties(array('link'=>$link_back));
             Form::commit();
             ?>
         </div>
@@ -38,6 +39,7 @@
                         Form::tips('Chose Level DDC');
                         Form::validation()->requaired();
                         Form::option($ddcLevel, ' ');
+                        Form::properties(array('link'=>$link_sub1));
                         Form::commit();
                         ?>
                     </td>
@@ -45,12 +47,26 @@
                 <tr class="sub1" style="display: none;">
                     <td>Main Class</td>
                     <td>:</td>
-                    <td class="sub1"></td>
+                    <td class="sub1">
+                        <?php
+                        Form::create('select', 'sub1');
+                        Form::tips('Chose Level DDC');
+                        Form::validation()->requaired();
+                        Form::commit();
+                        ?>
+                    </td>
                 </tr>
                 <tr class="sub2" style="display: none;">
                     <td>Sub Class</td>
                     <td>:</td>
-                    <td class="sub2"></td>
+                    <td class="sub2">
+                        <?php
+                        Form::create('select', 'sub2');
+                        Form::tips('Chose Level DDC');
+                        Form::validation()->requaired();
+                        Form::commit();
+                        ?>
+                    </td>
                 </tr>
                 <tr>
                     <td>Title</td>
@@ -59,6 +75,7 @@
                         <?php
                         Form::create('textarea', 'title');
                         Form::tips('Enter titel DDC');
+                        Form::size(40,4);
                         Form::validation()->requaired();
                         Form::commit();
                         ?>

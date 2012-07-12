@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title><?php echo Web::$title; ?></title>
+        <title><?php echo Web::getTitle(true, '|'); ?></title>
         <meta charset="utf-8" />
 
         <?php
@@ -38,7 +38,7 @@
                 {PAGE_CONTENT}
             </div>
             <div id="footer">
-                <?php Src::image('ws.png', null, array('style' => 'width:100px')); ?>
+                <?php Src::image('ws.png', null, array('style' => 'width:45px')); ?>
             </div>
         </div>
     </body>

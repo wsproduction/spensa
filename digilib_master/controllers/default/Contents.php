@@ -12,7 +12,8 @@ class Contents extends Controller {
         Session::init();
         if (!Session::get('loginStatus')) {
             Session::destroy();
-            $this->url->redirect('index');
+            $url = $this->setLink('index');
+            $this->url->redirect($url);
             exit;
         }
     }
@@ -125,15 +126,19 @@ class Contents extends Controller {
         return $count;
     }
 
-    public function setLink($val) {
+    public function setLink($val='',$ssl=false) {
         
         if (Web::$childStatus) {
             $house = Web::$host . '/' . Web::$webAlias;
         } else {
             $house = Web::$host;
         }
-
-        $link = 'http://' . $house . '/' . $val;
+        
+        $protocol = 'http://';
+        if ($ssl) {
+            $protocol = 'https://';
+        }
+        $link = $protocol . $house . '/' . $val;
         if ($val == '#') {
             $link = '#';
         }

@@ -1,6 +1,6 @@
 <div id="border_content">
     <div id="title_content">
-        <div class="left">Dewey Decimal Classification Edition 22</div>
+        <div class="left"><?php echo Web::getTitle(); ?></div>
     </div>
     <div id="board_content">
         <div id="filter_box">
@@ -32,6 +32,7 @@
                 Form::create('button', 'btnAddData');
                 Form::value('Tambah Data');
                 Form::style('action_add');
+                Form::properties(array('link'=>$link_add));
                 Form::commit();
                 Form::create('button', 'btnDeleteData');
                 Form::value('Delete');

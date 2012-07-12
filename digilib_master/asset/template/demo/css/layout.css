@@ -149,3 +149,9 @@ body {
     clear: both;
     display: none;
 }
+
+#pageNotFound {
+    background: url('../images/404.png') no-repeat;
+    background-position: center top;
+    height: 300px;
+}
