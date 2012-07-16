@@ -3,6 +3,7 @@
         <div class="left">Login</div>
     </div>
     <div id="board_content">
+        <div id="message"></div>
         <?php
         Form::begin('fLogin', 'login/run', 'post');
         ?>

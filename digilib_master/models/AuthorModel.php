@@ -1,6 +1,6 @@
 <?php
 
-class WriterModel extends Model {
+class AuthorModel extends Model {
 
     public function __construct() {
         parent::__construct();
@@ -9,8 +9,8 @@ class WriterModel extends Model {
     public function selectAll($start = 1, $count = 100) {
         $sth = $this->db->prepare('SELECT *
                                    FROM
-                                        digilib_writer
-                                   ORDER BY writer_name LIMIT ' . $start . ',' . $count);
+                                        digilib_author
+                                   ORDER BY author_name LIMIT ' . $start . ',' . $count);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -20,9 +20,9 @@ class WriterModel extends Model {
         $sth = $this->db->prepare('
                             SELECT *
                             FROM
-                                digilib_writer
+                                digilib_author
                             WHERE
-                                digilib_writer.writer_id=:id');
+                                digilib_author.author_id=:id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array(':id' => $id));
         if ($sth->rowCount() > 0) {
@@ -33,7 +33,7 @@ class WriterModel extends Model {
     }
 
     public function countAll() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_writer');
+        $sth = $this->db->prepare('SELECT * FROM digilib_author');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->rowCount();
@@ -42,9 +42,9 @@ class WriterModel extends Model {
     public function createSave() {
         $sth = $this->db->prepare('
                     INSERT INTO
-                    digilib_writer(
-                        writer_name,
-                        writer_profile)
+                    digilib_author(
+                        author_name,
+                        author_profile)
                     VALUES(
                         :name,
                         :profile)
@@ -62,12 +62,12 @@ class WriterModel extends Model {
     public function updateSave($id = 0) {
         $sth = $this->db->prepare('
                     UPDATE
-                        digilib_writer
+                        digilib_author
                     SET
-                        writer_name = :name,
-                        writer_profile = :profile
+                        author_name = :name,
+                        author_profile = :profile
                     WHERE
-                        digilib_writer.writer_id = :id
+                        digilib_author.author_id = :id
                 ');
 
         $name = trim($_POST['name']);
@@ -82,7 +82,7 @@ class WriterModel extends Model {
 
     public function delete() {
         $delete_id = $_POST['val'];
-        $sth = $this->db->prepare('DELETE FROM digilib_writer WHERE writer_id = :id');
+        $sth = $this->db->prepare('DELETE FROM digilib_author WHERE author_id = :id');
 
         try {
             foreach ($delete_id as $id) {

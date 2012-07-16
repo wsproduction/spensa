@@ -6,15 +6,15 @@
 $(function(){
     
     $('#fLogin').live('submit',function(){
-        deleteItem = $(this);
+        msgID = $('#message');
         var url =  $(this).attr('action');
         var data =  $(this).serialize();
-        
+        $(msgID).fadeOut('slow');
         $.post(url, data, function(o){
             if (o[0]) {
                 window.location = o[1];
             } else {
-                alert('Login Gagal');
+                $(msgID).html(o[1]).fadeIn('slow');
             }
         }, 'json');
         

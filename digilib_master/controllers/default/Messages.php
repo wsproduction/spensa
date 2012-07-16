@@ -18,6 +18,10 @@ class Messages extends Controller {
         return Message::render('message/save_succes');
     }
     
+    public function loginError() {
+        return Message::render('message/login_error');
+    }
+    
     public function tesModel() {
         $this->model->tes();
     }

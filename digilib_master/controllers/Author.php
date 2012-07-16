@@ -1,6 +1,6 @@
 <?php
 
-class Writer extends Controller {
+class Author extends Controller {
 
     public function __construct() {
         parent::__construct();
@@ -14,27 +14,27 @@ class Writer extends Controller {
     }
     
     public function index() {
-        Web::setTitle('List Writer');
-        $this->view->link_add = $this->content->setLink('writer/add');
+        Web::setTitle('List of Authors');
+        $this->view->link_add = $this->content->setLink('author/add');
         $this->view->listData = $this->listData();
-        $this->view->render('writer/index');
+        $this->view->render('author/index');
     }
     
     public function add() {
-        Web::setTitle('Add Writer');
-        $this->view->link_back = $this->content->setLink('writer');
-        $this->view->render('writer/add');
+        Web::setTitle('Add author');
+        $this->view->link_back = $this->content->setLink('author');
+        $this->view->render('author/add');
     }
     
     public function edit($id = 0) {
-        Web::setTitle('Edit Writer');
+        Web::setTitle('Edit author');
         $this->view->id = $id;
-        $this->view->link_back = $this->content->setLink('writer');
+        $this->view->link_back = $this->content->setLink('author');
         $data = $this->model->selectByID($id);
         if ($data) {
             $listData = $data[0];
             $this->view->dataEdit = $listData;
-            $this->view->render('writer/edit');
+            $this->view->render('author/edit');
         } else {
             $this->view->render('default/message/pnf');
         }
@@ -54,7 +54,7 @@ class Writer extends Controller {
             $idx = 1;
             $id = '0';
             foreach ($ddcList as $value) {
-                $tmpID = $value['writer_id'];
+                $tmpID = $value['author_id'];
                 $id .= ',' . $tmpID;
 
                 $tr_class = 'ganjil';
@@ -69,11 +69,11 @@ class Writer extends Controller {
                 Form::value($tmpID);
                 $html .= Form::commit('attach');
                 $html .= '  </td>';
-                $html .= '  <td style="text-align: left;">' . $value['writer_name'] . '</td>';
-                $html .= '  <td>' . $value['writer_profile'] . '</td>';
+                $html .= '  <td style="text-align: left;">' . $value['author_name'] . '</td>';
+                $html .= '  <td>' . $value['author_profile'] . '</td>';
                 $html .= '  <td style="text-align: center;">';
-                $html .= URL::link($this->content->setLink('writer/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
-                $html .= URL::link($this->content->setLink('writer/edit/' . $tmpID), 'Detail', 'attach');
+                $html .= URL::link($this->content->setLink('author/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
+                $html .= URL::link($this->content->setLink('author/edit/' . $tmpID), 'Detail', 'attach');
                 $html .= '  </td>';
                 $html .= '</tr>';
 

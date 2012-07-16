@@ -181,5 +181,9 @@ class Contents extends Controller {
         $html .= '</tr>';
         return $html;
     }
+    
+    public function numberFormat($number=0) {
+        return number_format($number,0,',','.');
+    }
 
 }

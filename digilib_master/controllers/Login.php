@@ -17,7 +17,7 @@ class Login extends Controller {
             Session::set('userGroup', $data_user['user_group_name']);
             $ket = array(1,$this->content->setLink('dashboard'));
         } else {
-            $ket = array(0,null);
+            $ket = array(0,$this->message->loginError());
         }
         echo json_encode($ket);
     }

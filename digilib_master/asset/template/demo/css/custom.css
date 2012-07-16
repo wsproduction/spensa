@@ -44,6 +44,7 @@ ul#navigation li ul {
     background-color: #fff;
     padding: 6px 13px 6px 0;
     border: 1px solid #b2b2b2;
+    z-index: 999;
 }
 
 ul#navigation li ul li {

@@ -47,7 +47,7 @@ class PublisherModel extends Model {
                         publisher_email,
                         publisher_website,
                         publisher_description,
-                        is_active)
+                        publisher_status)
                     VALUES(
                         :name,
                         :address,
