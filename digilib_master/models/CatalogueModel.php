@@ -14,9 +14,11 @@ class CatalogueModel extends Model {
                                         digilib_book.book_ddc,
                                         (SELECT digilib_ddc.ddc_call_number FROM digilib_ddc WHERE digilib_ddc.ddc_id = digilib_book.book_ddc) AS call_number,
                                         digilib_book.book_publisher,
+                                        (SELECT digilib_publisher.publisher_name FROM digilib_publisher WHERE digilib_publisher.publisher_id) AS publisher_name,
                                         digilib_book.book_type,
                                         digilib_book.book_year_launching,
                                         digilib_book.book_city_launching,
+                                        (SELECT public_city.city_name FROM public_city WHERE public_city.city_id = digilib_book.book_city_launching) AS city_name,
                                         digilib_book.book_edition,
                                         digilib_book.book_language,
                                         digilib_book.book_resource,
@@ -114,6 +116,24 @@ class CatalogueModel extends Model {
             return true;
         } catch (Exception $exc) {
             $this->db->rollBack();
+            return false;
+        }
+    }
+    
+    public function selectAuthor($id) {
+        $sth = $this->db->prepare('
+                            SELECT 
+                                digilib_author.author_last_name
+                            FROM
+                                digilib_author_detail
+                            INNER JOIN digilib_author ON (digilib_author_detail.author_id = digilib_author.author_id)
+                            WHERE
+                                digilib_author_detail.book_id = :id');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array(':id' => $id));
+        if ($sth->rowCount() > 0) {
+            return $sth->fetchAll();
+        } else {
             return false;
         }
     }

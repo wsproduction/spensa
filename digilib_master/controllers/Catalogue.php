@@ -12,34 +12,34 @@ class Catalogue extends Controller {
         Src::plugin()->poshytip();
         Src::plugin()->elrte();
     }
-    
+
     public function index() {
         Web::setTitle('Catalogue');
-        $this->view->link_add = $this->content->setLink('catalog/add');
+        $this->view->link_add = $this->content->setLink('catalogue/add');
         $this->view->listData = $this->listData();
-        $this->view->render('catalog/index');
+        $this->view->render('catalogue/index');
     }
-    
+
     public function add() {
         Web::setTitle('Add Catalogue');
-        $this->view->link_back = $this->content->setLink('catalog');
-        $this->view->render('catalog/add');
+        $this->view->link_back = $this->content->setLink('catalogue');
+        $this->view->render('catalogue/add');
     }
-    
+
     public function edit($id = 0) {
         Web::setTitle('Edit Catalogue');
         $this->view->id = $id;
-        $this->view->link_back = $this->content->setLink('catalog');
+        $this->view->link_back = $this->content->setLink('catalogue');
         $data = $this->model->selectByID($id);
         if ($data) {
             $listData = $data[0];
             $this->view->dataEdit = $listData;
-            $this->view->render('catalog/edit');
+            $this->view->render('catalogue/edit');
         } else {
             $this->view->render('default/message/pnf');
         }
     }
-    
+
     public function listData($page = 1) {
         $maxRows = 10;
         $countList = $this->model->countAll();
@@ -61,6 +61,19 @@ class Catalogue extends Controller {
                 if ($idx % 2 == 0) {
                     $tr_class = 'genap';
                 }
+                
+                $author = $this->model->selectAuthor($tmpID);
+                $listAuthor = '';
+                $countAuthor = count($author);
+                foreach ($author as $av) {
+                    $countAuthor--;
+                    if ($countAuthor > 0 ) {
+                        $listAuthor .= $av['author_last_name'] . ', ';
+                    } else {
+                        $listAuthor .= $av['author_last_name'];
+                    }
+                    
+                }
 
                 $html .= '<tr class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '">';
                 $html .= '  <td valign="top" style="width: 10px;" class="first">';
@@ -69,16 +82,31 @@ class Catalogue extends Controller {
                 Form::value($tmpID);
                 $html .= Form::commit('attach');
                 $html .= '  </td>';
-                $html .= '  <td valign="top" style="text-align: left;"><div style="margin:0 15px;"><div>' . $value['call_number'] . '</div><div>DAV</div><div>e</div></div></td>';
-                $html .= '  <td valign="top" style="text-align: left;">' . $value['book_title'] . '</td>';
+                $html .= '  <td valign="top" style="text-align: left;">';
+                $html .= '      <div style="margin:0 15px;">';
+                $html .= '          <div>' . $value['call_number'] . '</div>';
+                $html .= '          <div>DAV</div>';
+                $html .= '          <div>e</div>';
+                $html .= '      </div>';
+                $html .= '  </td>';
+                $html .= '  <td valign="top" style="text-align: left;">';
+                $html .=        $value['book_title'] . ' : ' . $value['book_sub_title'];
+                $html .= '      <strong> / </strong> ' . $listAuthor . ' .&HorizontalLine; <i>' . $value['city_name'] . ' : ' . $value['publisher_name'] . ', ' . $value['book_year_launching'] . '</i>';
+                $html .= '  </td>';
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['resource_name'] . '</td>';
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['fund_name'] . '</td>';
-                $html .= '  <td valign="top"><div style="float:left;">Rp.</div><div style="float:right;">' . $this->content->numberFormat($value['book_price']) . '</div></td>';
+                $html .= '  <td valign="top">';
+                $html .= '      <div style="float:left;">Rp.</div>';
+                $html .= '      <div style="float:right;">' . $this->content->numberFormat($value['book_price']) . '</div>';
+                $html .= '  </td>';
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['book_quantity'] . '</td>';
-                $html .= '  <td valign="top" style="text-align: center;"><div>' . date('l',strtotime($value['book_entry_date'])) . '</div><div>' . date('d-m-Y',strtotime($value['book_entry_date'])) . '</div></td>';
                 $html .= '  <td valign="top" style="text-align: center;">';
-                $html .= URL::link($this->content->setLink('catalog/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
-                $html .= URL::link($this->content->setLink('catalog/edit/' . $tmpID), 'Detail', 'attach');
+                $html .= '      <div>' . date('l', strtotime($value['book_entry_date'])) . '</div>';
+                $html .= '      <div>' . date('d-m-Y', strtotime($value['book_entry_date'])) . '</div>';
+                $html .= '  </td>';
+                $html .= '  <td valign="top" style="text-align: center;">';
+                $html .=        URL::link($this->content->setLink('catalogue/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
+                $html .=        URL::link($this->content->setLink('catalogue/edit/' . $tmpID), 'Detail', 'attach');
                 $html .= '  </td>';
                 $html .= '</tr>';
 
@@ -115,7 +143,7 @@ class Catalogue extends Controller {
         echo json_encode($this->listData($page));
     }
 
-    public function update($id=0) {
+    public function update($id = 0) {
         if ($this->model->updateSave($id)) {
             $ket = array(1, 0, $this->message->saveSucces());
         } else {
