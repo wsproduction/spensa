@@ -19,7 +19,33 @@
         <div>
             <table>
                 <tr>
-                    <td style="width: 200px;">Name</td>
+                    <td style="width: 200px;">Title Book</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'name');
+                        Form::tips('Enter Writer Name');
+                        Form::size(40);
+                        Form::validation()->requaired();
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 200px;">Subtitle Book</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'name');
+                        Form::tips('Enter Writer Name');
+                        Form::size(40);
+                        Form::validation()->requaired();
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 200px;">Call Number</td>
                     <td>:</td>
                     <td>
                         <?php
