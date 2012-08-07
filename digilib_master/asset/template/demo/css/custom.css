@@ -225,9 +225,8 @@ input[class=action_search] {
 }
 
 input[class=action_next] {
-    padding: 5px 24px 5px 10px;
     background: url('../images/35.png') no-repeat;
-    background-position: 46px 5px;
+    background-position: 5px 5px;
     background-color: #e6e6e6;
 }
 
@@ -286,4 +285,29 @@ div.succes div.description_message_succes {
     font-family: Arial,Helvetica,sans-serif;
     font-size: 12px;
     text-shadow: 1px 1px 1px #fff;
+}
+
+div.myTab {
+    clear: both;
+}
+
+div.myTab ul.header {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+div.myTab ul.header li {
+    padding: 5px 10px;
+    margin: 0 2px;
+    float: left;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+div.myTabContent {
+    clear: both;
+    border: 1px solid #ccc;
+    padding: 5px;
 }

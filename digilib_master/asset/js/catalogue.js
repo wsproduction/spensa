@@ -4,6 +4,12 @@
  */
 
 $(function(){    
+    $.get('getAuthor', function(o){
+        $("#author").tokenInput(o, {
+            theme: "facebook",
+            preventDuplicates: true
+        });
+    }, 'json');
     
     /* WYSIWYG elRTE */
     elRTE.prototype.options.panels.web2pyPanel = [
@@ -23,6 +29,15 @@ $(function(){
     }
     $('#profile').elrte(opts);
     
+    /* CHANGE VALUE ACTIONS */  
+    $('#country').live('change',function(){
+        var url = $(this).attr('link');
+        var id = $(this).val();
+        $.get(url, {id:id}, function(o){
+            $('#city').html(o);
+        }, 'json');
+    });
+    
     /* SUBMIT ACTIONS */    
     $('#fAdd').live('submit',function(){
         frmID = $(this);
@@ -40,6 +55,21 @@ $(function(){
             $(msgID).html(o[2]).fadeIn('slow');
         }, 'json');
         
+        return false;
+    });
+    
+    $('#fUpload').live('submit',function(){
+        $(this).ajaxSubmit({
+            success : function(o) {
+                var parOut = o.replace('<div id="LCS_336D0C35_8A85_403a_B9D2_65C292C39087_communicationDiv"></div>','');
+                //console.log(parOut); 
+                if (parOut) {
+                    var obj = eval('(' + parOut +')');
+                    console.log(obj.html); 
+                    $('#pesan').html($.base64.decode(obj.html));
+                }
+            }
+        });
         return false;
     });
     

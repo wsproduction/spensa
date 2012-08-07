@@ -62,7 +62,9 @@ $(function(){
                     }, function(o){
                         $('table#list tbody').html(o);
                     }, 'json');
+                    
                 }, 'json');
+                
             }
         } else {
             alert('No item Selected');
@@ -143,6 +145,7 @@ $(function(){
                     required : true
                 });
             }, 'json');
+            
             $('tr.sub1').fadeIn('slow');
         } else if ($(this).val()==3) {
             $.get(url, function(o){
@@ -152,6 +155,7 @@ $(function(){
                     required : true
                 });
             }, 'json');
+            
             
             var sub2  = '<select id="sub2" name="sub2" tips="Chose Level DDC">';
             sub2 += '   <option value="" selected></option>';
@@ -186,6 +190,7 @@ $(function(){
                 required : true
             });
         }, 'json');
+        
     });
     
     /* SET COOKIE */
@@ -201,6 +206,7 @@ $(function(){
             Set_Cookie('_page', page, '', '/', '', '');
             $('table#list tbody').html(o);
         }, 'json');
+        
     });
     $('.action_prev').live('click',function(){
         keyID = $('#paging');
@@ -212,6 +218,7 @@ $(function(){
                 Set_Cookie('_page', page, '', '/', '', '');
                 $('table#list tbody').html(o);
             }, 'json');
+            
         }
     });
     $('.action_next').live('click',function(){
@@ -224,6 +231,7 @@ $(function(){
                 Set_Cookie('_page', page, '', '/', '', '');
                 $('table#list tbody').html(o);
             }, 'json');
+            
         }
         
     });

@@ -75,7 +75,9 @@ $(function(){
                     }, function(o){
                         $('table#list tbody').html(o);
                     }, 'json');
+                    
                 }, 'json');
+                
             }
         } else {
             alert('No item Selected');
@@ -122,6 +124,7 @@ $(function(){
             Set_Cookie('_page', page, '', '/', '', '');
             $('table#list tbody').html(o);
         }, 'json');
+        
     });
     $('.action_prev').live('click',function(){
         keyID = $('#paging');
@@ -133,6 +136,7 @@ $(function(){
                 Set_Cookie('_page', page, '', '/', '', '');
                 $('table#list tbody').html(o);
             }, 'json');
+            
         }
     });
     $('.action_next').live('click',function(){
@@ -145,6 +149,7 @@ $(function(){
                 Set_Cookie('_page', page, '', '/', '', '');
                 $('table#list tbody').html(o);
             }, 'json');
+            
         }
         
     });

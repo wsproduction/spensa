@@ -6,18 +6,19 @@
 $(function(){
     
     $('#fLogin').live('submit',function(){
+        frmID = $(this);
         msgID = $('#message');
-        var url =  $(this).attr('action');
-        var data =  $(this).serialize();
+        var url =  $(frmID).attr('action');
+        var data =  $(frmID).serialize();
         $(msgID).fadeOut('slow');
         $.post(url, data, function(o){
+            $(frmID)[0].reset();
             if (o[0]) {
                 window.location = o[1];
             } else {
                 $(msgID).html(o[1]).fadeIn('slow');
             }
         }, 'json');
-        
         return false;
     })
     
