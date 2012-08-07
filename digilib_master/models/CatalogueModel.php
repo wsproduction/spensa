@@ -14,27 +14,26 @@ class CatalogueModel extends Model {
                                         digilib_book.book_ddc,
                                         (SELECT digilib_ddc.ddc_call_number FROM digilib_ddc WHERE digilib_ddc.ddc_id = digilib_book.book_ddc) AS call_number,
                                         digilib_book.book_publisher,
-                                        (SELECT digilib_publisher.publisher_name FROM digilib_publisher WHERE digilib_publisher.publisher_id) AS publisher_name,
+                                        (SELECT digilib_publisher.publisher_name FROM digilib_publisher WHERE digilib_publisher.publisher_id = digilib_book.book_publisher) AS publisher_name,
                                         digilib_book.book_type,
                                         digilib_book.book_year_launching,
                                         digilib_book.book_city_launching,
-                                        (SELECT public_city.city_name FROM public_city WHERE public_city.city_id = digilib_book.book_city_launching) AS city_name,
+                                        (SELECT public_city.`city_name` FROM `public_city` WHERE `public_city`.`city_id` = digilib_book.`book_city_launching`) AS city_name,
                                         digilib_book.book_edition,
                                         digilib_book.book_language,
                                         digilib_book.book_resource,
+                                        (SELECT digilib_resource.`resource_name` FROM `digilib_resource` WHERE `digilib_resource`.`resource_id` = digilib_book.`book_resource`) AS resource_name,
                                         digilib_book.book_fund,
-                                        (SELECT digilib_book_fund.fund_name FROM digilib_book_fund WHERE digilib_book_fund.`fund_id` = digilib_book.book_fund) AS fund_name,
+                                        (SELECT digilib_fund.`fund_name` FROM `digilib_fund` WHERE `digilib_fund`.`fund_id` = digilib_book.`book_fund`) AS fund_name,
                                         digilib_book.book_price,
                                         digilib_book.book_isbn,
                                         digilib_book.book_cover,
                                         digilib_book.book_quantity,
                                         digilib_book.book_status,
                                         digilib_book.book_entry_date,
-                                        digilib_book.book_review,
-                                        digilib_book_resource.resource_name
+                                        digilib_book.book_review
                                    FROM
                                         digilib_book
-                                   INNER JOIN digilib_book_resource ON (digilib_book.book_resource = digilib_book_resource.resource_id)
                                    ORDER BY digilib_book.book_title LIMIT ' . $start . ',' . $count);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
@@ -120,7 +119,7 @@ class CatalogueModel extends Model {
         }
     }
     
-    public function selectAuthor($id) {
+    public function selectAuthorByID($id) {
         $sth = $this->db->prepare('
                             SELECT 
                                 digilib_author.author_last_name
@@ -131,6 +130,107 @@ class CatalogueModel extends Model {
                                 digilib_author_detail.book_id = :id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array(':id' => $id));
+        if ($sth->rowCount() > 0) {
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
+    }
+    
+    public function selectAuthorByName() {
+        $sth = $this->db->prepare('
+                        SELECT *
+                        FROM
+                            digilib_author
+                        ORDER BY digilib_author.author_first_name, digilib_author.author_last_name');
+        
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        if ($sth->rowCount() > 0) {
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
+    }
+    
+    public function listYear() {
+        $y = array();
+        for ($idx=1970;$idx<=date('Y');$idx++) {
+            $y[$idx] = $idx;
+        }
+        return $y;
+    }
+    
+    public function selectLanguage() {
+        $sth = $this->db->prepare('SELECT * FROM public_language ORDER BY language_name');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        if ($sth->rowCount() > 0) {
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
+    }
+    
+    public function selectAccountingSymbol() {
+        $sth = $this->db->prepare('SELECT * FROM public_accounting_symbol');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        if ($sth->rowCount() > 0) {
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
+    }
+    
+    public function selectBookResource() {
+        $sth = $this->db->prepare('SELECT * FROM digilib_resource ORDER BY resource_name');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        if ($sth->rowCount() > 0) {
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
+    }
+    
+    public function selectBookFund() {
+        $sth = $this->db->prepare('SELECT * FROM digilib_fund ORDER BY fund_name');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        if ($sth->rowCount() > 0) {
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
+    }
+    
+    public function selectPublisher() {
+        $sth = $this->db->prepare('SELECT * FROM digilib_publisher ORDER BY publisher_name');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        if ($sth->rowCount() > 0) {
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
+    }
+    
+    public function selectCountry() {
+        $sth = $this->db->prepare('SELECT * FROM public_country ORDER BY country_name');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        if ($sth->rowCount() > 0) {
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
+    }
+    
+    public function selectCity($country_id=0) {
+        $sth = $this->db->prepare('SELECT * FROM public_city WHERE country_id=:cid ORDER BY city_name');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array(':cid'=>$country_id));
         if ($sth->rowCount() > 0) {
             return $sth->fetchAll();
         } else {

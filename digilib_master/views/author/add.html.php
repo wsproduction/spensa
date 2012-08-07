@@ -19,12 +19,25 @@
         <div>
             <table>
                 <tr>
-                    <td style="width: 200px;">Name</td>
+                    <td style="width: 200px;">First Name</td>
                     <td>:</td>
                     <td>
                         <?php
-                        Form::create('text', 'name');
-                        Form::tips('Enter Author Name');
+                        Form::create('text', 'first_name');
+                        Form::tips('Enter First Name');
+                        Form::size(40);
+                        Form::validation()->requaired();
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 200px;">Last Name</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'last_name');
+                        Form::tips('Enter Last Name');
                         Form::size(40);
                         Form::validation()->requaired();
                         Form::commit();

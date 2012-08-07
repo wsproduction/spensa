@@ -7,10 +7,13 @@ class Catalogue extends Controller {
         $this->content->accessRight();
         $this->view->topMenu = $this->content->topMenu();
 
+        Src::plugin()->jQueryForm();
         Src::plugin()->jQueryValidation();
         Src::plugin()->jQueryAlphaNumeric();
+        Src::plugin()->jQueryBase64();
         Src::plugin()->poshytip();
         Src::plugin()->elrte();
+        Src::plugin()->tokenInput();
     }
 
     public function index() {
@@ -23,6 +26,14 @@ class Catalogue extends Controller {
     public function add() {
         Web::setTitle('Add Catalogue');
         $this->view->link_back = $this->content->setLink('catalogue');
+        $this->view->link_city = $this->content->setLink('catalogue/getCity');
+        $this->view->years = $this->model->listYear();
+        $this->view->country = $this->listCountry();
+        $this->view->language = $this->listLanguage();
+        $this->view->publisher = $this->listPublisher();
+        $this->view->accounting_symbol = $this->listAccountingSymbol();
+        $this->view->book_resource = $this->listBookResource();
+        $this->view->book_fund = $this->listBookFund();
         $this->view->render('catalogue/add');
     }
 
@@ -61,18 +72,17 @@ class Catalogue extends Controller {
                 if ($idx % 2 == 0) {
                     $tr_class = 'genap';
                 }
-                
-                $author = $this->model->selectAuthor($tmpID);
+
+                $author = $this->model->selectAuthorByID($tmpID);
                 $listAuthor = '';
                 $countAuthor = count($author);
                 foreach ($author as $av) {
                     $countAuthor--;
-                    if ($countAuthor > 0 ) {
+                    if ($countAuthor > 0) {
                         $listAuthor .= $av['author_last_name'] . ', ';
                     } else {
                         $listAuthor .= $av['author_last_name'];
                     }
-                    
                 }
 
                 $html .= '<tr class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '">';
@@ -90,7 +100,7 @@ class Catalogue extends Controller {
                 $html .= '      </div>';
                 $html .= '  </td>';
                 $html .= '  <td valign="top" style="text-align: left;">';
-                $html .=        $value['book_title'] . ' : ' . $value['book_sub_title'];
+                $html .= $value['book_title'] . ' : ' . $value['book_sub_title'];
                 $html .= '      <strong> / </strong> ' . $listAuthor . ' .&HorizontalLine; <i>' . $value['city_name'] . ' : ' . $value['publisher_name'] . ', ' . $value['book_year_launching'] . '</i>';
                 $html .= '  </td>';
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['resource_name'] . '</td>';
@@ -105,8 +115,8 @@ class Catalogue extends Controller {
                 $html .= '      <div>' . date('d-m-Y', strtotime($value['book_entry_date'])) . '</div>';
                 $html .= '  </td>';
                 $html .= '  <td valign="top" style="text-align: center;">';
-                $html .=        URL::link($this->content->setLink('catalogue/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
-                $html .=        URL::link($this->content->setLink('catalogue/edit/' . $tmpID), 'Detail', 'attach');
+                $html .= URL::link($this->content->setLink('catalogue/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
+                $html .= URL::link($this->content->setLink('catalogue/edit/' . $tmpID), 'Detail', 'attach');
                 $html .= '  </td>';
                 $html .= '</tr>';
 
@@ -156,4 +166,151 @@ class Catalogue extends Controller {
         $this->model->delete();
     }
 
+    public function getAuthor() {
+        $res = array();
+        $listAuthor = $this->model->selectAuthorByName();
+
+        if ($listAuthor) {
+            foreach ($listAuthor as $value) {
+                $res[] = array('id' => $value['author_id'], 'name' => $value['author_first_name'] . ' ' . $value['author_last_name']);
+            }
+        }
+
+        # JSON-encode the response
+        $json_response = json_encode($res);
+
+        # Optionally: Wrap the response in a callback function for JSONP cross-domain support
+        if (isset($_GET["callback"])) {
+            if ($_GET["callback"]) {
+                $json_response = $_GET["callback"] . "(" . $json_response . ")";
+            }
+        }
+
+        # Return the response
+        echo $json_response;
+    }
+
+    public function upload() {
+        Web::setTitle('Test Upload');
+        $this->view->link_back = $this->content->setLink('catalogue');
+        $this->view->render('catalogue/upload');
+    }
+
+    public function postUpload() {
+        /*
+          $path = Web::path() . 'asset/upload/';
+          $valid_formats = array("jpg", "jpeg", "png", "gif", "bmp");
+
+          $name = $_FILES['photoimg']['name'];
+          $size = $_FILES['photoimg']['size'];
+
+          if (strlen($name)) {
+          list($txt, $ext) = explode(".", strtolower($name));
+          if (in_array($ext, $valid_formats)) {
+          if ($size < (1024 * 1024)) {
+          $actual_image_name = time() . substr(str_replace(" ", "_", $txt), 5) . "." . $ext;
+          $tmp = $_FILES['photoimg']['tmp_name'];
+          if (move_uploaded_file($tmp, $path . $actual_image_name)) {
+          //echo json_encode(array(1,$this->message->saveSucces()));
+          //echo '{"name":"Warman Suganda","gender":"Male","message":"' . json_encode($this->message->saveSucces()) . '"}';
+          echo '{"aye":"sds"}';
+          }
+          else
+          echo "failed";
+          }
+          else
+          echo "Image file size max 1 MB";
+          }
+          else
+          echo "Invalid file format..";
+          }
+          else
+          echo "Please select image..!";
+
+          exit;
+         */
+        echo '{"aye":"sds","html":"' . base64_encode($this->message->saveSucces()) . '"}';
+    }
+
+    public function listLanguage() {
+        $data = $this->model->selectLanguage();
+        $list = array();
+        if ($data) {
+            foreach ( $data as $value) {
+                $list[$value['language_id']] = $value['language_name'];
+            }
+        }
+        return $list;
+    }
+
+    public function listAccountingSymbol() {
+        $data = $this->model->selectAccountingSymbol();
+        $list = array();
+        if ($data) {
+            foreach ( $data as $value) {
+                $list[$value['accounting_symbol_id']] = $value['accounting_symbol'] . ' (' . $value['accounting_symbol_desc'] . ')';
+            }
+        }
+        return $list;
+    }
+
+    public function listBookResource() {
+        $data = $this->model->selectBookResource();
+        $list = array();
+        if ($data) {
+            foreach ( $data as $value) {
+                $list[$value['resource_id']] = $value['resource_name'];
+            }
+        }
+        return $list;
+    }
+
+    public function listBookFund() {
+        $data = $this->model->selectBookFund();
+        $list = array();
+        if ($data) {
+            foreach ( $data as $value) {
+                $fund_name = $value['fund_name'];
+                if (isset($value['fund_desc'])){
+                    $fund_name .= ' (' . $value['fund_desc'] . ')';
+                }
+                $list[$value['fund_id']] = $fund_name;
+            }
+        }
+        return $list;
+    }
+
+    public function listPublisher() {
+        $data = $this->model->selectPublisher();
+        $list = array();
+        if ($data) {
+            foreach ( $data as $value) {
+                $list[$value['publisher_id']] = $value['publisher_name'];
+            }
+        }
+        return $list;
+    }
+
+    public function listCountry() {
+        $data = $this->model->selectCountry();
+        $list = array();
+        if ($data) {
+            foreach ( $data as $value) {
+                $list[$value['country_id']] = $value['country_name'];
+            }
+        }
+        return $list;
+    }
+    
+    public function getCity() {
+        $data = $this->model->selectCity($_GET['id']);
+        $list = '<option value=""></option>';
+        if ($data) {
+            foreach ( $data as $value) {
+                $list .= '<option value="' . $value['city_id'] . '">' . $value['city_name'] . '</option>';
+            }
+        }
+        echo json_encode($list);
+    }
+    
 }

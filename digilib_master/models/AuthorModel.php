@@ -10,7 +10,7 @@ class AuthorModel extends Model {
         $sth = $this->db->prepare('SELECT *
                                    FROM
                                         digilib_author
-                                   ORDER BY author_name LIMIT ' . $start . ',' . $count);
+                                   ORDER BY author_first_name LIMIT ' . $start . ',' . $count);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -43,19 +43,23 @@ class AuthorModel extends Model {
         $sth = $this->db->prepare('
                     INSERT INTO
                     digilib_author(
-                        author_name,
+                        author_first_name,
+                        author_last_name,
                         author_profile)
                     VALUES(
-                        :name,
+                        :first_name,
+                        :last_name,
                         :profile)
                 ');
 
-        $name = trim($_POST['name']);
-        $address = trim($_POST['profile']);
+        $first_name = trim($_POST['first_name']);
+        $last_name = trim($_POST['last_name']);
+        $profile = trim($_POST['profile']);
 
         return $sth->execute(array(
-                    ':name' => $name,
-                    ':profile' => $address
+                    ':first_name' => $first_name,
+                    ':last_name' => $last_name,
+                    ':profile' => $profile
                 ));
     }
 
@@ -64,18 +68,21 @@ class AuthorModel extends Model {
                     UPDATE
                         digilib_author
                     SET
-                        author_name = :name,
+                        author_first_name = :first_name,
+                        author_last_name = :last_name,
                         author_profile = :profile
                     WHERE
                         digilib_author.author_id = :id
                 ');
 
-        $name = trim($_POST['name']);
-        $address = trim($_POST['profile']);
+        $first_name = trim($_POST['first_name']);
+        $last_name = trim($_POST['last_name']);
+        $profile = trim($_POST['profile']);
 
         return $sth->execute(array(
-                    ':name' => $name,
-                    ':profile' => $address,
+                    ':first_name' => $first_name,
+                    ':last_name' => $last_name,
+                    ':profile' => $profile,
                     ':id' => $id
                 ));
     }

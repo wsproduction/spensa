@@ -69,7 +69,7 @@ class Author extends Controller {
                 Form::value($tmpID);
                 $html .= Form::commit('attach');
                 $html .= '  </td>';
-                $html .= '  <td style="text-align: left;">' . $value['author_name'] . '</td>';
+                $html .= '  <td style="text-align: left;">' . $value['author_first_name'] . ' ' . $value['author_last_name'] . '</td>';
                 $html .= '  <td>' . $value['author_profile'] . '</td>';
                 $html .= '  <td style="text-align: center;">';
                 $html .= URL::link($this->content->setLink('author/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
