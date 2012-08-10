@@ -137,18 +137,17 @@ class Catalogue extends Controller {
         return $html;
     }
 
-    public function listDdc($page = 1,  $parent = 0, $level = 0) {
-        $maxRows = 2;
-        
-        if ($level != 0) {
+    public function listDdc($page = 1, $parent = 0, $level = 0) {
+        $maxRows = 10;
+
+        if ($level != 0 && $parent == 0) {
             $countList = $this->model->countAllDdcByLevel($level);
             $ddcList = $this->model->selectAllDdcByLevel($level, ($page * $maxRows) - $maxRows, $maxRows);
-        } 
-        if ($parent != 0) {
+        } else {
             $countList = $this->model->countAllDdcByParent($parent);
             $ddcList = $this->model->selectAllDdcByParent($parent, ($page * $maxRows) - $maxRows, $maxRows);
         }
-        
+
         $countPage = ceil($countList / $maxRows);
         $jumlah_kolom = 2;
 
@@ -173,6 +172,14 @@ class Catalogue extends Controller {
                 $html .= '</tr>';
 
                 $idx++;
+            }
+
+            if ($level == 1) {
+                $this->content->customPagingId('prevPagingLevel1', 'pagePagingLevel1', 'nextPagingLevel1', 'maxPagingLevel1');
+            } else if ($level == 2) {
+                $this->content->customPagingId('prevPagingLevel2', 'pagePagingLevel2', 'nextPagingLevel2', 'maxPagingLevel2');
+            } else if ($level == 3) {
+                $this->content->customPagingId('prevPagingLevel3', 'pagePagingLevel3', 'nextPagingLevel3', 'maxPagingLevel3');
             }
 
             $html .= $this->content->paging($jumlah_kolom, $countPage, $page);
@@ -214,7 +221,11 @@ class Catalogue extends Controller {
         if (isset($_GET['parent'])) {
             $parent = $_GET['parent'];
         }
-        echo json_encode($this->listDdc($page,$parent));
+        $level = 0;
+        if (isset($_GET['level'])) {
+            $level = $_GET['level'];
+        }
+        echo json_encode($this->listDdc($page, $parent, $level));
     }
 
     public function update($id = 0) {

@@ -150,13 +150,15 @@ class Contents extends Controller {
         return $link;
     }
 
-    public function customPagingId($prevId = '', $pageId = '', $nextId = '') {
+    public function customPagingId($prevId = '', $pageId = '', $nextId = '', $maxId = '') {
         if ($prevId != '')
             $this->prevId = $prevId;
         if ($pageId != '')
             $this->pageId = $pageId;
         if ($nextId != '')
             $this->nextId = $nextId;
+        if ($maxId != '')
+            $this->maxId = $maxId;
     }
 
     public function paging($colspan = 1, $count = 1, $current = 1) {

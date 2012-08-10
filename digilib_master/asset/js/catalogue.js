@@ -197,6 +197,7 @@ $(function(){
     Set_Cookie('_page', 1, '', '/', '', '');
     
     /* PAGING */
+    // INDEX
     $('#paging').live('change',function(){
         keyID = $(this);
         var page = parseInt($(keyID).val());
@@ -207,7 +208,7 @@ $(function(){
             $('table#list tbody').html(o);
         }, 'json');
     });
-    $('.action_prev').live('click',function(){
+    $('#prevPaging').live('click',function(){
         keyID = $('#paging');
         var page = parseInt($(keyID).val())-1;
         if (page>0) {
@@ -219,7 +220,7 @@ $(function(){
             }, 'json');
         }
     });
-    $('.action_next').live('click',function(){
+    $('#nextPaging').live('click',function(){
         keyID = $('#paging');
         var page = parseInt($(keyID).val())+1;
         if (page<$('#maxPaging').val()) {
@@ -232,6 +233,135 @@ $(function(){
         }
         
     });
+    // ADD - LEVEL 1
+    $('#pagePagingLevel1').live('change',function(){
+        keyID = $(this);
+        var page = parseInt($(keyID).val());
+        $.get('readDdc', {
+            p:page,
+            parent:0,
+            level:1
+        }, function(o){
+            Set_Cookie('_page', page, '', '/', '', '');
+            $('table#list1 tbody').html(o);
+        }, 'json');
+    });
+    $('#prevPagingLevel1').live('click',function(){
+        keyID = $('#pagePagingLevel1');
+        var page = parseInt($(keyID).val())-1;
+        if (page>0) {
+            $.get('readDdc', {
+                p:page,
+                parent:0,
+                level:1
+            }, function(o){
+                Set_Cookie('_page', page, '', '/', '', '');
+                $('table#list1 tbody').html(o);
+            }, 'json');
+        }
+    });
+    $('#nextPagingLevel1').live('click',function(){
+        keyID = $('#pagePagingLevel1');
+        var page = parseInt($(keyID).val())+1;
+        if (page<$('#maxPagingLevel1').val()) {
+            $.get('readDdc', {
+                p:page,
+                parent:0,
+                level:1
+            }, function(o){
+                Set_Cookie('_page', page, '', '/', '', '');
+                $('table#list1 tbody').html(o);
+            }, 'json');
+        }
+    });
+    // ADD - LEVEL 2
+    $('#pagePagingLevel2').live('change',function(){
+        keyID = $(this);
+        var page = parseInt($(keyID).val());
+        var parentId = parseInt($('#tempSelectId1').val());
+        $.get('readDdc', {
+            p:page,
+            parent:parentId,
+            level:2
+        }, function(o){
+            Set_Cookie('_page', page, '', '/', '', '');
+            $('table#list2 tbody').html(o);
+        }, 'json');
+    });
+    $('#prevPagingLevel2').live('click',function(){
+        keyID = $('#pagePagingLevel2');
+        var page = parseInt($(keyID).val())-1;
+        var parentId = parseInt($('#tempSelectId1').val());
+        if (page>0) {
+            $.get('readDdc', {
+                p:page,
+                parent:parentId,
+                level:2
+            }, function(o){
+                Set_Cookie('_page', page, '', '/', '', '');
+                $('table#list2 tbody').html(o);
+            }, 'json');
+        }
+    });
+    $('#nextPagingLevel2').live('click',function(){
+        keyID = $('#pagePagingLevel2');
+        var page = parseInt($(keyID).val())+1;
+        var parentId = parseInt($('#tempSelectId1').val());
+        if (page<$('#maxPagingLevel2').val()) {
+            $.get('readDdc', {
+                p:page,
+                parent:parentId,
+                level:2
+            }, function(o){
+                Set_Cookie('_page', page, '', '/', '', '');
+                $('table#list2 tbody').html(o);
+            }, 'json');
+        }
+    });
+    // ADD - LEVEL 3
+    $('#pagePagingLevel3').live('change',function(){
+        keyID = $(this);
+        var page = parseInt($(keyID).val());
+        var parentId = parseInt($('#tempSelectId2').val());
+        $.get('readDdc', {
+            p:page,
+            parent:parentId,
+            level:3
+        }, function(o){
+            Set_Cookie('_page', page, '', '/', '', '');
+            $('table#list3 tbody').html(o);
+        }, 'json');
+    });
+    $('#prevPagingLevel3').live('click',function(){
+        keyID = $('#pagePagingLevel3');
+        var page = parseInt($(keyID).val())-1;
+        var parentId = parseInt($('#tempSelectId2').val());
+        if (page>0) {
+            $.get('readDdc', {
+                p:page,
+                parent:parentId,
+                level:3
+            }, function(o){
+                Set_Cookie('_page', page, '', '/', '', '');
+                $('table#list3 tbody').html(o);
+            }, 'json');
+        }
+    });
+    $('#nextPagingLevel3').live('click',function(){
+        keyID = $('#pagePagingLevel3');
+        var page = parseInt($(keyID).val())+1;
+        var parentId = parseInt($('#tempSelectId2').val());
+        if (page<$('#maxPagingLevel3').val()) {
+            $.get('readDdc', {
+                p:page,
+                parent:parentId,
+                level:3
+            }, function(o){
+                Set_Cookie('_page', page, '', '/', '', '');
+                $('table#list3 tbody').html(o);
+            }, 'json');
+        }
+    });
     
     /* ROW SELECTED */
     $('#list1 tbody tr[is=option]').live('click',function(){
@@ -239,9 +369,13 @@ $(function(){
         tempSelectId = $('#tempSelectId1').val();
         $('#tempSelectId1').val(id);
         
+        $('#row_' + tempSelectId).removeClass().addClass($('#row_' + tempSelectId).attr('temp'));
+        $('#row_' + id).removeClass().addClass('selected');
+        
         if (id != tempSelectId) {
             $.get('readDdc', {
-                parent:id
+                parent:id,
+                level:2
             }, function(o){
                 $('table#list2 tbody').html(o);
                 $('table#list3 tbody').html('<tr><td colspan="2" class="first" style="text-align: center;">Data Not Found</td></tr>');
@@ -253,9 +387,13 @@ $(function(){
         tempSelectId = $('#tempSelectId2').val();
         $('#tempSelectId2').val(id);
         
+        $('#row_' + tempSelectId).removeClass().addClass($('#row_' + tempSelectId).attr('temp'));
+        $('#row_' + id).removeClass().addClass('selected');
+        
         if (id != tempSelectId) {
             $.get('readDdc', {
-                parent:id
+                parent:id,
+                level:3
             }, function(o){
                 $('table#list3 tbody').html(o);
             }, 'json');
@@ -266,6 +404,10 @@ $(function(){
         callNumber = $('#row_' + id + ' td[is=call_number]').text();
         tempSelectId = $('#tempSelectId3').val();
         $('#tempSelectId3').val(id);
+        
+        $('#row_' + tempSelectId).removeClass().addClass($('#row_' + tempSelectId).attr('temp'));
+        $('#row_' + id).removeClass().addClass('selected');
+        
         if (id != tempSelectId) {
             $('#preview_call_number #print_row_1').html(callNumber);
         }
