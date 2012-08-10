@@ -34,6 +34,7 @@ class Catalogue extends Controller {
         $this->view->accounting_symbol = $this->listAccountingSymbol();
         $this->view->book_resource = $this->listBookResource();
         $this->view->book_fund = $this->listBookFund();
+        $this->view->ddc_level1 = $this->listDdc(1, 0, 1);
         $this->view->render('catalogue/add');
     }
 
@@ -136,6 +137,57 @@ class Catalogue extends Controller {
         return $html;
     }
 
+    public function listDdc($page = 1,  $parent = 0, $level = 0) {
+        $maxRows = 2;
+        
+        if ($level != 0) {
+            $countList = $this->model->countAllDdcByLevel($level);
+            $ddcList = $this->model->selectAllDdcByLevel($level, ($page * $maxRows) - $maxRows, $maxRows);
+        } 
+        if ($parent != 0) {
+            $countList = $this->model->countAllDdcByParent($parent);
+            $ddcList = $this->model->selectAllDdcByParent($parent, ($page * $maxRows) - $maxRows, $maxRows);
+        }
+        
+        $countPage = ceil($countList / $maxRows);
+        $jumlah_kolom = 2;
+
+        $html = '';
+
+        if ($countList > 0) {
+
+            $idx = 1;
+            $id = '0';
+            foreach ($ddcList as $value) {
+                $tmpID = $value['ddc_id'];
+                $id .= ',' . $tmpID;
+
+                $tr_class = 'ganjil';
+                if ($idx % 2 == 0) {
+                    $tr_class = 'genap';
+                }
+
+                $html .= '<tr is="option" class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '" value="' . $tmpID . '">';
+                $html .= '  <td style="text-align: center;"  class="first" is="call_number">' . $value['ddc_classification_number'] . '</td>';
+                $html .= '  <td>' . $value['ddc_title'] . '</td>';
+                $html .= '</tr>';
+
+                $idx++;
+            }
+
+            $html .= $this->content->paging($jumlah_kolom, $countPage, $page);
+
+            Form::create('hidden', 'hiddenID');
+            Form::value($id);
+            $html .= Form::commit('attach');
+        } else {
+            $html .= '<tr>';
+            $html .= '   <th colspan="' . $jumlah_kolom . '">Data Not Found</th>';
+            $html .= '</tr>';
+        }
+        return $html;
+    }
+
     public function create() {
         if ($this->model->createSave()) {
             $ket = array(1, 1, $this->message->saveSucces()); // sucess, reset, message
@@ -151,6 +203,18 @@ class Catalogue extends Controller {
             $page = $_GET['p'];
         }
         echo json_encode($this->listData($page));
+    }
+
+    public function readDdc() {
+        $page = 1;
+        if (isset($_GET['p'])) {
+            $page = $_GET['p'];
+        }
+        $parent = 0;
+        if (isset($_GET['parent'])) {
+            $parent = $_GET['parent'];
+        }
+        echo json_encode($this->listDdc($page,$parent));
     }
 
     public function update($id = 0) {
@@ -236,7 +300,7 @@ class Catalogue extends Controller {
         $data = $this->model->selectLanguage();
         $list = array();
         if ($data) {
-            foreach ( $data as $value) {
+            foreach ($data as $value) {
                 $list[$value['language_id']] = $value['language_name'];
             }
         }
@@ -247,7 +311,7 @@ class Catalogue extends Controller {
         $data = $this->model->selectAccountingSymbol();
         $list = array();
         if ($data) {
-            foreach ( $data as $value) {
+            foreach ($data as $value) {
                 $list[$value['accounting_symbol_id']] = $value['accounting_symbol'] . ' (' . $value['accounting_symbol_desc'] . ')';
             }
         }
@@ -258,7 +322,7 @@ class Catalogue extends Controller {
         $data = $this->model->selectBookResource();
         $list = array();
         if ($data) {
-            foreach ( $data as $value) {
+            foreach ($data as $value) {
                 $list[$value['resource_id']] = $value['resource_name'];
             }
         }
@@ -269,9 +333,9 @@ class Catalogue extends Controller {
         $data = $this->model->selectBookFund();
         $list = array();
         if ($data) {
-            foreach ( $data as $value) {
+            foreach ($data as $value) {
                 $fund_name = $value['fund_name'];
-                if (isset($value['fund_desc'])){
+                if (isset($value['fund_desc'])) {
                     $fund_name .= ' (' . $value['fund_desc'] . ')';
                 }
                 $list[$value['fund_id']] = $fund_name;
@@ -284,7 +348,7 @@ class Catalogue extends Controller {
         $data = $this->model->selectPublisher();
         $list = array();
         if ($data) {
-            foreach ( $data as $value) {
+            foreach ($data as $value) {
                 $list[$value['publisher_id']] = $value['publisher_name'];
             }
         }
@@ -295,22 +359,22 @@ class Catalogue extends Controller {
         $data = $this->model->selectCountry();
         $list = array();
         if ($data) {
-            foreach ( $data as $value) {
+            foreach ($data as $value) {
                 $list[$value['country_id']] = $value['country_name'];
             }
         }
         return $list;
     }
-    
+
     public function getCity() {
         $data = $this->model->selectCity($_GET['id']);
         $list = '<option value=""></option>';
         if ($data) {
-            foreach ( $data as $value) {
+            foreach ($data as $value) {
                 $list .= '<option value="' . $value['city_id'] . '">' . $value['city_name'] . '</option>';
             }
         }
         echo json_encode($list);
     }
-    
+
 }

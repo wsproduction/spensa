@@ -19,7 +19,7 @@
         <div>
             <table>
                 <tr>
-                    <td style="width: 200px;">Call Number</td>
+                    <td style="width: 200px;">Classification Number</td>
                     <td>:</td>
                     <td>
                         <?php

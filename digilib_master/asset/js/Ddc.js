@@ -197,7 +197,7 @@ $(function(){
     Set_Cookie('_page', 1, '', '/', '', '');
     
     /* PAGING */
-    $('#paging').live('change',function(){
+    $('#pagePaging').live('change',function(){
         keyID = $(this);
         var page = parseInt($(keyID).val());
         $.get('ddc/read', {
@@ -208,8 +208,8 @@ $(function(){
         }, 'json');
         
     });
-    $('.action_prev').live('click',function(){
-        keyID = $('#paging');
+    $('#prevPaging').live('click',function(){
+        keyID = $('#pagePaging');
         var page = parseInt($(keyID).val())-1;
         if (page>0) {
             $.get('ddc/read', {
@@ -221,8 +221,8 @@ $(function(){
             
         }
     });
-    $('.action_next').live('click',function(){
-        keyID = $('#paging');
+    $('#nextPaging').live('click',function(){
+        keyID = $('#pagePaging');
         var page = parseInt($(keyID).val())+1;
         if (page<$('#maxPaging').val()) {
             $.get('ddc/read', {

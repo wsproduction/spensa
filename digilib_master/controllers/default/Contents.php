@@ -2,6 +2,11 @@
 
 class Contents extends Controller {
 
+    private $prevId = 'prevPaging';
+    private $pageId = 'pagePaging';
+    private $nextId = 'nextPaging';
+    private $maxId = 'maxPaging';
+
     public function __construct() {
         $this->model = Content::loadModel();
         $this->url = new URL();
@@ -126,14 +131,14 @@ class Contents extends Controller {
         return $count;
     }
 
-    public function setLink($val='',$ssl=false) {
-        
+    public function setLink($val = '', $ssl = false) {
+
         if (Web::$childStatus) {
             $house = Web::$host . '/' . Web::$webAlias;
         } else {
             $house = Web::$host;
         }
-        
+
         $protocol = 'http://';
         if ($ssl) {
             $protocol = 'https://';
@@ -145,12 +150,21 @@ class Contents extends Controller {
         return $link;
     }
 
+    public function customPagingId($prevId = '', $pageId = '', $nextId = '') {
+        if ($prevId != '')
+            $this->prevId = $prevId;
+        if ($pageId != '')
+            $this->pageId = $pageId;
+        if ($nextId != '')
+            $this->nextId = $nextId;
+    }
+
     public function paging($colspan = 1, $count = 1, $current = 1) {
-        $html = '<tr class="pagging">';
+        $html = '<tr class="paging">';
         $html .= '  <td colspan="' . $colspan . '" class="first">';
         $html .= '      <div class="left">';
 
-        Form::create('button');
+        Form::create('button', $this->prevId);
         Form::value('Prev');
         Form::style('action_prev');
         $html .= Form::commit('attach');
@@ -160,15 +174,15 @@ class Contents extends Controller {
             $num[$i] = $i;
         }
 
-        Form::create('select', 'paging');
+        Form::create('select', $this->pageId);
         Form::option($num, '', $current);
         $html .= Form::commit('attach');
 
-        Form::create('hidden', 'maxPaging');
+        Form::create('hidden', $this->maxId);
         Form::value($i);
         $html .= Form::commit('attach');
 
-        Form::create('button');
+        Form::create('button', $this->nextId);
         Form::value('Next');
         Form::style('action_next');
         $html .= Form::commit('attach');
@@ -181,9 +195,9 @@ class Contents extends Controller {
         $html .= '</tr>';
         return $html;
     }
-    
-    public function numberFormat($number=0) {
-        return number_format($number,0,',','.');
+
+    public function numberFormat($number = 0) {
+        return number_format($number, 0, ',', '.');
     }
 
 }

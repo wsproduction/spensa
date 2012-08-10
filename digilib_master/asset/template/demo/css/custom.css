@@ -128,16 +128,16 @@ table.list tbody tr:hover{
     background-color: #ececec;
 }
 
-table.list tbody tr.pagging{
+table.list tbody tr.paging{
     background-color: #ececec;
 }
 
-table.list tbody tr.pagging div.left{
+table.list tbody tr.paging div.left{
     float:left;
     text-align: left;
 }
 
-table.list tbody tr.pagging div.right{
+table.list tbody tr.paging div.right{
     float: right;
     text-align: right;
     padding-top: 10px;
@@ -310,4 +310,37 @@ div.myTabContent {
     clear: both;
     border: 1px solid #ccc;
     padding: 5px;
+}
+
+fieldset {
+    border: 1px solid #ccc;
+}
+
+legend {
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+#preview_call_number {
+    border: 1px solid #ccc;
+    width: 135px;
+    padding: 10px;
+    float: left;
+}
+
+#preview_call_number div {
+    padding: 5px;
+    background-color: #f8f8f8;
+    margin: 4px 0;
+    text-align: center;
+}
+
+#desc_call_number {
+    padding: 10px;
+    float: left;
+}
+
+#desc_call_number div {
+    padding: 5px;
+    margin: 4px 0;
 }

@@ -50,8 +50,9 @@
                         Form::commit();
                         ?>
                     </th>
-                    <th style="width: 100px;">Call Number</th>
+                    <th style="width: 200px;">Classification Number</th>
                     <th>Title</th>
+                    <th>Level</th>
                     <th style="width: 100px;">Action</th>
                 </tr>
             </thead>

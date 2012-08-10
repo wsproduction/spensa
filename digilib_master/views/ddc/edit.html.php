@@ -19,13 +19,13 @@
         <div>
             <table>
                 <tr>
-                    <td style="width: 200px;">Call Number</td>
+                    <td style="width: 200px;">Classification Number</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'callNumber');
                         Form::tips('Enter Call Number');
-                        Form::value($dataEdit['ddc_call_number']);
+                        Form::value($dataEdit['ddc_classification_number']);
                         Form::validation()->requaired();
                         Form::commit();
                         ?>

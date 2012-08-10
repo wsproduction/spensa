@@ -41,7 +41,7 @@ class Ddc extends Controller {
             switch ($listData['ddc_level']) {
                 case 2:
                     foreach ($this->model->selectSub1() as $value) {
-                        $listSub1[$value['ddc_id']] = $value['ddc_call_number'] . ' ' . $value['ddc_title'];
+                        $listSub1[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
                     }
                     $this->view->listSub1 = array($listSub1, $listData['ddc_main_parent']);
                     $this->view->link_sub2 = $this->content->setLink('ddc/getSub2');
@@ -49,12 +49,12 @@ class Ddc extends Controller {
                 case 3:
                     $this->view->link_sub2 = $this->content->setLink('ddc/getSub2');
                     foreach ($this->model->selectSub1() as $value) {
-                        $listSub1[$value['ddc_id']] = $value['ddc_call_number'] . ' ' . $value['ddc_title'];
+                        $listSub1[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
                     }
                     $this->view->listSub1 = array($listSub1, $listData['ddc_temp_parent']);
 
                     foreach ($this->model->selectSub2($listData['ddc_temp_parent']) as $value) {
-                        $listSub2[$value['ddc_id']] = $value['ddc_call_number'] . ' ' . $value['ddc_title'];
+                        $listSub2[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
                     }
                     $this->view->listSub2 = array($listSub2, $listData['ddc_main_parent']);
                     break;
@@ -98,7 +98,7 @@ class Ddc extends Controller {
     public function getSub1() {
         $list = array();
         foreach ($this->model->selectSub1() as $value) {
-            $list[$value['ddc_id']] = $value['ddc_call_number'] . ' ' . $value['ddc_title'];
+            $list[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
         }
 
         Form::create('select', 'sub1');
@@ -114,7 +114,7 @@ class Ddc extends Controller {
     public function getSub2() {
         $list = array();
         foreach ($this->model->selectSub2($_GET['id']) as $value) {
-            $list[$value['ddc_id']] = $value['ddc_call_number'] . ' ' . $value['ddc_title'];
+            $list[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
         }
 
         Form::create('select', 'sub2');
@@ -130,7 +130,7 @@ class Ddc extends Controller {
         $maxRows = 10;
         $countList = $this->model->countAll();
         $countPage = ceil($countList / $maxRows);
-        $jumlah_kolom = 4;
+        $jumlah_kolom = 5;
 
         $ddcList = $this->model->selectAll(($page * $maxRows) - $maxRows, $maxRows);
         $html = '';
@@ -155,8 +155,9 @@ class Ddc extends Controller {
                 Form::value($tmpID);
                 $html .= Form::commit('attach');
                 $html .= '  </td>';
-                $html .= '  <td style="text-align: center;">' . $value['ddc_call_number'] . '</td>';
+                $html .= '  <td style="text-align: center;">' . $value['ddc_classification_number'] . '</td>';
                 $html .= '  <td>' . $value['ddc_title'] . '</td>';
+                $html .= '  <td style="text-align:center;">' . $value['ddc_level'] . '</td>';
                 $html .= '  <td style="text-align: center;">';
                 $html .= URL::link($this->content->setLink('ddc/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
                 $html .= URL::link($this->content->setLink('ddc/edit/' . $tmpID), 'Detail', 'attach');

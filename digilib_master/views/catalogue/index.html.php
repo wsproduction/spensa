@@ -50,7 +50,7 @@
                         Form::commit();
                         ?>
                     </th>
-                    <th style="width: 110px;padding: 0px;font-size: 11px;">Classification Number</th>
+                    <th style="width: 110px;">Call Number</th>
                     <th>Book Description</th>
                     <th style="width: 100px;">Resource</th>
                     <th style="width: 120px;">Fund</th>

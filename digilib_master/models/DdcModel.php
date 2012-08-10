@@ -7,8 +7,8 @@ class DdcModel extends Model {
     }
 
     public function selectAll($start = 1, $count = 100) {
-        //$sth = $this->db->prepare('SELECT * FROM digilib_ddc WHERE ddc_level=1 ORDER BY ddc_call_number LIMIT ' . $start .',' . $count);
-        $sth = $this->db->prepare('SELECT * FROM digilib_ddc ORDER BY ddc_call_number LIMIT ' . $start . ',' . $count);
+        //$sth = $this->db->prepare('SELECT * FROM digilib_ddc WHERE ddc_level=1 ORDER BY ddc_classification_number LIMIT ' . $start .',' . $count);
+        $sth = $this->db->prepare('SELECT * FROM digilib_ddc ORDER BY ddc_classification_number LIMIT ' . $start . ',' . $count);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -18,7 +18,7 @@ class DdcModel extends Model {
         $sth = $this->db->prepare('
                             SELECT 
                                 digilib_ddc.ddc_id,
-                                digilib_ddc.ddc_call_number,
+                                digilib_ddc.ddc_classification_number,
                                 digilib_ddc.ddc_title,
                                 digilib_ddc.ddc_description,
                                 digilib_ddc.ddc_level,
@@ -72,7 +72,7 @@ class DdcModel extends Model {
         $sth = $this->db->prepare('
                 INSERT INTO
                 digilib_ddc(
-                ddc_call_number,
+                ddc_classification_number,
                 ddc_title,
                 ddc_description,
                 ddc_level,
@@ -112,7 +112,7 @@ class DdcModel extends Model {
                 UPDATE
                     digilib_ddc
                 SET
-                    ddc_call_number = :callNumber,
+                    ddc_classification_number = :callNumber,
                     ddc_title = :title,
                     ddc_description = :description,
                     ddc_level = :level,

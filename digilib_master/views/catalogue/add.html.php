@@ -15,17 +15,21 @@
         <div id="message"></div>
         <?php
         Form::begin('fAdd', 'catalogue/create', 'post');
+            
+            Form::create('hidden','stepStatus');
+            Form::value(1);
+            Form::commit()
         ?>
         <div class="myTab">
             <ul class="header">
-                <li>1. Book Detail</li>
-                <li>2. DDC</li>
-                <li>3. File</li>
-                <li>4. Confirmation</li>
+                <li id="s1">1. Book Detail</li>
+                <li id="s2" style="background: #ccc;">2. DDC</li>
+                <li id="s3" style="background: #ccc;">3. File</li>
+                <li id="s4" style="background: #ccc;">4. Confirmation</li>
             </ul>
         </div>
         <div class="myTabContent">
-            <table>
+            <table id="addStep1" style="display: none;">
                 <tr>
                     <td style="width: 200px;">Titles</td>
                     <td>:</td>
@@ -40,7 +44,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Subtitles</td>
+                    <td>Subtitles</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -52,7 +56,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Author</td>
+                    <td>Author</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -65,7 +69,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">ISBN</td>
+                    <td>ISBN</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -78,7 +82,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Publisher</td>
+                    <td>Publisher</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -91,7 +95,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Country</td>
+                    <td>Country</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -105,7 +109,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">City</td>
+                    <td>City</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -117,7 +121,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Years</td>
+                    <td>Years</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -130,7 +134,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Language</td>
+                    <td>Language</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -143,7 +147,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Page Count</td>
+                    <td>Page Count</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -157,17 +161,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Cover</td>
-                    <td>:</td>
-                    <td>
-                        <?php
-                        Form::create('file', 'cover');
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width: 200px;">Size</td>
+                    <td>Size</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -189,7 +183,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Weight</td>
+                    <td>Weight</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -204,7 +198,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Quantity</td>
+                    <td>Quantity</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -218,7 +212,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Price</td>
+                    <td>Price</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -238,7 +232,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Resouce</td>
+                    <td>Resouce</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -251,7 +245,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Fund</td>
+                    <td>Fund</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -277,17 +271,223 @@
                     <td></td>
                     <td>
                         <?php
-                        Form::create('submit', 'btnSave');
+                        Form::create('submit', 'btnStep1');
                         Form::value('Next');
                         Form::style('action_next');
-                        Form::commit();
-                        Form::create('reset', 'btnReset');
-                        Form::value('Reset');
-                        Form::style('action_cancel');
                         Form::commit();
                         ?>
                     </td>
                 </tr>
+            </table>
+            
+            <table id="addStep2" style="width: 100%;">
+                <tr>
+                    <td>
+                        <fieldset>
+                            <legend>Level 1</legend>
+                            <div id="filter_box">
+                                <div class="left">
+                                    <?php
+                                    Form::label('Filter | ', 'keyword');
+                                    Form::create('text', 'keyword');
+                                    Form::tips('Type keyword');
+                                    Form::size(40);
+                                    Form::commit();
+
+                                    Form::create('select', 'filterCategory');
+                                    Form::tips('Type keyword');
+                                    Form::option(array(1 => 'Call Number', 2 => 'Title'));
+                                    Form::commit();
+
+                                    Form::create('button', 'btnFilter');
+                                    Form::value('Search');
+                                    Form::style('action_search');
+                                    Form::commit();
+                                    
+                                    Form::create('hidden','tempSelectId1');
+                                    Form::value(0);
+                                    Form::commit();
+                                    ?>
+                                </div>
+                            </div>
+                            <table id="list1" class="list" style="width: 100%;" cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 250px;" class="first" >Classification Number</th>
+                                        <th>Title</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="body">
+                                    <?php echo $ddc_level1; ?>
+                                </tbody>
+                            </table>
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 10px;">
+                        <fieldset>
+                            <legend>Level 2</legend>
+                            <div id="filter_box">
+                                <div class="left">
+                                    <?php
+
+                                    Form::label('Filter | ', 'keyword');
+                                    Form::create('text', 'keyword');
+                                    Form::tips('Type keyword');
+                                    Form::size(40);
+                                    Form::commit();
+
+                                    Form::create('select', 'filterCategory');
+                                    Form::tips('Type keyword');
+                                    Form::option(array(1 => 'Call Number', 2 => 'Title'));
+                                    Form::commit();
+
+                                    Form::create('button', 'btnFilter');
+                                    Form::value('Search');
+                                    Form::style('action_search');
+                                    Form::commit();
+                                    
+                                    Form::create('hidden','tempSelectId2');
+                                    Form::value(0);
+                                    Form::commit();
+                                    ?>
+                                </div>
+                            </div>
+                            <table id="list2" class="list" style="width: 100%;" cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 250px;" class="first" >Classification Number</th>
+                                        <th>Title</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="body">
+                                    <tr>
+                                        <td colspan="2" class="first" style="text-align: center;">Data Not Found</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 10px;">
+                        <fieldset>
+                            <legend>Level 3</legend>
+                            <div id="filter_box">
+                                <div class="left">
+                                    <?php
+
+                                    Form::label('Filter | ', 'keyword');
+                                    Form::create('text', 'keyword');
+                                    Form::tips('Type keyword');
+                                    Form::size(40);
+                                    Form::commit();
+
+                                    Form::create('select', 'filterCategory');
+                                    Form::tips('Type keyword');
+                                    Form::option(array(1 => 'Call Number', 2 => 'Title'));
+                                    Form::commit();
+
+                                    Form::create('button', 'btnFilter');
+                                    Form::value('Search');
+                                    Form::style('action_search');
+                                    Form::commit();
+                                    
+                                    Form::create('hidden','tempSelectId3');
+                                    Form::value(0);
+                                    Form::commit();
+                                    ?>
+                                </div>
+                            </div>
+                            <table id="list3" class="list" style="width: 100%;" cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 250px;" class="first" >Classification Number</th>
+                                        <th>Title</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="body">
+                                    <tr>
+                                        <td colspan="2" class="first" style="text-align: center;">Data Not Found</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 10px;">
+                        <fieldset>
+                            <legend>Call Number</legend>
+                            <div>
+                                <div id="preview_call_number">
+                                    <div id="print_row_1">-</div>
+                                    <div id="print_row_2">WAR</div>
+                                    <div id="print_row_3">s</div>
+                                </div>
+                                <div id="desc_call_number">
+                                    <div>&Rrightarrow; <i>Classification Number</i></div>
+                                    <div>&Rrightarrow; <i>3 Digit ( Author Name / Book Title )</i></div>
+                                    <div>&Rrightarrow; <i>1 Digit ( Book Title )</i></div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <?php
+                        Form::create('button', 'btnPrev');
+                        Form::value('Prev');
+                        Form::style('action_prev');
+                        Form::commit();
+                        Form::create('submit', 'btnSave');
+                        Form::value('Next');
+                        Form::style('action_next');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+            </table>
+            
+            <table id="addStep3" style="display: none;">
+                <tr>
+                    <td>Cover</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('file', 'cover');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>    
+                <tr>
+                    <td>File E-Book</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('file', 'cover');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr> 
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <?php
+                        Form::create('button', 'btnPrev');
+                        Form::value('Prev');
+                        Form::style('action_prev');
+                        Form::commit();
+                        Form::create('submit', 'btnSave');
+                        Form::value('Save');
+                        Form::style('action_next');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>                
             </table>
         </div>
         <?php
