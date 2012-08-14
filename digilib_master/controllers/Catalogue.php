@@ -34,6 +34,7 @@ class Catalogue extends Controller {
         $this->view->accounting_symbol = $this->listAccountingSymbol();
         $this->view->book_resource = $this->listBookResource();
         $this->view->book_fund = $this->listBookFund();
+        $this->view->author_description = $this->listAuthorDescription();
         $this->view->ddc_level1 = $this->listDdc(1, 0, 1);
         $this->view->render('catalogue/add');
     }
@@ -166,7 +167,7 @@ class Catalogue extends Controller {
                     $tr_class = 'genap';
                 }
 
-                $html .= '<tr is="option" class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '" value="' . $tmpID . '">';
+                $html .= '<tr isa="option" class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '" value="' . $tmpID . '" style="cursor:pointer">';
                 $html .= '  <td style="text-align: center;"  class="first" is="call_number">' . $value['ddc_classification_number'] . '</td>';
                 $html .= '  <td>' . $value['ddc_title'] . '</td>';
                 $html .= '</tr>';
@@ -189,12 +190,60 @@ class Catalogue extends Controller {
             $html .= Form::commit('attach');
         } else {
             $html .= '<tr>';
-            $html .= '   <th colspan="' . $jumlah_kolom . '">Data Not Found</th>';
+            $html .= '   <td class="first" style="text-align:center;" colspan="' . $jumlah_kolom . '"><i>Data Not Found</i></th>';
             $html .= '</tr>';
         }
         return $html;
     }
+    
+    public function listAuthorTemp($page = 1, $sessionAuthor = 0) {
+        $maxRows = 10;
+        $countList = $this->model->countAllAuthorTemp($sessionAuthor);
+        $countPage = ceil($countList / $maxRows);
+        $jumlah_kolom = 4;
 
+        $ddcList = $this->model->selectAllAuthorTemp(($page * $maxRows) - $maxRows, $maxRows, $sessionAuthor);
+        $html = '';
+
+        if ($countList > 0) {
+
+            $idx = (($maxRows * $page) - $maxRows) + 1;
+            $id = '0';
+            foreach ($ddcList as $value) {
+                $tmpID = $value['author_id'];
+                $id .= ',' . $tmpID;
+
+                $tr_class = 'ganjil';
+                if ($idx % 2 == 0) {
+                    $tr_class = 'genap';
+                }
+
+                $html .= '<tr class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '">';
+                $html .= '  <td class="first" style="text-align: center;">' . $idx . '</td>';
+                $html .= '  <td style="text-align: left;">' . $value['author_first_name'] . ' ' . $value['author_last_name'] . '</td>';
+                $html .= '  <td>' . $value['author_description'] . '</td>';
+                $html .= '  <td style="text-align: center;">';
+                $html .=        URL::link('#', 'Delete', 'attach',array('class' => 'delete', 'value' => $tmpID));
+                $html .= '  </td>';
+                $html .= '</tr>';
+
+                $idx++;
+            }
+            
+            $this->content->customPagingId('prevPagingAuthor', 'pagePagingAuthor', 'nextPagingAuthor', 'maxPagingAuthor');
+            $html .= $this->content->paging($jumlah_kolom, $countPage, $page);
+
+            Form::create('hidden', 'hiddenID');
+            Form::value($id);
+            $html .= Form::commit('attach');
+        } else {
+            $html .= '<tr>';
+            $html .= '   <td colspan="' . $jumlah_kolom . '" class="first" style="text-align:center;"><i>Data Not Found</i></th>';
+            $html .= '</tr>';
+        }
+        return $html;
+    }
+    
     public function create() {
         if ($this->model->createSave()) {
             $ket = array(1, 1, $this->message->saveSucces()); // sucess, reset, message
@@ -227,6 +276,18 @@ class Catalogue extends Controller {
         }
         echo json_encode($this->listDdc($page, $parent, $level));
     }
+    
+    public function readAuthorTemp() {
+        $page = 1;
+        if (isset($_GET['p'])) {
+            $page = $_GET['p'];
+        }
+        $sessionAuthor = '0';
+        if (isset($_GET['sa'])) {
+            $sessionAuthor = $_GET['sa'];
+        }
+        echo json_encode($this->listAuthorTemp($page, $sessionAuthor));
+    }
 
     public function update($id = 0) {
         if ($this->model->updateSave($id)) {
@@ -240,29 +301,9 @@ class Catalogue extends Controller {
     public function delete() {
         $this->model->delete();
     }
-
-    public function getAuthor() {
-        $res = array();
-        $listAuthor = $this->model->selectAuthorByName();
-
-        if ($listAuthor) {
-            foreach ($listAuthor as $value) {
-                $res[] = array('id' => $value['author_id'], 'name' => $value['author_first_name'] . ' ' . $value['author_last_name']);
-            }
-        }
-
-        # JSON-encode the response
-        $json_response = json_encode($res);
-
-        # Optionally: Wrap the response in a callback function for JSONP cross-domain support
-        if (isset($_GET["callback"])) {
-            if ($_GET["callback"]) {
-                $json_response = $_GET["callback"] . "(" . $json_response . ")";
-            }
-        }
-
-        # Return the response
-        echo $json_response;
+    
+    public function deleteAuthorTemp() {
+        $this->model->deleteAuthorTemp();
     }
 
     public function upload() {
@@ -387,5 +428,39 @@ class Catalogue extends Controller {
         }
         echo json_encode($list);
     }
-
+    
+    public function listAuthorDescription() {
+        $data = $this->model->selectAllAuthorDescription();
+        $list = array();
+        foreach ($data as $value) {
+            $list[$value['author_description_id']] = $value['author_description'];
+        }
+        return $list;
+    }
+    
+    public function addAuthorTemp() {
+        if ($this->model->addAuthorTempSave()) {
+            $ket = array(1, 1, $this->message->saveSucces()); // sucess, reset, message
+        } else {
+            $ket = array(0, 0, $this->message->saveError()); // no sucess, no reset, message
+        }
+        echo json_encode($ket);
+    }
+    
+    public function getWriter() {
+        $sid = 0;
+        if (isset($_GET['sa'])) {
+            $sid = $_GET['sa'];
+        }
+        $data = $this->model->selectWriterTempBySession($sid);
+        if (count($data) > 0 && count($data) <= 3) {
+            $writerPrimary = $data[0];
+            
+            $ket = array(1,$writerPrimary['author_first_name']);
+        } else {
+            $ket = array(0);
+        } 
+        
+        echo json_encode($ket);
+    }
 }

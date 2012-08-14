@@ -119,15 +119,27 @@ class CatalogueModel extends Model {
         }
     }
     
+    public function deleteAuthorTemp() {
+        $delete_id = $_POST['val'];
+        $sth = $this->db->prepare('DELETE FROM digilib_author_temp WHERE author_id = :id');
+
+        try {
+            $sth->execute(array(':id' => $delete_id));
+            return true;
+        } catch (Exception $exc) {
+            $this->db->rollBack();
+            return false;
+        }
+    }
+    
     public function selectAuthorByID($id) {
         $sth = $this->db->prepare('
                             SELECT 
                                 digilib_author.author_last_name
                             FROM
-                                digilib_author_detail
-                            INNER JOIN digilib_author ON (digilib_author_detail.author_id = digilib_author.author_id)
+                                digilib_author
                             WHERE
-                                digilib_author_detail.book_id = :id');
+                                digilib_author.book_id = :id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array(':id' => $id));
         if ($sth->rowCount() > 0) {
@@ -287,5 +299,89 @@ class CatalogueModel extends Model {
         $sth->execute(array(':parent' => $parent));
         return $sth->rowCount();
     }
+    
+    public function selectAllAuthorDescription() {
+        $sth = $this->db->prepare('SELECT * FROM digilib_author_description ORDER BY author_description DESC');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function addAuthorTempSave() {
+        Session::init();
+        $sth = $this->db->prepare('
+                    INSERT INTO
+                        digilib_author_temp(
+                        author_first_name,
+                        author_last_name,
+                        author_description,
+                        author_front_degree,
+                        author_back_degree,
+                        session_id,
+                        insert_date)
+                    VALUES(
+                        :first_name,
+                        :last_name,
+                        :description,
+                        :front_degree,
+                        :back_degree,
+                        :session_id,
+                        NOW())
+                ');
 
+        $first_name = trim($_POST['first_name_author']);
+        $last_name = trim($_POST['last_name_author']);
+        $description = trim($_POST['description_author']);
+        $front_degree = trim($_POST['front_degree_author']);
+        $back_degree = trim($_POST['back_degree_author']);
+        $session_id = trim($_POST['sa']);
+        
+        return $sth->execute(array(
+                    ':first_name' => $first_name,
+                    ':last_name' => $last_name,
+                    ':description' => $description,
+                    ':front_degree' => $front_degree,
+                    ':back_degree' => $back_degree,
+                    ':session_id' => $session_id
+                ));
+    }
+    
+    public function selectAllAuthorTemp($start = 1, $count = 100, $sessionAuthor = 0) {
+        $sth = $this->db->prepare('SELECT 
+                                        digilib_author_temp.author_id,
+                                        digilib_author_temp.author_first_name,
+                                        digilib_author_temp.author_last_name,
+                                        (SELECT author_description FROM digilib_author_description WHERE digilib_author_description.author_description_id = digilib_author_temp.author_description) AS "author_description",
+                                        digilib_author_temp.author_front_degree,
+                                        digilib_author_temp.author_back_degree,
+                                        digilib_author_temp.session_id
+                                   FROM
+                                        digilib_author_temp
+                                   WHERE
+                                        digilib_author_temp.session_id = :session
+                                   ORDER BY author_first_name LIMIT ' . $start . ',' . $count);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array(':session' => $sessionAuthor));
+        return $sth->fetchAll();
+    }
+    
+    public function countAllAuthorTemp($sessionAuthor = 0) {
+        $sth = $this->db->prepare('SELECT * FROM digilib_author_temp WHERE session_id=:session');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array(':session'=>$sessionAuthor));
+        return $sth->rowCount();
+    }
+    
+    public function selectWriterTempBySession($sid = 0) {
+        $sth = $this->db->prepare('SELECT *
+                                   FROM
+                                        digilib_author_temp
+                                   WHERE
+                                        digilib_author_temp.session_id = :session AND
+                                        digilib_author_temp.author_description = 1
+                                   ORDER BY author_first_name');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array(':session' => $sid));
+        return $sth->fetchAll();
+    }
 }

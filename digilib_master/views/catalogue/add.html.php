@@ -23,15 +23,16 @@
         <div class="myTab">
             <ul class="header">
                 <li id="s1">1. Book Detail</li>
-                <li id="s2" style="background: #ccc;">2. DDC</li>
-                <li id="s3" style="background: #ccc;">3. File</li>
-                <li id="s4" style="background: #ccc;">4. Confirmation</li>
+                <li id="s2" style="background: #ccc;">2. Author</li>
+                <li id="s3" style="background: #ccc;">3. DDC</li>
+                <li id="s4" style="background: #ccc;">4. File</li>
+                <li id="s5" style="background: #ccc;">5. Confirmation</li>
             </ul>
         </div>
         <div class="myTabContent">
-            <table id="addStep1" style="display: none;">
+            <table id="addStep1" style="width: 100%;">
                 <tr>
-                    <td style="width: 200px;">Titles</td>
+                    <td style="width: 200px;">Titles *</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -56,19 +57,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Author</td>
-                    <td>:</td>
-                    <td>
-                        <?php
-                        Form::create('text', 'author');
-                        Form::tips('Enter Author Name');
-                        Form::size(40);
-                        Form::validation()->requaired();
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr>
-                <tr>
                     <td>ISBN</td>
                     <td>:</td>
                     <td>
@@ -82,7 +70,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Publisher</td>
+                    <td>Publisher *</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -95,7 +83,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Country</td>
+                    <td>Country *</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -109,7 +97,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>City</td>
+                    <td>City *</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -121,7 +109,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Years</td>
+                    <td>Years *</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -134,7 +122,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Language</td>
+                    <td>Language *</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -155,7 +143,6 @@
                         Form::tips('Enter Page Count of Book');
                         Form::size(10);
                         Form::inputType()->numeric();
-                        Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>
@@ -169,14 +156,12 @@
                         Form::tips('Enter Width');
                         Form::size(10);
                         Form::inputType()->numeric();
-                        Form::validation()->requaired();
                         Form::commit();
                         echo 'x';
                         Form::create('text', 'height');
                         Form::tips('Enter Height');
                         Form::size(10);
                         Form::inputType()->numeric();
-                        Form::validation()->requaired();
                         Form::commit();
                         echo 'Cm';
                         ?>
@@ -191,14 +176,13 @@
                         Form::tips('Enter Weight');
                         Form::size(10);
                         Form::inputType()->numeric();
-                        Form::validation()->requaired();
                         Form::commit();
                         echo 'Kg';
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Quantity</td>
+                    <td>Quantity *</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -219,14 +203,12 @@
                         Form::create('select', 'accounting_symbol');
                         Form::tips('Select Accounting Symbol');
                         Form::option($accounting_symbol,' ');
-                        Form::validation()->requaired();
                         Form::commit();
                         Form::create('text', 'price');
                         Form::tips('Enter Price of Book');
                         Form::size(20);
                         Form::inputType()->numeric();
                         Form::properties(array('style'=>'text-align:right;'));
-                        Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>
@@ -239,7 +221,6 @@
                         Form::create('select', 'resource');
                         Form::tips('Select Resource');
                         Form::option($book_resource,' ');
-                        Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>
@@ -267,12 +248,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td>
+                    <td colspan="3" style="text-align: right;">
                         <?php
                         Form::create('submit', 'btnStep1');
-                        Form::value('Next');
+                        Form::value('Next to Step 2');
                         Form::style('action_next');
                         Form::commit();
                         ?>
@@ -280,7 +259,140 @@
                 </tr>
             </table>
             
-            <table id="addStep2" style="width: 100%;">
+            <table id="addStep2" style="display: none;width: 100%;">
+                <tr>
+                    <td style="width: 50%;" valign="top">
+                        <fieldset>
+                            <legend>Add Author</legend>
+                            <div>
+                                <div id="messageAuthor"></div>
+                                <?php
+                                Form::create('hidden','sessionAuthor');
+                                Form::value(Session::id() . date('YmdHis'));
+                                Form::commit();
+                                ?>
+                                <table>
+                                    <tr>
+                                        <td style="width: 150px;">First Name *</td>
+                                        <td>:</td>
+                                        <td>
+                                            <?php
+                                            Form::create('text', 'first_name_author');
+                                            Form::tips('Enter First Name');
+                                            Form::size(40);
+                                            Form::validation()->requaired();
+                                            Form::commit();
+                                            ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Last Name</td>
+                                        <td>:</td>
+                                        <td>
+                                            <?php
+                                            Form::create('text', 'last_name_author');
+                                            Form::tips('Enter Last Name');
+                                            Form::size(40);
+                                            Form::commit();
+                                            ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Front Degree</td>
+                                        <td>:</td>
+                                        <td>
+                                            <?php
+                                            Form::create('text', 'front_degree_author');
+                                            Form::tips('Enter Front Degree<br>Exmp : Ir., Dr., DR., etc.');
+                                            Form::size(10);
+                                            Form::commit();
+                                            ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Back Degree</td>
+                                        <td>:</td>
+                                        <td>
+                                            <?php
+                                            Form::create('text', 'back_degree_author');
+                                            Form::tips('Enter Back Degree<br>Exmp : S.Pd.,S.Kom., etc.');
+                                            Form::size(10);
+                                            Form::commit();
+                                            ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Description * </td>
+                                        <td>:</td>
+                                        <td>
+                                            <?php
+                                            Form::create('select', 'description_author');
+                                            Form::tips('Enter Description');
+                                            Form::option($author_description,' ');
+                                            Form::validation()->requaired();
+                                            Form::commit();
+                                            ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <?php
+                                            Form::create('button', 'btnAddAuthor');
+                                            Form::value('Add');
+                                            Form::style('action_save');
+                                            Form::commit();
+                                            ?>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </fieldset>
+                    </td>
+                    <td style="width: 50%;" valign="top">
+                        <fieldset>
+                            <legend>Author List</legend>
+                            <?php
+                            Form::create('hidden','tempAuthorSelected');
+                            Form::value(0);
+                            Form::commit();
+                            ?>
+                            <table id="listAuthorSelected" class="list" style="width: 100%;" cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20px;" class="first" >No.</th>
+                                        <th>Author Name</th>
+                                        <th style="width: 160px;">Description</th>
+                                        <th style="width: 60px;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="body" style="">
+                                    <tr>
+                                        <td colspan="4" class="first" style="text-align: center;"><i>Data Not Found</i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: right;">
+                    <?php
+                    Form::create('button', 'btnPrev');
+                    Form::value('Back to Step 1');
+                    Form::style('action_prev');
+                    Form::commit();
+                    Form::create('submit', 'btnSave');
+                    Form::value('Next to Step 3');
+                    Form::style('action_next');
+                    Form::commit();
+                    ?>
+                    </td>
+                </tr>
+            </table>
+            
+            <table id="addStep3" style="width: 100%;display: none;">
                 <tr>
                     <td>
                         <fieldset>
@@ -363,7 +475,7 @@
                                 </thead>
                                 <tbody class="body">
                                     <tr>
-                                        <td colspan="2" class="first" style="text-align: center;">Data Not Found</td>
+                                        <td colspan="2" class="first" style="text-align: center;"><i>Data Not Found</i></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -409,7 +521,7 @@
                                 </thead>
                                 <tbody class="body">
                                     <tr>
-                                        <td colspan="2" class="first" style="text-align: center;">Data Not Found</td>
+                                        <td colspan="2" class="first" style="text-align: center;"><i>Data Not Found</i></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -436,14 +548,14 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="text-align: right;">
                         <?php
                         Form::create('button', 'btnPrev');
-                        Form::value('Prev');
+                        Form::value('Back to Step 2');
                         Form::style('action_prev');
                         Form::commit();
                         Form::create('submit', 'btnSave');
-                        Form::value('Next');
+                        Form::value('Next to Step 4');
                         Form::style('action_next');
                         Form::commit();
                         ?>
@@ -451,7 +563,7 @@
                 </tr>
             </table>
             
-            <table id="addStep3" style="display: none;">
+            <table id="addStep4" style="display: none;">
                 <tr>
                     <td>Cover</td>
                     <td>:</td>
@@ -473,16 +585,14 @@
                     </td>
                 </tr> 
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td>
+                    <td colspan="3" style="text-align: right;">
                         <?php
                         Form::create('button', 'btnPrev');
-                        Form::value('Prev');
+                        Form::value('Back to Step 3');
                         Form::style('action_prev');
                         Form::commit();
                         Form::create('submit', 'btnSave');
-                        Form::value('Save');
+                        Form::value('Next to Step 5');
                         Form::style('action_next');
                         Form::commit();
                         ?>

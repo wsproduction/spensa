@@ -3,13 +3,7 @@
  * and open the template in the editor.
  */
 
-$(function(){    
-    $.get('getAuthor', function(o){
-        $("#author").tokenInput(o, {
-            theme: "facebook",
-            preventDuplicates: true
-        });
-    }, 'json');
+$(function(){
     
     /* WYSIWYG elRTE */
     elRTE.prototype.options.panels.web2pyPanel = [
@@ -77,9 +71,15 @@ $(function(){
         */
        
         var stepStatus = $('#stepStatus').val();
+        
+        // TabStatus
+        $('li#s1').css('background','#ccc');
+        $('li#s2').css('background','#ccc');
+        $('li#s3').css('background','#ccc');
+        $('li#s4').css('background','#ccc');
+        $('li#s5').css('background','#ccc');
        
         if (stepStatus == 1) {
-            $('li#s2').css('background','#fff');
             $('#addStep1').fadeOut('slow',function(){
                 $('#addStep2').fadeIn('slow');
             });
@@ -88,9 +88,25 @@ $(function(){
             $('#addStep2').fadeOut('slow',function(){
                 $('#addStep3').fadeIn('slow');
             });
+            
+            $.get('getWriter', {
+                sa : $('#sessionAuthor').val()
+            }, function(o){
+                if (o[0]) {
+                    row2 = o[1];
+                    row3 = $('#title').val();
+                } else {
+                    row2 = $('#title').val();
+                    row3 = '';
+                }
+                $('#preview_call_number #print_row_2').text(row2.substr(0,3).toUpperCase());
+                $('#preview_call_number #print_row_3').text(row3.substr(0,1).toLowerCase());
+            }, 'json');
+            
             stepStatus++;
-        }        
+        }       
         
+        $('li#s' + stepStatus).css('background','#fff');
         $('#stepStatus').val(stepStatus);
         
         return false;
@@ -149,7 +165,49 @@ $(function(){
             alert('No item Selected');
         }
     });
+    $('#btnAddAuthor').live('click',function(){
+        if ($('#first_name_author').valid() && $('#description_author').valid()) {
+            $.post('addAuthorTemp', {
+                sa : $('#sessionAuthor').val(),
+                first_name_author : $('#first_name_author').val(),
+                last_name_author : $('#last_name_author').val(),
+                front_degree_author : $('#front_degree_author').val(),
+                back_degree_author : $('#back_degree_author').val(),
+                description_author : $('#description_author').val()
+            }, function(o){
+                var status = o[0];
+                var message = o[2];
+                if (status) {
+                    $.get('readAuthorTemp', {
+                        p:Get_Cookie('_page_author'),
+                        sa : $('#sessionAuthor').val()
+                    }, function(o){
+                        $('table#listAuthorSelected tbody').html(o);
+                    }, 'json');
+                }
+                $('#messageAuthor').html(message);
+            }, 'json'); 
+        }
+    });
+    $('#listAuthorSelected a.delete').live('click',function(){
+        thisID = $(this);
+        var conf = confirm("Are you sure to delete?");
+        if (conf) {
+            $.post('deleteAuthorTemp', {
+                val: $(thisID).attr('value')
+            }, function(o){
+                $.get('readAuthorTemp', {
+                    p:Get_Cookie('_page_author'),
+                    sa : $('#sessionAuthor').val()
+                }, function(o){
+                    $('table#listAuthorSelected tbody').html(o);
+                }, 'json');
+            }, 'json');
+        }
+        return false;
+    });
     
+    // TAB ACTION
     $('#btnPrev').live('click',function(){
         var stepStatus = $('#stepStatus').val();
         if (stepStatus == 2) {
@@ -195,6 +253,7 @@ $(function(){
     
     /* SET COOKIE */
     Set_Cookie('_page', 1, '', '/', '', '');
+    Set_Cookie('_page_author', 1, '', '/', '', '');
     
     /* PAGING */
     // INDEX
@@ -362,9 +421,83 @@ $(function(){
             }, 'json');
         }
     });
+    // AUTHOR Temp
+    $('#pagePagingAuthor').live('change',function(){
+        keyID = $(this);
+        var page = parseInt($(keyID).val());
+        $.get('readAuthorTemp', {
+            p:page,
+            sa : $('#sessionAuthor').val()
+        }, function(o){
+            Set_Cookie('_page_author', page, '', '/', '', '');
+            $('table#listAuthorSelected tbody').html(o);
+        }, 'json');
+    });
+    $('#prevPagingAuthor').live('click',function(){
+        keyID = $('#pagePagingAuthor');
+        var page = parseInt($(keyID).val())-1;
+        if (page>0) {
+            $.get('readAuthorTemp', {
+                p:page,
+                sa : $('#sessionAuthor').val()
+            }, function(o){
+                Set_Cookie('_page_author', page, '', '/', '', '');
+                $('table#listAuthorSelected tbody').html(o);
+            }, 'json');
+        }
+    });
+    $('#nextPagingAuthor').live('click',function(){
+        keyID = $('#pagePagingAuthor');
+        var page = parseInt($(keyID).val())+1;
+        if (page<$('#maxPagingAuthor').val()) {
+            $.get('readAuthorTemp', {
+                p:page,
+                sa : $('#sessionAuthor').val()
+            }, function(o){
+                Set_Cookie('_page_author', page, '', '/', '', '');
+                $('table#listAuthorSelected tbody').html(o);
+            }, 'json');
+        }
+    });
     
     /* ROW SELECTED */
-    $('#list1 tbody tr[is=option]').live('click',function(){
+    /*
+    $('#listAuthor tbody tr[isa=option]').live('click',function(){
+        thisId = $(this);
+        var html;
+        var tempID = $(thisId).attr('value');
+        var tempAuhtorSelected = $("#tempAuthorSelected").val();
+        var splitTempAuthorSelected = tempAuhtorSelected.split(',');
+        
+        var ket = true;
+        for (var i = 0; i<=splitTempAuthorSelected.length;i++) {
+            if (splitTempAuthorSelected[i]==tempID) {
+                ket = false;
+                break;
+            }
+        }
+        
+        if (ket) {
+            tempAuhtorSelected += ',' + tempID;
+            $("#tempAuthorSelected").val(tempAuhtorSelected);
+        }
+        
+        html = '<tr>';
+        html += '   <td class="first" style="text-align:center;">' + splitTempAuthorSelected.length + '</td>';
+        html += '   <td>kkfkfk</td>';
+        html += '   <td style="text-align:center;">Delete</td>';
+        html += '</tr>';
+        
+        if (splitTempAuthorSelected.length > 1) {
+            if (ket) {
+                $('#listAuthorSelected tbody').append(html); 
+            }
+        } else {
+            $('#listAuthorSelected tbody').html(html);
+        }
+    });
+    */
+    $('#list1 tbody tr[isa=option]').live('click',function(){
         id = $(this).attr('value');
         tempSelectId = $('#tempSelectId1').val();
         $('#tempSelectId1').val(id);
@@ -382,7 +515,7 @@ $(function(){
             }, 'json');
         } 
     });
-    $('#list2 tbody tr[is=option]').live('click',function(){
+    $('#list2 tbody tr[isa=option]').live('click',function(){
         id = $(this).attr('value');
         tempSelectId = $('#tempSelectId2').val();
         $('#tempSelectId2').val(id);
@@ -399,7 +532,7 @@ $(function(){
             }, 'json');
         } 
     });
-    $('#list3 tbody tr[is=option]').live('click',function(){
+    $('#list3 tbody tr[isa=option]').live('click',function(){
         id = $(this).attr('value');
         callNumber = $('#row_' + id + ' td[is=call_number]').text();
         tempSelectId = $('#tempSelectId3').val();
