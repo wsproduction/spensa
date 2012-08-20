@@ -50,13 +50,13 @@
                         Form::commit();
                         ?>
                     </th>
-                    <th style="width: 110px;">Call Number</th>
-                    <th>Book Description</th>
-                    <th style="width: 100px;">Resource</th>
-                    <th style="width: 120px;">Fund</th>
-                    <th style="width: 120px;">Price</th>
-                    <th style="width: 60px;">Quantity</th>
-                    <th style="width: 75px;">Entry Date</th>
+                    <th style="width: 90px;">Number</th>
+                    <th style="width: 210px;">Name</th>
+                    <th>Address</th>
+                    <th style="width: 60px;">Visit</th>
+                    <th style="width: 70px;">Borrowed</th>
+                    <th style="width: 100px;">Last Visit</th>
+                    <th style="width: 100px;">Status</th>
                     <th style="width: 100px;">Action</th>
                 </tr>
             </thead>

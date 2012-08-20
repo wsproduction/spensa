@@ -30,7 +30,7 @@
             <div class="right">
                 <?php
                 Form::create('button', 'btnAddData');
-                Form::value('Tambah Data');
+                Form::value('Add Data');
                 Form::style('action_add');
                 Form::properties(array('link'=>$link_add));
                 Form::commit();

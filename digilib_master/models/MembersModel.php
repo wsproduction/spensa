@@ -9,8 +9,8 @@ class MembersModel extends Model {
     public function selectAll($start = 1, $count = 100) {
         $sth = $this->db->prepare('SELECT *
                                    FROM
-                                        digilib_author
-                                   ORDER BY author_first_name LIMIT ' . $start . ',' . $count);
+                                        digilib_members
+                                   ORDER BY members_name LIMIT ' . $start . ',' . $count);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -20,9 +20,9 @@ class MembersModel extends Model {
         $sth = $this->db->prepare('
                             SELECT *
                             FROM
-                                digilib_author
+                                digilib_members
                             WHERE
-                                digilib_author.author_id=:id');
+                                digilib_members.members_id=:id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array(':id' => $id));
         if ($sth->rowCount() > 0) {
@@ -33,7 +33,7 @@ class MembersModel extends Model {
     }
 
     public function countAll() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_author');
+        $sth = $this->db->prepare('SELECT * FROM digilib_members');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->rowCount();
@@ -42,14 +42,21 @@ class MembersModel extends Model {
     public function createSave() {
         $sth = $this->db->prepare('
                     INSERT INTO
-                    digilib_author(
-                        author_first_name,
-                        author_last_name,
-                        author_profile)
+                    digilib_members(
+                    members_number,
+                    members_name)
                     VALUES(
-                        :first_name,
-                        :last_name,
-                        :profile)
+                    ( SELECT IF (
+                        (SELECT COUNT(cdm.members_number) FROM digilib_members AS cdm 
+                                WHERE cdm.members_number  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"%")) 
+                                ORDER BY cdm.members_number DESC LIMIT 1
+                        ) > 0,
+                        (SELECT ( dm.members_number + 1 ) FROM digilib_members AS dm 
+                                WHERE dm . members_number  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"%")) 
+                                ORDER BY dm . members_number DESC LIMIT 1),
+                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"001"))) AS dd ),
+                    :full_name,
+                    )
                 ');
 
         $first_name = trim($_POST['first_name']);
