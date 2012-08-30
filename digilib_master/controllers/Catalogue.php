@@ -34,6 +34,7 @@ class Catalogue extends Controller {
         $this->view->accounting_symbol = $this->listAccountingSymbol();
         $this->view->book_resource = $this->listBookResource();
         $this->view->book_fund = $this->listBookFund();
+        $this->view->book_type = $this->listBookType();
         $this->view->author_description = $this->listAuthorDescription();
         $this->view->ddc_level1 = $this->listDdc(1, 0, 1);
         $this->view->render('catalogue/add');
@@ -57,7 +58,7 @@ class Catalogue extends Controller {
         $maxRows = 10;
         $countList = $this->model->countAll();
         $countPage = ceil($countList / $maxRows);
-        $jumlah_kolom = 9;
+        $jumlah_kolom = 10;
 
         $ddcList = $this->model->selectAll(($page * $maxRows) - $maxRows, $maxRows);
         $html = '';
@@ -94,6 +95,7 @@ class Catalogue extends Controller {
                 Form::value($tmpID);
                 $html .= Form::commit('attach');
                 $html .= '  </td>';
+                $html .= '  <td valign="top" style="text-align: center;">' . $value['book_id'] . '</td>';
                 $html .= '  <td valign="top" style="text-align: left;">';
                 $html .= '      <div style="margin:0 15px;">';
                 $html .= '          <div>' . $value['call_number'] . '</div>';
@@ -168,8 +170,15 @@ class Catalogue extends Controller {
                 }
 
                 $html .= '<tr isa="option" class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '" value="' . $tmpID . '" style="cursor:pointer">';
-                $html .= '  <td style="text-align: center;"  class="first" is="call_number">' . $value['ddc_classification_number'] . '</td>';
-                $html .= '  <td>' . $value['ddc_title'] . '</td>';
+                $html .= '  <td valign="top" style="text-align: center;"  class="first" is="call_number">' . $value['ddc_classification_number'] . '</td>';
+                $html .= '  <td>';
+                $html .= '      <div>' . $value['ddc_title'] . '</div>';
+                
+                if ($level == 3 && $value['ddc_description']!='') {
+                    $html .= '      <div style="font-size:10px;border-top:1px solid #ddd;margin-top:2px;padding-top:2px;">' . $value['ddc_description'] . '</div>';
+                }
+                
+                $html .= '  </td>';
                 $html .= '</tr>';
 
                 $idx++;
@@ -391,6 +400,17 @@ class Catalogue extends Controller {
                     $fund_name .= ' (' . $value['fund_desc'] . ')';
                 }
                 $list[$value['fund_id']] = $fund_name;
+            }
+        }
+        return $list;
+    }
+    
+    public function listBookType() {
+        $data = $this->model->selectBookType();
+        $list = array();
+        if ($data) {
+            foreach ($data as $value) {
+                $list[$value['book_type_id']] = $value['book_type'];
             }
         }
         return $list;

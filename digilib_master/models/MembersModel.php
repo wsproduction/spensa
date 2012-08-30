@@ -10,7 +10,7 @@ class MembersModel extends Model {
         $sth = $this->db->prepare('SELECT *
                                    FROM
                                         digilib_members
-                                   ORDER BY members_name LIMIT ' . $start . ',' . $count);
+                                   ORDER BY members_id, members_name LIMIT ' . $start . ',' . $count);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -38,75 +38,106 @@ class MembersModel extends Model {
         $sth->execute();
         return $sth->rowCount();
     }
-    
+
     public function createSave() {
         $sth = $this->db->prepare('
                     INSERT INTO
                     digilib_members(
-                    members_number,
-                    members_name)
+                    members_id,
+                    members_name,
+                    members_gender,
+                    members_birthplace,
+                    members_birthday,
+                    members_address,
+                    members_email,
+                    members_status,
+                    members_entry)
                     VALUES(
                     ( SELECT IF (
-                        (SELECT COUNT(cdm.members_number) FROM digilib_members AS cdm 
-                                WHERE cdm.members_number  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"%")) 
-                                ORDER BY cdm.members_number DESC LIMIT 1
+                        (SELECT COUNT(cdm . members_id) FROM digilib_members AS cdm 
+                                WHERE cdm . members_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"%")) 
+                                ORDER BY cdm . members_id DESC LIMIT 1
                         ) > 0,
-                        (SELECT ( dm.members_number + 1 ) FROM digilib_members AS dm 
-                                WHERE dm . members_number  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"%")) 
-                                ORDER BY dm . members_number DESC LIMIT 1),
-                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"001"))) AS dd ),
-                    :full_name,
+                        (SELECT ( dm.members_id + 1 ) FROM digilib_members AS dm 
+                                WHERE dm . members_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"%")) 
+                                ORDER BY dm . members_id DESC LIMIT 1),
+                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"0001"))) AS dd ),
+                    :name,
+                    :gender,
+                    :birthplace,
+                    :birthday,
+                    :address,
+                    :email,
+                    :status,
+                    NOW()
                     )
                 ');
 
-        $first_name = trim($_POST['first_name']);
-        $last_name = trim($_POST['last_name']);
-        $profile = trim($_POST['profile']);
+        $name = trim($_POST['full_name']);
+        $gender = trim($_POST['gender']);
+        $birthplace = trim($_POST['birthplace']);
+        $birthday = trim($_POST['birth_years']) . '-' . trim($_POST['birth_month']) . '-' . trim($_POST['birth_date']);
+        $address = trim($_POST['address']);
+        $email = trim($_POST['email']);
+        //$photo = trim($_POST['photo']);
+        $status = trim($_POST['status']);
 
         return $sth->execute(array(
-                    ':first_name' => $first_name,
-                    ':last_name' => $last_name,
-                    ':profile' => $profile
+                    ':name' => $name,
+                    ':gender' => $gender,
+                    ':birthplace' => $birthplace,
+                    ':birthday' => $birthday,
+                    ':address' => $address,
+                    ':email' => $email,
+                    ':status' => $status
                 ));
     }
 
     public function updateSave($id = 0) {
         $sth = $this->db->prepare('
                     UPDATE
-                        digilib_author
+                        digilib_members
                     SET
-                        author_first_name = :first_name,
-                        author_last_name = :last_name,
-                        author_profile = :profile
+                        members_name = :name,
+                        members_gender = :gender,
+                        members_birthplace = :birthplace,
+                        members_birthday = :birthday,
+                        members_address = :address,
+                        members_email = :email,
+                        members_status = :status
                     WHERE
-                        digilib_author.author_id = :id
+                        digilib_members.members_id = :id
                 ');
 
-        $first_name = trim($_POST['first_name']);
-        $last_name = trim($_POST['last_name']);
-        $profile = trim($_POST['profile']);
+        $name = trim($_POST['full_name']);
+        $gender = trim($_POST['gender']);
+        $birthplace = trim($_POST['birthplace']);
+        $birthday = trim($_POST['birth_years']) . '-' . trim($_POST['birth_month']) . '-' . trim($_POST['birth_date']);
+        $address = trim($_POST['address']);
+        $email = trim($_POST['email']);
+        //$photo = trim($_POST['photo']);
+        $status = trim($_POST['status']);
 
         return $sth->execute(array(
-                    ':first_name' => $first_name,
-                    ':last_name' => $last_name,
-                    ':profile' => $profile,
+                    ':name' => $name,
+                    ':gender' => $gender,
+                    ':birthplace' => $birthplace,
+                    ':birthday' => $birthday,
+                    ':address' => $address,
+                    ':email' => $email,
+                    ':status' => $status,
                     ':id' => $id
                 ));
     }
 
     public function delete() {
         $delete_id = $_POST['val'];
-        $sth = $this->db->prepare('DELETE FROM digilib_author WHERE author_id = :id');
-
-        try {
-            foreach ($delete_id as $id) {
-                $sth->execute(array(':id' => $id));
-            }
-            return true;
-        } catch (Exception $exc) {
-            $this->db->rollBack();
-            return false;
+        $tempid = '0';
+        foreach ($delete_id as $id) {
+            $tempid .= ',' . $id;
         }
+        $sth = $this->db->prepare('DELETE FROM digilib_members WHERE members_id IN (' . $tempid . ')');
+        return $sth->execute();
     }
 
 }

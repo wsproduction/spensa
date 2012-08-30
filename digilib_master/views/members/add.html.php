@@ -32,6 +32,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <td style="width: 200px;">Gender</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('select', 'gender');
+                        Form::tips('Select Gender');
+                        Form::option(array('L'=>'Laki-Laki','P'=>'Perempuan'),' ');
+                        Form::validation()->requaired();
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
                     <td style="width: 200px;">Birth Place & Date</td>
                     <td>:</td>
                     <td>
@@ -61,7 +74,7 @@
                                     11=>'November',
                                     12=>'Desember'
                             );
-                        Form::create('select', 'birht_month');
+                        Form::create('select', 'birth_month');
                         Form::tips('Select Month');
                         Form::option($month,' ');
                         Form::commit();
@@ -117,7 +130,8 @@
                         <?php
                         Form::create('select', 'status');
                         Form::tips('Select Status');
-                        Form::option(array(1 => 'Enabled',0 => 'Disabled'));
+                        Form::option(array(1 => 'Enabled',0 => 'Disabled'),' ');
+                        Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>

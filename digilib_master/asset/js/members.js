@@ -49,10 +49,10 @@ $(function(){
         if (arrayID.length > 0) {
             var conf = confirm("Are you sure to delete data?");
             if (conf) {
-                $.post('author/delete', {
+                $.post('members/delete', {
                     val:arrayID
                 }, function(o){
-                    $.get('author/read', {
+                    $.get('members/read', {
                         p:Get_Cookie('_page')
                     }, function(o){
                         $('table#list tbody').html(o);
@@ -100,7 +100,7 @@ $(function(){
     $('#pagePaging').live('change',function(){
         keyID = $(this);
         var page = parseInt($(keyID).val());
-        $.get('author/read', {
+        $.get('members/read', {
             p:page
         }, function(o){
             Set_Cookie('_page', page, '', '/', '', '');
@@ -112,7 +112,7 @@ $(function(){
         keyID = $('#pagePaging');
         var page = parseInt($(keyID).val())-1;
         if (page>0) {
-            $.get('author/read', {
+            $.get('members/read', {
                 p:page
             }, function(o){
                 Set_Cookie('_page', page, '', '/', '', '');
@@ -125,7 +125,7 @@ $(function(){
         keyID = $('#pagePaging');
         var page = parseInt($(keyID).val())+1;
         if (page<$('#maxPaging').val()) {
-            $.get('author/read', {
+            $.get('members/read', {
                 p:page
             }, function(o){
                 Set_Cookie('_page', page, '', '/', '', '');

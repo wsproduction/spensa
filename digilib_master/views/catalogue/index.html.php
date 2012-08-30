@@ -50,6 +50,7 @@
                         Form::commit();
                         ?>
                     </th>
+                    <th style="width: 110px;">ID</th>
                     <th style="width: 110px;">Call Number</th>
                     <th>Book Description</th>
                     <th style="width: 100px;">Resource</th>

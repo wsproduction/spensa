@@ -2,11 +2,11 @@
     <div id="box_title">
         <div class="left"><?php echo Web::getTitle(); ?></div>
         <div class="right">
-            <?php            
+            <?php
             Form::create('button', 'btnBack');
             Form::value('Back');
             Form::style('action_back');
-            Form::properties(array('link'=>$link_back));
+            Form::properties(array('link' => $link_back));
             Form::commit();
             ?>
         </div>
@@ -15,10 +15,10 @@
         <div id="message"></div>
         <?php
         Form::begin('fAdd', 'catalogue/create', 'post');
-            
-            Form::create('hidden','stepStatus');
-            Form::value(1);
-            Form::commit()
+
+        Form::create('hidden', 'stepStatus');
+        Form::value(1);
+        Form::commit()
         ?>
         <div class="myTab">
             <ul class="header">
@@ -32,13 +32,13 @@
         <div class="myTabContent">
             <table id="addStep1" style="width: 100%;">
                 <tr>
-                    <td style="width: 200px;">Titles *</td>
+                    <td style="width: 230px;">Titles *</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'title');
                         Form::tips('Enter Title of Book');
-                        Form::size(70);
+                        Form::size(100);
                         Form::validation()->requaired();
                         Form::commit();
                         ?>
@@ -51,20 +51,7 @@
                         <?php
                         Form::create('text', 'subtitle');
                         Form::tips('Enter Subtitle of Book');
-                        Form::size(70);
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>ISBN</td>
-                    <td>:</td>
-                    <td>
-                        <?php
-                        Form::create('text', 'isbn');
-                        Form::tips('Enter ISBN (<i>International Standar Book Number</i>)');
-                        Form::size(20);
-                        Form::inputType()->numeric('-');
+                        Form::size(100);
                         Form::commit();
                         ?>
                     </td>
@@ -76,7 +63,7 @@
                         <?php
                         Form::create('select', 'publisher');
                         Form::tips('Select Publisher Name');
-                        Form::option($publisher,' ');
+                        Form::option($publisher, ' ');
                         Form::validation()->requaired();
                         Form::commit();
                         ?>
@@ -89,9 +76,9 @@
                         <?php
                         Form::create('select', 'country');
                         Form::tips('Select Country');
-                        Form::option($country,' ');
+                        Form::option($country, ' ');
                         Form::validation()->requaired();
-                        Form::properties(array('link'=>$link_city));
+                        Form::properties(array('link' => $link_city));
                         Form::commit();
                         ?>
                     </td>
@@ -115,7 +102,7 @@
                         <?php
                         Form::create('select', 'year');
                         Form::tips('Years');
-                        Form::option($years,' ');
+                        Form::option($years, ' ');
                         Form::validation()->requaired();
                         Form::commit();
                         ?>
@@ -128,14 +115,64 @@
                         <?php
                         Form::create('select', 'language');
                         Form::tips('Select Language of Book');
-                        Form::option($language,' ');
+                        Form::option($language, ' ');
                         Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Page Count</td>
+                    <td>Edition</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'edition');
+                        Form::tips('Enter Edition of Book');
+                        Form::size(20);
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Print-out</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'print_out');
+                        Form::tips('Enter Print-out of Book');
+                        Form::size(20);
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ISBN</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'isbn');
+                        Form::tips('Enter ISBN (<i>International Standar Book Number</i>)');
+                        Form::size(20);
+                        Form::inputType()->numeric('-');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Roman Number</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'roman_count');
+                        Form::tips('Enter Page Count of Book');
+                        Form::size(10);
+                        Form::inputType()->numeric();
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Page Number</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -143,6 +180,40 @@
                         Form::tips('Enter Page Count of Book');
                         Form::size(10);
                         Form::inputType()->numeric();
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Bibliography</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'bibliography');
+                        Form::tips('Enter Page Count of Book');
+                        Form::size(10);
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr style="height: 30px;">
+                    <td>Ilustration</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('checkbox', 'ilustration');
+                        Form::size(10);
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="height: 30px;">Index</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('checkbox', 'index');
+                        Form::size(10);
                         Form::commit();
                         ?>
                     </td>
@@ -202,13 +273,13 @@
                         <?php
                         Form::create('select', 'accounting_symbol');
                         Form::tips('Select Accounting Symbol');
-                        Form::option($accounting_symbol,' ');
+                        Form::option($accounting_symbol, ' ');
                         Form::commit();
                         Form::create('text', 'price');
                         Form::tips('Enter Price of Book');
                         Form::size(20);
                         Form::inputType()->numeric();
-                        Form::properties(array('style'=>'text-align:right;'));
+                        Form::properties(array('style' => 'text-align:right;'));
                         Form::commit();
                         ?>
                     </td>
@@ -220,7 +291,7 @@
                         <?php
                         Form::create('select', 'resource');
                         Form::tips('Select Resource');
-                        Form::option($book_resource,' ');
+                        Form::option($book_resource, ' ');
                         Form::commit();
                         ?>
                     </td>
@@ -232,7 +303,7 @@
                         <?php
                         Form::create('select', 'fund');
                         Form::tips('Select Fund');
-                        Form::option($book_fund,' ');
+                        Form::option($book_fund, ' ');
                         Form::commit();
                         ?>
                     </td>
@@ -242,7 +313,42 @@
                     <td valign="top">:</td>
                     <td>
                         <?php
-                        Form::create('textarea', 'profile');
+                        Form::create('textarea', 'review');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="height: 20px;">Type *</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('select', 'book_type');
+                        Form::option($book_type,' ');
+                        Form::validation()->requaired();
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="height: 20px;">Lengt Borrowed</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'status');
+                        Form::size(10);
+                        Form::validation()->requaired();
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="height: 20px;">Status</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('checkbox', 'status');
+                        Form::size(10);
                         Form::commit();
                         ?>
                     </td>
@@ -258,7 +364,7 @@
                     </td>
                 </tr>
             </table>
-            
+
             <table id="addStep2" style="display: none;width: 100%;">
                 <tr>
                     <td style="width: 50%;" valign="top">
@@ -267,7 +373,7 @@
                             <div>
                                 <div id="messageAuthor"></div>
                                 <?php
-                                Form::create('hidden','sessionAuthor');
+                                Form::create('hidden', 'sessionAuthor');
                                 Form::value(Session::id() . date('YmdHis'));
                                 Form::commit();
                                 ?>
@@ -280,7 +386,6 @@
                                             Form::create('text', 'first_name_author');
                                             Form::tips('Enter First Name');
                                             Form::size(40);
-                                            Form::validation()->requaired();
                                             Form::commit();
                                             ?>
                                         </td>
@@ -328,8 +433,7 @@
                                             <?php
                                             Form::create('select', 'description_author');
                                             Form::tips('Enter Description');
-                                            Form::option($author_description,' ');
-                                            Form::validation()->requaired();
+                                            Form::option($author_description, ' ');
                                             Form::commit();
                                             ?>
                                         </td>
@@ -354,7 +458,7 @@
                         <fieldset>
                             <legend>Author List</legend>
                             <?php
-                            Form::create('hidden','tempAuthorSelected');
+                            Form::create('hidden', 'tempAuthorSelected');
                             Form::value(0);
                             Form::commit();
                             ?>
@@ -378,20 +482,20 @@
                 </tr>
                 <tr>
                     <td colspan="2" style="text-align: right;">
-                    <?php
-                    Form::create('button', 'btnPrev');
-                    Form::value('Back to Step 1');
-                    Form::style('action_prev');
-                    Form::commit();
-                    Form::create('submit', 'btnSave');
-                    Form::value('Next to Step 3');
-                    Form::style('action_next');
-                    Form::commit();
-                    ?>
+                        <?php
+                        Form::create('button', 'btnPrev');
+                        Form::value('Back to Step 1');
+                        Form::style('action_prev');
+                        Form::commit();
+                        Form::create('submit', 'btnSave');
+                        Form::value('Next to Step 3');
+                        Form::style('action_next');
+                        Form::commit();
+                        ?>
                     </td>
                 </tr>
             </table>
-            
+
             <table id="addStep3" style="width: 100%;display: none;">
                 <tr>
                     <td>
@@ -415,8 +519,8 @@
                                     Form::value('Search');
                                     Form::style('action_search');
                                     Form::commit();
-                                    
-                                    Form::create('hidden','tempSelectId1');
+
+                                    Form::create('hidden', 'tempSelectId1');
                                     Form::value(0);
                                     Form::commit();
                                     ?>
@@ -443,7 +547,6 @@
                             <div id="filter_box">
                                 <div class="left">
                                     <?php
-
                                     Form::label('Filter | ', 'keyword');
                                     Form::create('text', 'keyword');
                                     Form::tips('Type keyword');
@@ -459,8 +562,8 @@
                                     Form::value('Search');
                                     Form::style('action_search');
                                     Form::commit();
-                                    
-                                    Form::create('hidden','tempSelectId2');
+
+                                    Form::create('hidden', 'tempSelectId2');
                                     Form::value(0);
                                     Form::commit();
                                     ?>
@@ -489,7 +592,6 @@
                             <div id="filter_box">
                                 <div class="left">
                                     <?php
-
                                     Form::label('Filter | ', 'keyword');
                                     Form::create('text', 'keyword');
                                     Form::tips('Type keyword');
@@ -505,8 +607,8 @@
                                     Form::value('Search');
                                     Form::style('action_search');
                                     Form::commit();
-                                    
-                                    Form::create('hidden','tempSelectId3');
+
+                                    Form::create('hidden', 'tempSelectId3');
                                     Form::value(0);
                                     Form::commit();
                                     ?>
@@ -534,9 +636,9 @@
                             <legend>Call Number</legend>
                             <div>
                                 <div id="preview_call_number">
-                                    <div id="print_row_1">-</div>
-                                    <div id="print_row_2">WAR</div>
-                                    <div id="print_row_3">s</div>
+                                    <div style="height: 20px;" id="print_row_1">-</div>
+                                    <div style="height: 20px;" id="print_row_2">WAR</div>
+                                    <div style="height: 20px;" id="print_row_3">s</div>
                                 </div>
                                 <div id="desc_call_number">
                                     <div>&Rrightarrow; <i>Classification Number</i></div>
@@ -562,10 +664,10 @@
                     </td>
                 </tr>
             </table>
-            
-            <table id="addStep4" style="display: none;">
+
+            <table id="addStep4" style="display: none;width: 100%">
                 <tr>
-                    <td>Cover</td>
+                    <td style="width: 200px;">Cover</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -593,6 +695,123 @@
                         Form::commit();
                         Form::create('submit', 'btnSave');
                         Form::value('Next to Step 5');
+                        Form::style('action_next');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>                
+            </table>
+
+            <table id="addStep5" style="display:none;width: 100%"> 
+                <tr>
+                    <td>
+                        <div class="confFrameCatalogue">
+                            <div><b>Author Catalogue</b></div>
+                            <table  class="confCatalogue">
+                                <tr>
+                                    <td class="confCallNumber" valign="top">
+                                        <div class="confRow1">00948.3</div>
+                                        <div class="confRow2">SUG</div>
+                                        <div class="confRow3">s</div>
+                                    </td>
+                                    <td valign="top">
+                                        <div style="color: #fff;">000</div>
+                                        <div>
+                                            <div>SUGANDA, Warman</div>
+                                            <div class="confContent">
+                                                <span style="color: #fff;">AAA</span>
+                                                Pedoman katalogisasi : cara mudah membuat  katalog perpustakaan / Yaya Suhendar. – Ed. 1, cet. 2. –  Bandung : Rosdakarya, 1990.
+                                            </div>
+                                            <div style="padding-left: 60px;">xi, 160 hlm. : ilus. ; 21 cm</div>
+                                            <div style="padding-left: 60px;margin-top: 20px;">
+                                                Biblliografi   : hlm. 135 – 136<br>
+                                                Indeks<br>
+                                                ISBN 979-514-005-1
+                                            </div>
+                                            <div style="margin-top: 30px;">
+                                                <div style="float: left;width: 50%">1. KATALOG</div>
+                                                <div style="float: left;width: 50%">I. Judul</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="confFrameCatalogue">
+                            <div><b>Title Catalogue</b></div>
+                            <table  class="confCatalogue">
+                                <tr>
+                                    <td class="confCallNumber" valign="top">
+                                        <div class="confRow1">00948.3</div>
+                                        <div class="confRow2">SUG</div>
+                                        <div class="confRow3">s</div>
+                                    </td>
+                                    <td valign="top">
+                                        <div style="color: #fff;">000</div>
+                                        <div>
+                                            <div>SUGANDA, Warman</div>
+                                            <div class="confContent">
+                                                <span style="color: #fff;">AAA</span>
+                                                Pedoman katalogisasi : cara mudah membuat  katalog perpustakaan / Yaya Suhendar. – Ed. 1, cet. 2. –  Bandung : Rosdakarya, 1990.
+                                            </div>
+                                            <div style="padding-left: 60px;">xi, 160 hlm. : ilus. ; 21 cm</div>
+                                            <div style="padding-left: 60px;margin-top: 20px;">
+                                                Biblliografi   : hlm. 135 – 136<br>
+                                                Indeks<br>
+                                                ISBN 979-514-005-1
+                                            </div>
+                                            <div style="margin-top: 30px;">
+                                                <div style="float: left;width: 50%">1. KATALOG</div>
+                                                <div style="float: left;width: 50%">I. Judul</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="confFrameCatalogue">
+                            <div><b>Subject Catalogue</b></div>
+                            <table  class="confCatalogue">
+                                <tr>
+                                    <td class="confCallNumber" valign="top">
+                                        <div class="confRow1">00948.3</div>
+                                        <div class="confRow2">SUG</div>
+                                        <div class="confRow3">s</div>
+                                    </td>
+                                    <td valign="top">
+                                        <div style="color: #fff;">000</div>
+                                        <div>
+                                            <div>SUGANDA, Warman</div>
+                                            <div class="confContent">
+                                                <span style="color: #fff;">AAA</span>
+                                                Pedoman katalogisasi : cara mudah membuat  katalog perpustakaan / Yaya Suhendar. – Ed. 1, cet. 2. –  Bandung : Rosdakarya, 1990.
+                                            </div>
+                                            <div style="padding-left: 60px;">xi, 160 hlm. : ilus. ; 21 cm</div>
+                                            <div style="padding-left: 60px;margin-top: 20px;">
+                                                Biblliografi   : hlm. 135 – 136<br>
+                                                Indeks<br>
+                                                ISBN 979-514-005-1
+                                            </div>
+                                            <div style="margin-top: 30px;">
+                                                <div style="float: left;width: 50%">1. KATALOG</div>
+                                                <div style="float: left;width: 50%">I. Judul</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right;">
+                        <?php
+                        Form::create('button', 'btnPrev');
+                        Form::value('Back to Step 4');
+                        Form::style('action_prev');
+                        Form::commit();
+                        Form::create('submit', 'btnSave');
+                        Form::value('Save');
                         Form::style('action_next');
                         Form::commit();
                         ?>

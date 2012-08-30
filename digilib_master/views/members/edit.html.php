@@ -14,46 +14,142 @@
     <div id="box_content">
         <div id="message"></div>
         <?php
-        Form::begin('fAdd', 'author/update/' . $id, 'post');
+        Form::begin('fAdd', 'members/update/' . $id, 'post');
         ?>
         <div>
             <table>
                 <tr>
-                    <td style="width: 200px;">First Name</td>
+                    <td style="width: 200px;">Full Name</td>
                     <td>:</td>
                     <td>
                         <?php
-                        Form::create('text', 'first_name');
-                        Form::tips('Enter First Name');
+                        Form::create('text', 'full_name');
+                        Form::tips('Enter Full Name');
+                        Form::value($dataEdit['members_name']);
                         Form::size(40);
-                        Form::value($dataEdit['author_first_name']);
                         Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 200px;">Last Name</td>
+                    <td style="width: 200px;">Gender</td>
                     <td>:</td>
                     <td>
                         <?php
-                        Form::create('text', 'last_name');
-                        Form::tips('Enter Last Name');
-                        Form::size(40);
-                        Form::value($dataEdit['author_last_name']);
+                        Form::create('select', 'gender');
+                        Form::tips('Select Gender');
+                        Form::option(array('L'=>'Laki-Laki','P'=>'Perempuan'),' ', $dataEdit['members_gender']);
                         Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td valign="top">Description</td>
+                    <td style="width: 200px;">Birth Place & Date</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'birthplace');
+                        Form::tips('Enter Birth Place');
+                        Form::size(40);
+                        Form::value($dataEdit['members_birthplace']);
+                        Form::commit();
+                        
+                        $day = explode('-',$dataEdit['members_birthday']);
+                        
+                        for ($i=1;$i<=31;$i++) {
+                            $date[$i] = $i;
+                        }
+                        Form::create('select', 'birth_date');
+                        Form::tips('Select Date');
+                        if (isset($day[2]))
+                            Form::option($date,' ', $day[2]);
+                        else 
+                            Form::option($date,' ');
+                        Form::commit();
+                        
+                        $month = array(
+                                    1=>'Januari',
+                                    2=>'Februari',
+                                    3=>'Maret',
+                                    4=>'April',
+                                    5=>'Mei',
+                                    6=>'Juni',
+                                    7=>'Juli',
+                                    8=>'Agustus',
+                                    9=>'September',
+                                    10=>'Oktober',
+                                    11=>'November',
+                                    12=>'Desember'
+                            );
+                        Form::create('select', 'birth_month');
+                        Form::tips('Select Month');
+                        if (isset($day[1]))
+                            Form::option($month,' ',$day[1]);
+                        else 
+                            Form::option($month,' ');
+                        Form::commit();
+                        
+                        for ($i=1970;$i<=date('Y');$i++)
+                            $years[$i] = $i;
+                        Form::create('select', 'birth_years');
+                        Form::tips('Select Years');
+                        if (isset($day[0]))
+                            Form::option($years,' ', $day[0]);
+                        else
+                            Form::option($years,' ');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top">Address</td>
                     <td valign="top">:</td>
                     <td>
                         <?php
-                        Form::create('textarea', 'profile');
-                        Form::tips('Enter Description');
-                        Form::value($dataEdit['author_profile']);
+                        Form::create('textarea', 'address');
+                        Form::tips('Enter Address');
+                        Form::size(40, 4);
+                        Form::value($dataEdit['members_address']);
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 200px;">Email</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'email');
+                        Form::tips('Enter Email<br>Expm: username@domain.com');
+                        Form::validation()->email();
+                        Form::size(40);
+                        Form::value($dataEdit['members_email']);
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 200px;">Photo</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('file', 'photo');
+                        Form::size(40);
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 200px;">Status</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('select', 'status');
+                        Form::tips('Select Status');
+                        Form::option(array(1 => 'Enabled',0 => 'Disabled'),' ', $dataEdit['members_status']);
+                        Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>

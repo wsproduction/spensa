@@ -21,7 +21,7 @@ $(function(){
         toolbar  : 'web2pyToolbar',
         cssfiles : ['css/elrte-inner.css']
     }
-    $('#profile').elrte(opts);
+    $('#review').elrte(opts);
     
     /* CHANGE VALUE ACTIONS */  
     $('#country').live('change',function(){
@@ -54,23 +54,9 @@ $(function(){
     
     /* SUBMIT ACTIONS */    
     $('#fAdd').live('submit',function(){
-        /*frmID = $(this);
-        msgID = $('#message');
-        var url =  $(frmID).attr('action');
-        var data =  $(frmID).serialize();
-        
-        $(msgID).fadeOut('slow');
-        $.post(url, data, function(o){
-            if (o[0]) {
-                if (o[1]) {
-                    $(frmID)[0].reset();
-                }
-            }
-            $(msgID).html(o[2]).fadeIn('slow');
-        }, 'json');
-        */
        
         var stepStatus = $('#stepStatus').val();
+        var stepStatusCurent = parseInt(stepStatus) + 1;
         
         // TabStatus
         $('li#s1').css('background','#ccc');
@@ -78,17 +64,13 @@ $(function(){
         $('li#s3').css('background','#ccc');
         $('li#s4').css('background','#ccc');
         $('li#s5').css('background','#ccc');
-       
-        if (stepStatus == 1) {
-            $('#addStep1').fadeOut('slow',function(){
-                $('#addStep2').fadeIn('slow');
-            });
-            stepStatus++;
-        } else if (stepStatus == 2) {
-            $('#addStep2').fadeOut('slow',function(){
-                $('#addStep3').fadeIn('slow');
-            });
+        /*$('li#s' + stepStatusCurent) .css('background','#fff');
+        
+        $('#addStep' + stepStatus).fadeOut('slow',function(){
+            $('#addStep' + stepStatusCurent).fadeIn('slow');
+        });
             
+        if (stepStatus == 2) {            
             $.get('getWriter', {
                 sa : $('#sessionAuthor').val()
             }, function(o){
@@ -102,12 +84,29 @@ $(function(){
                 $('#preview_call_number #print_row_2').text(row2.substr(0,3).toUpperCase());
                 $('#preview_call_number #print_row_3').text(row3.substr(0,1).toLowerCase());
             }, 'json');
-            
-            stepStatus++;
-        }       
+        } else*/ if (stepStatus == 1) {
+            frmID = $(this);
+            msgID = $('#message');
+            var url =  $(frmID).attr('action');
+            var data =  $(frmID).serialize();
         
-        $('li#s' + stepStatus).css('background','#fff');
-        $('#stepStatus').val(stepStatus);
+            $(msgID).fadeOut('slow');
+            $.post(url, data, function(o){
+                if (o[0]) {
+                    if (o[1]) {
+                        $(frmID)[0].reset();
+                    }
+                }
+                $(msgID).html(o[2]).fadeIn('slow');
+            }, 'json');
+        }
+        /*
+        if (stepStatus != 5) { 
+            stepStatus++;
+            $('#stepStatus').val(stepStatus);
+        } else {
+            $('#stepStatus').val(1);
+        }*/
         
         return false;
     });
@@ -166,6 +165,13 @@ $(function(){
         }
     });
     $('#btnAddAuthor').live('click',function(){
+        $("#fAdd #first_name_author").rules("add",{
+            required : true
+        });
+        $("#fAdd #description_author").rules("add",{
+            required : true
+        });
+        
         if ($('#first_name_author').valid() && $('#description_author').valid()) {
             $.post('addAuthorTemp', {
                 sa : $('#sessionAuthor').val(),
@@ -183,11 +189,22 @@ $(function(){
                         sa : $('#sessionAuthor').val()
                     }, function(o){
                         $('table#listAuthorSelected tbody').html(o);
+                        $('#first_name_author').val('');
+                        $('#last_name_author').val('');
+                        $('#front_degree_author').val('');
+                        $('#back_degree_author').val('');
+                        $('#description_author').val('');
                     }, 'json');
                 }
                 $('#messageAuthor').html(message);
             }, 'json'); 
         }
+        $("#fAdd #first_name_author").rules("add",{
+            required : false
+        });
+        $("#fAdd #description_author").rules("add",{
+            required : false
+        });
     });
     $('#listAuthorSelected a.delete').live('click',function(){
         thisID = $(this);
@@ -210,17 +227,21 @@ $(function(){
     // TAB ACTION
     $('#btnPrev').live('click',function(){
         var stepStatus = $('#stepStatus').val();
-        if (stepStatus == 2) {
-            $('#addStep2').fadeOut('slow',function(){
-                $('#addStep1').fadeIn('slow');
-            });
-            stepStatus--;
-        } else if (stepStatus == 3) {
-            $('#addStep3').fadeOut('slow',function(){
-                $('#addStep2').fadeIn('slow');
-            });
-            stepStatus--;
-        }   
+        var stepStatusCurent = parseInt(stepStatus) - 1;
+        
+        // TabStatus
+        $('li#s1').css('background','#ccc');
+        $('li#s2').css('background','#ccc');
+        $('li#s3').css('background','#ccc');
+        $('li#s4').css('background','#ccc');
+        $('li#s5').css('background','#ccc');
+        $('li#s' + stepStatusCurent).css('background','#fff');
+        
+        $('#addStep' + stepStatus).fadeOut('slow',function(){
+            $('#addStep' + stepStatusCurent).fadeIn('slow');
+        }); 
+        
+        stepStatus--;
         $('#stepStatus').val(stepStatus);
     });
     

@@ -1,6 +1,6 @@
 <?php
 
-class AuthorModel extends Model {
+class CollectionModel extends Model {
 
     public function __construct() {
         parent::__construct();
@@ -42,21 +42,25 @@ class AuthorModel extends Model {
     public function createSave() {
         $sth = $this->db->prepare('
                     INSERT INTO
-                    digilib_tes(
-                        tes_isi,
-                        tes_fk)
+                    digilib_author(
+                        author_first_name,
+                        author_last_name,
+                        author_profile)
                     VALUES(
                         :first_name,
-                        :tes_fk)
+                        :last_name,
+                        :profile)
                 ');
 
-        $first_name = $this->method->post('first_name');
-        $fk = $this->method->post('last_name');
-        
-        $sth->bindValue(':first_name', $first_name, PDO::PARAM_NULL);
-        $sth->bindValue(':tes_fk', $fk, PDO::PARAM_NULL);
+        $first_name = trim($_POST['first_name']);
+        $last_name = trim($_POST['last_name']);
+        $profile = trim($_POST['profile']);
 
-        return $sth->execute();
+        return $sth->execute(array(
+                    ':first_name' => $first_name,
+                    ':last_name' => $last_name,
+                    ':profile' => $profile
+                ));
     }
 
     public function updateSave($id = 0) {

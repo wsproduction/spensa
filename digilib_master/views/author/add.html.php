@@ -26,7 +26,7 @@
                         Form::create('text', 'first_name');
                         Form::tips('Enter First Name');
                         Form::size(40);
-                        Form::validation()->requaired();
+                        
                         Form::commit();
                         ?>
                     </td>
@@ -39,7 +39,7 @@
                         Form::create('text', 'last_name');
                         Form::tips('Enter Last Name');
                         Form::size(40);
-                        Form::validation()->requaired();
+                        
                         Form::commit();
                         ?>
                     </td>

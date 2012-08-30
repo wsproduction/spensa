@@ -344,3 +344,24 @@ legend {
     padding: 5px;
     margin: 4px 0;
 }
+
+.confFrameCatalogue {
+    float: left;
+    width: 580px;
+    margin: 10px;
+}
+
+.confCatalogue {
+    border: 1px solid #ccc;
+    width: 550px;
+    padding: 30px 10px;
+}
+
+.confCallNumber {
+    width: 80px;
+}
+
+.confContent {
+    padding-left: 30px;
+}
+

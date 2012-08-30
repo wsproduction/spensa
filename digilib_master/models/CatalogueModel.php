@@ -66,20 +66,99 @@ class CatalogueModel extends Model {
     public function createSave() {
         $sth = $this->db->prepare('
                     INSERT INTO
-                    digilib_writer(
-                        writer_name,
-                        writer_profile)
+                    digilib_book(
+                        book_id,
+                        book_title,
+                        book_sub_title,
+                        book_ddc,
+                        book_publisher,
+                        book_type,
+                        book_year_launching,
+                        book_city_launching,
+                        book_edition,
+                        book_language,
+                        book_resource,
+                        book_fund,
+                        book_accounting_symbol,
+                        book_price,
+                        book_isbn,
+                        book_cover,
+                        book_quantity,
+                        book_width,
+                        book_height,
+                        book_weight,
+                        book_status,
+                        book_entry_date,
+                        book_review)
                     VALUES(
-                        :name,
-                        :profile)
+                        ( SELECT IF (
+                        (SELECT COUNT(cdm . book_id) FROM digilib_book AS cdm 
+                                WHERE cdm . book_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
+                                ORDER BY cdm . book_id DESC LIMIT 1
+                        ) > 0,
+                        (SELECT ( dm.book_id + 1 ) FROM digilib_book AS dm 
+                                WHERE dm . book_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
+                                ORDER BY dm . book_id DESC LIMIT 1),
+                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%m%d"),"001"))) AS dd ),
+                        :title,
+                        :subtitle,
+                        NULL,
+                        :publisher,
+                        NULL,
+                        :year,
+                        :city,
+                        NULL,
+                        :language,
+                        :resource,
+                        :fund,
+                        :accounting_symbol,
+                        :price,
+                        :isbn,
+                        NULL,
+                        :quantity,
+                        :width,
+                        :height,
+                        :weight,
+                        NULL,
+                        NOW(),
+                        :review)
                 ');
 
-        $name = trim($_POST['name']);
-        $address = trim($_POST['profile']);
+        $title = $this->method->post('title');
+        $subtitle = $this->method->post('subtitle');
+        $publisher = $this->method->post('publisher');
+        $year = $this->method->post('year');
+        $city = $this->method->post('city');
+        $language = $this->method->post('language');
+        $resource = $this->method->post('resource');
+        $fund = $this->method->post('fund');
+        $accounting_symbol = $this->method->post('accounting_symbol');
+        $price = $this->method->post('price');
+        $isbn = $this->method->post('isbn');
+        $quantity = $this->method->post('quantity');
+        $width = $this->method->post('width');
+        $height = $this->method->post('height');
+        $weight = $this->method->post('weight');
+        $review = $this->method->post('review');
 
+        $sth->bindValue(':resource', $resource, PDO::PARAM_NULL);
+        
         return $sth->execute(array(
-                    ':name' => $name,
-                    ':profile' => $address
+                    ':title' => $title,
+                    ':subtitle' => $subtitle,
+                    ':publisher' => $publisher,
+                    ':year' => $year,
+                    ':city' => $city,
+                    ':language' => $language,
+                    ':fund' => $fund,
+                    ':accounting_symbol' => $accounting_symbol,
+                    ':price' => $price,
+                    ':isbn' => $isbn,
+                    ':quantity' => $quantity,
+                    ':width' => $width,
+                    ':height' => $height,
+                    ':weight' => $weight,
+                    ':review' => $review
                 ));
     }
 
@@ -382,6 +461,16 @@ class CatalogueModel extends Model {
                                    ORDER BY author_first_name');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array(':session' => $sid));
+        return $sth->fetchAll();
+    }
+    
+    public function selectBookType() {
+        $sth = $this->db->prepare('SELECT *
+                                   FROM
+                                        digilib_book_type
+                                   ORDER BY book_type');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
         return $sth->fetchAll();
     }
 }

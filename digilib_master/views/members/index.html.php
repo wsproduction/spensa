@@ -50,7 +50,7 @@
                         Form::commit();
                         ?>
                     </th>
-                    <th style="width: 90px;">Number</th>
+                    <th style="width: 90px;">ID</th>
                     <th style="width: 210px;">Name</th>
                     <th>Address</th>
                     <th style="width: 60px;">Visit</th>

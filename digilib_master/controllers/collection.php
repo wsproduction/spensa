@@ -1,6 +1,6 @@
 <?php
 
-class Members extends Controller {
+class Collection extends Controller {
 
     public function __construct() {
         parent::__construct();
@@ -14,27 +14,27 @@ class Members extends Controller {
     }
     
     public function index() {
-        Web::setTitle('List of Members');
-        $this->view->link_add = $this->content->setLink('members/add');
+        Web::setTitle('List of Authors');
+        $this->view->link_add = $this->content->setLink('author/add');
         $this->view->listData = $this->listData();
-        $this->view->render('members/index');
+        $this->view->render('author/index');
     }
     
     public function add() {
-        Web::setTitle('Add Members');
-        $this->view->link_back = $this->content->setLink('members');
-        $this->view->render('members/add');
+        Web::setTitle('Add author');
+        $this->view->link_back = $this->content->setLink('author');
+        $this->view->render('author/add');
     }
     
     public function edit($id = 0) {
-        Web::setTitle('Edit Members');
+        Web::setTitle('Edit author');
         $this->view->id = $id;
-        $this->view->link_back = $this->content->setLink('members');
+        $this->view->link_back = $this->content->setLink('author');
         $data = $this->model->selectByID($id);
         if ($data) {
             $listData = $data[0];
             $this->view->dataEdit = $listData;
-            $this->view->render('members/edit');
+            $this->view->render('author/edit');
         } else {
             $this->view->render('default/message/pnf');
         }
@@ -44,7 +44,7 @@ class Members extends Controller {
         $maxRows = 10;
         $countList = $this->model->countAll();
         $countPage = ceil($countList / $maxRows);
-        $jumlah_kolom = 9;
+        $jumlah_kolom = 4;
 
         $ddcList = $this->model->selectAll(($page * $maxRows) - $maxRows, $maxRows);
         $html = '';
@@ -54,7 +54,7 @@ class Members extends Controller {
             $idx = 1;
             $id = '0';
             foreach ($ddcList as $value) {
-                $tmpID = $value['members_id'];
+                $tmpID = $value['author_id'];
                 $id .= ',' . $tmpID;
 
                 $tr_class = 'ganjil';
@@ -69,21 +69,11 @@ class Members extends Controller {
                 Form::value($tmpID);
                 $html .= Form::commit('attach');
                 $html .= '  </td>';
-                $html .= '  <td style="text-align: center;">' . $value['members_id'] . '</td>';
-                $html .= '  <td style="text-align: left;">' . $value['members_name'] . '</td>';
-                $html .= '  <td>' . $value['members_address'] . '</td>';
-                $html .= '  <td style="text-align:center">' . $value['members_visit'] . '</td>';
-                $html .= '  <td style="text-align:center">' . $value['members_borrowed'] . '</td>';
-                $html .= '  <td style="text-align:center">' . date('d-m-Y',strtotime($value['members_last_visit'])) . '</td>';
-                $html .= '  <td style="text-align:center">';
-                            if ($value['members_status'])
-                                $html .= 'Enabled';
-                            else 
-                                $html .= 'Disabled';
-                $html .= '</td>';
+                $html .= '  <td style="text-align: left;">' . $value['author_first_name'] . ' ' . $value['author_last_name'] . '</td>';
+                $html .= '  <td>' . $value['author_profile'] . '</td>';
                 $html .= '  <td style="text-align: center;">';
-                $html .= URL::link($this->content->setLink('members/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
-                $html .= URL::link($this->content->setLink('members/edit/' . $tmpID), 'Detail', 'attach');
+                $html .= URL::link($this->content->setLink('author/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
+                $html .= URL::link($this->content->setLink('author/edit/' . $tmpID), 'Detail', 'attach');
                 $html .= '  </td>';
                 $html .= '</tr>';
 
