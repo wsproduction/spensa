@@ -1,11 +1,14 @@
 <?php
 
-Web::$host = $_SERVER['SERVER_NAME']; //'ecp.net';
+Web::$host = $_SERVER['SERVER_NAME']; //'warmansuganda.com';
 //echo md5($_SERVER['SERVER_NAME']);
 switch (Web::getSubDomain()) {
     case 'www':
         Web::main('SMPN 1 SUBANG', 'main', 'elegant');
         Web::child('ADMIN SMPN 1 SUBANG', 'admin_main', 'demo');
+        break;
+    case 'komite':
+        Web::main('SMPN 1 SUBANG', 'absensi', 'demo');
         break;
     case 'digilib':
         Web::main('DIGITAL LIBRARY', 'digilib', 'elegant');
