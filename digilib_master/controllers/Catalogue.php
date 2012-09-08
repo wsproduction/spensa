@@ -2,6 +2,13 @@
 
 class Catalogue extends Controller {
 
+    private $dataAuthorDescriptionID;
+    private $dataAuthorDescription;
+    private $dataAuthor;
+    private $dataAuthorTempDescriptionID;
+    private $dataAuthorTempDescription;
+    private $dataAuthorTemp;
+
     public function __construct() {
         parent::__construct();
         $this->content->accessRight();
@@ -10,6 +17,7 @@ class Catalogue extends Controller {
         Src::plugin()->jQueryForm();
         Src::plugin()->jQueryValidation();
         Src::plugin()->jQueryAlphaNumeric();
+        Src::plugin()->jQueryAutoNumeric();
         Src::plugin()->jQueryBase64();
         Src::plugin()->poshytip();
         Src::plugin()->elrte();
@@ -17,16 +25,120 @@ class Catalogue extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Catalogue');
+        Web::setTitle('Katalog');
         $this->view->link_add = $this->content->setLink('catalogue/add');
         $this->view->listData = $this->listData();
         $this->view->render('catalogue/index');
     }
 
+    public function setAuthor() {
+        $listDadID = array();
+        $listDad = array();
+        foreach ($this->model->selectAllAuthorDescription() as $value) {
+            $listDadID[] = $value['author_description_id'];
+            $listDad[$value['author_description_id']] = $value['author_description'];
+        }
+
+        $this->dataAuthorDescriptionID = $listDadID;
+        $this->dataAuthorDescription = $listDad;
+
+        $dataAuthor = $this->model->selectAllAuthor();
+
+        $varAuthor = array();
+        foreach ($dataAuthor as $value) {
+            $varAuthor[$value['book_id']][$value['author_description']][] = array('first_name' => $value['author_first_name'], 'last_name' => $value['author_last_name']);
+        }
+        $this->dataAuthor = $varAuthor;
+    }
+
+    public function setAuthorTemp() {
+        $listDadID = array();
+        $listDad = array();
+        foreach ($this->model->selectAllAuthorDescription() as $value) {
+            $listDadID[] = $value['author_description_id'];
+            $listDad[$value['author_description_id']] = $value['author_description'];
+        }
+
+        $this->dataAuthorTempDescriptionID = $listDadID;
+        $this->dataAuthorTempDescription = $listDad;
+
+        $dataAuthor = $this->model->selectAuthorTempBySession();
+
+        $varAuthor = array();
+        foreach ($dataAuthor as $value) {
+            $varAuthor[$value['session_id']][$value['author_description']][] = array('first_name' => $value['author_first_name'], 'last_name' => $value['author_last_name']);
+        }
+        $this->dataAuthorTemp = $varAuthor;
+    }
+
+    public function parsingAuthor($bookID, $authorDescrptionID) {
+        $res = '';
+        $count = 0;
+
+        $data = $this->dataAuthor;
+        if (isset($data[$bookID][$authorDescrptionID])) {
+            $list = $data[$bookID][$authorDescrptionID];
+            $count = count($list);
+            $idx = 1;
+
+            if ($count > 0) {
+                if ($authorDescrptionID != 1)
+                    $res .= strtolower($this->dataAuthorDescription[$authorDescrptionID]) . ', ';
+
+                foreach ($list as $value) {
+                    $tempNama = $value['first_name'];
+                    if ($value['last_name'] != '')
+                        $tempNama .= ' ' . $value['last_name'];
+
+                    if ($idx == $count) {
+                        $res .= $tempNama;
+                    } else {
+                        $res .= $tempNama . ', ';
+                    }
+                    $idx++;
+                }
+            }
+        }
+        return array($count, $res);
+    }
+
+    public function parsingAuthorTemp($bookID, $authorDescrptionID) {
+        $res = '';
+        $count = 0;
+
+        $data = $this->dataAuthorTemp;
+        if (isset($data[$bookID][$authorDescrptionID])) {
+            $list = $data[$bookID][$authorDescrptionID];
+            $count = count($list);
+            $idx = 1;
+
+            if ($count > 0) {
+                if ($authorDescrptionID != 1)
+                    $res .= strtolower($this->dataAuthorTempDescription[$authorDescrptionID]) . ', ';
+
+                foreach ($list as $value) {
+                    $tempNama = $value['first_name'];
+                    if ($value['last_name'] != '')
+                        $tempNama .= ' ' . $value['last_name'];
+
+                    if ($idx == $count) {
+                        $res .= $tempNama;
+                    } else {
+                        $res .= $tempNama . ', ';
+                    }
+                    $idx++;
+                }
+            }
+        }
+        return array($count, $res);
+    }
+
     public function add() {
-        Web::setTitle('Add Catalogue');
+        Web::setTitle('Tambah Katalog');
         $this->view->link_back = $this->content->setLink('catalogue');
         $this->view->link_city = $this->content->setLink('catalogue/getCity');
+        $this->view->link_info_publisher = $this->content->setLink('catalogue/getInfoPublisher');
+        $this->view->session_id_temp = Session::id() . date('YmdHis');
         $this->view->years = $this->model->listYear();
         $this->view->country = $this->listCountry();
         $this->view->language = $this->listLanguage();
@@ -67,6 +179,9 @@ class Catalogue extends Controller {
 
             $idx = 1;
             $id = '0';
+
+            $this->setAuthor();
+
             foreach ($ddcList as $value) {
                 $tmpID = $value['book_id'];
                 $id .= ',' . $tmpID;
@@ -76,17 +191,66 @@ class Catalogue extends Controller {
                     $tr_class = 'genap';
                 }
 
-                $author = $this->model->selectAuthorByID($tmpID);
-                $listAuthor = '';
-                $countAuthor = count($author);
-                foreach ($author as $av) {
-                    $countAuthor--;
-                    if ($countAuthor > 0) {
-                        $listAuthor .= $av['author_last_name'] . ', ';
-                    } else {
-                        $listAuthor .= $av['author_last_name'];
+                // Judul Buku
+                $keterangan_buku = $value['book_title'];
+                if ($value['book_sub_title'] != '')
+                    $keterangan_buku .= ' : ' . $value['book_sub_title'];$value['book_year_launching'] . '</i>';
+
+                // Author
+                $outAuthor = '';
+                $countAuthor = 0;
+                $tempCount = 0;
+                $jmlPengarang = 0;
+                $namaPengarang = '';
+                foreach ($this->dataAuthorDescription as $keyAD => $valueAD) {
+                    $res = $this->parsingAuthor($tmpID, $keyAD);
+
+                    if ($res[0] > 0 && $countAuthor)
+                        $outAuthor .= '; ';
+
+                    $countAuthor += $res[0];
+                    $outAuthor .= $res[1];
+                    $tempCount = $res[0];
+
+                    //untuk menentukan classification number
+                    if ($keyAD == 1) {
+                        $namaPengarang = $res[1];
+                        $jmlPengarang = $res[0];
                     }
                 }
+
+                if ($countAuthor > 0)
+                    $keterangan_buku .= '      / ' . $outAuthor;
+
+                // Edisi, Cetakan
+                if ($value['book_edition'] != '' || $value['book_print'] != '')
+                    $keterangan_buku .= '.&HorizontalLine;';
+
+                if ($value['book_edition'] != '')
+                    $keterangan_buku .= ' Ed. ' . $value['book_edition'];
+
+                if ($value['book_edition'] != '' && $value['book_print'] != '')
+                    $keterangan_buku .= ', ';
+
+                if ($value['book_print'] != '')
+                    $keterangan_buku .= ' cet. ' . $value['book_print'];
+
+                // Keterangan Penerbit
+                $keterangan_buku .= '.&HorizontalLine; ' . $value['city_name'] . ' : ' . $value['publisher_name'] . ', ' . $value['book_year_launching'] . '.';
+
+
+                // CallNumber
+                $callNumberRow1 = $value['classification_number'];
+                $callNumberRow2 = '';
+                $callNumberRow3 = '';
+                if ($jmlPengarang > 0 && $jmlPengarang <= 3) {
+                    $np = explode(',', $namaPengarang);
+                    $callNumberRow2 = strtoupper(substr(str_replace(' ', '', $np[0]), 0, 3));
+                    $callNumberRow3 = strtolower(substr(str_replace(' ', '', $value['book_title']), 0, 1));
+                } else {
+                    $callNumberRow2 = strtoupper(substr(str_replace(' ', '', $value['book_title']), 0, 3));
+                }
+
 
                 $html .= '<tr class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '">';
                 $html .= '  <td valign="top" style="width: 10px;" class="first">';
@@ -98,15 +262,12 @@ class Catalogue extends Controller {
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['book_id'] . '</td>';
                 $html .= '  <td valign="top" style="text-align: left;">';
                 $html .= '      <div style="margin:0 15px;">';
-                $html .= '          <div>' . $value['call_number'] . '</div>';
-                $html .= '          <div>DAV</div>';
-                $html .= '          <div>e</div>';
+                $html .= '          <div>' . $callNumberRow1 . '</div>';
+                $html .= '          <div>' . $callNumberRow2 . '</div>';
+                $html .= '          <div>' . $callNumberRow3 . '</div>';
                 $html .= '      </div>';
                 $html .= '  </td>';
-                $html .= '  <td valign="top" style="text-align: left;">';
-                $html .= $value['book_title'] . ' : ' . $value['book_sub_title'];
-                $html .= '      <strong> / </strong> ' . $listAuthor . ' .&HorizontalLine; <i>' . $value['city_name'] . ' : ' . $value['publisher_name'] . ', ' . $value['book_year_launching'] . '</i>';
-                $html .= '  </td>';
+                $html .= '  <td valign="top" style="text-align: left;">' . $keterangan_buku . '</td>';
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['resource_name'] . '</td>';
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['fund_name'] . '</td>';
                 $html .= '  <td valign="top">';
@@ -173,11 +334,11 @@ class Catalogue extends Controller {
                 $html .= '  <td valign="top" style="text-align: center;"  class="first" is="call_number">' . $value['ddc_classification_number'] . '</td>';
                 $html .= '  <td>';
                 $html .= '      <div>' . $value['ddc_title'] . '</div>';
-                
-                if ($level == 3 && $value['ddc_description']!='') {
+
+                if ($level == 3 && $value['ddc_description'] != '') {
                     $html .= '      <div style="font-size:10px;border-top:1px solid #ddd;margin-top:2px;padding-top:2px;">' . $value['ddc_description'] . '</div>';
                 }
-                
+
                 $html .= '  </td>';
                 $html .= '</tr>';
 
@@ -204,7 +365,7 @@ class Catalogue extends Controller {
         }
         return $html;
     }
-    
+
     public function listAuthorTemp($page = 1, $sessionAuthor = 0) {
         $maxRows = 10;
         $countList = $this->model->countAllAuthorTemp($sessionAuthor);
@@ -232,13 +393,13 @@ class Catalogue extends Controller {
                 $html .= '  <td style="text-align: left;">' . $value['author_first_name'] . ' ' . $value['author_last_name'] . '</td>';
                 $html .= '  <td>' . $value['author_description'] . '</td>';
                 $html .= '  <td style="text-align: center;">';
-                $html .=        URL::link('#', 'Delete', 'attach',array('class' => 'delete', 'value' => $tmpID));
+                $html .= URL::link('#', 'Delete', 'attach', array('class' => 'delete', 'value' => $tmpID));
                 $html .= '  </td>';
                 $html .= '</tr>';
 
                 $idx++;
             }
-            
+
             $this->content->customPagingId('prevPagingAuthor', 'pagePagingAuthor', 'nextPagingAuthor', 'maxPagingAuthor');
             $html .= $this->content->paging($jumlah_kolom, $countPage, $page);
 
@@ -252,14 +413,14 @@ class Catalogue extends Controller {
         }
         return $html;
     }
-    
+
     public function create() {
         if ($this->model->createSave()) {
-            $ket = array(1, 1, $this->message->saveSucces()); // sucess, reset, message
+            $ket = '{sucess:1, reset:1, html: "' . base64_encode($this->message->saveSucces()) . '"}';
         } else {
-            $ket = array(0, 0, $this->message->saveError()); // no sucess, no reset, message
+            $ket = '{sucess:0, reset:0, html: "' . base64_encode($this->message->saveError()) . '" }';
         }
-        echo json_encode($ket);
+        echo $ket;
     }
 
     public function read() {
@@ -285,7 +446,7 @@ class Catalogue extends Controller {
         }
         echo json_encode($this->listDdc($page, $parent, $level));
     }
-    
+
     public function readAuthorTemp() {
         $page = 1;
         if (isset($_GET['p'])) {
@@ -310,7 +471,7 @@ class Catalogue extends Controller {
     public function delete() {
         $this->model->delete();
     }
-    
+
     public function deleteAuthorTemp() {
         $this->model->deleteAuthorTemp();
     }
@@ -322,39 +483,23 @@ class Catalogue extends Controller {
     }
 
     public function postUpload() {
-        /*
-          $path = Web::path() . 'asset/upload/';
-          $valid_formats = array("jpg", "jpeg", "png", "gif", "bmp");
+        $gambar = 'gambar';
+        $file = 'file';
+        if ($_FILES[$gambar]['tmp_name'] && $_FILES[$file]['tmp_name']) {
+            $upload = Src::plugin()->PHPUploader();
 
-          $name = $_FILES['photoimg']['name'];
-          $size = $_FILES['photoimg']['size'];
+            $upload->SetFileName($_FILES[$gambar]['name']);
+            $upload->ChangeFileName('cover_' . date('Ymd') . time());
+            $upload->SetTempName($_FILES[$gambar]['tmp_name']);
+            $upload->SetUploadDirectory(Web::path() . 'asset/upload/images/'); //Upload directory, this should be writable
+            echo 'yang pertama ' . $upload->UploadFile();
 
-          if (strlen($name)) {
-          list($txt, $ext) = explode(".", strtolower($name));
-          if (in_array($ext, $valid_formats)) {
-          if ($size < (1024 * 1024)) {
-          $actual_image_name = time() . substr(str_replace(" ", "_", $txt), 5) . "." . $ext;
-          $tmp = $_FILES['photoimg']['tmp_name'];
-          if (move_uploaded_file($tmp, $path . $actual_image_name)) {
-          //echo json_encode(array(1,$this->message->saveSucces()));
-          //echo '{"name":"Warman Suganda","gender":"Male","message":"' . json_encode($this->message->saveSucces()) . '"}';
-          echo '{"aye":"sds"}';
-          }
-          else
-          echo "failed";
-          }
-          else
-          echo "Image file size max 1 MB";
-          }
-          else
-          echo "Invalid file format..";
-          }
-          else
-          echo "Please select image..!";
-
-          exit;
-         */
-        echo '{"aye":"sds","html":"' . base64_encode($this->message->saveSucces()) . '"}';
+            $upload->SetFileName($_FILES[$file]['name']);
+            $upload->ChangeFileName('ebook_' . date('Ymd') . time());
+            $upload->SetTempName($_FILES[$file]['tmp_name']);
+            $upload->SetUploadDirectory(Web::path() . 'asset/upload/file/'); //Upload directory, this should be writable
+            echo '<br>yang kedua ' . $upload->UploadFile();
+        }
     }
 
     public function listLanguage() {
@@ -404,7 +549,7 @@ class Catalogue extends Controller {
         }
         return $list;
     }
-    
+
     public function listBookType() {
         $data = $this->model->selectBookType();
         $list = array();
@@ -448,7 +593,7 @@ class Catalogue extends Controller {
         }
         echo json_encode($list);
     }
-    
+
     public function listAuthorDescription() {
         $data = $this->model->selectAllAuthorDescription();
         $list = array();
@@ -457,7 +602,7 @@ class Catalogue extends Controller {
         }
         return $list;
     }
-    
+
     public function addAuthorTemp() {
         if ($this->model->addAuthorTempSave()) {
             $ket = array(1, 1, $this->message->saveSucces()); // sucess, reset, message
@@ -466,7 +611,7 @@ class Catalogue extends Controller {
         }
         echo json_encode($ket);
     }
-    
+
     public function getWriter() {
         $sid = 0;
         if (isset($_GET['sa'])) {
@@ -475,12 +620,112 @@ class Catalogue extends Controller {
         $data = $this->model->selectWriterTempBySession($sid);
         if (count($data) > 0 && count($data) <= 3) {
             $writerPrimary = $data[0];
-            
-            $ket = array(1,$writerPrimary['author_first_name']);
+
+            $WriterName = $writerPrimary['author_first_name'];
+            if ($writerPrimary['author_last_name'] != '') {
+                $WriterName = strtoupper($writerPrimary['author_last_name']) . ', ' . $writerPrimary['author_first_name'];
+            }
+
+            $ket = array(1, $WriterName);
         } else {
             $ket = array(0);
-        } 
-        
+        }
+
         echo json_encode($ket);
     }
+
+    public function getInfoPublisher() {
+
+        $data = $this->model->selectPublisherByID();
+        if ($data) {
+            $listData = $data[0];
+
+            $namaPenerbit = '-';
+            if ($listData['publisher_name'] != '')
+                $namaPenerbit = $listData['publisher_name'];
+
+            $alamat = '-';
+            if ($listData['publisher_name'] != '')
+                $alamat = $listData['publisher_address'];
+
+            $telp = '-';
+            if ($listData['publisher_phone'] != '')
+                $telp = $listData['publisher_phone'];
+
+            $fax = '-';
+            if ($listData['publisher_fax'] != '')
+                $fax = $listData['publisher_fax'];
+
+            $email = '-';
+            if ($listData['publisher_email'] != '')
+                $email = $listData['publisher_email'];
+
+            $website = '-';
+            if ($listData['publisher_website'] != '')
+                $website = $listData['publisher_website'];
+
+            $keterangan = '-';
+            if ($listData['publisher_description'] != '')
+                $keterangan = $listData['publisher_description'];
+
+            if ($listData['publisher_logo'] != '') {
+                $logo = Src::image($listData['publisher_logo'], URL::getService() . '://' . Web::$host . '/__MyWeb/' . Web::$webFolder . '/asset/upload/images/', array('id' => 'publisherLogo', 'style' => 'max-width:128px;max-height:128px;'));
+            } else {
+                $logo = Src::image('128.png', null, array('id' => "publisherLogo"));
+            }
+        } else {
+            $logo = Src::image('128.png', null, array('id' => "publisherLogo"));
+            $namaPenerbit = '&Lt; Nama Penerbit &Gt;';
+            $alamat = '&Lt; Alamat &Gt;';
+            $telp = '-';
+            $fax = '-';
+            $email = '-';
+            $website = '-';
+            $keterangan = '-';
+        }
+
+        $html = '<div id="info_publisher">
+            <table style="width: 100%">
+                    <tr>
+                        <td style="width: 128px;" valign="top"> ' . $logo . ' </td>
+                        <td valign="top" style="padding: 5px 10px;font-size: 11px;">
+                            <div style="font-weight: bold">' . $namaPenerbit . '</div>
+                            <div>' . $alamat . '</div>
+                            <div>Telp. : ' . $telp . ' , Fax. : ' . $fax . '</div>
+                            <div>Email : ' . $email . ' </div>
+                            <div>Website : ' . $website . '</div>
+                            <div style="padding-top: 5px;">Keterangan : </div>
+                            <div>' . $keterangan . '</div>
+                        </td>
+                    </tr>
+                </table>
+                </div>';
+        echo json_encode($html);
+    }
+
+    public function getAuhtorTemp() {
+        $this->setAuthorTemp();
+
+        // Author
+        $outAuthor = '';
+        $countAuthor = 0;
+        $tempCount = 0;
+
+        foreach ($this->dataAuthorTempDescription as $keyAD => $valueAD) {
+            $res = $this->parsingAuthorTemp($this->method->get('sa'), $keyAD);
+
+            if ($res[0] > 0 && $countAuthor)
+                $outAuthor .= '; ';
+
+            $countAuthor += $res[0];
+            $outAuthor .= $res[1];
+            $tempCount = $res[0];
+        }
+
+        if ($countAuthor > 0)
+            $keteranganAuthor = ' / ' . $outAuthor;
+
+        echo json_encode($keteranganAuthor);
+    }
+
 }

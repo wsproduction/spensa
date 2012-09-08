@@ -14,20 +14,30 @@
     <div id="box_content">
         <div id="pesan"></div>
         <?php
-        echo base64_encode('<b style="text-align">aku</b>');
+        /*echo base64_encode('<b style="text-align">aku</b>');*/
         Form::begin('fUpload', 'catalogue/postUpload', 'post', true);
         ?>
         <div>
             <table>
                 <tr>
-                    <td style="width: 200px;">Titles</td>
+                    <td style="width: 200px;">Gambar</td>
                     <td>:</td>
                     <td>
                         <?php
-                        Form::create('file', 'photoimg');
+                        Form::create('file', 'gambar');
                         Form::tips('Enter Book Title');
-                        Form::size(70);
-                        Form::validation()->requaired();
+                        Form::validation()->accept('jpg|jpeg');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 200px;">File</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('file', 'file');
+                        Form::tips('Enter Book Title');
                         Form::commit();
                         ?>
                     </td>

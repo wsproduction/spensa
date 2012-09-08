@@ -50,13 +50,13 @@
                         Form::commit();
                         ?>
                     </th>
-                    <th style="width: 110px;">ID</th>
-                    <th style="width: 110px;">Call Number</th>
-                    <th>Book Description</th>
-                    <th style="width: 100px;">Resource</th>
-                    <th style="width: 120px;">Fund</th>
-                    <th style="width: 120px;">Price</th>
-                    <th style="width: 60px;">Quantity</th>
+                    <th style="width: 90px;">Nomor</th>
+                    <th style="width: 90px;">Call Number</th>
+                    <th>Keterangan Buku</th>
+                    <th style="width: 90px;">Resource</th>
+                    <th style="width: 90px;">Fund</th>
+                    <th style="width: 90px;">Harga</th>
+                    <th style="width: 60px;">Eksemplar</th>
                     <th style="width: 75px;">Entry Date</th>
                     <th style="width: 100px;">Action</th>
                 </tr>

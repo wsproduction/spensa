@@ -50,10 +50,10 @@
                         Form::commit();
                         ?>
                     </th>
-                    <th style="width: 200px;">Name</th>
-                    <th style="width: 300px;">Address</th>
-                    <th>Description</th>
-                    <th style="width: 100px;">Action</th>
+                    <th style="width: 200px;">Nama Penerbit</th>
+                    <th style="width: 300px;">Alamat</th>
+                    <th>Keterangan</th>
+                    <th style="width: 100px;">Aksi</th>
                 </tr>
             </thead>
             <tbody><?php echo $listData; ?></tbody>

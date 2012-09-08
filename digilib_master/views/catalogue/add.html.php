@@ -14,7 +14,7 @@
     <div id="box_content">
         <div id="message"></div>
         <?php
-        Form::begin('fAdd', 'catalogue/create', 'post');
+        Form::begin('fAdd', 'catalogue/create', 'post', true);
 
         Form::create('hidden', 'stepStatus');
         Form::value(1);
@@ -22,22 +22,22 @@
         ?>
         <div class="myTab">
             <ul class="header">
-                <li id="s1">1. Book Detail</li>
-                <li id="s2" style="background: #ccc;">2. Author</li>
+                <li id="s1">1. Keterangan Buku</li>
+                <li id="s2" style="background: #ccc;">2. Penanggung Jawab</li>
                 <li id="s3" style="background: #ccc;">3. DDC</li>
-                <li id="s4" style="background: #ccc;">4. File</li>
-                <li id="s5" style="background: #ccc;">5. Confirmation</li>
+                <li id="s4" style="background: #ccc;">4. Resensi</li>
+                <li id="s6" style="background: #ccc;">5. Confirmation</li>
             </ul>
         </div>
         <div class="myTabContent">
             <table id="addStep1" style="width: 100%;">
                 <tr>
-                    <td style="width: 230px;">Titles *</td>
+                    <td style="width: 230px;">Judul *</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'title');
-                        Form::tips('Enter Title of Book');
+                        Form::tips('Masukan Judul Buku');
                         Form::size(100);
                         Form::validation()->requaired();
                         Form::commit();
@@ -45,76 +45,36 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Subtitles</td>
+                    <td>Anak Judul</td>
                     <td>:</td>
                     <td>
                         <?php
-                        Form::create('text', 'subtitle');
-                        Form::tips('Enter Subtitle of Book');
+                        Form::create('text', 'sub_title');
+                        Form::tips('Masukan Anak Judul');
                         Form::size(100);
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Publisher *</td>
+                    <td>Judul Bahasa Asing</td>
                     <td>:</td>
                     <td>
                         <?php
-                        Form::create('select', 'publisher');
-                        Form::tips('Select Publisher Name');
-                        Form::option($publisher, ' ');
-                        Form::validation()->requaired();
+                        Form::create('text', 'foreign_title');
+                        Form::tips('Masukan Anak Judul');
+                        Form::size(100);
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Country *</td>
-                    <td>:</td>
-                    <td>
-                        <?php
-                        Form::create('select', 'country');
-                        Form::tips('Select Country');
-                        Form::option($country, ' ');
-                        Form::validation()->requaired();
-                        Form::properties(array('link' => $link_city));
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>City *</td>
-                    <td>:</td>
-                    <td>
-                        <?php
-                        Form::create('select', 'city');
-                        Form::tips('Select City');
-                        Form::validation()->requaired();
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Years *</td>
-                    <td>:</td>
-                    <td>
-                        <?php
-                        Form::create('select', 'year');
-                        Form::tips('Years');
-                        Form::option($years, ' ');
-                        Form::validation()->requaired();
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Language *</td>
+                    <td>Bahasa *</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('select', 'language');
-                        Form::tips('Select Language of Book');
+                        Form::tips('Pilih Bahasa');
                         Form::option($language, ' ');
                         Form::validation()->requaired();
                         Form::commit();
@@ -122,24 +82,26 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Edition</td>
+                    <td>Edisi</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'edition');
-                        Form::tips('Enter Edition of Book');
+                        Form::tips('Masukan Edisi Buku Keberapa?');
+                        Form::inputType()->numeric();
                         Form::size(20);
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Print-out</td>
+                    <td>Cetakan</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'print_out');
-                        Form::tips('Enter Print-out of Book');
+                        Form::tips('Masukan Cetakan Buku Keberapa?');
+                        Form::inputType()->numeric();
                         Form::size(20);
                         Form::commit();
                         ?>
@@ -151,7 +113,7 @@
                     <td>
                         <?php
                         Form::create('text', 'isbn');
-                        Form::tips('Enter ISBN (<i>International Standar Book Number</i>)');
+                        Form::tips('Masukan ISBN (<i>International Standard Book Number</i>)<br>* Hanya nomor dan strip yang diijinkan.<br>Contoh: 978-3-16-148410-0');
                         Form::size(20);
                         Form::inputType()->numeric('-');
                         Form::commit();
@@ -159,25 +121,24 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Roman Number</td>
+                    <td>Halaman Romawi</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'roman_count');
-                        Form::tips('Enter Page Count of Book');
+                        Form::tips('Masukan nomor halaman romawi terakhir. Contoh: vii');
                         Form::size(10);
-                        Form::inputType()->numeric();
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Page Number</td>
+                    <td>Halaman Angka</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'page_count');
-                        Form::tips('Enter Page Count of Book');
+                        Form::tips('Masukan nomor halaman angka. Contoh: 120');
                         Form::size(10);
                         Form::inputType()->numeric();
                         Form::commit();
@@ -185,24 +146,25 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Bibliography</td>
+                    <td>Bibliografi</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'bibliography');
-                        Form::tips('Enter Page Count of Book');
+                        Form::tips('Masukan halaman rentang halaman bibliografi.<br>Example : 103-107');
                         Form::size(10);
+                        Form::inputType()->numeric('-');
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr style="height: 30px;">
-                    <td>Ilustration</td>
+                    <td>Ilustrasi</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('checkbox', 'ilustration');
-                        Form::size(10);
+                        Form::value(1);
                         Form::commit();
                         ?>
                     </td>
@@ -213,24 +175,24 @@
                     <td>
                         <?php
                         Form::create('checkbox', 'index');
-                        Form::size(10);
+                        Form::value(1);
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Size</td>
+                    <td>Ukuran</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'width');
-                        Form::tips('Enter Width');
+                        Form::tips('Masukan ukuran lebar buku.');
                         Form::size(10);
                         Form::inputType()->numeric();
                         Form::commit();
                         echo 'x';
                         Form::create('text', 'height');
-                        Form::tips('Enter Height');
+                        Form::tips('Masukan ukuran tinggi buku.');
                         Form::size(10);
                         Form::inputType()->numeric();
                         Form::commit();
@@ -239,12 +201,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Weight</td>
+                    <td>Berat</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'weight');
-                        Form::tips('Enter Weight');
+                        Form::tips('Masukan berat buku.');
                         Form::size(10);
                         Form::inputType()->numeric();
                         Form::commit();
@@ -253,12 +215,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Quantity *</td>
+                    <td>Jumlah Eksemplar  *</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'quantity');
-                        Form::tips('Enter Quantity Book');
+                        Form::tips('Masukan jumlah eksemplar.');
                         Form::size(10);
                         Form::inputType()->numeric();
                         Form::validation()->requaired();
@@ -267,16 +229,17 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Price</td>
+                    <td>Harga</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('select', 'accounting_symbol');
-                        Form::tips('Select Accounting Symbol');
+                        Form::tips('Pilih mata uang.');
                         Form::option($accounting_symbol, ' ');
                         Form::commit();
+
                         Form::create('text', 'price');
-                        Form::tips('Enter Price of Book');
+                        Form::tips('Masukan harga buku.');
                         Form::size(20);
                         Form::inputType()->numeric();
                         Form::properties(array('style' => 'text-align:right;'));
@@ -285,7 +248,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Resouce</td>
+                    <td>Sumber</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -297,58 +260,87 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Fund</td>
+                    <td>Sumber Dana</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('select', 'fund');
-                        Form::tips('Select Fund');
+                        Form::tips('Pilih sumber dana');
                         Form::option($book_fund, ' ');
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td valign="top">Reviews</td>
-                    <td valign="top">:</td>
-                    <td>
-                        <?php
-                        Form::create('textarea', 'review');
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="height: 20px;">Type *</td>
+                    <td>Jenis Buku *</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('select', 'book_type');
-                        Form::option($book_type,' ');
+                        Form::option($book_type, ' ');
+                        Form::tips('Pilih jenis buku');
                         Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td style="height: 20px;">Lengt Borrowed</td>
+                    <td>Lama Peminjaman</td>
                     <td>:</td>
                     <td>
                         <?php
-                        Form::create('text', 'status');
+                        Form::create('text', 'length_borrowed');
+                        Form::tips('Masukan lama peminjaman');
                         Form::size(10);
-                        Form::validation()->requaired();
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td style="height: 20px;">Status</td>
+                    <td style="padding: 8px 0;" valign="middle">Bentuk Buku</td>
+                    <td valign="middle">:</td>
+                    <td valign="middle">
+                        <?php
+                        Form::create('checkbox', 'hard_copy');
+                        Form::size(10);
+                        Form::commit();
+                        echo ' Buku Cetak &nbsp;&nbsp;&nbsp;';
+                        Form::create('checkbox', 'soft_copy');
+                        Form::size(10);
+                        Form::commit();
+                        echo ' Buku Electronik';
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 200px;">Cover</td>
                     <td>:</td>
                     <td>
+                        <?php
+                        Form::create('file', 'cover');
+                        Form::validation()->accept('jpg|jpeg|gif|png');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>    
+                <tr>
+                    <td>File E-Book</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('file', 'file');
+                        Form::validation()->accept('pdf');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0;" valign="middle">Status Buku</td>
+                    <td valign="middle">:</td>
+                    <td valign="middle">
                         <?php
                         Form::create('checkbox', 'status');
-                        Form::size(10);
+                        Form::value(1);
                         Form::commit();
                         ?>
                     </td>
@@ -367,72 +359,154 @@
 
             <table id="addStep2" style="display: none;width: 100%;">
                 <tr>
-                    <td style="width: 50%;" valign="top">
+                    <td colspan="2" style="border-bottom: 1px dashed #ccc;padding-bottom: 10px;">
                         <fieldset>
-                            <legend>Add Author</legend>
+                            <legend>Keterangan Penerbit</legend>
+                            <table style="width: 100%;" >
+                                <tr>
+                                    <td style="width: 200px;">Penerbit *</td>
+                                    <td style="width: 10px;">:</td>
+                                    <td style="width: 350px;">
+                                        <?php
+                                        Form::create('select', 'publisher');
+                                        Form::tips('Select Publisher Name');
+                                        Form::option($publisher, ' ');
+                                        Form::validation()->requaired();
+                                        Form::properties(array('link' => $link_info_publisher));
+                                        Form::commit();
+                                        ?>
+                                    </td>
+                                    <td rowspan="4" valign="top" id="view_info_publisher">
+                                        <div id="info_publisher">
+                                            <table style="width: 100%">
+                                                <tr>
+                                                    <td style="width: 128px;" valign="top">
+                                                        <?php echo Src::image('128.png', null, array('id' => "publisherLogo")); ?>
+                                                    </td>
+                                                    <td valign="top" style="padding: 5px 10px;font-size: 11px;">
+                                                        <div style="font-weight: bold"> &Lt; Nama Penerbit &Gt;</div>
+                                                        <div> &Lt; Alamat &Gt;</div>
+                                                        <div>Telp. : - , Fax. : -</div>
+                                                        <div>Email : -</div>
+                                                        <div>Website : - </div>
+                                                        <div style="padding-top: 5px;">Keterangan :</div>
+                                                        <div>-</div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Negara *</td>
+                                    <td>:</td>
+                                    <td>
+                                        <?php
+                                        Form::create('select', 'country');
+                                        Form::tips('Select Country');
+                                        Form::option($country, ' ');
+                                        Form::validation()->requaired();
+                                        Form::properties(array('link' => $link_city));
+                                        Form::commit();
+                                        ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Kota *</td>
+                                    <td>:</td>
+                                    <td>
+                                        <?php
+                                        Form::create('select', 'city');
+                                        Form::tips('Select City');
+                                        Form::validation()->requaired();
+                                        Form::commit();
+                                        ?>
+                                    </td>
+                                </tr>
+                                <tr valign="top">
+                                    <td style="padding-top: 8px;">Tahun *</td>
+                                    <td style="padding-top: 8px;">:</td>
+                                    <td>
+                                        <?php
+                                        Form::create('select', 'year');
+                                        Form::tips('Years');
+                                        Form::option($years, ' ');
+                                        Form::validation()->requaired();
+                                        Form::commit();
+                                        ?>
+                                    </td>
+                                </tr>
+                            </table>
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top" style="padding-top: 10px;">
+                        <fieldset>
+                            <legend>Form Tambah Penanggung Jawab</legend>
                             <div>
                                 <div id="messageAuthor"></div>
                                 <?php
                                 Form::create('hidden', 'sessionAuthor');
-                                Form::value(Session::id() . date('YmdHis'));
+                                Form::value($session_id_temp);
                                 Form::commit();
                                 ?>
                                 <table>
                                     <tr>
-                                        <td style="width: 150px;">First Name *</td>
+                                        <td style="width: 150px;">Nama Depan *</td>
                                         <td>:</td>
                                         <td>
                                             <?php
                                             Form::create('text', 'first_name_author');
-                                            Form::tips('Enter First Name');
+                                            Form::tips('Masukan nama depan penaggung jawab');
                                             Form::size(40);
                                             Form::commit();
                                             ?>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Last Name</td>
+                                        <td>Nama Belakang</td>
                                         <td>:</td>
                                         <td>
                                             <?php
                                             Form::create('text', 'last_name_author');
-                                            Form::tips('Enter Last Name');
+                                            Form::tips('Masukan nama belakang penanggung jawab');
                                             Form::size(40);
                                             Form::commit();
                                             ?>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Front Degree</td>
+                                        <td>Gelar Depan</td>
                                         <td>:</td>
                                         <td>
                                             <?php
                                             Form::create('text', 'front_degree_author');
-                                            Form::tips('Enter Front Degree<br>Exmp : Ir., Dr., DR., etc.');
+                                            Form::tips('Masukan gelar depan<br>Contoh : Ir., Dr., DR., dll.');
                                             Form::size(10);
                                             Form::commit();
                                             ?>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Back Degree</td>
+                                        <td>Gelar Belakang</td>
                                         <td>:</td>
                                         <td>
                                             <?php
                                             Form::create('text', 'back_degree_author');
-                                            Form::tips('Enter Back Degree<br>Exmp : S.Pd.,S.Kom., etc.');
+                                            Form::tips('Masukan gelar belakang<br>Contoh : S.Pd.,S.Kom., dll.');
                                             Form::size(10);
                                             Form::commit();
                                             ?>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Description * </td>
+                                        <td>Keterangan * </td>
                                         <td>:</td>
                                         <td>
                                             <?php
                                             Form::create('select', 'description_author');
-                                            Form::tips('Enter Description');
+                                            Form::tips('Pilih keterangan penanggun jawab');
                                             Form::option($author_description, ' ');
                                             Form::commit();
                                             ?>
@@ -454,9 +528,9 @@
                             </div>
                         </fieldset>
                     </td>
-                    <td style="width: 50%;" valign="top">
+                    <td style="width: 50%;padding-top: 10px;" valign="top">
                         <fieldset>
-                            <legend>Author List</legend>
+                            <legend>Daftar Penanggung Jawab</legend>
                             <?php
                             Form::create('hidden', 'tempAuthorSelected');
                             Form::value(0);
@@ -466,9 +540,9 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 20px;" class="first" >No.</th>
-                                        <th>Author Name</th>
-                                        <th style="width: 160px;">Description</th>
-                                        <th style="width: 60px;">Action</th>
+                                        <th>Nama</th>
+                                        <th style="width: 160px;">Keterangan</th>
+                                        <th style="width: 60px;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="body" style="">
@@ -636,9 +710,9 @@
                             <legend>Call Number</legend>
                             <div>
                                 <div id="preview_call_number">
-                                    <div style="height: 20px;" id="print_row_1">-</div>
-                                    <div style="height: 20px;" id="print_row_2">WAR</div>
-                                    <div style="height: 20px;" id="print_row_3">s</div>
+                                    <div style="height: 20px;" class="print_row_1"></div>
+                                    <div style="height: 20px;" class="print_row_2"></div>
+                                    <div style="height: 20px;" class="print_row_3"></div>
                                 </div>
                                 <div id="desc_call_number">
                                     <div>&Rrightarrow; <i>Classification Number</i></div>
@@ -667,27 +741,19 @@
 
             <table id="addStep4" style="display: none;width: 100%">
                 <tr>
-                    <td style="width: 200px;">Cover</td>
-                    <td>:</td>
-                    <td>
+                    <td style="text-align: center;">
+                <center>
+                    <div class="resensi_editor">
                         <?php
-                        Form::create('file', 'cover');
+                        Form::create('textarea', 'reviews');
                         Form::commit();
                         ?>
-                    </td>
-                </tr>    
+                    </div>
+                </center>
+                </td>
+                </tr>
                 <tr>
-                    <td>File E-Book</td>
-                    <td>:</td>
-                    <td>
-                        <?php
-                        Form::create('file', 'cover');
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr> 
-                <tr>
-                    <td colspan="3" style="text-align: right;">
+                    <td style="text-align: right;">
                         <?php
                         Form::create('button', 'btnPrev');
                         Form::value('Back to Step 3');
@@ -699,99 +765,29 @@
                         Form::commit();
                         ?>
                     </td>
-                </tr>                
+                </tr>
             </table>
 
             <table id="addStep5" style="display:none;width: 100%"> 
                 <tr>
                     <td>
                         <div class="confFrameCatalogue">
-                            <div><b>Author Catalogue</b></div>
                             <table  class="confCatalogue">
                                 <tr>
                                     <td class="confCallNumber" valign="top">
-                                        <div class="confRow1">00948.3</div>
-                                        <div class="confRow2">SUG</div>
-                                        <div class="confRow3">s</div>
+                                        <div style="height: 20px;" class="print_row_1"></div>
+                                        <div style="height: 20px;" class="print_row_2"></div>
+                                        <div style="height: 20px;" class="print_row_3"></div>
                                     </td>
                                     <td valign="top">
-                                        <div style="color: #fff;">000</div>
                                         <div>
-                                            <div>SUGANDA, Warman</div>
+                                            <div class="authorName"></div>
                                             <div class="confContent">
                                                 <span style="color: #fff;">AAA</span>
-                                                Pedoman katalogisasi : cara mudah membuat  katalog perpustakaan / Yaya Suhendar. – Ed. 1, cet. 2. –  Bandung : Rosdakarya, 1990.
+                                                <span class="contentRow1"></span>
                                             </div>
-                                            <div style="padding-left: 60px;">xi, 160 hlm. : ilus. ; 21 cm</div>
-                                            <div style="padding-left: 60px;margin-top: 20px;">
-                                                Biblliografi   : hlm. 135 – 136<br>
-                                                Indeks<br>
-                                                ISBN 979-514-005-1
-                                            </div>
-                                            <div style="margin-top: 30px;">
-                                                <div style="float: left;width: 50%">1. KATALOG</div>
-                                                <div style="float: left;width: 50%">I. Judul</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="confFrameCatalogue">
-                            <div><b>Title Catalogue</b></div>
-                            <table  class="confCatalogue">
-                                <tr>
-                                    <td class="confCallNumber" valign="top">
-                                        <div class="confRow1">00948.3</div>
-                                        <div class="confRow2">SUG</div>
-                                        <div class="confRow3">s</div>
-                                    </td>
-                                    <td valign="top">
-                                        <div style="color: #fff;">000</div>
-                                        <div>
-                                            <div>SUGANDA, Warman</div>
-                                            <div class="confContent">
-                                                <span style="color: #fff;">AAA</span>
-                                                Pedoman katalogisasi : cara mudah membuat  katalog perpustakaan / Yaya Suhendar. – Ed. 1, cet. 2. –  Bandung : Rosdakarya, 1990.
-                                            </div>
-                                            <div style="padding-left: 60px;">xi, 160 hlm. : ilus. ; 21 cm</div>
-                                            <div style="padding-left: 60px;margin-top: 20px;">
-                                                Biblliografi   : hlm. 135 – 136<br>
-                                                Indeks<br>
-                                                ISBN 979-514-005-1
-                                            </div>
-                                            <div style="margin-top: 30px;">
-                                                <div style="float: left;width: 50%">1. KATALOG</div>
-                                                <div style="float: left;width: 50%">I. Judul</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="confFrameCatalogue">
-                            <div><b>Subject Catalogue</b></div>
-                            <table  class="confCatalogue">
-                                <tr>
-                                    <td class="confCallNumber" valign="top">
-                                        <div class="confRow1">00948.3</div>
-                                        <div class="confRow2">SUG</div>
-                                        <div class="confRow3">s</div>
-                                    </td>
-                                    <td valign="top">
-                                        <div style="color: #fff;">000</div>
-                                        <div>
-                                            <div>SUGANDA, Warman</div>
-                                            <div class="confContent">
-                                                <span style="color: #fff;">AAA</span>
-                                                Pedoman katalogisasi : cara mudah membuat  katalog perpustakaan / Yaya Suhendar. – Ed. 1, cet. 2. –  Bandung : Rosdakarya, 1990.
-                                            </div>
-                                            <div style="padding-left: 60px;">xi, 160 hlm. : ilus. ; 21 cm</div>
-                                            <div style="padding-left: 60px;margin-top: 20px;">
-                                                Biblliografi   : hlm. 135 – 136<br>
-                                                Indeks<br>
-                                                ISBN 979-514-005-1
-                                            </div>
+                                            <div style="padding-left: 60px;" class="contentRow2">xi, 160 hlm. : ilus. ; 21 cm</div>
+                                            <div style="padding-left: 60px;margin-top: 20px;" class="contentRow3"></div>
                                             <div style="margin-top: 30px;">
                                                 <div style="float: left;width: 50%">1. KATALOG</div>
                                                 <div style="float: left;width: 50%">I. Judul</div>

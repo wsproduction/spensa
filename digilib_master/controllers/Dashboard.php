@@ -8,6 +8,7 @@ class Dashboard extends Controller {
         $this->view->topMenu = $this->content->topMenu();
         
         Src::plugin()->poshytip();
+        Src::plugin()->highChart();
     }
 
     public function index() {

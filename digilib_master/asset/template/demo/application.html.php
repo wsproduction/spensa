@@ -38,7 +38,7 @@
                 {PAGE_CONTENT}
             </div>
             <div id="footer">
-                <?php Src::image('ws.png', null, array('style' => 'width:45px')); ?>
+                <?php echo Src::image('ws.png', null, array('style' => 'width:45px')); ?>
             </div>
         </div>
     </body>

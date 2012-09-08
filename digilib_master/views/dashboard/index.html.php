@@ -1,3 +1,10 @@
+<div id="border_content">
+    <div id="title_content">
+        <div class="left"><?php echo Web::getTitle(); ?></div>
+    </div>
+    <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+</div>
+<!--
 <div id="tempDialog"></div>
 Hallow, kamu sudah login
 
@@ -25,3 +32,4 @@ Hallow, kamu sudah login
         }
     });
 </script>
+-->

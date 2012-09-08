@@ -19,6 +19,19 @@
         <div>
             <table>
                 <tr>
+                    <td style="width: 200px;">Test Checkbox</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('checkbox', 'cbGue');
+                        Form::tips('Enter First Name');
+                        Form::size(40);
+                        
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
                     <td style="width: 200px;">First Name</td>
                     <td>:</td>
                     <td>

@@ -94,12 +94,13 @@ class Author extends Controller {
     }
 
     public function create() {
-        if ($this->model->createSave()) {
+        var_dump($this->method->post('cbGue'));
+       /*&if ($this->model->createSave()) {
             $ket = array(1, 1, $this->message->saveSucces()); // sucess, reset, message
         } else {
             $ket = array(0, 0, $this->message->saveError()); // no sucess, no reset, message
         }
-        echo json_encode($ket);
+        echo json_encode($ket);*/
     }
 
     public function read() {

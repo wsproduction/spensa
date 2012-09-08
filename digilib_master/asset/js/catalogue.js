@@ -16,12 +16,17 @@ $(function(){
     var opts = {
         cssClass : 'el-rte',
         // lang     : 'ru',
-        height   : 180,
-        width    : 600,
+        height   : 400,
+        width    : 800,
         toolbar  : 'web2pyToolbar',
         cssfiles : ['css/elrte-inner.css']
     }
-    $('#review').elrte(opts);
+    
+    $('#reviews').elrte(opts);
+    
+    $('#price').autoNumeric({
+        aPad: false
+    });
     
     /* CHANGE VALUE ACTIONS */  
     $('#country').live('change',function(){
@@ -31,6 +36,15 @@ $(function(){
             id:id
         }, function(o){
             $('#city').html(o);
+        }, 'json');
+    });
+    $('#publisher').live('change',function(){
+        var url = $(this).attr('link');
+        var id = $(this).val();
+        $.get(url, {
+            id:id
+        }, function(o){
+            $('#view_info_publisher').html(o);
         }, 'json');
     });
     $('#ddcLevel1').live('change',function(){
@@ -55,20 +69,29 @@ $(function(){
     /* SUBMIT ACTIONS */    
     $('#fAdd').live('submit',function(){
        
+        var ddc = $('#tempSelectId3').val();
         var stepStatus = $('#stepStatus').val();
-        var stepStatusCurent = parseInt(stepStatus) + 1;
         
-        // TabStatus
-        $('li#s1').css('background','#ccc');
-        $('li#s2').css('background','#ccc');
-        $('li#s3').css('background','#ccc');
-        $('li#s4').css('background','#ccc');
-        $('li#s5').css('background','#ccc');
-        /*$('li#s' + stepStatusCurent) .css('background','#fff');
+        var stepStatusCurent = stepStatus;
+        if (ddc == 0 && stepStatus ==3) {
+            alert('Silahkan tentukan terlebih dahulu DDC buku yang diinputkan.');
+        } else {
+            stepStatusCurent = parseInt(stepStatus) + 1;            
+        }
         
-        $('#addStep' + stepStatus).fadeOut('slow',function(){
-            $('#addStep' + stepStatusCurent).fadeIn('slow');
-        });
+        if (stepStatus<5) {
+            // TabStatus
+            $('li#s1').css('background','#ccc');
+            $('li#s2').css('background','#ccc');
+            $('li#s3').css('background','#ccc');
+            $('li#s4').css('background','#ccc');
+            $('li#s5').css('background','#ccc');
+            $('li#s' + stepStatusCurent) .css('background','#fff');
+        
+            $('#addStep' + stepStatus).fadeOut('slow',function(){
+                $('#addStep' + stepStatusCurent).fadeIn('slow');
+            });
+        }
             
         if (stepStatus == 2) {            
             $.get('getWriter', {
@@ -77,15 +100,19 @@ $(function(){
                 if (o[0]) {
                     row2 = o[1];
                     row3 = $('#title').val();
+                    header = o[1];
                 } else {
-                    row2 = $('#title').val();
+                    row2 = $('#title').val().replace(' ', '');
                     row3 = '';
+                    header = '';
                 }
-                $('#preview_call_number #print_row_2').text(row2.substr(0,3).toUpperCase());
-                $('#preview_call_number #print_row_3').text(row3.substr(0,1).toLowerCase());
+                $('.print_row_2').text(row2.substr(0,3).toUpperCase());
+                $('.print_row_3').text(row3.substr(0,1).toLowerCase());
+                $('.authorName').text(header);
             }, 'json');
-        } else*/ if (stepStatus == 1) {
-            frmID = $(this);
+            generateCatalogue();
+        } else if (stepStatus == 5) {
+            /* frmID = $(this);
             msgID = $('#message');
             var url =  $(frmID).attr('action');
             var data =  $(frmID).serialize();
@@ -98,20 +125,47 @@ $(function(){
                     }
                 }
                 $(msgID).html(o[2]).fadeIn('slow');
-            }, 'json');
+            }, 'json'); */
+        
+            frmID = $(this);
+            msgID = $('#message');
+            $(frmID).ajaxSubmit({
+                success : function(o) {
+                    var parOut = o.replace('<div id="LCS_336D0C35_8A85_403a_B9D2_65C292C39087_communicationDiv"></div>','');
+                    //console.log(parOut);
+                    if (parOut) {
+                        var obj = eval('(' + parOut +')');
+                        //console.log(obj.html); 
+                        $(msgID).html($.base64.decode(obj.html)).fadeIn('slow');
+                        $(frmID)[0].reset();
+                        $('table#listAuthorSelected tbody').html('<tr><td colspan="4" class="first" style="text-align: center;"><i>Data Not Found</i></td></tr>');
+                        
+                        // TabStatus
+                        $('li#s1').css('background','#fff');
+                        $('li#s2').css('background','#ccc');
+                        $('li#s3').css('background','#ccc');
+                        $('li#s4').css('background','#ccc');
+                        $('li#s5').css('background','#ccc');
+        
+                        $('#addStep5').fadeOut('slow',function(){
+                            $('#addStep1').fadeIn('slow');
+                        });
+                    }
+                }
+            });
         }
-        /*
-        if (stepStatus != 5) { 
-            stepStatus++;
-            $('#stepStatus').val(stepStatus);
+        
+        if (stepStatus != 5) {
+            $('#stepStatus').val(stepStatusCurent);
         } else {
             $('#stepStatus').val(1);
-        }*/
+        }
         
         return false;
     });
     
     $('#fUpload').live('submit',function(){
+        /*
         $(this).ajaxSubmit({
             success : function(o) {
                 var parOut = o.replace('<div id="LCS_336D0C35_8A85_403a_B9D2_65C292C39087_communicationDiv"></div>','');
@@ -120,11 +174,12 @@ $(function(){
                     var obj = eval('(' + parOut +')');
                     console.log(obj.html); 
                     $('#pesan').html($.base64.decode(obj.html));
+                    //$('#pesan').html($.base64.decode(parOut));
                 }
             }
         });
-        return false;
-    });
+        return false;*/
+        });
     
     /* BUTTON ACTION */
     $('#btnAddData').live('click',function(){
@@ -150,10 +205,10 @@ $(function(){
         if (arrayID.length > 0) {
             var conf = confirm("Are you sure to delete data?");
             if (conf) {
-                $.post('catalog/delete', {
+                $.post('catalogue/delete', {
                     val:arrayID
                 }, function(o){
-                    $.get('catalog/read', {
+                    $.get('catalogue/read', {
                         p:Get_Cookie('_page')
                     }, function(o){
                         $('table#list tbody').html(o);
@@ -197,6 +252,9 @@ $(function(){
                     }, 'json');
                 }
                 $('#messageAuthor').html(message);
+                setTimeout(function(){
+                    $("#messageAuthor").html('');
+                }, 3000);
             }, 'json'); 
         }
         $("#fAdd #first_name_author").rules("add",{
@@ -271,6 +329,12 @@ $(function(){
             $('#row_' + $(this).val()).removeClass().addClass($('#row_' + $(this).val()).attr('temp'));
         }
     });
+    $('#fAdd input[type=checkbox]').live('click',function(){
+        key = '#' + $(this).attr('id');
+        if ($(key).is(':checked')) {
+            $(key).val(1);
+        }
+    });
     
     /* SET COOKIE */
     Set_Cookie('_page', 1, '', '/', '', '');
@@ -278,7 +342,7 @@ $(function(){
     
     /* PAGING */
     // INDEX
-    $('#paging').live('change',function(){
+    $('#pagePaging').live('change',function(){
         keyID = $(this);
         var page = parseInt($(keyID).val());
         $.get('catalogue/read', {
@@ -289,7 +353,7 @@ $(function(){
         }, 'json');
     });
     $('#prevPaging').live('click',function(){
-        keyID = $('#paging');
+        keyID = $('#pagePaging');
         var page = parseInt($(keyID).val())-1;
         if (page>0) {
             $.get('catalogue/read', {
@@ -301,7 +365,7 @@ $(function(){
         }
     });
     $('#nextPaging').live('click',function(){
-        keyID = $('#paging');
+        keyID = $('#pagePaging');
         var page = parseInt($(keyID).val())+1;
         if (page<$('#maxPaging').val()) {
             $.get('catalogue/read', {
@@ -517,7 +581,7 @@ $(function(){
             $('#listAuthorSelected tbody').html(html);
         }
     });
-    */
+     */
     $('#list1 tbody tr[isa=option]').live('click',function(){
         id = $(this).attr('value');
         tempSelectId = $('#tempSelectId1').val();
@@ -563,10 +627,110 @@ $(function(){
         $('#row_' + id).removeClass().addClass('selected');
         
         if (id != tempSelectId) {
-            $('#preview_call_number #print_row_1').html(callNumber);
+            $('.print_row_1').html(callNumber);
         }
     });
     
 });
 
 
+function generateCatalogue() {
+    var contentRow1 = '';
+    var contentRow2 = '';
+    var contentRow3 = '';
+    
+    var tempJudul = $('#title').val();
+    var tempAnakJudul = $('#sub_title').val();
+    var tempJudulBahasaLain = $('#foreign_title').val();
+    var tempEdisi = $('#edition').val();
+    var tempCetakan = $('#print_out').val();
+    var tempKota = $('#city option:selected').text();
+    var tempPenerbit = $('#publisher option:selected').text();
+    var tempTahun = $('#year option:selected').text();
+    
+    var tempHalamanRomawi = $('#roman_count').val();
+    var tempHalamanAngka = $('#page_count').val();
+    var tempIlustrasi = $('#ilustration').is(':checked');
+    var tempLebar = $('#width').val();
+    
+    var tempBiblliografi = $('#bibliography').val();
+    var tempIndex = $('#ilustration').is(':checked');
+    var tempISBN = $('#isbn').val();
+    
+    var judul = tempJudul;
+    var anakJudul = '';
+    var judulBahasaLain = '';
+    var author = '<span class="viewListAuthorTemp"></span>';
+    var edisi = '';
+    var cetakan = '';
+    var penerbit = '';
+    
+    var halamanRomawi = '';
+    var halamanAngka = '';
+    var ilustrasi = '';
+    var lebar = '';
+    
+    var biblliografi = '';
+    var index = '';
+    var ISBN = '';
+    
+    var sparator1 = '';
+    var sparator2 = '';
+    
+    if (tempAnakJudul != '')
+        anakJudul = ' : ' + tempAnakJudul;
+    
+    if (tempJudulBahasaLain != '')
+        judulBahasaLain = ' = ' + tempJudulBahasaLain;
+    
+    if (tempEdisi != '')
+        edisi = '.&HorizontalLine; Ed. ' + tempEdisi;
+    
+    if (tempEdisi != '' && tempCetakan != '')
+        sparator1 = ',';
+    
+    if (tempCetakan != '')
+        cetakan = ' cet. ' + tempCetakan;
+    
+    if (tempHalamanRomawi != '')
+        halamanRomawi = tempHalamanRomawi;
+    
+    if (tempHalamanRomawi != '' && tempHalamanAngka != '')
+        sparator2 = ',';
+    
+    if (tempHalamanAngka != '')
+        halamanAngka = ' ' + tempHalamanAngka + ' hlm.';
+    
+    if (tempIlustrasi)
+        ilustrasi = ' : ilus.';
+    
+    if (tempLebar != '')
+        lebar = ' ; ' + tempLebar + ' cm&DiacriticalAcute;';
+    
+    if (tempBiblliografi != '')
+        biblliografi = 'Biblliografi : ' + tempBiblliografi + ' <br>';
+    
+    if (tempIndex)
+        index = 'Indeks <br>';
+    
+    if (tempISBN != '')
+        ISBN = 'ISBN ' + tempISBN + ' <br>';
+    
+    penerbit = '.&HorizontalLine; ' + tempKota + ' : ' + tempPenerbit + ', ' + tempTahun + '. ';
+    
+    contentRow1 = judul + anakJudul + judulBahasaLain + author + edisi + sparator1 + cetakan + penerbit;
+    
+    contentRow2 = halamanRomawi + sparator2 + halamanAngka + ilustrasi + lebar;
+    
+    contentRow3 = biblliografi + index + ISBN;
+    
+    $('.contentRow1').html(contentRow1);
+    $('.contentRow2').html(contentRow2);
+    $('.contentRow3').html(contentRow3);
+    
+    $.get('getAuhtorTemp', {
+        sa : $('#sessionAuthor').val()
+    }, function(o){
+        $('.viewListAuthorTemp').html(o) ;
+    }, 'json');
+}

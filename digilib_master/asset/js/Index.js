@@ -4,6 +4,7 @@
  */
 
 $(function(){
+    $('#username').focus();
     
     $('#fLogin').live('submit',function(){
         frmID = $(this);

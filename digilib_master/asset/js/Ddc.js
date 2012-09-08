@@ -109,6 +109,7 @@ $(function(){
         $.post(url, data, function(o){
             if (o[0]) {
                 if (o[1]) {
+                    $('#description').elrte('val',' ');
                     $(frmID)[0].reset();
                 }
             }
