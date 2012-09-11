@@ -32,7 +32,6 @@
                 Form::create('button', 'btnAddData');
                 Form::value('Add Data');
                 Form::style('action_add');
-                Form::properties(array('link'=>$link_add));
                 Form::commit();
                 Form::create('button', 'btnDeleteData');
                 Form::value('Delete');
@@ -50,14 +49,8 @@
                         Form::commit();
                         ?>
                     </th>
-                    <th style="width: 90px;display: none;">Nomor</th>
-                    <th style="width: 90px;">Call Number</th>
-                    <th>Detail Buku</th>
-                    <th style="width: 90px;">Asal</th>
-                    <th style="width: 150px;">Sumber</th>
-                    <th style="width: 60px;">Eksemplar</th>
-                    <th style="width: 60px;">Pinjam</th>
-                    <th style="width: 75px;">Tanggal</th>
+                    <th style="width: 250px;">Nama</th>
+                    <th>Profile</th>
                     <th style="width: 100px;">Action</th>
                 </tr>
             </thead>

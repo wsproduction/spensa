@@ -16,7 +16,7 @@ switch (Web::getSubDomain()) {
         Web::child('OPERATOR DIGITAL LIBRARY', 'operator', 'digilib_master', 'demo');
         break;
     case 'hots':
-        Web::main('HOTS', 'hots', 'demo');
+        Web::main('HOTS', 'hots', 'wbfashion');
         Web::child('HOTS ADMINISTRATOR', 'admin', 'demo', 'demo');
         break;
     case 'demo':

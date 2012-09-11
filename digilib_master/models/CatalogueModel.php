@@ -283,13 +283,15 @@ class CatalogueModel extends Model {
                             digilib_book_register(
                             book_register_id,
                             book_id,
-                            book_condition)
+                            book_condition,
+                            entry_date)
                         VALUES(
                             (SELECT IF (
                             (SELECT COUNT(cdm.book_register_id) FROM digilib_book_register AS cdm WHERE cdm.book_register_id  LIKE  "' . $book_id . '%") > 0,
                             (SELECT ( dm.book_register_id + 1 ) FROM digilib_book_register AS dm WHERE dm.book_register_id  LIKE  "' . $book_id . '%" ORDER BY dm.book_register_id DESC LIMIT 1), "' . $book_id . '001")),
                             "' . $book_id . '",
-                            "1");';
+                            "1",
+                            NOW());';
             }
         }
 

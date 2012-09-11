@@ -248,7 +248,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Sumber</td>
+                    <td>Asal</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -260,7 +260,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Sumber Dana</td>
+                    <td>Sumber</td>
                     <td>:</td>
                     <td>
                         <?php

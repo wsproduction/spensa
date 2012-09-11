@@ -259,7 +259,7 @@ class Catalogue extends Controller {
                 Form::value($tmpID);
                 $html .= Form::commit('attach');
                 $html .= '  </td>';
-                $html .= '  <td valign="top" style="text-align: center;">' . $value['book_id'] . '</td>';
+                $html .= '  <td valign="top" style="text-align: center;display:none;">' . $value['book_id'] . '</td>';
                 $html .= '  <td valign="top" style="text-align: left;">';
                 $html .= '      <div style="margin:0 15px;">';
                 $html .= '          <div>' . $callNumberRow1 . '</div>';
@@ -270,14 +270,10 @@ class Catalogue extends Controller {
                 $html .= '  <td valign="top" style="text-align: left;">' . $keterangan_buku . '</td>';
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['resource_name'] . '</td>';
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['fund_name'] . '</td>';
-                $html .= '  <td valign="top">';
-                $html .= '      <div style="float:left;">Rp.</div>';
-                $html .= '      <div style="float:right;">' . $this->content->numberFormat($value['book_price']) . '</div>';
-                $html .= '  </td>';
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['book_quantity'] . '</td>';
+                $html .= '  <td valign="top" style="text-align: center;">-</td>';
                 $html .= '  <td valign="top" style="text-align: center;">';
-                $html .= '      <div>' . date('l', strtotime($value['book_entry_date'])) . '</div>';
-                $html .= '      <div>' . date('d-m-Y', strtotime($value['book_entry_date'])) . '</div>';
+                $html .=        date('d/m/Y', strtotime($value['book_entry_date']));
                 $html .= '  </td>';
                 $html .= '  <td valign="top" style="text-align: center;">';
                 $html .= URL::link($this->content->setLink('catalogue/edit/' . $tmpID), 'Edit', 'attach') . ' | ';

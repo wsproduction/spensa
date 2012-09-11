@@ -50,14 +50,13 @@
                         Form::commit();
                         ?>
                     </th>
-                    <th style="width: 90px;display: none;">Nomor</th>
-                    <th style="width: 90px;">Call Number</th>
-                    <th>Detail Buku</th>
-                    <th style="width: 90px;">Asal</th>
-                    <th style="width: 150px;">Sumber</th>
-                    <th style="width: 60px;">Eksemplar</th>
-                    <th style="width: 60px;">Pinjam</th>
-                    <th style="width: 75px;">Tanggal</th>
+                    <th style="width: 100px;">No. Indux</th>
+                    <th style="width: 100px;">Call Number</th>
+                    <th>Detail</th>
+                    <th style="width: 100px;">Kondisi</th>
+                    <th style="width: 100px;">Tanggal</th>
+                    <th style="width: 100px;">Status</th>
+                    <th style="width: 100px;">Pinj. Terakhir</th>
                     <th style="width: 100px;">Action</th>
                 </tr>
             </thead>

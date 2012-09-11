@@ -7,10 +7,16 @@ class CollectionModel extends Model {
     }
 
     public function selectAll($start = 1, $count = 100) {
-        $sth = $this->db->prepare('SELECT *
+        $sth = $this->db->prepare('SELECT 
+                                        dbr.book_register_id,
+                                        dbr.book_id,
+                                        (SELECT dbc.book_condition FROM digilib_book_condition AS dbc WHERE dbc.book_condition_id = dbr.book_condition) AS book_con,
+                                        dbr.entry_date,
+                                        dbr.last_borrow,
+                                        dbr.borrow_status
                                    FROM
-                                        digilib_author
-                                   ORDER BY author_first_name LIMIT ' . $start . ',' . $count);
+                                        digilib_book_register AS dbr
+                                   ORDER BY dbr.book_register_id LIMIT ' . $start . ',' . $count);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -33,7 +39,7 @@ class CollectionModel extends Model {
     }
 
     public function countAll() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_author');
+        $sth = $this->db->prepare('SELECT * FROM digilib_book_register');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->rowCount();

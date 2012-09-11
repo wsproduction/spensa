@@ -14,10 +14,10 @@ class Collection extends Controller {
     }
     
     public function index() {
-        Web::setTitle('List of Authors');
+        Web::setTitle('Daftar Koleksi Buku');
         $this->view->link_add = $this->content->setLink('author/add');
         $this->view->listData = $this->listData();
-        $this->view->render('author/index');
+        $this->view->render('collection/index');
     }
     
     public function add() {
@@ -44,7 +44,7 @@ class Collection extends Controller {
         $maxRows = 10;
         $countList = $this->model->countAll();
         $countPage = ceil($countList / $maxRows);
-        $jumlah_kolom = 4;
+        $jumlah_kolom = 9;
 
         $ddcList = $this->model->selectAll(($page * $maxRows) - $maxRows, $maxRows);
         $html = '';
@@ -54,12 +54,17 @@ class Collection extends Controller {
             $idx = 1;
             $id = '0';
             foreach ($ddcList as $value) {
-                $tmpID = $value['author_id'];
+                $tmpID = $value['book_register_id'];
                 $id .= ',' . $tmpID;
 
                 $tr_class = 'ganjil';
                 if ($idx % 2 == 0) {
                     $tr_class = 'genap';
+                }
+                
+                $sts = 'Ada';
+                if ($value['borrow_status']){
+                    $sts = 'Dipinjam';
                 }
 
                 $html .= '<tr class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '">';
@@ -69,8 +74,16 @@ class Collection extends Controller {
                 Form::value($tmpID);
                 $html .= Form::commit('attach');
                 $html .= '  </td>';
-                $html .= '  <td style="text-align: left;">' . $value['author_first_name'] . ' ' . $value['author_last_name'] . '</td>';
-                $html .= '  <td>' . $value['author_profile'] . '</td>';
+                $html .= '  <td style="text-align: center;">' . $tmpID . '</td>';
+                $html .= '  <td></td>';
+                $html .= '  <td></td>';
+                $html .= '  <td style="text-align: center;">' . $value['book_con'] . '</td>';
+                $html .= '  <td style="text-align: center;">' . date('d/m/Y', strtotime($value['entry_date'])) . '</td>';
+                $html .= '  <td style="text-align: center;">' . $sts . '</td>';
+                $html .= '  <td style="text-align: center;">';
+                        if ($value['last_borrow']==NULL)
+                            $html .= date('d/m/Y',  strtotime ($value['last_borrow']));
+                $html .= '  </td>';
                 $html .= '  <td style="text-align: center;">';
                 $html .= URL::link($this->content->setLink('author/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
                 $html .= URL::link($this->content->setLink('author/edit/' . $tmpID), 'Detail', 'attach');

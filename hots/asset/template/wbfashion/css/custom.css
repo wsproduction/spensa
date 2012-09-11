@@ -1,0 +1,175 @@
+.form-login {
+    border: 1px solid #ccc;
+    width: 325px;
+    margin: 20px 0;
+    padding: 20px;
+    text-align: left;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+
+    -moz-box-shadow:    0px 0px 6px 1px #ccc;
+    -webkit-box-shadow: 0px 0px 6px 1px #ccc;
+    box-shadow:         0px 0px 6px 1px #ccc;
+}
+
+.form-login input[type=text], .form-login input[type=password]{
+    padding: 10px;
+    font-size: 16px;
+    width: 300px;
+}
+
+.form-login input[type=submit] {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    font-weight: bold;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+div.box-list {
+    padding: 4px 4px 4px 0;
+}
+
+div.box-list div.box-content {
+    width: 580px;
+    padding:10px;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow:    0px 0px 6px 1px #ccc;
+    -webkit-box-shadow: 0px 0px 6px 1px #ccc;
+    box-shadow:         0px 0px 6px 1px #ccc;
+    margin: 10px 0;
+}
+
+div.box-list div.box-content div.box-main {
+    text-align: justify;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 14px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+}
+
+div.box-list div.box-content div.box-main div.box-time {
+    text-align: center;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+div.box-list div.box-content div.box-main div.box-time div.count-down {
+    float: left;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 8px;
+    font-weight: none;
+    width: 64px;
+    height: 64px;
+    margin: 5px;
+    background: url('../images/calendar-icon-64x64.png') no-repeat;
+}
+
+div.box-list div.box-content div.box-main div.box-time div.count-down div {
+    font-weight: bold;
+    font-size: 30px;
+    margin-top: 23px;
+    margin-bottom: 2px;
+}
+
+div.box-list div.box-content div.box-main div.box-time div.box-info {
+    float: right;
+    width: 490px;
+    height: 62px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+div.box-list div.box-content div.box-main div.box-time div.box-info table{
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+}
+
+div.box-list div.box-content div.box-main div.box-time div.box-info table th{
+    background: #78ac70;
+    color: #fff;
+    padding: 7px;
+    width: 100px;
+}
+
+div.box-list div.box-content div.box-main div.box-time div.box-info table td{
+    background: #dcf3d8;
+    color: #000;
+    padding: 7px;
+}
+
+div.box-list div.box-content div.box-main div.box-qustion {
+    border-top: 1px dashed #ccc;
+    padding: 10px;
+}
+
+div.box-list div.box-content div.box-main div.box-qustion fieldset {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+div.box-list div.box-content div.box-main div.box-qustion fieldset legend {
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    padding: 0 5px;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+div.box-list div.box-content div.box-button {
+    text-align: right;
+    border-top: 1px dashed #ccc;
+    padding-top: 5px;
+    margin-top: 8px;
+}
+
+div.box-list div.box-content div.box-button div.left {
+    float: left;
+}
+
+div.box-list div.box-content div.box-button div.right {
+    float: right;
+}
+
+input[class=optFollow], input[class=optSubmit] {
+    border: 1px solid #147b03;
+    padding: 4px 10px;
+    cursor: pointer;
+    color: #fff;
+    background: #1ed100;
+    text-shadow: 1px 1px 1px #147b03;
+}
+
+input[class=optFollowDisabled] {
+    border: 1px solid #a8c4a3;
+    padding: 4px 10px;
+    cursor: pointer;
+    color: #78ac70;
+    background: #d5edd1;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+input[class=optFollow]:hover, input[class=optSubmit]:hover {
+    background: #23ef01;
+}
+
+label.error {
+    font-size: 11px;
+    color:red;
+    font-family: Arial,Helvetica,sans-serif;
+}
