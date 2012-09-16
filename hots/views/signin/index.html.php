@@ -4,12 +4,13 @@
             <h2 class="no-border">SIGN IN</h2>
             <div class="cl">&nbsp;</div>
             <?php
-            Form::begin('login', 'login/run', 'post');
+            Form::begin('fLogin', 'signin/run', 'post', true);
             ?>
+            <div class="view-message"></div>
             <div style="margin-top: 5px;">NOMOR INDUX SISWA</div>
             <div>
                 <?php
-                Form::create('text', 'username');
+                Form::create('text', 'nis');
                 Form::tips('Please enter username');
                 Form::commit();
                 ?>
@@ -27,10 +28,10 @@
                 Form::create('submit');
                 Form::value('Login');
                 Form::commit();
-                
+
                 echo '&nbsp; | ';
-                
-                URL::link('hhtp://' . Web::$host . 'fogrgot', 'Forgot Password');
+
+                URL::link('http://' . Web::$host . 'fogrgot', 'Forgot Password');
                 ?>
             </div>
             <?php

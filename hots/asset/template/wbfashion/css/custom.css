@@ -173,3 +173,142 @@ label.error {
     color:red;
     font-family: Arial,Helvetica,sans-serif;
 }
+
+table.statistic {
+    margin: 5px 0 30px 0;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+}
+
+table.statistic th {
+    width: 100px;
+    padding: 4px;
+    text-align: left;
+}
+
+table.statistic td {
+    padding: 4px;
+}
+
+div.box_message {
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    padding: 5px 5px 5px 70px;
+    min-height: 50px;
+    margin: 5px 0;
+}
+
+div.error {
+    border: 1px solid #e8aaad;
+    background: url('../images/comment_error.png') no-repeat;
+    background-color: #f9e5e6;
+}
+
+div.error div.title_message_error {
+    color: #b50007;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+div.error div.description_message_error {
+    color: #b50007;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+div.succes {
+    border: 1px solid #b4e8aa;
+    background: url('../images/comment_add.png') no-repeat;
+    background-color: #e9f9e5;
+}
+
+div.succes div.title_message_sucess {
+    color: #1c8400;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+div.navtab-header {
+    background: #ddd;
+    padding: 4px 4px 0 4px;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+div.navtab-header ul {
+    list-style: none;
+}
+
+div.navtab-header li {
+    float: left;
+    margin-right: 4px;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+div.navtab-header li a {
+    background: #f7f7f7;
+    padding: 8px;
+    display: block;
+}
+
+div.navtab-content {
+    padding: 8px;
+    border: 1px solid #ccc;
+}
+
+table.my-grid {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 10px;
+}
+
+table.my-grid thead tr {
+    background: #f7f7f7;
+}
+
+table.my-grid thead th {
+    padding: 5px;
+    border-top: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+table.my-grid thead th.first, table.my-grid tbody td.first {
+    border-left: 1px solid #ccc;
+}
+
+table.my-grid tbody td {
+    padding : 5px;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.icon-file {
+    clear: both;
+    margin-top : 10px;
+}
+
+.icon-file img {
+    float: left;
+    border: 1px solid #ccc;
+    padding: 4px 2px;
+}
+
+.icon-file .info-file {
+    float: left;
+    margin-left: 4px;
+}
+
+.icon-file .opsi-file {
+    margin-top: 4px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+}

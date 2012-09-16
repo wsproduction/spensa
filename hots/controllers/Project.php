@@ -1,6 +1,6 @@
 <?php
 
-class Subject extends Controller {
+class Project extends Controller {
 
     public function __construct() {
         parent::__construct();
@@ -11,46 +11,31 @@ class Subject extends Controller {
         Src::plugin()->elrte();
         Src::plugin()->jQueryForm();
         Src::plugin()->jQueryValidation();
-    }
-
-    public function index() {
-        Web::setTitle('Beranda');
-        $this->view->render('laporan/guru');
+        Src::plugin()->jQueryBase64();
     }
 
     public function view($id = 0) {
-        $subject = $this->model->selectSubjectById($id);
-        Web::setTitle('List of ' . $subject[0]['subject_title'] . ' Question');
-        $this->view->listDataQuestion = $this->listDataQuestion($id);
-        $this->view->render('subject/index');
-    }
-
-    public function follow($id = 0) {
 
         if (!Session::get('loginStatus')) {
             $this->url->redirect('http://' . Web::$host . '/signin');
             exit;
         }
 
-        $dataAnswer = $this->model->cekProject($id);
-        if ($dataAnswer) {
-            if (count($dataAnswer) > 0) {
-                $this->url->redirect('http://' . Web::$host . '/project/view/' . $dataAnswer[0]['answer_id']);
-            }
+        $data = $this->model->selectAnswerById($id);
+
+        if (count($data) > 0) {
+            $this->view->listData = $data[0];
+            $qid = $data[0]['question_id'];
+            $subject = $this->model->selectSubjectById($qid);
+            Web::setTitle('Project of ' . $subject[0]['subject_title'] . ' Question');
+
+            $listDataQuestion = $this->model->selectDataQuestionByID($qid);
+            $this->view->listDataQuestion = $listDataQuestion[0];
+
+            $this->view->countFollower = $this->model->countFollowers($qid);
+
+            $this->view->render('project/view');
         }
-
-        $subject = $this->model->selectSubjectById($id);
-        Web::setTitle('Follow of ' . $subject[0]['subject_title'] . ' Question');
-
-        $listDataQuestion = $this->model->selectDataQuestionByID($id);
-        $this->view->listDataQuestion = $listDataQuestion[0];
-
-        $this->view->countFollower = $this->model->countFollowers($id);
-        $this->view->questionID = $id;
-
-        $this->view->answer = $this->model->selectMyAnswer($id);
-
-        $this->view->render('subject/follow');
     }
 
     public function listDataQuestion($id = 0, $page = 1) {
@@ -140,10 +125,38 @@ class Subject extends Controller {
     }
 
     public function answer() {
-        if ($this->model->answerSave()) {
-            echo 'Sukses';
+        if ($this->model->answerUpdate()) {
+            $re = '{s:1, link: "' . base64_encode('http://' . Web::$host . '/account') . '"}';
         } else {
-            echo 'Failed';
+            $re = '{s:1}';
+        }
+        echo $re;
+    }
+
+    public function deleteFile() {
+        if ($this->model->deleteFile()) {
+            $re = true;
+        } else {
+            $re = false;
+        }
+        echo json_encode($re);
+    }
+
+    public function download($filename = '') {
+        $download_path = Web::path() . 'asset/upload/file/';
+        $args = array(
+            'download_path' => $download_path,
+            'file' => $filename,
+            'extension_check' => TRUE,
+            'referrer_check' => FALSE,
+            'referrer' => NULL,
+        );
+        $download = Src::plugin()->PHPDownloader();
+        $download->set_args($args);
+        $download_hook = $download->get_download_hook();
+        if ($download_hook['download'] == TRUE) {
+            /* Let's download file */
+            $download->get_download();
         }
     }
 

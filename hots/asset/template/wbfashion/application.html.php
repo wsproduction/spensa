@@ -32,8 +32,15 @@
                 <div class="right-part">
                     <p>
                         <?php
-                        URL::link('http://' . Web::$host . '/signin', 'sign in');
-                        URL::link('http://' . Web::$host . '/signup', 'create account');
+                        if (Session::get('loginStatus')) {
+                            echo 'Welcome, <b>' . Session::get('name') . '</b>';
+                            echo '&nbsp;&nbsp;&nbsp; |';
+                            URL::link('http://' . Web::$host . '/account', 'Account');
+                            
+                            URL::link('http://' . Web::$host . '/signin/stop', 'Sign Out');
+                        } else {
+                            URL::link('http://' . Web::$host . '/signin', 'sign in');
+                        }
                         ?>
                     </p>
                     <form action="" class="search" method="post">
@@ -51,10 +58,10 @@
                 <div class="inner">
                     <ul>
                         <li><?php URL::link('http://' . Web::$host . '/index', 'Home'); ?></li>
-                        <li><?php URL::link('http://' . Web::$host . '/signin', 'Hots News'); ?></li>
-                        <li><?php URL::link('http://' . Web::$host . '/signin', 'Help'); ?></li>
-                        <li><?php URL::link('http://' . Web::$host . '/signin', 'About Us'); ?></li>
-                        <li><?php URL::link('http://' . Web::$host . '/signin', 'Testimony'); ?></li>
+                        <li><?php URL::link('http://' . Web::$host . '/news', 'Hots News'); ?></li>
+                        <li><?php URL::link('http://' . Web::$host . '/help', 'Help'); ?></li>
+                        <li><?php URL::link('http://' . Web::$host . '/aboutus', 'About Us'); ?></li>
+                        <li><?php URL::link('http://' . Web::$host . '/testimony', 'Testimony'); ?></li>
                     </ul>
                 </div>
             </div>
@@ -77,40 +84,30 @@
                             <?php echo $hotsSubject; ?>
                         </ul>
                         <h2>HOTS STATISTIC</h2>
-                        <ul class="blue">
-                            <li><a href="#">Lorem ipsum dolor sit amet, consectetur <br />adipiscing elit. </a></li>
-                            <li><a href="#">Summer uni 2009!</a></li>
-                            <li><a href="#">The singular suit project</a></li>
-                            <li><a href="#">Eva models</a></li>
-                            <li><a href="#">Try me by faah damji</a></li>
-                            <li><a href="#">Purus vitae urna molesti </a></li>
-                            <li><a href="#">Quisque elementum purus vita</a></li>
-                            <li><a href="#">Ipsum dolor sit consectetur</a></li>
-                            <li><a href="#">Ac diam pulvinar porttitor</a></li>
-                        </ul>
+                        <div class="blue">
+                            <br />Unserconstruction!!!<br /><br />
+                            <table class="statistic" style="display: none;">
+                                <tr>
+                                    <th>Onlie</th>
+                                    <td>:</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <th>Today Visitor</th>
+                                    <td>:</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <th>Total Visitor</th>
+                                    <td>:</td>
+                                    <td>2</td>
+                                </tr>
+                            </table>
+                        </div>
                         <h2>HOTS ROLL</h2>
                         <ul class="blue">
-                            <li>
-                                <small>21.05.09 | posted by <a href="#">admin</a></small>
-                                <a href="#">Lorem ipsum dolor sit amet, consectetur <br />adipiscing elit. </a>
-                            </li>
-                            <li>
-                                <small>21.05.09 | posted by <a href="#">admin</a></small>
-                                <a href="#">Nulla ipsum magna pellentesque et imperdiet<br /> eget, intercedm sed neque </a>
-                            </li>
-                            <li>
-                                <small>21.05.09 | posted by <a href="#">admin</a></small>
-                                <a href="#">Consecettur adipsicing elit pellentesque turpis<br /> unra tempus.</a>
-                            </li>
-                            <li>
-                                <small>21.05.09 | posted by <a href="#">admin</a></small>
-                                <a href="#">Curabitu eleifend , diam ac pulvinar portititor, <br />massa elit lobortis ligula a blandit</a>
-                            </li>
-                            <li>
-                                <small>21.05.09 | posted by <a href="#">admin</a></small>
-                                <a href="#">Lorem ipsum dolor sit amet, consectetur <br />adipiscing elit. </a>
-                            </li>
-                            <li>
+                            Unserconstruction!!!
+                            <li style="display: none;">
                                 <small>21.05.09 | posted by <a href="#">admin</a></small>
                                 <a href="#">Lorem ipsum dolor sit amet, consectetur <br />adipiscing elit. </a>
                             </li>
@@ -126,7 +123,7 @@
             <!-- Footer -->
             <div id="footer">
                 <div class="right-area">
-                    <p>HOTS SPENSA &copy; 2012 | Develop By <a href="#">Warman Suganda</a>  |  Design by <a href="http://chocotemplates.com">ChocoTemplates.com</a></p>
+                    <p>HOTS SPENSA &copy; 2012 | Develop By <a href="#">Warman Suganda</a></p>
                 </div>
                 <div class="cl">&nbsp;</div>
             </div>

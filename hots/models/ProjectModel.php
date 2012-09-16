@@ -1,6 +1,6 @@
 <?php
 
-class SubjectModel extends Model {
+class ProjectModel extends Model {
 
     public function __construct() {
         parent::__construct();
@@ -13,7 +13,7 @@ class SubjectModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectAllQuestion($id = 0, $start = 1, $count = 100) {
+    public function selectAllQuestion($id = 0) {
         $sth = $this->db->prepare('
                                     SELECT 
                                         hots_question.question_id,
@@ -28,6 +28,26 @@ class SubjectModel extends Model {
                                         hots_question 
                                     WHERE 
                                         question_subject = :id');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array(':id' => $id));
+        return $sth->fetchAll();
+    }
+
+    public function selectAnswerById($id = 0) {
+        $sth = $this->db->prepare('
+                                    SELECT 
+                                        hots_answer.answer_id,
+                                        hots_answer.student_id,
+                                        hots_answer.question_id,
+                                        hots_answer.answer_content,
+                                        hots_answer.answer_file,
+                                        hots_answer.answer_date,
+                                        hots_answer.answer_score,
+                                        hots_answer.answer_status
+                                    FROM
+                                        hots_answer
+                                    WHERE
+                                        hots_answer.answer_id = :id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array(':id' => $id));
         return $sth->fetchAll();
@@ -58,24 +78,6 @@ class SubjectModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectMyAnswer($id = 0) {
-        $sth = $this->db->prepare('SELECT 
-                                        hots_answer.answer_id,
-                                        hots_answer.student_id,
-                                        hots_answer.question_id,
-                                        hots_answer.answer_content,
-                                        hots_answer.answer_file,
-                                        hots_answer.answer_date,
-                                        hots_answer.answer_score,
-                                        hots_answer.answer_status
-                                    FROM
-                                        hots_answer 
-                                    WHERE hots_answer.question_id = :id');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute(array(':id' => $id));
-        return $sth->fetchAll();
-    }
-
     public function countFollowers($id = 0) {
         $sth = $this->db->prepare('SELECT * FROM hots_answer WHERE question_id = :id AND answer_status NOT IN (1,5);');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
@@ -83,34 +85,24 @@ class SubjectModel extends Model {
         return $sth->rowCount();
     }
 
-    public function answerSave() {
-        Session::init();
-        $student_id = Session::get('id');
-        $question_id = $this->method->post('question_id');
+    public function answerUpdate() {
+        
+        $answer_id = $this->method->post('answer_id');
         $text_answer = $this->method->post('text_answer');
 
-        $sth = $this->db->prepare('INSERT INTO
-                                        hots_answer(
-                                        student_id,
-                                        question_id,
-                                        answer_content,
-                                        answer_date,
-                                        answer_score,
-                                        answer_status)
-                                    VALUES(
-                                        :student_id,
-                                        :question_id,
-                                        :text_answer,
-                                        NOW(),
-                                        0,
-                                        1)');
+        $sth = $this->db->prepare('UPDATE
+                                        hots_answer
+                                    SET
+                                        answer_content = :text_answer,
+                                        answer_date = NOW()
+                                    WHERE
+                                        hots_answer.answer_id = :id');
 
-        $sth->bindValue(':student_id', $student_id, PDO::PARAM_NULL);
-        $sth->bindValue(':question_id', $question_id, PDO::PARAM_NULL);
+        $sth->bindValue(':id', $answer_id, PDO::PARAM_NULL);
         $sth->bindValue(':text_answer', $text_answer, PDO::PARAM_NULL);
 
         if ($sth->execute()) {
-            $lastAnswerID = $this->db->lastInsID('answer_id', 'hots_answer');
+            $lastAnswerID = $answer_id;
 
             $upload = Src::plugin()->PHPUploader();
             if ($this->method->files('file_answer', 'tmp_name')) {
@@ -145,17 +137,30 @@ class SubjectModel extends Model {
         }
     }
 
-    public function cekProject($id) {
-        Session::init();
-        $student = Session::get('id');
-        $sth = $this->db->prepare('SELECT * FROM hots_answer WHERE hots_answer.question_id=:id AND hots_answer.student_id=:student');
-        $sth->bindValue(':id', $id);
-        $sth->bindValue(':student', $student);
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        if ($sth->execute())
-            return $sth->fetchAll();
-        else 
+    public function deleteFile() {
+
+        $filename = Web::path() . 'asset/upload/file/' . $this->method->post('file');
+        $id = $this->method->post('id');
+
+        $upload = Src::plugin()->PHPUploader();
+        $upload->RemoveFile($filename);
+
+        if (!file_exists($filename)) {
+            $sth = $this->db->prepare('UPDATE
+                                        hots_answer
+                                    SET
+                                        answer_file = NULL
+                                    WHERE
+                                        hots_answer.answer_id = :id');
+            $sth->bindValue(':id', $id);
+            if ($sth->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
             return false;
+        }
     }
 
 }
