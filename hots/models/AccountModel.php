@@ -2,6 +2,8 @@
 
 class AccountModel extends Model {
 
+    public $fileNameAvatar;
+
     public function __construct() {
         parent::__construct();
         Session::init();
@@ -20,7 +22,8 @@ class AccountModel extends Model {
                                         hots_answer_status.answer_status,
                                         hots_question.question_start_date,
                                         hots_question.question_end_date,
-                                        hots_subject.subject_title
+                                        hots_subject.subject_title,
+                                        DATEDIFF(hots_question.question_end_date,NOW()) AS range_date 
                                     FROM
                                         hots_answer
                                     INNER JOIN hots_answer_status ON (hots_answer.answer_status = hots_answer_status.answer_status_id)
@@ -28,7 +31,7 @@ class AccountModel extends Model {
                                     INNER JOIN hots_subject ON (hots_question.question_subject = hots_subject.subject_id)
                                     WHERE
                                         hots_answer.student_id = :id
-                                    ORDER BY hots_answer.answer_id DESC');
+                                    ORDER BY range_date DESC');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array(':id' => Session::get('id')));
         return $sth->fetchAll();
@@ -41,8 +44,14 @@ class AccountModel extends Model {
         return $sth->rowCount();
     }
 
+    public function selectStudentById() {
+        $sth = $this->db->prepare('SELECT * FROM public_student WHERE public_student.student_id = :id');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute(array(':id' => Session::get('id')));
+        return $sth->fetchAll();
+    }
+
     public function cekPassword() {
-        Session::init();
         $id = Session::get('id');
         $old_password = $this->method->post('old_password');
 
@@ -59,7 +68,6 @@ class AccountModel extends Model {
     }
 
     public function saveChangePassword() {
-        Session::init();
         $id = Session::get('id');
         $conf_password = $this->method->post('conf_password');
 
@@ -77,9 +85,67 @@ class AccountModel extends Model {
             return false;
         }
     }
-    
+
     public function saveAvatar() {
-        
+        $upload = Src::plugin()->PHPUploader();
+        if ($this->method->files('avatar', 'tmp_name')) {
+            $upload->SetFileName($this->method->files('avatar', 'name'));
+            $upload->ChangeFileName('avatar_' . date('Ymd') . time());
+            $upload->SetTempName($this->method->files('avatar', 'tmp_name'));
+            $upload->SetUploadDirectory(Web::path() . 'asset/upload/images/'); //Upload directory, this should be writable
+            if ($upload->UploadFile()) {
+                $tempOld = $this->selectStudentById();
+                $this->fileNameAvatar = $upload->GetFileName();
+                $newAvatar = Web::path() . 'asset/upload/images/' . $this->fileNameAvatar;
+
+                $rezImg = Src::plugin()->PHPImageResize();
+                $rezImg->load($newAvatar);
+                $rezImg->resize(284, 385);
+                $rezImg->save($newAvatar);
+
+                $sth = $this->db->prepare('UPDATE
+                                                public_student
+                                            SET
+                                                student_picture = :avatar
+                                            WHERE
+                                                public_student.student_id = :id');
+                $sth->bindValue(':id', Session::get('id'));
+                $sth->bindValue(':avatar', $this->fileNameAvatar);
+                if ($sth->execute()) {
+                    $tempOldAvatar = 'dumy.jpg';
+                    if ($tempOld[0]['student_picture']) {
+                        $tempOldAvatar = $tempOld[0]['student_picture'];
+                    }
+                    $oldAvatar = Web::path() . 'asset/upload/images/' . $tempOldAvatar;
+                    if (file_exists($oldAvatar))
+                        $upload->RemoveFile($oldAvatar);
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function changeStatus() {
+        list($id, $status) = explode('|', $this->method->post('temp'));
+        $sth = $this->db->prepare('UPDATE
+                                        hots_answer
+                                    SET
+                                        answer_status = :status
+                                    WHERE
+                                        answer_id = :id');
+        $sth->bindValue(':id', $id);
+        $sth->bindValue(':status', $status);
+        if ($sth->execute()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

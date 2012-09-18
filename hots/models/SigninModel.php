@@ -15,8 +15,7 @@ class SigninModel extends Model {
                                     SELECT 
                                         public_student.student_id,
                                         public_student.student_register_number,
-                                        public_student.student_first_name,
-                                        public_student.student_last_name
+                                        public_student.student_full_name
                                     FROM
                                         public_student
                                     WHERE

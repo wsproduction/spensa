@@ -206,7 +206,7 @@ class Contents extends Controller {
         $data = $this->model->selectAllSubject();
         $html = '';
         foreach ($data as $value) {
-            $html .= '<li>' . URL::link('http://' . Web::$host . '/subject/view/' . $value['subject_id'], $value['subject_title'],'attach') . '</li>';
+            $html .= '<li>' . URL::link('http://' . Web::$host . '/subject/view/' . $value['subject_id'], $value['subject_title'],'attach') . ' <span style="font-size:9px;">(' . $value['count_question'] . ')</span>' . '</li>';
         }
         return $html;
     }

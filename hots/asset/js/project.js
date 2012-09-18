@@ -21,7 +21,7 @@ $(function () {
         cssfiles : ['css/elrte-inner.css']
     }
     $('#text_answer').elrte(opts);
-    
+        
     $('#fFollow').live('submit',function(){
         $(this).ajaxSubmit({
             success : function(o) {

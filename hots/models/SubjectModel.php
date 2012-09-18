@@ -23,6 +23,7 @@ class SubjectModel extends Model {
                                         hots_question.question_start_date,
                                         hots_question.question_end_date,
                                         hots_question.question_status,
+                                        hots_question.question_entry,
                                         DATEDIFF(hots_question.question_end_date,NOW()) AS range_date 
                                     FROM 
                                         hots_question 

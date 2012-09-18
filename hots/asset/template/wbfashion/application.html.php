@@ -61,7 +61,6 @@
                         <li><?php URL::link('http://' . Web::$host . '/news', 'Hots News'); ?></li>
                         <li><?php URL::link('http://' . Web::$host . '/help', 'Help'); ?></li>
                         <li><?php URL::link('http://' . Web::$host . '/aboutus', 'About Us'); ?></li>
-                        <li><?php URL::link('http://' . Web::$host . '/testimony', 'Testimony'); ?></li>
                     </ul>
                 </div>
             </div>
@@ -85,7 +84,6 @@
                         </ul>
                         <h2>HOTS STATISTIC</h2>
                         <div class="blue">
-                            <br />Unserconstruction!!!<br /><br />
                             <table class="statistic" style="display: none;">
                                 <tr>
                                     <th>Onlie</th>
@@ -103,10 +101,15 @@
                                     <td>2</td>
                                 </tr>
                             </table>
+                            <div style="height:100px;margin:10px;">
+                            <a href="http://www.alexa.com/siteinfo/hots.smpn1subang.sch.id">
+                            	<script type='text/javascript' src='http://xslt.alexa.com/site_stats/js/s/a?url=hots.smpn1subang.sch.id'></script>
+                            </a>
+                            </div
                         </div>
                         <h2>HOTS ROLL</h2>
                         <ul class="blue">
-                            Unserconstruction!!!
+                            <i>Unserconstruction!!!</i>
                             <li style="display: none;">
                                 <small>21.05.09 | posted by <a href="#">admin</a></small>
                                 <a href="#">Lorem ipsum dolor sit amet, consectetur <br />adipiscing elit. </a>

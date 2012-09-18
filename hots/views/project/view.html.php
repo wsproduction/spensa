@@ -13,7 +13,7 @@
                 <div class="box-time">
                     <div class="count-down">
                         <div>
-                        <?php
+                            <?php
                             $cd = 0;
                             if ($listDataQuestion['range_date'] > 0)
                                 $cd = $listDataQuestion['range_date'];
@@ -53,86 +53,97 @@
                         <div style="margin: 30px 0 0 0;">File Attachment : </div>
                         <div style="margin: 5px 0 10px 0;font-size: 11px;">Suport file extension: .doc, .docx, .pdf, .ppt, .pptx, .xls, .xlsx </div>
                         <?php
-                        if ($listData['answer_file']!='' && file_exists(Web::path() . '/asset/upload/file/' . $listData['answer_file'])) {
-                        ?>
-                        <div class="icon-file">
-                            <?php
-                            list($file_name, $file_ext) = explode('.', $listData['answer_file']);
-                            switch ($file_ext) {
-                                case 'doc':
-                                    echo Src::image('doc.png');
-                                    break;
-                                case 'docx':
-                                    echo Src::image('doc.png');
-                                    break;
-                                case 'pdf':
-                                    echo Src::image('pdf.png');
-                                    break;
-                                case 'ppt':
-                                    echo Src::image('ppt.png');
-                                    break;
-                                case 'xls':
-                                    echo Src::image('xls.png');
-                                    break;
-                            }
+                        if ($listData['answer_file'] != '' && file_exists(Web::path() . '/asset/upload/file/' . $listData['answer_file'])) {
                             ?>
-                            <div class="info-file">
-                                <?php echo $listData['answer_file']; ?>
-                                <div class="opsi-file">
-                                    <?php
-                                    URL::link('#view', 'View');
-                                    echo ' | ';
-                                    URL::link('http://' . Web::$host . '/project/download/' . $listData['answer_file'], 'Download');
-                                    echo ' | ';
-                                    URL::link('#delete', 'Delete');
-                                    ?>
+                            <div class="icon-file">
+                                <?php
+                                list($file_name, $file_ext) = explode('.', $listData['answer_file']);
+                                switch ($file_ext) {
+                                    case 'doc':
+                                        echo Src::image('doc.png');
+                                        break;
+                                    case 'docx':
+                                        echo Src::image('doc.png');
+                                        break;
+                                    case 'pdf':
+                                        echo Src::image('pdf.png');
+                                        break;
+                                    case 'ppt':
+                                        echo Src::image('ppt.png');
+                                        break;
+                                    case 'xls':
+                                        echo Src::image('xls.png');
+                                        break;
+                                }
+                                ?>
+                                <div class="info-file">
+                                    <?php echo $listData['answer_file']; ?>
+                                    <div class="opsi-file">
+                                        <?php
+                                        URL::link('#view', 'View');
+                                        echo ' | ';
+                                        URL::link('http://' . Web::$host . '/project/download/' . $listData['answer_file'], 'Download');
+                                        if ($listData['answer_status'] == 1) {
+                                            echo ' | ';
+                                            URL::link('#delete', 'Delete');
+                                        }
+                                        ?>
+                                    </div>
                                 </div>
+                                <div class="cl">&nbsp;</div>
                             </div>
-                            <div class="cl">&nbsp;</div>
+                            <div class="box-upload" style="display: none;">
+                                <?php
+                            } else {
+                                ?>
+                                <div class="box-upload">
+                                    <?php
+                                }
+                                Form::create('file', 'file_answer');
+                                Form::validation()->accept('doc|docx|pdf|ppt|pptx|xls|xlsx');
+                                Form::commit();
+                                ?>
+                            </div>
                         </div>
-                        <div class="box-upload" style="display: none;">
-                        <?php
-                        } else {
-                        ?>
-                        <div class="box-upload">
-                            <?php
-                        }
-                            Form::create('file', 'file_answer');
-                            Form::validation()->accept('doc|docx|pdf|ppt|pptx|xls|xlsx');
-                            Form::commit();
-                            ?>
-                        </div>
-                    </div>
 
+                    </div>
                 </div>
-            </div>
-            <div class="cl">&nbsp;</div>
-            <div class="box-button">
-                <div class="right">
-                    <?php
-                    Form::create('submit', 'btnSubmit');
-                    Form::value('Save to Project');
-                    Form::style('optSubmit');
-                    Form::commit();
-                    ?>
+                <div class="cl">&nbsp;</div>
+                <div class="box-button">
+                    <div class="right">
+                        <?php
+                        Form::create('submit', 'btnSubmit');
+                        Form::value('Save to Project');
+                        if ($listData['answer_status'] == 1) {
+                            Form::style('optSubmit');
+                        } else {
+                            Form::style('optFollowDisabled');
+                            Form::properties(array('disabled'=>'disabled'));
+                        }
+                        Form::commit();
+                        ?>
+                    </div>
                 </div>
+                <div class="cl">&nbsp;</div>
             </div>
-            <div class="cl">&nbsp;</div>
+            <?php
+            Form::end();
+            ?>
         </div>
-        <?php
-        Form::end();
-        ?>
+        <div class="cl">&nbsp;</div>
+        <!--<iframe src="http://docs.google.com/gview?url=http://ampundeh.files.wordpress.com/2012/04/hipotesis-daur-hidup-dan-konsumsi-serta-tabungan-pada-lansia.docx&embedded=true" style="width:600px; height:500px;" frameborder="0"></iframe>-->
     </div>
-    <div class="cl">&nbsp;</div>
-    <!--<iframe src="http://docs.google.com/gview?url=http://ampundeh.files.wordpress.com/2012/04/hipotesis-daur-hidup-dan-konsumsi-serta-tabungan-pada-lansia.docx&embedded=true" style="width:600px; height:500px;" frameborder="0"></iframe>-->
-</div>
-    
- 
-<div id="file-view">
-    <iframe src="http://docs.google.com/gview?url=http://ampundeh.files.wordpress.com/2012/04/hipotesis-daur-hidup-dan-konsumsi-serta-tabungan-pada-lansia.docx&embedded=true" style="width:600px; height:500px;" frameborder="0"></iframe>
-</div>
-    
-<div id="conf-delete" link="<?php echo 'http://' . Web::$host . '/project/deleteFile'; ?>" aid="<?php echo $listData['answer_id']; ?>" file="<?php echo $listData['answer_file']; ?>">
-    Are you sure to delete this file?
-</div>
-    
+
+
+    <div id="file-view">
+        <?php
+        /*$link_embed = 'http://docs.google.com/gview?url=http://ampundeh.files.wordpress.com/2012/04/hipotesis-daur-hidup-dan-konsumsi-serta-tabungan-pada-lansia.docx&embedded=true';*/
+        $link_embed = 'http://docs.google.com/gview?url=' . 'http://' . Web::$host . '/hots/asset/web/upload/file/' . $listData['answer_file'] . '&embedded=true';
+        ?>
+        <iframe src="<?php echo $link_embed; ?>" style="width:600px; height:500px;" frameborder="0"></iframe>
+    </div>
+
+    <div id="conf-delete" link="<?php echo 'http://' . Web::$host . '/project/deleteFile'; ?>" aid="<?php echo $listData['answer_id']; ?>" file="<?php echo $listData['answer_file']; ?>">
+        Are you sure to delete this file?
+    </div>
+

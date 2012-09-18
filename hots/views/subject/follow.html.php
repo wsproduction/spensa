@@ -53,10 +53,10 @@
                         </div>
                         <div style="margin: 10px 0;">
                             <div style="margin: 30px 0 0 0;">File Attachment : </div>
-                            <div style="margin: 5px 0 10px 0;font-size: 11px;">Suport file extension: .doc, .docx, .pdf, .ppt </div>
+                            <div style="margin: 5px 0 10px 0;font-size: 11px;">Suport file extension: .doc, .docx, .pdf, .ppt, .pptx, .xls, .xlsx </div>
                             <?php
                             Form::create('file', 'file_answer');
-                            Form::validation()->accept('doc|docx|pdf|ppt');
+                            Form::validation()->accept('doc|docx|pdf|ppt|pptx|xls|xlsx');
                             Form::commit();
                             ?>
                         </div>

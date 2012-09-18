@@ -26,14 +26,14 @@ $(function () {
         $(this).ajaxSubmit({
             success : function(o) {
                 var parOut = o.replace('<div id="LCS_336D0C35_8A85_403a_B9D2_65C292C39087_communicationDiv"></div>','');
-                console.log(parOut); 
-                /*
                 if (parOut) {
                     var obj = eval('(' + parOut +')');
-                    console.log(obj.html); 
-                    $('#pesan').html($.base64.decode(obj.html));
-                //$('#pesan').html($.base64.decode(parOut));
-                }*/
+                    if (obj.s == '1') {
+                        window.location = $.base64.decode(obj.link);
+                    } else {
+                        alert('Proces Error');
+                    }
+                }
             }
         });
         return false;

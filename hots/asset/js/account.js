@@ -25,4 +25,23 @@ $(function () {
         return false;
     });
     
+    $('#fChangeAvatar').live('submit',function(){
+        $(this).ajaxSubmit({
+            success : function(o) {
+                var parOut = o.replace('<div id="LCS_336D0C35_8A85_403a_B9D2_65C292C39087_communicationDiv"></div>','');
+                //console.log(parOut); 
+                $('#viewAvatar').attr('src',$.base64.decode(parOut));
+            }
+        });
+        return false;
+    });
+    
+    $('.btnOption').live('click',function(){
+        $.post('account/option', {temp:$(this).attr('temp')}, function(o){
+            $.get('account/readProject',function(o){
+                $('table#listProject tbody').html(o);
+            },'json');
+        }, 'json');
+    });
+    
 });

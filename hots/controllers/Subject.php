@@ -11,6 +11,7 @@ class Subject extends Controller {
         Src::plugin()->elrte();
         Src::plugin()->jQueryForm();
         Src::plugin()->jQueryValidation();
+        Src::plugin()->jQueryBase64();
     }
 
     public function index() {
@@ -22,7 +23,7 @@ class Subject extends Controller {
         $subject = $this->model->selectSubjectById($id);
         Web::setTitle('List of ' . $subject[0]['subject_title'] . ' Question');
         $this->view->listDataQuestion = $this->listDataQuestion($id);
-        $this->view->render('subject/index');
+        $this->view->render('subject/view');
     }
 
     public function follow($id = 0) {
@@ -115,7 +116,7 @@ class Subject extends Controller {
                 $html .= '  </div>
                             <div class="cl">&nbsp;</div>
                             <div class="box-button">';
-                $html .= '      <div class="left">Saturday, 10.09.2012 | Posted by admin</div>
+                $html .= '      <div class="left">' . date('l, d.m.Y',  strtotime($value['question_entry'])) . ' | Posted by admin</div>
                                 <div class="right">';
                 $html .= $btnFollow;
                 $html .= '      </div>
@@ -141,10 +142,11 @@ class Subject extends Controller {
 
     public function answer() {
         if ($this->model->answerSave()) {
-            echo 'Sukses';
+            $re = '{s:1, link: "' . base64_encode('http://' . Web::$host . '/account') . '"}';
         } else {
-            echo 'Failed';
+            $re = '{s:1}';
         }
+        echo $re;
     }
 
 }

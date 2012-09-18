@@ -16,7 +16,7 @@
 
             <!-- Videos -->
             <div class="right-col">
-                <h2><a href="#" class="rss">&nbsp;</a> HOTS WINNER'S </h2>	
+                <h2><a href="#" class="rss">&nbsp;</a> HOTS' WINNERS </h2>	
                 <div class="holder">
                     <div class="cl">&nbsp;</div>
                     <a href="#"><?php echo Src::image('face.gif', null, array('style' => 'max-width:100px;')); ?></a>
@@ -47,6 +47,7 @@
 <!-- Box  -->
 <div class="simple">
     <h2 class="no-border">HOTS CHART</h2>
+    <div>Underconstuction!!!</div>
     <div id="view_statistic"></div>
     <div class="cl">&nbsp;</div>
 </div>

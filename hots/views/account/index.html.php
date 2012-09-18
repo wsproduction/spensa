@@ -9,7 +9,7 @@
                 <li><?php URL::link('#fragment-3', 'Change Password') ?></li>
             </ul>
             <div id="fragment-1">
-                <table class="my-grid" cellspacing="0" cellpadding="0" style="width: 570px;">
+                <table class="my-grid" id="listProject" cellspacing="0" cellpadding="0" style="width: 570px;">
                     <thead>
                         <tr>
                             <th class="first">Subject</th>
@@ -26,20 +26,35 @@
             </div>
             <div id="fragment-2">
                 <div style="float: left;">
-                    <a href="#"><?php echo Src::image('face.gif', null, array('style'=>'border:1px solid #ccc;padding:4px;max-width:200px;')); ?></a>
+                    <a href="#">
+                        <?php
+                        if ($accountProfil['student_picture']) {
+                             echo Src::image($accountProfil['student_picture'], URL::getService() . '://' . Web::$host . '/__MyWeb/' . Web::$webFolder . '/asset/upload/images/', array('style' => 'border:1px solid #ccc;padding:4px;max-width:200px;', 'id' => 'viewAvatar'));
+                        } else {
+                            echo Src::image('face.gif', null, array('style' => 'border:1px solid #ccc;padding:4px;max-width:200px;', 'id' => 'viewAvatar'));
+                        }
+                        ?>
+                    </a>
                 </div>
-                <div style="float: left;margin-left: 10px;">
+                <div style="float: left;margin-left: 10px;width: 322px;padding: 10px;border: 1px solid #ccc;">
                     <?php
                     Form::begin('fChangeAvatar', 'account/changeAvatar', 'post', true);
-                    
-                    Form::create('file','avatar');
+
+                    Form::create('hidden', 'tempAvatar');
+                    Form::value($accountProfil['student_picture']);
+                    Form::commit();
+
+                    Form::create('file', 'avatar');
                     Form::size(20);
+                    Form::validation()->requaired();
+                    Form::validation()->accept('jpg|jpeg|gif|png');
                     Form::commit();
-                    echo '<br><br>';
-                    Form::create('submit','bSubmit');
+                    echo '<hr style="margin:10px 0;">';
+                    Form::create('submit');
                     Form::value('Upload');
+                    Form::style('btnUploadAvatar');
                     Form::commit();
-                    
+
                     Form::end();
                     ?>
                 </div>
@@ -50,7 +65,7 @@
                 Form::begin('fChangePassword', 'account/changePassword', 'post', true);
                 ?>
                 <div id="msg_change_password"></div>
-                <table>
+                <table id="frameChangePassword" collspan="4" rowspan="4">
                     <tr>
                         <td>Old Password</td>
                         <td>:</td>
@@ -58,7 +73,7 @@
                             <?php
                             Form::create('password', 'old_password');
                             Form::validation()->requaired();
-                            /*Form::validation()->remote('account/cp', 'post');*/
+                            /* Form::validation()->remote('account/cp', 'post'); */
                             Form::commit();
                             ?>
                         </td>
@@ -94,6 +109,7 @@
                             <?php
                             Form::create('submit', 'btnSubmit');
                             Form::value('Submit');
+                            Form::style('btnSubmitStandar');
                             Form::commit();
                             ?>
                         </td>

@@ -30,7 +30,7 @@ class Signin extends Controller {
             Session::set('loginStatus', 1);
             Session::set('id', $data_user['student_id']);
             Session::set('nis', $data_user['student_register_number']);
-            Session::set('name', $data_user['student_first_name'] . ' ' . $data_user['student_last_name']);
+            Session::set('name', $data_user['student_full_name']);
             $ket = '{s:1, msg:"' . base64_encode($this->content->setLink('index')) . '"}';
         } else {
             $ket = '{s:0, msg:"' . base64_encode($this->message->loginError()) . '"}';
