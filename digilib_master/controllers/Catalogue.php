@@ -147,6 +147,7 @@ class Catalogue extends Controller {
         $this->view->book_resource = $this->listBookResource();
         $this->view->book_fund = $this->listBookFund();
         $this->view->book_type = $this->listBookType();
+        $this->view->length_borrowed = $this->listLengthBorrowed();
         $this->view->author_description = $this->listAuthorDescription();
         $this->view->ddc_level1 = $this->listDdc(1, 0, 1);
         $this->view->render('catalogue/add');
@@ -164,6 +165,15 @@ class Catalogue extends Controller {
         } else {
             $this->view->render('default/message/pnf');
         }
+    }
+
+    public function detail($id = 0) {
+        Web::setTitle('Detail Catalogue');
+        $this->view->id = $id;
+        $this->view->link_back = $this->content->setLink('catalogue');
+        $this->view->link_print_barcode = $this->content->setLink('catalogue/printBarcode/' . $id);
+        $this->view->listDataCollection = $this->listDataCollection($id);
+        $this->view->render('catalogue/detail');
     }
 
     public function listData($page = 1) {
@@ -271,13 +281,79 @@ class Catalogue extends Controller {
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['resource_name'] . '</td>';
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['fund_name'] . '</td>';
                 $html .= '  <td valign="top" style="text-align: center;">' . $value['book_quantity'] . '</td>';
-                $html .= '  <td valign="top" style="text-align: center;">-</td>';
+                $html .= '  <td valign="top" style="text-align: center;">' . $value['length_borrowed'] . '</td>';
                 $html .= '  <td valign="top" style="text-align: center;">';
-                $html .=        date('d/m/Y', strtotime($value['book_entry_date']));
+                $html .= date('d/m/Y', strtotime($value['book_entry_date']));
                 $html .= '  </td>';
                 $html .= '  <td valign="top" style="text-align: center;">';
                 $html .= URL::link($this->content->setLink('catalogue/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
-                $html .= URL::link($this->content->setLink('catalogue/edit/' . $tmpID), 'Detail', 'attach');
+                $html .= URL::link($this->content->setLink('catalogue/detail/' . $tmpID), 'Detail', 'attach');
+                $html .= '  </td>';
+                $html .= '</tr>';
+
+                $idx++;
+            }
+
+            $html .= $this->content->paging($jumlah_kolom, $countPage, $page);
+
+            Form::create('hidden', 'hiddenID');
+            Form::value($id);
+            $html .= Form::commit('attach');
+        } else {
+            $html .= '<tr>';
+            $html .= '   <th colspan="' . $jumlah_kolom . '">Data Not Found</th>';
+            $html .= '</tr>';
+        }
+        return $html;
+    }
+
+    public function listDataCollection($id = 0, $page = 1) {
+        $maxRows = 10;
+        $countList = $this->model->countAllCollection($id);
+        $countPage = ceil($countList / $maxRows);
+        $jumlah_kolom = 9;
+
+        $ddcList = $this->model->selectAllCollection($id, ($page * $maxRows) - $maxRows, $maxRows);
+        $html = '';
+
+        if ($countList > 0) {
+
+            $idx = 1;
+            $id = '0';
+            foreach ($ddcList as $value) {
+                $tmpID = $value['book_register_id'];
+                $id .= ',' . $tmpID;
+
+                $tr_class = 'ganjil';
+                if ($idx % 2 == 0) {
+                    $tr_class = 'genap';
+                }
+
+                $sts = 'Ada';
+                if ($value['borrow_status']) {
+                    $sts = 'Dipinjam';
+                }
+
+                $html .= '<tr class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '">';
+                $html .= '  <td style="width: 10px;" class="first">';
+                Form::create('checkbox', 'list_' . $tmpID);
+                Form::style('cbList');
+                Form::value($tmpID);
+                $html .= Form::commit('attach');
+                $html .= '  </td>';
+                $html .= '  <td style="text-align: center;">' . $tmpID . '</td>';
+                $html .= '  <td></td>';
+                $html .= '  <td></td>';
+                $html .= '  <td style="text-align: center;">' . $value['book_con'] . '</td>';
+                $html .= '  <td style="text-align: center;">' . date('d/m/Y', strtotime($value['entry_date'])) . '</td>';
+                $html .= '  <td style="text-align: center;">' . $sts . '</td>';
+                $html .= '  <td style="text-align: center;">';
+                if ($value['last_borrow'] == NULL)
+                    $html .= date('d/m/Y', strtotime($value['last_borrow']));
+                $html .= '  </td>';
+                $html .= '  <td style="text-align: center;">';
+                $html .= URL::link($this->content->setLink('author/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
+                $html .= URL::link($this->content->setLink('author/edit/' . $tmpID), 'Detail', 'attach');
                 $html .= '  </td>';
                 $html .= '</tr>';
 
@@ -579,6 +655,17 @@ class Catalogue extends Controller {
         return $list;
     }
 
+    public function listLengthBorrowed() {
+        $data = $this->model->selectAllLengthBorrowed();
+        $list = array();
+        if ($data) {
+            foreach ($data as $value) {
+                $list[$value['borrowed_description_id']] = $value['borrowed_title'];
+            }
+        }
+        return $list;
+    }
+
     public function getCity() {
         $data = $this->model->selectCity($_GET['id']);
         $list = '<option value=""></option>';
@@ -722,6 +809,106 @@ class Catalogue extends Controller {
             $keteranganAuthor = ' / ' . $outAuthor;
 
         echo json_encode($keteranganAuthor);
+    }
+
+    public function printBarcode($id = 0) {
+        $pdf = Src::plugin()->tcPdf();
+
+        // set document information
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('Warman Suganda');
+        $pdf->SetTitle('Cetak Barcode Buku Induk');
+        $pdf->SetSubject('Koleksi Buku');
+
+        // set default header data
+        $pdf->SetHeaderData('', '', '[ ' . $id . ' ] ' . 'Sistem Infomasi Perpustakaan', 'Call Number : 900.1-WAR-s | Jumlah Barcode : 53');
+
+        // set header and footer fonts
+        $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+        // set default monospaced font
+        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+        //set margins
+        $pdf->SetMargins(11, PDF_MARGIN_TOP, 11);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+        //set auto page breaks
+        $pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);
+
+        //set image scale factor
+        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+        // ---------------------------------------------------------
+        // set a barcode on the page footer
+        $pdf->setBarcode(date('Y-m-d H:i:s'));
+
+        // set font
+        $pdf->SetFont('helvetica', '', 11);
+
+        // add a page
+        $pdf->AddPage();
+
+        // -----------------------------------------------------------------------------
+
+        $pdf->SetFont('helvetica', '', 10);
+
+        // define barcode style
+        $style = array(
+            'position' => '',
+            'align' => 'C',
+            'stretch' => false,
+            'fitwidth' => true,
+            'cellfitalign' => '',
+            'border' => true,
+            'hpadding' => 'auto',
+            'vpadding' => 'auto',
+            'fgcolor' => array(0, 0, 0),
+            'bgcolor' => false, //array(255,255,255),
+            'text' => true,
+            'font' => 'helvetica',
+            'fontsize' => 8,
+            'stretchtext' => 4
+        );
+
+        // CODE 128 C
+        $posX = 11;
+        $posY = 20;
+        $row = 1;
+        $col = 1;
+        
+        $data = $this->model->selectAllCollection($id);
+        //var_dump($data);
+        //for ($idx = 1; $idx <= 53; $idx++) {
+        foreach ($data as $value) {
+
+            $pdf->write1DBarcode($value['book_register_id'], 'C128C', $posX, $posY, 44, 18, 0.4, $style, '');
+
+            $posX += 48;
+
+            if ($col == 4) {
+                $col = 1;
+                $posX = 11;
+                $posY += 22;
+                $row++;
+            } else {
+                $col++;
+            }
+
+            if ($row > 12) {
+                $pdf->AddPage();
+                $posX = 11;
+                $posY = 20;
+                $row = 1;
+                $col = 1;
+            }
+        }
+
+        // ---------------------------------------------------------
+        //Close and output PDF document
+        $pdf->Output('example_027.pdf', 'I');
     }
 
 }

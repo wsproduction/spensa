@@ -4,6 +4,9 @@
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <title><?php echo Web::getTitle(true, '|'); ?></title>
+        <meta name="description" content="Welcome to HOTS SPENSA, Heiger Order Thinking Skill for Student SMP Negeri 1 Subang." />
+        <meta name="keywords" content="hots, hots spensa, hots smpn 1 subang, smp negeri 1 subang" />
+
         <!--[if IE 6]>
                 <style type="text/css" media="screen">
                         #main .box .holder a.play{background-image: none;filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='css/images/play.png', sizingMethod='image');}	
@@ -28,7 +31,7 @@
 
             <!-- Header -->
             <div id="header">
-                <h1 id="logo"><a href="#">wbfashion</a></h1>
+                <h1 id="logo"><?php echo Src::image('logo.png'); ?></h1>
                 <div class="right-part">
                     <p>
                         <?php
@@ -36,7 +39,7 @@
                             echo 'Welcome, <b>' . Session::get('name') . '</b>';
                             echo '&nbsp;&nbsp;&nbsp; |';
                             URL::link('http://' . Web::$host . '/account', 'Account');
-                            
+
                             URL::link('http://' . Web::$host . '/signin/stop', 'Sign Out');
                         } else {
                             URL::link('http://' . Web::$host . '/signin', 'sign in');
@@ -82,6 +85,24 @@
                         <ul class="pink">
                             <?php echo $hotsSubject; ?>
                         </ul>
+                        <h2>HOTS CHAT</h2>
+                        <div class="blue">
+                            <div style="margin-bottom: 10px;">
+                                <b>NB : </b> Use polite language in use chat box, thank you!!
+                            </div>
+                            
+                            <!-- BEGIN CBOX - www.cbox.ws - v001 -->
+                            <div id="cboxdiv" style="text-align: center; line-height: 0">
+                                <div><iframe frameborder="0" width="260" height="362" src="http://www7.cbox.ws/box/?boxid=568567&amp;boxtag=r7n089&amp;sec=main" marginheight="2" marginwidth="2" scrolling="auto" allowtransparency="yes" name="cboxmain7-568567" style="border:#ababab 1px solid;" id="cboxmain7-568567"></iframe></div>
+                                <div><iframe frameborder="0" width="260" height="90" src="http://www7.cbox.ws/box/?boxid=568567&amp;boxtag=r7n089&amp;sec=form" marginheight="2" marginwidth="2" scrolling="no" allowtransparency="yes" name="cboxform7-568567" style="border:#ababab 1px solid;border-top:0px" id="cboxform7-568567"></iframe></div>
+                            </div>
+                            <!-- END CBOX -->
+                            <li style="display: none;">
+                                <small>21.05.09 | posted by <a href="#">admin</a></small>
+                                <a href="#">Lorem ipsum dolor sit amet, consectetur <br />adipiscing elit. </a>
+                            </li>
+                        </div>
+                        <div class="cl" style="height: 30px;">&nbsp;</div>
                         <h2>HOTS STATISTIC</h2>
                         <div class="blue">
                             <table class="statistic" style="display: none;">
@@ -101,20 +122,12 @@
                                     <td>2</td>
                                 </tr>
                             </table>
-                            <div style="height:100px;margin:10px;">
-                            <a href="http://www.alexa.com/siteinfo/hots.smpn1subang.sch.id">
-                            	<script type='text/javascript' src='http://xslt.alexa.com/site_stats/js/s/a?url=hots.smpn1subang.sch.id'></script>
-                            </a>
+                            <div style="height:134px;margin:10px;">
+                                <a href="http://www.alexa.com/siteinfo/hots.smpn1subang.sch.id">
+                                    <script type='text/javascript' src='http://xslt.alexa.com/site_stats/js/s/a?url=hots.smpn1subang.sch.id'></script>
+                                </a>
                             </div
                         </div>
-                        <h2>HOTS ROLL</h2>
-                        <ul class="blue">
-                            <i>Unserconstruction!!!</i>
-                            <li style="display: none;">
-                                <small>21.05.09 | posted by <a href="#">admin</a></small>
-                                <a href="#">Lorem ipsum dolor sit amet, consectetur <br />adipiscing elit. </a>
-                            </li>
-                        </ul>
                     </div>
                 </div>
                 <!-- End Sidebar -->

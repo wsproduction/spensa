@@ -6,11 +6,18 @@ class Index extends Controller {
         parent::__construct();
         $this->view->hotsSubject = $this->content->hotsSubject();
         Src::plugin()->highChart();
+        
+        Src::plugin()->jQueryForm();
+        Src::plugin()->flexiGrid();
     }
 
     public function index() {
         Web::setTitle('Welcome');
+        $this->view->render('index/index');
+    }
 
+    public function cobabaca() {
+        
         $inputFileType = 'Excel5';
         $inputFileName = Web::path() . 'asset/upload/file/KELAS9/9H.xls';
 
@@ -60,17 +67,6 @@ class Index extends Controller {
         }
         $html .= '</table>';
         //$this->model->saveStudent('555555555', '1', 'Warsu', '1');
-
-        $this->view->listData = $html;
-        $this->view->render('index/index');
-    }
-
-    public function cobabaca() {
-        $file_handle = fopen("myfile", "r");
-        while (!feof($file_handle)) {
-            echo fgetss($file_handle);
-        }
-        fclose($file_handle);
     }
 
 }

@@ -24,7 +24,8 @@ class SubjectModel extends Model {
                                         hots_question.question_end_date,
                                         hots_question.question_status,
                                         hots_question.question_entry,
-                                        DATEDIFF(hots_question.question_end_date,NOW()) AS range_date 
+                                        DATEDIFF(hots_question.question_end_date,NOW()) AS range_date,
+                                        (SELECT COUNT(answer_id) FROM hots_answer WHERE hots_answer.answer_status IN (2,3,4) AND hots_answer.question_id = hots_question.question_id) AS folower
                                     FROM 
                                         hots_question 
                                     WHERE 

@@ -52,13 +52,13 @@
                     </th>
                     <th style="width: 90px;display: none;">Nomor</th>
                     <th style="width: 90px;">Call Number</th>
-                    <th>Detail Buku</th>
+                    <th>Keterangan Buku</th>
                     <th style="width: 90px;">Asal</th>
                     <th style="width: 150px;">Sumber</th>
                     <th style="width: 60px;">Eksemplar</th>
-                    <th style="width: 60px;">Pinjam</th>
-                    <th style="width: 75px;">Tanggal</th>
-                    <th style="width: 100px;">Action</th>
+                    <th style="width: 100px;">Lama Pinjam</th>
+                    <th style="width: 60px;">Tanggal</th>
+                    <th style="width: 80px;">Action</th>
                 </tr>
             </thead>
             <tbody><?php echo $listData; ?></tbody>

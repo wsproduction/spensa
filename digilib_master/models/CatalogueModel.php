@@ -33,7 +33,7 @@ class CatalogueModel extends Model {
                                     (SELECT dn.fund_name FROM digilib_fund AS dn WHERE dn.fund_id = digilib_book.book_fund ) AS fund_name,
                                     digilib_book.book_review,
                                     digilib_book.book_type,
-                                    digilib_book.book_length_borrowed,
+                                    (SELECT dbbd.borrowed_title FROM digilib_book_borrowed_description AS dbbd WHERE dbbd.borrowed_description_id = digilib_book.book_length_borrowed) AS length_borrowed,
                                     digilib_book.book_status,
                                     (SELECT ddc.ddc_classification_number FROM digilib_ddc AS ddc WHERE ddc.ddc_id = digilib_book.book_classification ) AS classification_number,
                                     digilib_book.book_cover,
@@ -42,6 +42,25 @@ class CatalogueModel extends Model {
                                     digilib_book
                                    ORDER BY digilib_book.book_id DESC LIMIT ' . $start . ',' . $count);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectAllCollection($id = 0, $start = 0, $count = 100) {
+        $sth = $this->db->prepare('SELECT 
+                                        dbr.book_register_id,
+                                        dbr.book_id,
+                                        (SELECT dbc.book_condition FROM digilib_book_condition AS dbc WHERE dbc.book_condition_id = dbr.book_condition) AS book_con,
+                                        dbr.entry_date,
+                                        dbr.last_borrow,
+                                        dbr.borrow_status
+                                   FROM
+                                        digilib_book_register AS dbr
+                                   WHERE
+                                        dbr.book_id = :id
+                                   ORDER BY dbr.book_register_id LIMIT ' . $start . ',' . $count);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':id', $id);
         $sth->execute();
         return $sth->fetchAll();
     }
@@ -68,12 +87,21 @@ class CatalogueModel extends Model {
         $sth->execute();
         return $sth->rowCount();
     }
+    
+    public function countAllCollection($id = 0) {
+        $sth = $this->db->prepare('SELECT * FROM digilib_book_register WHERE book_id = :id');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':id', $id);
+        $sth->execute();
+        return $sth->rowCount();
+    }
 
     public function createSave() {
 
         $title = $this->method->post('title');
         $sub_title = $this->method->post('sub_title');
         $foreign_title = $this->method->post('foreign_title');
+        $desc_title = $this->method->post('desc_title');
         $publisher = $this->method->post('publisher');
         $city = $this->method->post('city');
         $year = $this->method->post('year');
@@ -110,6 +138,7 @@ class CatalogueModel extends Model {
                         book_title,
                         book_sub_title,
                         book_foreign_title,
+                        book_description_title,
                         book_publisher,
                         book_city_launching,
                         book_year_launching,
@@ -152,6 +181,7 @@ class CatalogueModel extends Model {
                         :title,
                         :sub_title,
                         :foreign_title,
+                        :desc_title,
                         :publisher,
                         :city,
                         :year,
@@ -186,6 +216,7 @@ class CatalogueModel extends Model {
         $sth->bindValue(':title', $title);
         $sth->bindValue(':sub_title', $sub_title);
         $sth->bindValue(':foreign_title', $foreign_title);
+        $sth->bindValue(':desc_title', $desc_title);
         $sth->bindValue(':publisher', $publisher);
         $sth->bindValue(':city', $city);
         $sth->bindValue(':year', $year);
@@ -208,7 +239,7 @@ class CatalogueModel extends Model {
         $sth->bindValue(':fund', $fund, PDO::PARAM_NULL);
         $sth->bindValue(':review', $reviews);
         $sth->bindValue(':type', $book_type);
-        $sth->bindValue(':length_borrowed', $length_borrowed);
+        $sth->bindValue(':length_borrowed', $length_borrowed, PDO::PARAM_NULL);
         $sth->bindValue(':book_hard_copy', $hard_copy);
         $sth->bindValue(':book_electronic', $soft_copy);
         $sth->bindValue(':status', $status);
@@ -591,6 +622,13 @@ class CatalogueModel extends Model {
 
     public function selectAllAuthorDescription() {
         $sth = $this->db->prepare('SELECT * FROM digilib_author_description ORDER BY author_description DESC');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectAllLengthBorrowed() {
+        $sth = $this->db->prepare('SELECT * FROM digilib_book_borrowed_description ORDER BY borrowed_title DESC');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();

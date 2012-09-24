@@ -101,7 +101,7 @@ class Subject extends Controller {
                                             </tr>
                                             <tr>
                                                 <th>Follower</th>
-                                                <td>2</td>
+                                                <td>' . $value['folower'] . '</td>
                                             </tr>
                                         </table>
                                     </div>';

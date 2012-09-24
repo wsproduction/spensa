@@ -35,7 +35,7 @@
                 </div>
                 <div class="holder right">
                     <a href="#"><?php echo Src::image('face.gif', null, array('style' => 'max-width:100px;')); ?></a>
-                    <a href="#" class="blue">BAHSA INDONESIA</a>
+                    <a href="#" class="blue">INDONESIAN</a>
                 </div>
             </div>
             <!-- End Videos -->
@@ -47,7 +47,6 @@
 <!-- Box  -->
 <div class="simple">
     <h2 class="no-border">HOTS CHART</h2>
-    <div>Underconstuction!!!</div>
     <div id="view_statistic"></div>
     <div class="cl">&nbsp;</div>
 </div>

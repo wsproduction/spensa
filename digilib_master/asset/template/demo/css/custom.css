@@ -83,7 +83,7 @@ table.list thead tr th{
     border-top: 1px solid #ccc;
     font-family: Verdana,Arial,Helvetica,sans-serif;
     text-decoration: none;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
     color: #00102d;
     padding: 9px 6px;
@@ -103,7 +103,7 @@ table.list tbody tr td {
     border-bottom: 1px solid #ccc;
     font-family: Verdana,Arial,Helvetica,sans-serif;
     text-decoration: none;
-    font-size: 12px;
+    font-size: 11px;
     color: #00102d;
     padding: 6px;
 }
@@ -159,6 +159,8 @@ input[type=text], input[type=password], select, textarea {
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
 }
 
 input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover{

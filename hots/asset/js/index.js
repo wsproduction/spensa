@@ -1,10 +1,11 @@
 $(function () {
     var chart;
     $(document).ready(function() {
-        chart = new Highcharts.Chart({
+        var option = {
             chart: {
                 renderTo: 'view_statistic',
-                type: 'column'
+                type: 'column',
+                marginBottom: 50
             },
             title: {
                 text: 'HOTS CHART YEARS 2012 - 2013'
@@ -13,41 +14,43 @@ $(function () {
                 text: 'SMP NEGERI 1 SUBANG'
             },
             xAxis: {
+                title : {
+                    text: 'Month'
+                },
                 categories: [
-                    'Jan',
-                    'Feb',
-                    'Mar',
-                    'Apr',
-                    'May',
-                    'Jun',
-                    'Jul',
-                    'Aug',
-                    'Sep',
-                    'Oct',
-                    'Nov',
-                    'Dec'
+                'Jul',
+                'Aug',
+                'Sep',
+                'Okt',
+                'Nov',
+                'Des',
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun'
                 ]
             },
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Jumlah'
+                    text: 'Participant'
                 }
             },
             legend: {
-                layout: 'vertical',
+                layout: 'horizontal',
                 backgroundColor: '#FFFFFF',
                 align: 'left',
-                verticalAlign: 'top',
-                x: 100,
-                y: 70,
+                verticalAlign: 'bottom',
+                y: 15,
                 floating: true,
                 shadow: true
             },
             tooltip: {
                 formatter: function() {
                     return ''+
-                        this.x +': '+ this.y;// +' mm';
+                    this.x +': '+ this.y;// +' mm';
                 }
             },
             plotOptions: {
@@ -56,20 +59,25 @@ $(function () {
                     borderWidth: 0
                 }
             },
-                series: [{
-                name: 'Grade VII',
-                data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-    
+            series: [{
+                name: 'Grade VII'
             }, {
-                name: 'Grade VIII',
-                data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
-    
+                name: 'Grade VIII'
             }, {
-                name: 'Grade IX',
-                data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
-    
+                name: 'Grade IX'
             }]
-        });
+        };
+        
+        $.get('index/chart', function (o){
+            option.series[0].data = o[0];
+            option.series[1].data = o[1];
+            option.series[2].data = o[2];
+            chart = new Highcharts.Chart(option);
+        }, 'json');
+        
     });
     
+    
+    
 });
+

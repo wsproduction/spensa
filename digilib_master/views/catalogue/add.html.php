@@ -33,13 +33,13 @@
             <table id="addStep1" style="width: 100%;">
                 <tr>
                     <td style="width: 230px;">Judul *</td>
-                    <td>:</td>
+                    <td style="width: 10px;">:</td>
                     <td>
                         <?php
                         Form::create('text', 'title');
                         Form::tips('Masukan Judul Buku');
                         Form::size(100);
-                        Form::validation()->requaired();
+                        Form::validation()->requaired('* Judul harus diisi.');
                         Form::commit();
                         ?>
                     </td>
@@ -62,8 +62,20 @@
                     <td>
                         <?php
                         Form::create('text', 'foreign_title');
-                        Form::tips('Masukan Anak Judul');
+                        Form::tips('Masukan Judul Bahasa Asing');
                         Form::size(100);
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Keterangan</td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('text', 'desc_title');
+                        Form::tips('Masukan keterangan buku.');
+                        Form::size(80);
                         Form::commit();
                         ?>
                     </td>
@@ -76,7 +88,7 @@
                         Form::create('select', 'language');
                         Form::tips('Pilih Bahasa');
                         Form::option($language, ' ');
-                        Form::validation()->requaired();
+                        Form::validation()->requaired('* Bahasa harus diisi.');
                         Form::commit();
                         ?>
                     </td>
@@ -89,7 +101,7 @@
                         Form::create('text', 'edition');
                         Form::tips('Masukan Edisi Buku Keberapa?');
                         Form::inputType()->numeric();
-                        Form::size(20);
+                        Form::size(5);
                         Form::commit();
                         ?>
                     </td>
@@ -102,7 +114,7 @@
                         Form::create('text', 'print_out');
                         Form::tips('Masukan Cetakan Buku Keberapa?');
                         Form::inputType()->numeric();
-                        Form::size(20);
+                        Form::size(5);
                         Form::commit();
                         ?>
                     </td>
@@ -121,25 +133,29 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Halaman Romawi</td>
+                    <td>Jumlah Halaman Romawi</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'roman_count');
                         Form::tips('Masukan nomor halaman romawi terakhir. Contoh: vii');
-                        Form::size(10);
+                        Form::size(5);
+                        Form::inputType()->alpha(true);
                         Form::commit();
                         ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Halaman Angka</td>
+                    <td>Jumlah Halaman Angka *</td>
                     <td>:</td>
                     <td>
                         <?php
                         Form::create('text', 'page_count');
                         Form::tips('Masukan nomor halaman angka. Contoh: 120');
-                        Form::size(10);
+                        Form::size(5);
+                        Form::validation()->requaired('* Halaman angka harus diisi.');
+                        Form::validation()->number('* Periksa angka dengan benar.');
+                        Form::validation()->min(1);
                         Form::inputType()->numeric();
                         Form::commit();
                         ?>
@@ -152,7 +168,7 @@
                         <?php
                         Form::create('text', 'bibliography');
                         Form::tips('Masukan halaman rentang halaman bibliografi.<br>Example : 103-107');
-                        Form::size(10);
+                        Form::size(15);
                         Form::inputType()->numeric('-');
                         Form::commit();
                         ?>
@@ -188,13 +204,13 @@
                         Form::create('text', 'width');
                         Form::tips('Masukan ukuran lebar buku.');
                         Form::size(10);
-                        Form::inputType()->numeric();
+                        Form::inputType()->numeric('.');
                         Form::commit();
                         echo 'x';
                         Form::create('text', 'height');
                         Form::tips('Masukan ukuran tinggi buku.');
                         Form::size(10);
-                        Form::inputType()->numeric();
+                        Form::inputType()->numeric('.');
                         Form::commit();
                         echo 'Cm';
                         ?>
@@ -208,7 +224,7 @@
                         Form::create('text', 'weight');
                         Form::tips('Masukan berat buku.');
                         Form::size(10);
-                        Form::inputType()->numeric();
+                        Form::inputType()->numeric('.');
                         Form::commit();
                         echo 'Kg';
                         ?>
@@ -223,7 +239,7 @@
                         Form::tips('Masukan jumlah eksemplar.');
                         Form::size(10);
                         Form::inputType()->numeric();
-                        Form::validation()->requaired();
+                        Form::validation()->requaired('* Jumlah eksemplar harus diisi.');
                         Form::commit();
                         ?>
                     </td>
@@ -248,7 +264,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Asal</td>
+                    <td>Asal / Sumber</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -256,14 +272,7 @@
                         Form::tips('Select Resource');
                         Form::option($book_resource, ' ');
                         Form::commit();
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Sumber</td>
-                    <td>:</td>
-                    <td>
-                        <?php
+                        echo ' / ';
                         Form::create('select', 'fund');
                         Form::tips('Pilih sumber dana');
                         Form::option($book_fund, ' ');
@@ -279,19 +288,7 @@
                         Form::create('select', 'book_type');
                         Form::option($book_type, ' ');
                         Form::tips('Pilih jenis buku');
-                        Form::validation()->requaired();
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Lama Peminjaman</td>
-                    <td>:</td>
-                    <td>
-                        <?php
-                        Form::create('text', 'length_borrowed');
-                        Form::tips('Masukan lama peminjaman');
-                        Form::size(10);
+                        Form::validation()->requaired('* Jenis buku harus diisi.');
                         Form::commit();
                         ?>
                     </td>
@@ -309,6 +306,19 @@
                         Form::size(10);
                         Form::commit();
                         echo ' Buku Electronik';
+                        ?>
+                    </td>
+                </tr>
+                <tr >
+                    <td>Lama Peminjaman * </td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('select', 'length_borrowed');
+                        Form::tips('Masukan lama peminjaman');
+                        Form::option($length_borrowed, ' ');
+                        Form::validation()->requaired('* Lama peminjaman harus diisi.');
+                        Form::commit();
                         ?>
                     </td>
                 </tr>

@@ -5,6 +5,8 @@
 
 $(function(){
     
+    $('#detailTab').tabs();
+    
     /* WYSIWYG elRTE */
     elRTE.prototype.options.panels.web2pyPanel = [
     'bold', 'italic', 'underline', 'forecolor', 'justifyleft', 'justifyright',
@@ -186,6 +188,9 @@ $(function(){
         window.location = $(this).attr('link');
     });
     $('#btnBack').live('click',function(){
+        window.location = $(this).attr('link');
+    });
+    $('#btnPrintBarcode').live('click',function(){
         window.location = $(this).attr('link');
     });
     $('#btnDeleteData').live('click',function(){
