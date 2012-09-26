@@ -3,19 +3,24 @@
     <div class="content">
         <table style="width: 100%">
             <tr>
-                <td style="width: 200px;">ID</td>
-                <td style="width: 10px;">:</td>
+                <th style="width: 200px;">ID</th>
+                <th style="width: 10px;">:</th>
                 <td><?php echo $tempId; ?></td>
             </tr>
             <tr>
-                <td>Question Title</td>
-                <td>:</td>
-                <td></td>
+                <th>Subject</th>
+                <th>:</th>
+                <td><?php echo $subject['subject_title']; ?></td>
             </tr>
             <tr>
-                <td>Question Description</td>
-                <td>:</td>
-                <td></td>
+                <th>Question Title</th>
+                <th>:</th>
+                <td><?php echo $subject['question_title']; ?></td>
+            </tr>
+            <tr>
+                <th>Question Description</th>
+                <th>:</th>
+                <td><?php echo $subject['question_description']; ?></td>
             </tr>
             <tr>
                 <td colspan="3">
@@ -27,6 +32,15 @@
                     Form::end();
                     ?>
                     <table class="flexme4" link="<?php echo $link; ?>" style="display: none;"></table>
+                    <div id="view-answer">
+                        <div id="tabs">
+                            <ul>
+                                <li><?php URL::link('#fragment-1', 'Plain Text') ?></li>
+                                <li><?php URL::link('#fragment-1', 'File Attachment') ?></li>
+                            </ul>
+                            <div id="fragment-1">ssss</div>
+                        </div>
+                    </div>
                 </td>
             </tr>
         </table>

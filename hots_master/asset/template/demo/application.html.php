@@ -7,12 +7,12 @@
 
         <?php
         Src::css('custom.css');
-        
+
         /* Loader */
         Src::getJavascript();
         Src::getCss();
         ?>
-        
+
     </head>
     <body>
         <div id="header">
@@ -20,24 +20,20 @@
         </div>
         <div id="page_menu">
             <?php
-            /*
             if (Session::get('statusLogin') == true) {
-                URL::link('http://' . Web::$host . '/dashboard', 'Dashboard');
-                URL::link('http://' . Web::$host . '/login/stop', 'Logout');
+                URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/home', 'Home');
+                URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/data', 'Hots Data');
+                URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/logout', 'Logout');
             } else {
-                URL::link('#', 'Home');
+                URL::link('#', 'Login');
             }
-             */
-            URL::link('#', 'Home');
-            URL::link('http://' . Web::$host . '/admin/data', 'Hots Data');
-            URL::link('#', 'Logout');
             ?>
         </div>
         <div id="content">
             {PAGE_CONTENT}
         </div>
         <div id="footer">
-            Copyright &copy; 2012 HOTS | Develope by : Warman Suganda
+            Copyright &copy; 2012 HOTS SPENSA | Develope by : Warman Suganda
         </div>
 
     </body>

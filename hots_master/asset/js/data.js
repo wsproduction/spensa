@@ -128,38 +128,44 @@ $(function(){
         dataType : 'xml',
         colModel : [ {
             display : 'ID', 
-            name : 'question_id', 
+            name : 'answer_id', 
             width : 40,
             sortable : true,
             align : 'center'
         }, {
+            display : 'NIS',
+            name : 'nis',
+            width : 100,
+            sortable : true,
+            align : 'center'
+        }, {
             display : 'Student Name',
-            name : 'periode',
+            name : 'student_name',
             width : 300,
             sortable : true,
             align : 'left'
         }, {
             display : 'Grade',
-            name : 'question_title',
+            name : 'grade',
             width : 100,
             sortable : true,
-            align : 'left'
+            align : 'center'
         }, {
             display : 'Entry Date',
-            name : 'follower',
+            name : 'answer_date',
             width : 130,
             sortable : true,
             align : 'center',
             hide : true
         }, {
             display : 'Status',
-            name : 'question_status',
+            name : 'answer_status',
             width : 100,
             sortable : true,
             align : 'center'
         }, {
             display : 'Score',
-            name : 'question_entry',
+            name : 'answer_score',
             width : 100,
             sortable : true,
             align : 'center'
@@ -197,17 +203,23 @@ $(function(){
             }
         }, {
             separator : true
+        }, {
+            name : 'Print',
+            bclass : 'print',
+            onpress : function() {
+                alert('ssss');
+            }
         } ],
         searchitems : [ {
             display : 'ID',
-            name : 'question_id'
+            name : 'answer_id'
         }, {
             display : 'Student Name',
             name : 'question_description',
             isdefault : true
         } ],
         nowrap : false,
-        sortname : "question_id",
+        sortname : "answer_id",
         sortorder : "asc",
         usepager : true,
         title : 'Follower',
@@ -227,5 +239,67 @@ $(function(){
     };
     
     $(".flexme4").flexigrid(option2);
+    
+    $('#view-answer').dialog({
+        title:'Answer',
+        autoOpen: false,
+        height: 540,
+        width: 620,
+        modal: true,
+        resizable: false
+    });
+    
+    $('a[href=#view]').live('click',function(){
+        $( "#view-answer" ).dialog("open");
+        return false;
+    });
+    
+    $('#tabs').tabs();
+    
+    $('#fAdd').live('submit',function(){
+        frmID = $(this);
+        msgID = $('#message');
+        var url =  $(frmID).attr('action');
+        var data =  $(frmID).serialize();
+        
+        $(msgID).fadeOut('slow');
+        $.post(url, data, function(o){
+            if (o[0]) {
+                if (o[1]) {
+                    $('#content_question').elrte('val',' ');
+                    $(frmID)[0].reset();
+                }
+            }
+            $(msgID).html(o[2]).fadeIn('slow');
+        }, 'json');
+        return false;
+    });
+    
+    /* WYSIWYG elRTE */
+    elRTE.prototype.options.panels.Panel1 = [
+    'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'forecolor', 'justifyleft', 'justifyright',
+    'justifycenter', 'justifyfull', 'formatblock', 'insertorderedlist', 'insertunorderedlist',
+    'link', 'image'
+    ];
+    
+    elRTE.prototype.options.panels.Panel2 = [
+    'undo', 'redo', 'copy', 'cut', 'paste'
+    ];
+    
+    elRTE.prototype.options.toolbars.web2pyToolbar = ['Panel1', 'Panel2', 'tables'];
+    
+    var opts = {
+        cssClass : 'el-rte',
+        height   : 300,
+        width    : 558,
+        toolbar  : 'web2pyToolbar',
+        cssfiles : ['css/elrte-inner.css']
+    }
+    
+    $('#content_question').elrte(opts);
+    
+    $("#start_date").datepicker();
+    $("#end_date").datepicker();
+        
 });
 

@@ -5,12 +5,16 @@ $(function () {
     });
     
     /* WYSIWYG elRTE */
-    elRTE.prototype.options.panels.web2pyPanel = [
-    'bold', 'italic', 'underline', 'forecolor', 'justifyleft', 'justifyright',
+    elRTE.prototype.options.panels.Panel1 = [
+    'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'forecolor', 'justifyleft', 'justifyright',
     'justifycenter', 'justifyfull', 'formatblock', 'insertorderedlist', 'insertunorderedlist',
     'link', 'image'
     ];
-    elRTE.prototype.options.toolbars.web2pyToolbar = ['web2pyPanel', 'tables'];
+    
+    elRTE.prototype.options.panels.Panel2 = [
+    'undo', 'redo', 'copy', 'cut', 'paste'
+    ];
+    elRTE.prototype.options.toolbars.web2pyToolbar = ['Panel1', 'Panel2', 'tables'];
     
     var opts = {
         cssClass : 'el-rte',
