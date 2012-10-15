@@ -238,6 +238,12 @@ input[class=action_prev] {
     background-color: #e6e6e6;
 }
 
+input[class=action_print] {
+    background: url('../images/print.png') no-repeat;
+    background-position: 5px 5px;
+    background-color: #e6e6e6;
+}
+
 div.box_message {
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;

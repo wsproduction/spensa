@@ -114,21 +114,6 @@ $(function(){
             }, 'json');
             generateCatalogue();
         } else if (stepStatus == 5) {
-            /* frmID = $(this);
-            msgID = $('#message');
-            var url =  $(frmID).attr('action');
-            var data =  $(frmID).serialize();
-        
-            $(msgID).fadeOut('slow');
-            $.post(url, data, function(o){
-                if (o[0]) {
-                    if (o[1]) {
-                        $(frmID)[0].reset();
-                    }
-                }
-                $(msgID).html(o[2]).fadeIn('slow');
-            }, 'json'); */
-        
             frmID = $(this);
             msgID = $('#message');
             $(frmID).ajaxSubmit({
@@ -191,7 +176,10 @@ $(function(){
         window.location = $(this).attr('link');
     });
     $('#btnPrintBarcode').live('click',function(){
-        window.location = $(this).attr('link');
+        window.open($(this).attr('link'),'_blank');
+    });
+    $('#btnPrintLabel').live('click',function(){
+        window.open($(this).attr('link'),'_blank');
     });
     $('#btnDeleteData').live('click',function(){
         var hiddenID = $('#hiddenID').val();

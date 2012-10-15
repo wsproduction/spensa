@@ -127,7 +127,7 @@
                         Form::create('text', 'isbn');
                         Form::tips('Masukan ISBN (<i>International Standard Book Number</i>)<br>* Hanya nomor dan strip yang diijinkan.<br>Contoh: 978-3-16-148410-0');
                         Form::size(20);
-                        Form::inputType()->numeric('-');
+                        Form::inputType()->numeric('-x');
                         Form::commit();
                         ?>
                     </td>

@@ -728,5 +728,38 @@ class CatalogueModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
+    
+    public function selectCatalogueById($id) {
+        $sth = $this->db->prepare('SELECT 
+                                        digilib_book.book_title,
+                                        digilib_book.book_sub_title,
+                                        (SELECT digilib_ddc.ddc_classification_number FROM digilib_ddc WHERE digilib_ddc.ddc_id = digilib_book.book_classification) AS class_number
+                                    FROM
+                                        digilib_book
+                                    WHERE
+                                        digilib_book.book_id=:id');
+        $sth->bindValue(':id', $id);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectAllCollectionByBookId($id = 0) {
+        $sth = $this->db->prepare('SELECT 
+                                        dbr.book_register_id,
+                                        dbr.book_id,
+                                        (SELECT dbc.book_condition FROM digilib_book_condition AS dbc WHERE dbc.book_condition_id = dbr.book_condition) AS book_con,
+                                        dbr.entry_date,
+                                        dbr.last_borrow,
+                                        dbr.borrow_status
+                                   FROM
+                                        digilib_book_register AS dbr
+                                   WHERE
+                                        dbr.book_id = :id');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':id', $id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
 
 }

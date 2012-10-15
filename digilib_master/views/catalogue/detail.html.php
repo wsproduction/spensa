@@ -19,6 +19,14 @@
                 <li><?php URL::link('#fragment-3', 'Koleksi Buku'); ?></li>
             </ul>
             <div id="fragment-1">
+                <?php
+                Form::create('button','btnPrintLabel');
+                Form::value('Print Label');
+                Form::style('action_print');
+                Form::properties(array('link'=>$link_print_label));
+                Form::commit();
+                ?>
+                <br><br>
                 Underconstruction!!!
             </div>
             <div id="fragment-2">
@@ -29,6 +37,7 @@
                     <?php
                     Form::create('button', 'btnPrintBarcode');
                     Form::value('Print Barcode');
+                    Form::style('action_print');
                     Form::properties(array('link'=>$link_print_barcode));
                     Form::commit();
                     ?>

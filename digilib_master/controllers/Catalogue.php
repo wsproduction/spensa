@@ -172,6 +172,7 @@ class Catalogue extends Controller {
         $this->view->id = $id;
         $this->view->link_back = $this->content->setLink('catalogue');
         $this->view->link_print_barcode = $this->content->setLink('catalogue/printBarcode/' . $id);
+        $this->view->link_print_label = $this->content->setLink('catalogue/printLabel/' . $id);
         $this->view->listDataCollection = $this->listDataCollection($id);
         $this->view->render('catalogue/detail');
     }
@@ -812,103 +813,246 @@ class Catalogue extends Controller {
     }
 
     public function printBarcode($id = 0) {
-        $pdf = Src::plugin()->tcPdf();
 
-        // set document information
-        $pdf->SetCreator(PDF_CREATOR);
-        $pdf->SetAuthor('Warman Suganda');
-        $pdf->SetTitle('Cetak Barcode Buku Induk');
-        $pdf->SetSubject('Koleksi Buku');
+        $catalogue = $this->model->selectCatalogueById($id);
 
-        // set default header data
-        $pdf->SetHeaderData('', '', '[ ' . $id . ' ] ' . 'Sistem Infomasi Perpustakaan', 'Call Number : 900.1-WAR-s | Jumlah Barcode : 53');
+        if (count($catalogue) > 0) {
+            $listCatalogue = $catalogue[0];
+            $data = $this->model->selectAllCollectionByBookId($id);
+            $author = $this->model->selectAuthorByBookID($id);
 
-        // set header and footer fonts
-        $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-        $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+            $booktitle = $listCatalogue['book_title'];
+            if ($listCatalogue['book_sub_title'] != '')
+                $booktitle .= ' : ' . $listCatalogue['book_sub_title'];
 
-        // set default monospaced font
-        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-
-        //set margins
-        $pdf->SetMargins(11, PDF_MARGIN_TOP, 11);
-        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-
-        //set auto page breaks
-        $pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);
-
-        //set image scale factor
-        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
-
-        // ---------------------------------------------------------
-        // set a barcode on the page footer
-        $pdf->setBarcode(date('Y-m-d H:i:s'));
-
-        // set font
-        $pdf->SetFont('helvetica', '', 11);
-
-        // add a page
-        $pdf->AddPage();
-
-        // -----------------------------------------------------------------------------
-
-        $pdf->SetFont('helvetica', '', 10);
-
-        // define barcode style
-        $style = array(
-            'position' => '',
-            'align' => 'C',
-            'stretch' => false,
-            'fitwidth' => true,
-            'cellfitalign' => '',
-            'border' => true,
-            'hpadding' => 'auto',
-            'vpadding' => 'auto',
-            'fgcolor' => array(0, 0, 0),
-            'bgcolor' => false, //array(255,255,255),
-            'text' => true,
-            'font' => 'helvetica',
-            'fontsize' => 8,
-            'stretchtext' => 4
-        );
-
-        // CODE 128 C
-        $posX = 11;
-        $posY = 20;
-        $row = 1;
-        $col = 1;
-        
-        $data = $this->model->selectAllCollection($id);
-        //var_dump($data);
-        //for ($idx = 1; $idx <= 53; $idx++) {
-        foreach ($data as $value) {
-
-            $pdf->write1DBarcode($value['book_register_id'], 'C128C', $posX, $posY, 44, 18, 0.4, $style, '');
-
-            $posX += 48;
-
-            if ($col == 4) {
-                $col = 1;
-                $posX = 11;
-                $posY += 22;
-                $row++;
+            if (count($author) > 0) {
+                $listAuthor = $author[0];
+                $call_number = $listCatalogue['class_number'] . ' / ' . strtoupper(substr(str_replace(' ', '', $listAuthor['author_first_name']), 0, 3)) . ' / ' . strtolower(substr(str_replace(' ', '', $listCatalogue['book_title']), 0, 1));
             } else {
-                $col++;
+                $call_number = $listCatalogue['class_number'] . ' / ' . strtoupper(substr(str_replace(' ', '', $listCatalogue['book_title']), 0, 3));
             }
 
-            if ($row > 12) {
-                $pdf->AddPage();
-                $posX = 11;
-                $posY = 20;
-                $row = 1;
-                $col = 1;
+            $pdf = Src::plugin()->tcPdf();
+
+            // set document information
+            $pdf->SetCreator(PDF_CREATOR);
+            $pdf->SetAuthor('Warman Suganda');
+            $pdf->SetTitle('Cetak Barcode Buku Induk');
+            $pdf->SetSubject('Koleksi Buku');
+
+            // set default header data
+            $pdf->SetHeaderData('', '', '[ ' . $id . ' ] ' . $booktitle, 'Call Number : ' . $call_number . ' | Jumlah Barcode : ' . count($data));
+
+            // set header and footer fonts
+            $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+            $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+            // set default monospaced font
+            $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+            //set margins
+            $pdf->SetMargins(11, PDF_MARGIN_TOP, 11);
+            $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+            $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+            //set auto page breaks
+            $pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);
+
+            //set image scale factor
+            $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+            // ---------------------------------------------------------
+            // set a barcode on the page footer
+            $pdf->setBarcode(date('Y-m-d H:i:s'));
+
+            // set font
+            $pdf->SetFont('helvetica', '', 11);
+
+            // add a page
+            $pdf->AddPage();
+
+            // -----------------------------------------------------------------------------
+
+            $pdf->SetFont('helvetica', '', 10);
+
+            // define barcode style
+            $style = array(
+                'position' => '',
+                'align' => 'C',
+                'stretch' => false,
+                'fitwidth' => true,
+                'cellfitalign' => '',
+                'border' => true,
+                'hpadding' => 'auto',
+                'vpadding' => 'auto',
+                'fgcolor' => array(0, 0, 0),
+                'bgcolor' => false, //array(255,255,255),
+                'text' => true,
+                'font' => 'helvetica',
+                'fontsize' => 8,
+                'stretchtext' => 4
+            );
+
+            // CODE 128 C
+            $posX = 11;
+            $posY = 20;
+            $row = 1;
+            $col = 1;
+
+            //var_dump($data);
+            //for ($idx = 1; $idx <= 53; $idx++) {
+            foreach ($data as $value) {
+
+                $pdf->write1DBarcode($value['book_register_id'], 'C128C', $posX, $posY, 44, 18, 0.4, $style, '');
+
+                $posX += 48;
+
+                if ($col == 4) {
+                    $col = 1;
+                    $posX = 11;
+                    $posY += 22;
+                    $row++;
+                } else {
+                    $col++;
+                }
+
+                if ($row > 12) {
+                    $pdf->AddPage();
+                    $posX = 11;
+                    $posY = 20;
+                    $row = 1;
+                    $col = 1;
+                }
             }
+
+            // ---------------------------------------------------------
+            //Close and output PDF document
+            $pdf->Output('example_027.pdf', 'I');
+        } else {
+            echo 'Sory, Catalogue Not Found!';
         }
+    }
 
-        // ---------------------------------------------------------
-        //Close and output PDF document
-        $pdf->Output('example_027.pdf', 'I');
+    public function printLabel($id) {
+        $catalogue = $this->model->selectCatalogueById($id);
+
+        if (count($catalogue) > 0) {
+            $listCatalogue = $catalogue[0];
+            $data = $this->model->selectAllCollectionByBookId($id);
+            $author = $this->model->selectAuthorByBookID($id);
+
+            $booktitle = $listCatalogue['book_title'];
+            if ($listCatalogue['book_sub_title'] != '')
+                $booktitle .= ' : ' . $listCatalogue['book_sub_title'];
+
+            if (count($author) > 0) {
+                $listAuthor = $author[0];
+                $call_number = $listCatalogue['class_number'] . ' / ' . strtoupper(substr(str_replace(' ', '', $listAuthor['author_first_name']), 0, 3)) . ' / ' . strtolower(substr(str_replace(' ', '', $listCatalogue['book_title']), 0, 1));
+            } else {
+                $call_number = $listCatalogue['class_number'] . ' / ' . strtoupper(substr(str_replace(' ', '', $listCatalogue['book_title']), 0, 3));
+            }
+
+            $pdf = Src::plugin()->tcPdf();
+
+            // set document information
+            $pdf->SetCreator(PDF_CREATOR);
+            $pdf->SetAuthor('Warman Suganda');
+            $pdf->SetTitle('Cetak Barcode Buku Induk');
+            $pdf->SetSubject('Koleksi Buku');
+            
+            // set default header data
+            $pdf->SetHeaderData('', '', '[ ' . $id . ' ] ' . $booktitle, 'Call Number : ' . $call_number . ' | Jumlah Barcode : ' . count($data));
+
+            // set header and footer fonts
+            $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+            $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+            // set default monospaced font
+            $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+            //set margins
+            $pdf->SetMargins(11, PDF_MARGIN_TOP, 11);
+            $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+            $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+            //set auto page breaks
+            $pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);
+
+            //set image scale factor
+            $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+            // ---------------------------------------------------------
+            // set a barcode on the page footer
+            $pdf->setBarcode(date('Y-m-d H:i:s'));
+
+            // set font
+            $pdf->SetFont('helvetica', '', 11);
+
+            // add a page
+            $resolution= array(210, 310);
+            $pdf->AddPage('P', $resolution);
+
+            // create some HTML content
+            // HTML text with soft hyphens (&shy;)
+            $html = '
+                    <table style="border:1px solid #000;text-align:center;">
+                        <tr>
+                            <td>PERPUSTAKAAN</td>
+                        </tr>
+                        <tr>
+                            <td style="border-bottom:1px solid #000;">SMP NEGERI 1 SUBANG</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">
+                                &nbsp;
+                                <br>
+                                578.03<br>
+                                WAR<br>
+                                p
+                                <br>
+                            </td>
+                        </tr>
+                    </table>
+                    ';
+
+            // print a cell
+            $pdf->writeHTMLCell(60, 0, 10, 20, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 75, 20, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 140, 20, $html, 0, 0, 0, true, 'J');
+            // print a cell
+            $pdf->writeHTMLCell(60, 0, 10, 60, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 75, 60, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 140, 60, $html, 0, 0, 0, true, 'J');
+            // print a cell
+            $pdf->writeHTMLCell(60, 0, 10, 100, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 75, 100, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 140, 100, $html, 0, 0, 0, true, 'J');
+            // print a cell
+            $pdf->writeHTMLCell(60, 0, 10, 140, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 75, 140, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 140, 140, $html, 0, 0, 0, true, 'J');
+            // print a cell
+            $pdf->writeHTMLCell(60, 0, 10, 180, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 75, 180, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 140, 180, $html, 0, 0, 0, true, 'J');
+            // print a cell
+            $pdf->writeHTMLCell(60, 0, 10, 220, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 75, 220, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 140, 220, $html, 0, 0, 0, true, 'J');
+            // print a cell
+            $pdf->writeHTMLCell(60, 0, 10, 260, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 75, 260, $html, 0, 0, 0, true, 'J');
+            $pdf->writeHTMLCell(60, 0, 140, 260, $html, 0, 0, 0, true, 'J');
+
+            // reset pointer to the last page
+            $pdf->lastPage();
+
+            // ---------------------------------------------------------
+            //Close and output PDF document
+            $pdf->Output('example_027.pdf', 'I');
+        } else {
+            echo 'Sory, Catalogue Not Found!';
+        }
     }
 
 }

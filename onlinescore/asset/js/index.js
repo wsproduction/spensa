@@ -1,0 +1,4 @@
+$(function () {
+    $('#btn-check').address();
+    
+});
