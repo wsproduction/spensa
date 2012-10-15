@@ -29,7 +29,8 @@ class SubjectModel extends Model {
                                     FROM 
                                         hots_question 
                                     WHERE 
-                                        question_subject = :id');
+                                        question_subject = :id AND hots_question.question_status <> 0
+                                    ORDER BY hots_question.question_entry DESC');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array(':id' => $id));
         return $sth->fetchAll();

@@ -207,7 +207,7 @@ $(function(){
             name : 'Print',
             bclass : 'print',
             onpress : function() {
-                alert('ssss');
+                window.open($('#linkPrint').val(),'_blank');
             }
         } ],
         searchitems : [ {
@@ -251,6 +251,26 @@ $(function(){
     
     $('a[href=#view]').live('click',function(){
         $( "#view-answer" ).dialog("open");
+        return false;
+    });
+    
+    $('a[href=#winners]').live('click',function(){
+        //$( "#view-answer" ).dialog("open");
+        var conf = confirm('Are you sure?');
+        var tempId = $(this);
+        if (conf) {
+            $.post($(tempId).attr('rel'), {
+                qid : $('#qid').val(),
+                id : $(tempId).attr('title')
+            }, function(o){
+                if (o) {
+                    $(".flexme4").flexReload();
+                } else {
+                    alert('Process delete failed.');
+                }                            
+            }, 'json');
+        }
+        
         return false;
     });
     

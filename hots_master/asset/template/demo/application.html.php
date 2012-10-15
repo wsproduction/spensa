@@ -20,10 +20,10 @@
         </div>
         <div id="page_menu">
             <?php
-            if (Session::get('statusLogin') == true) {
+            if (Session::get('loginStatus') == true) {
                 URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/home', 'Home');
                 URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/data', 'Hots Data');
-                URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/logout', 'Logout');
+                URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/login/stop', 'Logout');
             } else {
                 URL::link('#', 'Login');
             }

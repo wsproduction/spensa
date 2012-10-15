@@ -10,7 +10,28 @@ class Index extends Controller {
 
     public function index() {
         Web::setTitle('Welcome');
+        $this->view->winners = $this->listWinners();
         $this->view->render('index/index');
+    }
+    
+    public function listWinners() {
+        $subject = $this->model->selectAllSubject();
+        
+        $winners = array();
+        foreach ($subject as $value) {
+            $tempQuestion = $this->model->selectWinnersBySubjectId($value['subject_id']);
+            $tempWinners = array('name'=>'-','pic'=>'-');
+            if (count($tempQuestion)>0) {
+                $tempStudent = $tempQuestion[0];
+                $img = '-';
+                if ($tempStudent['student_picture']!='')
+                    $img = $tempStudent['student_picture'];
+                $tempWinners = array('name'=>$tempStudent['student_full_name'],'pic'=>$img);
+            }
+            $winners[$value['subject_id']] = array($value['subject_title'], $tempWinners);
+        }
+        return $winners;
+        //var_dump($winners);        
     }
 
     public function chart() {

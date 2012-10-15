@@ -165,5 +165,35 @@ class IndexModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-
+    
+    public function selectAllSubject() {
+        $sth = $this->db->prepare('SELECT * FROM hots_subject');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);        
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectWinnersBySubjectId($id) {
+        $sth = $this->db->prepare('SELECT 
+                                        hots_winners.winner_id,
+                                        hots_winners.winner_name,
+                                        hots_winners.winners_question,
+                                        hots_winners.entry_date,
+                                        public_student.student_full_name,
+                                        public_student.student_picture
+                                    FROM
+                                        hots_winners
+                                        INNER JOIN hots_question ON (hots_winners.winners_question = hots_question.question_id)
+                                        INNER JOIN public_student ON (hots_winners.winner_name = public_student.student_id)
+                                    WHERE
+                                        hots_question.question_subject = :id
+                                    ORDER BY 
+                                        hots_winners.entry_date DESC
+                                    LIMIT 1');
+        $sth->bindValue(':id', $id);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);        
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
 }

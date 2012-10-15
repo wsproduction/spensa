@@ -37,7 +37,7 @@
                 <td>
                     <?php
                     Form::create('textarea', 'content_question');
-                    Form::value($listQuestion['question_description']);
+                    Form::value(trim(stripslashes($listQuestion['question_description']),'"'));
                     Form::validation()->requaired();
                     Form::commit();
                     ?>

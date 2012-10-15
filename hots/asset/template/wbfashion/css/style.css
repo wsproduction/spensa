@@ -68,7 +68,7 @@ h1#logo a{
     height:60px;
     background:url(../images/logo.png);
 }
-h2{font-size: 20px; color:#2a2a2a; font-weight: normal; text-transform: uppercase; font-family: georgia, sans-serif; padding-bottom:8px; border-bottom:solid 2px #dedede; margin-right:5px}
+h2{font-size: 15px; font-weight: bold; color:#2a2a2a; font-weight: normal; text-transform: uppercase; font-family: georgia, sans-serif; padding-bottom:8px; border-bottom:solid 2px #dedede; margin-right:5px}
 h2 span{color:#ff0081}
 h3{color:#0f89df; font-size: 15px; font-family: "trebuchet ms", sans-serif; text-transform: uppercase; line-height: 18px;}
 h4{color:#0f89df; font-size: 12px; font-family: "trebuchet ms", sans-serif; text-transform: uppercase; line-height: 16px;}

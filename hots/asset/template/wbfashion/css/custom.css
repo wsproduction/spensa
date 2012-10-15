@@ -358,7 +358,7 @@ input[class=btnSubmitStandar] {
     font-family: Arial,Helvetica,sans-serif;
     font-size: 12px;
     padding: 10px;
-    
+
     -moz-box-shadow:    0px 0px 6px 1px #ccc;
     -webkit-box-shadow: 0px 0px 6px 1px #ccc;
     box-shadow:         0px 0px 6px 1px #ccc;
@@ -400,4 +400,57 @@ input[class=btnSubmitStandar] {
     margin-top: 20px;
     font-family: Arial,Helvetica,sans-serif;
     font-size: 12px;
+}
+
+#bigPic{
+    width:280px;
+    height:380px;
+    padding:5px;
+    border:1px solid #CCC;
+    background-color:#FFF;
+    margin-bottom:10px;
+}
+
+#bigPic #info-slide {
+    z-index: 2;
+    position: absolute;
+    background: #ccc;
+    margin-top: 330px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px;
+    min-width: 150px;
+}
+
+#bigPic img{
+    position:absolute;
+    display:none;
+}
+ul#thumbs li.active img{
+    border:1px solid #000;
+}
+ul#thumbs, ul#thumbs li{
+    margin:0;
+    padding:0;
+    list-style:none;
+}
+
+ul#thumbs li{
+    float:left;
+    margin-right:7px;
+    margin-bottom:5px;
+    padding:3px;
+    cursor:pointer;
+}
+ul#thumbs img{
+    border:1px solid #CCC;	
+    float:left;
+    width:80px;
+    height:80px;
+    line-height:80px;
+    overflow:hidden;
+    position:relative;
+    padding: 5px;
+    z-index:1;		
 }

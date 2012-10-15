@@ -5,7 +5,17 @@
             <tr>
                 <th style="width: 200px;">ID</th>
                 <th style="width: 10px;">:</th>
-                <td><?php echo $tempId; ?></td>
+                <td>
+                    <?php 
+                    echo $tempId; 
+                    Form::create('hidden','qid');
+                    Form::value($tempId);
+                    Form::commit();
+                    Form::create('hidden','linkPrint');
+                    Form::value($link_print);
+                    Form::commit();
+                    ?>
+                </td>
             </tr>
             <tr>
                 <th>Subject</th>
@@ -39,6 +49,17 @@
                                 <li><?php URL::link('#fragment-1', 'File Attachment') ?></li>
                             </ul>
                             <div id="fragment-1">ssss</div>
+                        </div>
+                        <div>
+                            <?php
+                            Form::begin('fRating','data/score','post');
+                            Form::create('text','score');
+                            Form::commit();
+                            Form::create('button','score');
+                            Form::value('Save');
+                            Form::commit();
+                            Form::end();
+                            ?>
                         </div>
                     </div>
                 </td>

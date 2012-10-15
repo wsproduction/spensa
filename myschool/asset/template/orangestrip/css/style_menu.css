@@ -1,0 +1,61 @@
+/* 
+    Document   : style_menu
+    Created on : Oct 14, 2012, 8:30:54 PM
+    Author     : ws
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+ul.m-left {
+    width: 230px;
+}
+
+ul.m-left li.toggle-on {
+    background: url('../images/down-arrow-grey-on.png') no-repeat;
+    background-position: 210px 16px;
+}
+
+ul.m-left li.toggle-of {
+    background: url('../images/down-arrow-grey-of.png') no-repeat;
+    background-position: 210px 16px;
+}
+
+ul.m-left li a{
+    display: block;
+    padding: 15px 15px 15px 35px;
+    text-decoration: none;
+    color: #32415a;
+    font-weight: bold;
+}
+
+ul.m-left li a.user{
+    background: url('../images/user.png') no-repeat;
+    background-position: 10px center;
+}
+
+ul.m-left li a.pages{
+    background: url('../images/library.png') no-repeat;
+    background-position: 10px center;
+}
+
+ul.m-left li a.border-bottom{
+    border-color: #eeeeee;
+}
+
+ul.m-left ul {
+    display: none;
+    border-bottom: 1px solid #eeeeee;
+}
+
+ul.m-left ul li{
+    list-style: none;
+    border-left: 1px dashed #ccc;
+    margin: 0 0 0 25px;
+}
+
+ul.m-left ul li a {
+    padding: 15px 15px 15px 12px;
+    background: url('../images/dashed-grey.png') no-repeat;
+    background-position: left center;
+    font-weight: normal;
+}

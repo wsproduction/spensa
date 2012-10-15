@@ -15,8 +15,8 @@
         <![endif]-->
 
         <?php
-        Src::css('style.css');
-        Src::css('custom.css');
+        Src::css('style');
+        Src::css('custom');
 
         /* Loader */
         Src::plugin()->flexDropDown();

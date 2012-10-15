@@ -1,0 +1,178 @@
+/* 
+    Document   : layout
+    Created on : Oct 11, 2012, 2:46:49 PM
+    Author     : ws
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* Online Score */
+#online-score {
+    clear: both;
+    padding: 10px;
+}
+
+#online-score .hr {
+    margin: 5px 2px;
+    padding-top: 5px;
+    border-top: 1px dashed #ddd;
+}
+
+#online-score a[class=btn-check-score-green] {
+    text-decoration: none;
+    padding: 5px 5px;
+    border: 1px solid #328503;
+    color: #fff;
+    background-color: #429c0f;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    opacity:0.8;
+    filter:alpha(opacity=80); /* For IE8 and earlier */
+    
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+#online-score a[class=btn-check-score-green]:hover {
+    opacity:1.0;
+    filter:alpha(opacity=100); /* For IE8 and earlier */
+}
+
+#online-score .box-score-check {
+    clear: both;
+    background: url('../images/credit-score-check.png') no-repeat;
+    background-color: #f5f5f5;
+    margin: 2px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+#online-score .box-score-check .box-frame-check {
+    border-left: 1px solid #ccc;
+    padding: 0 5px 0 10px;
+    font-family: Geneva,Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    margin: 0 0 0 150px;
+}
+
+#online-score .radius-all {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+#online-score .box-score-check select, input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+#online-score .box-score-check input[type=submit] {
+    padding: 5px 5px;
+    border: 1px solid #328503;
+    color: #fff;
+    background-color: #429c0f;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    opacity:0.8;
+    filter:alpha(opacity=80); /* For IE8 and earlier */
+}
+
+#online-score .box-score-check input[type=submit]:hover {
+    opacity:1.0;
+    filter:alpha(opacity=100); /* For IE8 and earlier */
+}
+
+#online-score .box-info {
+    margin: 10px 2px;
+    padding-top: 10px;
+    border-top: 1px dashed #ddd;
+}
+
+#online-score .box-info .box-info-arsip {
+    width: 360px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+#online-score .box-info .box-info-arsip .title {
+    border: 1px solid #ddd;
+    background-color: #f5f5f5;
+    padding: 7px 7px 7px 30px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    text-shadow: 1px 1px 1px #fff;
+    font-family: Geneva,Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#online-score .box-info .box-info-arsip .ic-arsip {
+    background: url('../images/billing.png') no-repeat;
+    background-position: 7px center;
+}
+
+#online-score .box-info .box-info-arsip .ic-statistics {
+    background: url('../images/statistics.png') no-repeat;
+    background-position: 7px center;
+}
+
+#online-score .box-info .box-info-arsip .ic-online {
+    background: url('../images/lightbulb.png') no-repeat;
+    background-position: 7px center;
+}
+
+#online-score .box-info .box-info-arsip .ic-sigin {
+    background: url('../images/sign-in.png') no-repeat;
+    background-position: 7px center;
+}
+
+#online-score .box-info .box-info-arsip .content {
+    font-family: Geneva,Arial,Helvetica,sans-serif;
+    font-size: 12px;
+}
+
+#online-score .box-info .box-info-arsip .tbl-info-arsip {
+    width: 100%;
+}
+
+#online-score .box-info .box-info-arsip .tbl-info-arsip th{
+    text-align: left;
+    padding: 5px 5px 5px 30px;
+}
+
+#online-score .box-info .box-info-arsip .tbl-info-arsip td{
+    text-align: right;
+    color: #03a7e4;
+    padding: 5px;
+}
+
+#online-score .box-info .box-info-arsip .tbl-info-arsip th.ic-student {
+    background: url('../images/customers.png') no-repeat;
+    background-position: 6px center;
+}
+
+#online-score .box-info .box-info-arsip .tbl-info-arsip th.ic-teacher {
+    background: url('../images/hire-me.png') no-repeat;
+    background-position: 6px center;
+}
+
+#online-score .box-info .box-info-arsip .tbl-info-arsip th.ic-data {
+    background: url('../images/archives.png') no-repeat;
+    background-position: 6px center;
+}

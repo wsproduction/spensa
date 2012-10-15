@@ -252,7 +252,7 @@ class DataModel extends Model {
 
         return $sth->execute();
     }
-    
+
     public function updateSave($id) {
         $subject = $this->method->post('subject');
         $title_question = $this->method->post('title_question');
@@ -281,6 +281,63 @@ class DataModel extends Model {
         $sth->bindValue(':id', $id);
 
         return $sth->execute();
+    }
+
+    public function setWinner() {
+        $qid = $this->method->post('qid');
+        $id = $this->method->post('id');
+
+
+        $stha = $this->db->prepare('SELECT 
+                                        hots_answer.student_id
+                                    FROM
+                                        hots_answer
+                                    WHERE
+                                        hots_answer.answer_id = :id');
+        $stha->bindValue(':id', $id);
+        $stha->setFetchMode(PDO::FETCH_ASSOC);
+        $stha->execute();
+
+        if ($stha->rowCount() > 0) {
+
+            $answerList = $stha->fetchAll();
+            $answer = $answerList[0];
+
+            $aid = $answer['student_id'];
+            //var_dump($aid);
+
+            $sth = $this->db->prepare('SELECT * FROM hots_winners WHERE hots_winners.winners_question = :id');
+            $sth->bindValue(':id', $qid);
+            $sth->setFetchMode(PDO::FETCH_ASSOC);
+            $sth->execute();
+
+            if ($sth->rowCount() > 0) {
+                $sth1 = $this->db->prepare('UPDATE
+                                                hots_winners
+                                            SET
+                                                winner_name = :student
+                                            WHERE
+                                                hots_winners.winners_question = :id ');
+                $sth1->bindValue(':id', $qid);
+                $sth1->bindValue(':student', $aid);
+            } else {
+                $sth1 = $this->db->prepare('INSERT INTO
+                                            hots_winners(
+                                            winner_name,
+                                            winners_question,
+                                            entry_date)
+                                        VALUES(
+                                            :student,
+                                            :id,
+                                            NOW())');
+                $sth1->bindValue(':id', $qid);
+                $sth1->bindValue(':student', $aid);
+            }
+
+            return $sth1->execute();
+        } else {
+            return false;
+        }
     }
 
 }

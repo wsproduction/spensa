@@ -1,0 +1,42 @@
+/* 
+    Document   : style_login
+    Created on : Oct 14, 2012, 8:35:29 PM
+    Author     : ws
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+#form_login input[type=submit] {
+    background: url('../images/bg-btn-blue.png') repeat-x;
+    padding: 5px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid #3079ed;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    opacity:0.8;
+    filter:alpha(opacity=80); /* For IE8 and earlier */
+    cursor: pointer;
+}
+
+#form_login input[type=submit]:hover {
+    opacity:1.0;
+    filter:alpha(opacity=100); /* For IE8 and earlier */
+}
+
+#form_login input[type=text], input[type=password] {
+    padding: 5px;
+}
+
+#form_login .box-login {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+}
+
+#form_login .box-login div {
+    margin: 2px 0;
+}

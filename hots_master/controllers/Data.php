@@ -31,6 +31,7 @@ class Data extends Controller {
             $this->view->tempId = $questionId;
             $this->view->subject = $question[0];
             $this->view->link = $this->content->setLink('data/ranswer');
+            $this->view->link_print = $this->content->setLink('data/printanswer/' . $questionId);
             $this->view->listSubject = $this->listSubject();
             $this->view->render('data/detail');
         } else {
@@ -166,9 +167,12 @@ class Data extends Controller {
         foreach ($listData AS $row) {
 
             //$link_view = URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/data/view/' . $row['question_id'], 'View', 'attach');
-            $link = URL::link('#view', 'View', 'attach');
-            if ($row['status'] == 'Submit')
-                $link .= ' | ' . URL::link('#rate', 'Rating', 'attach');
+            //$link = URL::link('#view', 'View', 'attach');
+            //if ($row['status'] == 'Submit')
+                //$link .= ' | ' . URL::link('#rate', 'Rating', 'attach');
+            
+            //if ($row['status'] == 'Check')
+                $link = URL::link('#winners', 'Set Winner', 'attach', array('rel'=>$this->content->setLink('data/setWinner'),'title'=>$row['answer_id']));
 
             $xml .= "<row id='" . $row['answer_id'] . "'>";
             $xml .= "<cell><![CDATA[" . $row['answer_id'] . "]]></cell>";
@@ -196,7 +200,7 @@ class Data extends Controller {
     }
 
     public function printAnswer($id) {
-
+        
         $dataQuestion = $this->model->selectQuestionById($id);
         if (count($dataQuestion) > 0) {
             $dataAnswer = $this->model->selectAnswerByQuestionId($id);
@@ -230,9 +234,11 @@ class Data extends Controller {
             //set image scale factor
             $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
-            // ---------------------------------------------------------
-            // set font
-            $pdf->SetFont('helvetica', '', 10);
+            // set default font subsetting mode
+$pdf->setFontSubsetting(true);
+
+// set font
+$pdf->SetFont('freeserif', '', 12);
 
             // add a page
             $pdf->AddPage();
@@ -241,7 +247,7 @@ class Data extends Controller {
 
             $html = '<table class="list" cellpadding="4" cellspacing="6">';
             $html .= '  <tr>';
-            $html .= '      <td style="text-align:center;text-decoration:underline;font-weight:bold;">' . $question['subject_title'] . '</td>';
+            $html .= '      <td style="text-align:center;text-decoration:underline;font-weight:bold;">' . htmlspecialchars(trim(stripslashes($question['subject_title']),'"'), ENT_COMPAT, 'UTF-8') . '</td>';
             $html .= '  </tr>';
             $html .= '  <tr>';
             $html .= '      <td style="border-bottom:1px dashed #ccc;"><b>Question:</b> <br>' . $question['question_description'] . '</td>';
@@ -261,7 +267,7 @@ class Data extends Controller {
                 $html .= '              <td colspan="2"></td>';
                 $html .= '          </tr>';
                 $html .= '          <tr>';
-                $html .= '              <td colspan="2"><b>Answer :</b><br>' . $value['answer_content'] . '</td>';
+                $html .= '              <td colspan="2"><b>Answer :</b><br>' . stripslashes($value['answer_content']) . '</td>';
                 $html .= '          </tr>';
                 $html .= '          <tr>';
                 $link = 'http://' . Web::$host . '/hots/asset/web/upload/file/' . $value['answer_file'];
@@ -280,7 +286,10 @@ class Data extends Controller {
             $pdf->writeHTML($html, true, false, true, false, '');
             // reset pointer to the last page
             $pdf->lastPage();
-
+            
+            //echo '<code>';
+            //echo $html;
+            //echo '</code>';
             // ---------------------------------------------------------
             //Close and output PDF document
             $pdf->Output('example_061.pdf', 'I');
@@ -304,5 +313,13 @@ class Data extends Controller {
         }
         echo json_encode($msg);
     }
-
+    
+    public function setWinner() {
+        if ($this->model->setWinner()) {
+            $res = 1;
+        } else {
+            $res = 0;
+        }
+        echo json_encode($res);
+    }
 }

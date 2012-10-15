@@ -1,3 +1,4 @@
+<div id="#message"></div>
 <?php
 Form::begin('fLogin', 'login/run', 'post', true);
 
@@ -13,5 +14,3 @@ Form::commit();
 
 Form::end();
 ?>
-
-<table class="flexme3" style="display: none;"></table>
