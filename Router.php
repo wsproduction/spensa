@@ -7,6 +7,10 @@ switch (Web::getSubDomain()) {
         Web::main('SMPN 1 SUBANG', 'main', 'elegant');
         Web::child('ADMIN SMPN 1 SUBANG', 'admin_main', 'demo');
         break;
+    case 'myschool':
+        Web::main('MY SCHOOL SMPN 1 SUBANG', 'myschool', 'orangestrip');
+        Web::child('ONLINE SCORE', 'onlinescore', 'onlinescore', 'orangestrip');
+        break;
     case 'komite':
         Web::main('SMPN 1 SUBANG', 'absensi', 'demo');
         break;
