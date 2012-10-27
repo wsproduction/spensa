@@ -6,16 +6,60 @@ class MembersModel extends Model {
         parent::__construct();
     }
 
-    public function selectAll($start = 1, $count = 100) {
-        $sth = $this->db->prepare('SELECT *
-                                   FROM
-                                        digilib_members
-                                   ORDER BY members_id, members_name LIMIT ' . $start . ',' . $count);
+    public function selectAllMembers($page = 1) {
+        $rp = $this->method->post('rp', 10);
+        $sortname = $this->method->post('sortname', 'question_id');
+        $sortorder = $this->method->post('sortorder', 'desc');
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $listSelect = "
+            digilib_members.members_id,
+            digilib_members.members_name,
+            digilib_members.members_gender,
+            digilib_members.members_birthplace,
+            digilib_members.members_birthday,
+            digilib_members.members_address,
+            digilib_members.members_email,
+            digilib_members.members_password,
+            digilib_members.members_photo,
+            digilib_members.members_visit,
+            digilib_members.members_borrowed,
+            digilib_members.members_last_visit,
+            digilib_members.members_entry,
+            digilib_members.members_status";
+
+        $prepare = 'SELECT ' . $listSelect . ' FROM digilib_members';
+        if ($query)
+            $prepare .= ' WHERE ' . $qtype . ' LIKE "%' . $query . '%" ';
+        $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
+
+        $start = (($page - 1) * $rp);
+        $prepare .= ' LIMIT ' . $start . ',' . $rp;
+
+        $sth = $this->db->prepare($prepare);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
     }
 
+    public function countAllMembers() {
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $prepare = 'SELECT COUNT(members_id) AS cnt FROM digilib_members';
+        if ($query)
+            $prepare .= ' WHERE ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        $tempCount = $sth->fetchAll();
+        $count = $tempCount[0];
+        return $count['cnt'];
+    }
+    
+    
     public function selectByID($id) {
         $sth = $this->db->prepare('
                             SELECT *
@@ -30,13 +74,6 @@ class MembersModel extends Model {
         } else {
             return false;
         }
-    }
-
-    public function countAll() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_members');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return $sth->rowCount();
     }
 
     public function createSave() {

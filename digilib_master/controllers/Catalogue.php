@@ -22,12 +22,14 @@ class Catalogue extends Controller {
         Src::plugin()->poshytip();
         Src::plugin()->elrte();
         Src::plugin()->tokenInput();
+        Src::plugin()->flexiGrid();
     }
 
     public function index() {
-        Web::setTitle('Katalog');
-        $this->view->link_add = $this->content->setLink('catalogue/add');
-        $this->view->listData = $this->listData();
+        Web::setTitle('Daftar Katalog');
+        $this->view->link_r = $this->content->setLink('catalogue/read');
+        $this->view->link_c = $this->content->setLink('catalogue/add');
+        $this->view->link_d = $this->content->setLink('catalogue/delete');
         $this->view->render('catalogue/index');
     }
 
@@ -497,11 +499,107 @@ class Catalogue extends Controller {
     }
 
     public function read() {
-        $page = 1;
-        if (isset($_GET['p'])) {
-            $page = $_GET['p'];
+
+        if ($this->method->isAjax()) {
+            $page = $this->method->post('page', 1);
+            $listData = $this->model->selectAllCatalogue($page);
+            $total = $this->model->countAllCatalogue();
+            
+            $this->setAuthor();
+
+            header("Content-type: text/xml");
+            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            $xml .= "<rows>";
+            $xml .= "<page>$page</page>";
+            $xml .= "<total>$total</total>";
+
+            foreach ($listData AS $row) {
+                
+                // Author
+                $outAuthor = '';
+                $countAuthor = 0;
+                $tempCount = 0;
+                $jmlPengarang = 0;
+                $namaPengarang = '';
+                foreach ($this->dataAuthorDescription as $keyAD => $valueAD) {
+                    $res = $this->parsingAuthor($row['book_id'], $keyAD);
+
+                    if ($res[0] > 0 && $countAuthor)
+                        $outAuthor .= '; ';
+
+                    $countAuthor += $res[0];
+                    $outAuthor .= $res[1];
+                    $tempCount = $res[0];
+
+                    //untuk menentukan classification number
+                    if ($keyAD == 1) {
+                        $namaPengarang = $res[1];
+                        $jmlPengarang = $res[0];
+                    }
+                }
+                
+                // Judul Buku
+                $keterangan_buku = $row['book_title'];
+                if ($row['book_sub_title'] != '')
+                    $keterangan_buku .= ' : ' . $row['book_sub_title'];$row['book_year_launching'] . '</i>';
+                
+                // Author
+                if ($countAuthor > 0)
+                    $keterangan_buku .= '      / ' . $outAuthor;
+                
+                // Edisi, Cetakan
+                if ($row['book_edition'] != '' || $row['book_print'] != '')
+                    $keterangan_buku .= '.&HorizontalLine;';
+
+                if ($row['book_edition'] != '')
+                    $keterangan_buku .= ' Ed. ' . $row['book_edition'];
+
+                if ($row['book_edition'] != '' && $row['book_print'] != '')
+                    $keterangan_buku .= ', ';
+
+                if ($row['book_print'] != '')
+                    $keterangan_buku .= ' cet. ' . $row['book_print'];
+                
+                // Keterangan Penerbit
+                $keterangan_buku .= '.&HorizontalLine; ' . $row['city_name'] . ' : ' . $row['publisher_name'] . ', ' . $row['book_year_launching'] . '.';
+                
+                // CallNumber
+                $callNumberRow1 = $row['classification_number'];
+                $callNumberRow2 = '';
+                $callNumberRow3 = '';
+                if ($jmlPengarang > 0 && $jmlPengarang <= 3) {
+                    $np = explode(',', $namaPengarang);
+                    $callNumberRow2 = strtoupper(substr(str_replace(' ', '', $np[0]), 0, 3));
+                    $callNumberRow3 = strtolower(substr(str_replace(' ', '', $row['book_title']), 0, 1));
+                } else {
+                    $callNumberRow2 = strtoupper(substr(str_replace(' ', '', $row['book_title']), 0, 3));
+                }
+                
+                $cn = '      <div>';
+                $cn .= '          <div>' . $callNumberRow1 . '</div>';
+                $cn .= '          <div>' . $callNumberRow2 . '</div>';
+                $cn .= '          <div>' . $callNumberRow3 . '</div>';
+                $cn .= '      </div>';
+
+                $link_detail = URL::link($this->content->setLink('catalogue/detail/' . $row['book_id']), 'Detail', 'attach');
+                $link_edit = URL::link($this->content->setLink('catalogue/edit/' . $row['book_id']), 'Edit', 'attach');
+
+                $xml .= "<row id='" . $row['book_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $row['book_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $cn . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $keterangan_buku . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['resource_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['fund_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['book_quantity'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['length_borrowed'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d / m / Y', strtotime($row['book_entry_date'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $link_detail . " | " . $link_edit . "]]></cell>";
+                $xml .= "</row>";
+            }
+
+            $xml .= "</rows>";
+            echo $xml;
         }
-        echo json_encode($this->listData($page));
     }
 
     public function readDdc() {
@@ -903,7 +1001,8 @@ class Catalogue extends Controller {
             //for ($idx = 1; $idx <= 53; $idx++) {
             foreach ($data as $value) {
 
-                $pdf->write1DBarcode($value['book_register_id'], 'C128C', $posX, $posY, 44, 18, 0.4, $style, '');
+                //$pdf->write1DBarcode($value['book_register_id'], 'C128C', $posX, $posY, 44, 18, 0.4, $style, '');
+                $pdf->write1DBarcode($value['book_register_id'], 'C128C', $posX, $posY, 30, 10, 0.4, $style, '');
 
                 $posX += 48;
 
@@ -959,7 +1058,7 @@ class Catalogue extends Controller {
             $pdf->SetAuthor('Warman Suganda');
             $pdf->SetTitle('Cetak Barcode Buku Induk');
             $pdf->SetSubject('Koleksi Buku');
-            
+
             // set default header data
             $pdf->SetHeaderData('', '', '[ ' . $id . ' ] ' . $booktitle, 'Call Number : ' . $call_number . ' | Jumlah Barcode : ' . count($data));
 
@@ -989,7 +1088,7 @@ class Catalogue extends Controller {
             $pdf->SetFont('helvetica', '', 11);
 
             // add a page
-            $resolution= array(210, 310);
+            $resolution = array(210, 310);
             $pdf->AddPage('P', $resolution);
 
             // create some HTML content

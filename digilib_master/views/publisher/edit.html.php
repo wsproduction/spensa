@@ -33,13 +33,13 @@
                     </td>
                 </tr>        
                 <tr>
-                    <td>Address</td>
-                    <td>:</td>
+                    <td valign="top">Address</td>
+                    <td valign="top">:</td>
                     <td>
                         <?php
                         Form::create('textarea', 'address');
                         Form::tips('Enter Publisher Address');
-                        Form::size(40,4);
+                        Form::size(60,4);
                         Form::value($dataEdit['publisher_address']);
                         Form::commit();
                         ?>
@@ -106,6 +106,7 @@
                         Form::create('textarea', 'description');
                         Form::tips('Enter Description');
                         Form::value($dataEdit['publisher_description']);
+                        Form::size(80,4);
                         Form::commit();
                         ?>
                     </td>

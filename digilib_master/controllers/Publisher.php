@@ -11,21 +11,23 @@ class Publisher extends Controller {
         Src::plugin()->jQueryAlphaNumeric();
         Src::plugin()->poshytip();
         Src::plugin()->elrte();
+        Src::plugin()->flexiGrid();
     }
-    
+
     public function index() {
         Web::setTitle('List of Publishers');
-        $this->view->link_add = $this->content->setLink('publisher/add');
-        $this->view->listData = $this->listData();
+        $this->view->link_r = $this->content->setLink('publisher/read');
+        $this->view->link_c = $this->content->setLink('publisher/add');
+        $this->view->link_d = $this->content->setLink('publisher/delete');
         $this->view->render('publisher/index');
     }
-    
+
     public function add() {
         Web::setTitle('Add Data Publisher');
         $this->view->link_back = $this->content->setLink('publisher');
         $this->view->render('publisher/add');
     }
-    
+
     public function edit($id = 0) {
         Web::setTitle('Edit Data Publisher');
         $this->view->id = $id;
@@ -39,60 +41,6 @@ class Publisher extends Controller {
             $this->view->render('default/message/pnf');
         }
     }
-    
-    public function listData($page = 1) {
-        $maxRows = 10;
-        $countList = $this->model->countAll();
-        $countPage = ceil($countList / $maxRows);
-        $jumlah_kolom = 5;
-
-        $ddcList = $this->model->selectAll(($page * $maxRows) - $maxRows, $maxRows);
-        $html = '';
-
-        if ($countList > 0) {
-
-            $idx = 1;
-            $id = '0';
-            foreach ($ddcList as $value) {
-                $tmpID = $value['publisher_id'];
-                $id .= ',' . $tmpID;
-
-                $tr_class = 'ganjil';
-                if ($idx % 2 == 0) {
-                    $tr_class = 'genap';
-                }
-
-                $html .= '<tr class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '">';
-                $html .= '  <td style="width: 10px;" class="first">';
-                Form::create('checkbox', 'list_' . $tmpID);
-                Form::style('cbList');
-                Form::value($tmpID);
-                $html .= Form::commit('attach');
-                $html .= '  </td>';
-                $html .= '  <td style="text-align: left;">' . $value['publisher_name'] . '</td>';
-                $html .= '  <td>' . $value['publisher_address'] . '</td>';
-                $html .= '  <td>' . $value['publisher_description'] . '</td>';
-                $html .= '  <td style="text-align: center;">';
-                $html .= URL::link($this->content->setLink('publisher/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
-                $html .= URL::link($this->content->setLink('publisher/edit/' . $tmpID), 'Detail', 'attach');
-                $html .= '  </td>';
-                $html .= '</tr>';
-
-                $idx++;
-            }
-
-            $html .= $this->content->paging($jumlah_kolom, $countPage, $page);
-
-            Form::create('hidden', 'hiddenID');
-            Form::value($id);
-            $html .= Form::commit('attach');
-        } else {
-            $html .= '<tr>';
-            $html .= '   <th colspan="' . $jumlah_kolom . '">Data Not Found</th>';
-            $html .= '</tr>';
-        }
-        return $html;
-    }
 
     public function create() {
         if ($this->model->createSave()) {
@@ -104,14 +52,38 @@ class Publisher extends Controller {
     }
 
     public function read() {
-        $page = 1;
-        if (isset($_GET['p'])) {
-            $page = $_GET['p'];
+
+        if ($this->method->isAjax()) {
+            $page = $this->method->post('page', 1);
+            $listData = $this->model->selectAllPublisher($page);
+            $total = $this->model->countAllPublisher();
+
+            header("Content-type: text/xml");
+            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            $xml .= "<rows>";
+            $xml .= "<page>$page</page>";
+            $xml .= "<total>$total</total>";
+
+            foreach ($listData AS $row) {
+
+                $link_detail = URL::link($this->content->setLink('publisher/detail/' . $row['publisher_id']), 'Detail', 'attach');
+                $link_edit = URL::link($this->content->setLink('publisher/edit/' . $row['publisher_id']), 'Edit', 'attach');
+
+                $xml .= "<row id='" . $row['publisher_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $row['publisher_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['publisher_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['publisher_address'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['publisher_description'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $link_detail . " | " . $link_edit . "]]></cell>";
+                $xml .= "</row>";
+            }
+
+            $xml .= "</rows>";
+            echo $xml;
         }
-        echo json_encode($this->listData($page));
     }
 
-    public function update($id=0) {
+    public function update($id = 0) {
         if ($this->model->updateSave($id)) {
             $ket = array(1, 0, $this->message->saveSucces());
         } else {
@@ -121,7 +93,11 @@ class Publisher extends Controller {
     }
 
     public function delete() {
-        $this->model->delete();
+        $res = false;
+        if ($this->model->delete()) {
+            $res = true;
+        }
+        echo json_encode($res);
     }
 
 }

@@ -131,8 +131,8 @@ class Data extends Controller {
 
         foreach ($listData AS $row) {
 
-            $link_detail = URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/data/detail/' . $row['question_id'], 'Detail', 'attach');
-            $link_edit = URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/data/edit/' . $row['question_id'], 'Edit', 'attach');
+            $link_detail = URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/data/detail/' . $row['question_id'], 'Detail', false);
+            $link_edit = URL::link('http://' . Web::$host . '/' . Web::$webAlias . '/data/edit/' . $row['question_id'], 'Edit', false);
 
             $xml .= "<row id='" . $row['question_id'] . "'>";
             $xml .= "<cell><![CDATA[" . $row['question_id'] . "]]></cell>";
@@ -172,7 +172,7 @@ class Data extends Controller {
                 //$link .= ' | ' . URL::link('#rate', 'Rating', 'attach');
             
             //if ($row['status'] == 'Check')
-                $link = URL::link('#winners', 'Set Winner', 'attach', array('rel'=>$this->content->setLink('data/setWinner'),'title'=>$row['answer_id']));
+            $link = URL::link('#winners', 'Set Winner', false, array('rel'=>$this->content->setLink('data/setWinner'),'title'=>$row['answer_id']));
 
             $xml .= "<row id='" . $row['answer_id'] . "'>";
             $xml .= "<cell><![CDATA[" . $row['answer_id'] . "]]></cell>";

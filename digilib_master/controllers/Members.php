@@ -11,12 +11,14 @@ class Members extends Controller {
         Src::plugin()->jQueryAlphaNumeric();
         Src::plugin()->poshytip();
         Src::plugin()->elrte();
+        Src::plugin()->flexiGrid();
     }
     
     public function index() {
-        Web::setTitle('List of Members');
-        $this->view->link_add = $this->content->setLink('members/add');
-        $this->view->listData = $this->listData();
+        Web::setTitle('Daftar Anggota Perpustakaan');
+        $this->view->link_r = $this->content->setLink('members/read');
+        $this->view->link_c = $this->content->setLink('members/add');
+        $this->view->link_d = $this->content->setLink('members/delete');
         $this->view->render('members/index');
     }
     
@@ -113,11 +115,38 @@ class Members extends Controller {
     }
 
     public function read() {
-        $page = 1;
-        if (isset($_GET['p'])) {
-            $page = $_GET['p'];
+        if ($this->method->isAjax()) {
+            $page = $this->method->post('page', 1);
+            $listData = $this->model->selectAllMembers($page);
+            $total = $this->model->countAllMembers();
+
+            header("Content-type: text/xml");
+            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            $xml .= "<rows>";
+            $xml .= "<page>$page</page>";
+            $xml .= "<total>$total</total>";
+
+            foreach ($listData AS $row) {
+
+                $link_detail = URL::link($this->content->setLink('publisher/detail/' . $row['members_id']), 'Detail', 'attach');
+                $link_edit = URL::link($this->content->setLink('publisher/edit/' . $row['members_id']), 'Edit', 'attach');
+
+                $xml .= "<row id='" . $row['members_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $row['members_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['members_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['members_address'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[0]]></cell>";
+                $xml .= "<cell><![CDATA[0]]></cell>";
+                $xml .= "<cell><![CDATA[0]]></cell>";
+                $xml .= "<cell><![CDATA[0]]></cell>";
+                $xml .= "<cell><![CDATA[0]]></cell>";
+                $xml .= "<cell><![CDATA[" . $link_detail . " | " . $link_edit . "]]></cell>";
+                $xml .= "</row>";
+            }
+
+            $xml .= "</rows>";
+            echo $xml;
         }
-        echo json_encode($this->listData($page));
     }
 
     public function update($id=0) {

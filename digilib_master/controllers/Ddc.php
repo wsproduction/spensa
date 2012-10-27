@@ -11,12 +11,14 @@ class Ddc extends Controller {
         Src::plugin()->jQueryAlphaNumeric();
         Src::plugin()->poshytip();
         Src::plugin()->elrte();
+        Src::plugin()->flexiGrid();
     }
 
     public function index() {
-        Web::setTitle('List Dewey Decimal Classification Edition 22');
-        $this->view->link_add = $this->content->setLink('ddc/add');
-        $this->view->listData = $this->listData();
+        Web::setTitle('Daftar DDC (Dewey Decimal Classification Edition 22)');
+        $this->view->link_r = $this->content->setLink('ddc/read');
+        $this->view->link_c = $this->content->setLink('ddc/add');
+        $this->view->link_d = $this->content->setLink('ddc/delete');
         $this->view->render('ddc/index');
     }
 
@@ -75,11 +77,41 @@ class Ddc extends Controller {
     }
 
     public function read() {
-        $page = 1;
-        if (isset($_GET['p'])) {
-            $page = $_GET['p'];
+
+        if ($this->method->isAjax()) {
+            $page = $this->method->post('page', 1);
+            $listData = $this->model->selectAllDdc($page);
+            $total = $this->model->countAllDdc();
+
+            header("Content-type: text/xml");
+            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            $xml .= "<rows>";
+            $xml .= "<page>$page</page>";
+            $xml .= "<total>$total</total>";
+
+            foreach ($listData AS $row) {
+
+                $link_detail = URL::link($this->content->setLink('ddc/detail/' . $row['ddc_id']), 'Detail', 'attach');
+                $link_edit = URL::link($this->content->setLink('ddc/edit/' . $row['ddc_id']), 'Edit', 'attach');
+
+                $xml .= "<row id='" . $row['ddc_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $row['ddc_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['ddc_classification_number'] . "]]></cell>";
+                
+                if ($row['ddc_description'] == "") {
+                    $xml .= "<cell><![CDATA[<div>" . $row['ddc_title'] . "</div><div>" . $row['ddc_description'] . "</div>]]></cell>";
+                } else {
+                    $xml .= "<cell><![CDATA[<div><b>" . $row['ddc_title'] . "</b></div><div>" . $row['ddc_description'] . "</div>]]></cell>";
+                }
+                
+                $xml .= "<cell><![CDATA[" . $row['ddc_level'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $link_detail . " | " . $link_edit . "]]></cell>";
+                $xml .= "</row>";
+            }
+
+            $xml .= "</rows>";
+            echo $xml;
         }
-        echo json_encode($this->listData($page));
     }
 
     public function update($id = 0) {
@@ -92,7 +124,11 @@ class Ddc extends Controller {
     }
 
     public function delete() {
-        echo json_encode($this->model->delete());
+        $res = false;
+        if ($this->model->delete()) {
+            $res = true;
+        }
+        echo json_encode($res);
     }
 
     public function getSub1() {
@@ -124,60 +160,6 @@ class Ddc extends Controller {
         $html = Form::commit('attach');
 
         echo json_encode($html);
-    }
-
-    public function listData($page = 1) {
-        $maxRows = 10;
-        $countList = $this->model->countAll();
-        $countPage = ceil($countList / $maxRows);
-        $jumlah_kolom = 5;
-
-        $ddcList = $this->model->selectAll(($page * $maxRows) - $maxRows, $maxRows);
-        $html = '';
-
-        if ($countList > 0) {
-
-            $idx = 1;
-            $id = '0';
-            foreach ($ddcList as $value) {
-                $tmpID = $value['ddc_id'];
-                $id .= ',' . $tmpID;
-
-                $tr_class = 'ganjil';
-                if ($idx % 2 == 0) {
-                    $tr_class = 'genap';
-                }
-
-                $html .= '<tr class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '">';
-                $html .= '  <td style="width: 10px;" class="first">';
-                Form::create('checkbox', 'list_' . $tmpID);
-                Form::style('cbList');
-                Form::value($tmpID);
-                $html .= Form::commit('attach');
-                $html .= '  </td>';
-                $html .= '  <td style="text-align: center;">' . $value['ddc_classification_number'] . '</td>';
-                $html .= '  <td>' . $value['ddc_title'] . '</td>';
-                $html .= '  <td style="text-align:center;">' . $value['ddc_level'] . '</td>';
-                $html .= '  <td style="text-align: center;">';
-                $html .= URL::link($this->content->setLink('ddc/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
-                $html .= URL::link($this->content->setLink('ddc/edit/' . $tmpID), 'Detail', 'attach');
-                $html .= '  </td>';
-                $html .= '</tr>';
-
-                $idx++;
-            }
-
-            $html .= $this->content->paging($jumlah_kolom, $countPage, $page);
-
-            Form::create('hidden', 'hiddenID');
-            Form::value($id);
-            $html .= Form::commit('attach');
-        } else {
-            $html .= '<tr>';
-            $html .= '   <th colspan="' . $jumlah_kolom . '">Data Not Found</th>';
-            $html .= '</tr>';
-        }
-        return $html;
     }
 
 }

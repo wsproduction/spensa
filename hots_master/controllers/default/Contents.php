@@ -62,28 +62,28 @@ class Contents extends Controller {
         }
 
         foreach ($level1 as $val_level1) {
-            $html .= '<li>' . URL::link($this->setLink($val_level1['menu_link']), $val_level1['menu_title'], 'attach');
+            $html .= '<li>' . URL::link($this->setLink($val_level1['menu_link']), $val_level1['menu_title'], false);
 
             // View Menu Level 2
             if ($this->countChildMenu($level2, $val_level1['menu_id']) > 0) {
                 $html .= '<ul style="width: 285px;">';
                 foreach ($level2 as $val_level2) {
                     if ($val_level2['menu_parent'] == $val_level1['menu_id']) {
-                        $html .= '<li>' . URL::link($this->setLink($val_level2['menu_link']), $val_level2['menu_title'], 'attach');
+                        $html .= '<li>' . URL::link($this->setLink($val_level2['menu_link']), $val_level2['menu_title'], false);
 
                         // View Menu Leve 3
                         if ($this->countChildMenu($level3, $val_level2['menu_id']) > 0) {
                             $html .= '<ul style="width: 150px;">';
                             foreach ($level3 as $val_level3) {
                                 if ($val_level3['menu_parent'] == $val_level2['menu_id']) {
-                                    $html .= '<li>' . URL::link($this->setLink($val_level3['menu_link']), $val_level3['menu_title'], 'attach');
+                                    $html .= '<li>' . URL::link($this->setLink($val_level3['menu_link']), $val_level3['menu_title'], false);
 
                                     // View Menu Leve 3
                                     if ($this->countChildMenu($level4, $val_level3['menu_id']) > 0) {
                                         $html .= '<ul style="width: 150px;">';
                                         foreach ($level4 as $val_level4) {
                                             if ($val_level4['menu_parent'] == $val_level3['menu_id']) {
-                                                $html .= '<li>' . URL::link($this->setLink($val_level4['menu_link']), $val_level4['menu_title'], 'attach') . '</li>';
+                                                $html .= '<li>' . URL::link($this->setLink($val_level4['menu_link']), $val_level4['menu_title'], false) . '</li>';
                                             }
                                         }
                                         $html .= '</ul>';
@@ -206,7 +206,7 @@ class Contents extends Controller {
         $data = $this->model->selectAllSubject();
         $html = '';
         foreach ($data as $value) {
-            $html .= '<li>' . URL::link('http://' . Web::$host . '/subject/view/' . $value['subject_id'], $value['subject_title'],'attach') . '</li>';
+            $html .= '<li>' . URL::link('http://' . Web::$host . '/subject/view/' . $value['subject_id'], $value['subject_title'],false) . '</li>';
         }
         return $html;
     }

@@ -19,39 +19,37 @@ ul#navigation {
 ul#navigation li {
     list-style:none;
     float:left;
-    border-right: 1px solid #fff;
+    border: 1px solid #d6d6d6;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
 }
 
 ul#navigation li:hover {
-    background:#fff;
-    background-position:0px -30px;
-
+    border-color: #868686;
 }
 
 ul#navigation li a {
     display: block;
-    padding: 12px 25px;
-    font-family: Verdana,Arial,Helvetica,sans-serif;
+    padding: 2px 15px;
+    font-family: Arial,Helvetica,sans-serif;
     text-decoration: none;
     font-size: 12px;
-    font-weight: bold;
     color: #00102d;
     text-shadow: 1px 1px 1px #fff;
 }
 
 ul#navigation li ul {
     margin: 0;
-    background-color: #fff;
-    padding: 6px 13px 6px 0;
-    border: 1px solid #b2b2b2;
+    background-color: #f0f0f0;
+    padding: 2px;
+    border: 1px solid #a0a0a0;
     z-index: 999;
 }
 
 ul#navigation li ul li {
     width: 100%;
-    background: #ffffff;
-    padding: 0 6px;
-
+    border: none;
 }
 
 ul#navigation li ul li:hover {
@@ -59,18 +57,19 @@ ul#navigation li ul li:hover {
 
 ul#navigation li ul li a {
     display: block;
-    padding: 9px 25px;
-    font-family: Verdana, Geneva, sans-serif;
-    font-size: 11px;
-    font-weight: bold;
-    color: #7c7c7c;
+    padding: 5px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #00102d;
     background-color: #f0f0f0;
-    border-bottom: 1px dashed #cccccc;
+    border: none;
 }
 
 ul#navigation li ul li a:hover {
-    color: #00102d;
-    background-color: #f7f7f7;
+    color: #fff;
+    background-color: #3399ff;
+    border: none;
+    text-shadow: 1px 1px 1px #00102d;
 }
 
 table.list thead tr{
@@ -385,4 +384,16 @@ legend {
     -moz-box-shadow:    0px 0px 10px 1px #ccc;
     -webkit-box-shadow: 0px 0px 10px 1px #ccc;
     box-shadow:         0px 0px 10px 1px #ccc;
+}
+
+.flexigrid div.fbutton .add {
+    background: url(../images/add.png) no-repeat center left;
+}
+
+.flexigrid div.fbutton .delete {
+    background: url(../images/close.png) no-repeat center left;
+}
+
+.flexigrid div.fbutton .print {
+    background: url(../images/print.png) no-repeat center left;
 }

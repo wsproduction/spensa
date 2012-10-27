@@ -6,11 +6,54 @@ class PublisherModel extends Model {
         parent::__construct();
     }
 
-    public function selectAll($start = 1, $count = 100) {
-        $sth = $this->db->prepare('SELECT * FROM digilib_publisher ORDER BY publisher_name LIMIT ' . $start . ',' . $count);
+    public function selectAllPublisher($page = 1) {
+
+        $rp = $this->method->post('rp', 10);
+        $sortname = $this->method->post('sortname', 'question_id');
+        $sortorder = $this->method->post('sortorder', 'desc');
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $listSelect = "
+            digilib_publisher.publisher_id,
+            digilib_publisher.publisher_name,
+            digilib_publisher.publisher_address,
+            digilib_publisher.publisher_phone,
+            digilib_publisher.publisher_fax,
+            digilib_publisher.publisher_email,
+            digilib_publisher.publisher_website,
+            digilib_publisher.publisher_description,
+            digilib_publisher.publisher_status,
+            digilib_publisher.publisher_logo";
+
+        $prepare = 'SELECT ' . $listSelect . ' FROM digilib_publisher';
+        if ($query)
+            $prepare .= ' WHERE ' . $qtype . ' LIKE "%' . $query . '%" ';
+        $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
+
+        $start = (($page - 1) * $rp);
+        $prepare .= ' LIMIT ' . $start . ',' . $rp;
+
+        $sth = $this->db->prepare($prepare);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
+    }
+
+    public function countAllPublisher() {
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $prepare = 'SELECT COUNT(publisher_id) AS cnt FROM digilib_publisher';
+        if ($query)
+            $prepare .= ' WHERE ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        $tempCount = $sth->fetchAll();
+        $count = $tempCount[0];
+        return $count['cnt'];
     }
 
     public function selectByID($id) {
@@ -27,13 +70,6 @@ class PublisherModel extends Model {
         } else {
             return false;
         }
-    }
-
-    public function countAll() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_publisher');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return $sth->rowCount();
     }
 
     public function createSave() {
@@ -116,18 +152,9 @@ class PublisherModel extends Model {
     }
 
     public function delete() {
-        $delete_id = $_POST['val'];
-        $sth = $this->db->prepare('DELETE FROM digilib_publisher WHERE publisher_id = :id');
-
-        try {
-            foreach ($delete_id as $id) {
-                $sth->execute(array(':id' => $id));
-            }
-            return true;
-        } catch (Exception $exc) {
-            $this->db->rollBack();
-            return false;
-        }
+        $id = $this->method->post('id', 0);
+        $sth = $this->db->prepare('DELETE FROM digilib_publisher WHERE digilib_publisher.publisher_id IN (' . $id . ')');
+        return $sth->execute();
     }
 
 }
