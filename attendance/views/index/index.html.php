@@ -1,5 +1,5 @@
-<div id="box">
-    <div id="box_title">
+<div class="box">
+    <div class="box_title">
         <div class="left"><?php echo Web::getTitle(); ?></div>
     </div>
     <div id="board_content">

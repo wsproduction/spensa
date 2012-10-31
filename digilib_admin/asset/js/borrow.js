@@ -3,19 +3,7 @@
  * and open the template in the editor.
  */
 
-
-$(function(){
-    
-    $('#sdate').datepicker({
-        changeMonth: true,
-        changeYear: true
-    });
-    
-    $('#fdate').datepicker({
-        changeMonth: true,
-        changeYear: true
-    });
-    
+$(function(){    
     var listId = '#list';
     var title = $(listId).attr('title');
     var link_r = $(listId).attr('link_r');
@@ -27,66 +15,50 @@ $(function(){
         dataType : 'xml',
         colModel : [ {
             display : 'ID', 
-            name : 'USERID', 
+            name : 'language_id', 
             width : 40,
             sortable : true,
             align : 'center'
         }, {
-            display : 'NIP',
-            name : 'ddc_classification_number',
-            width : 110,
-            sortable : true,
-            align : 'center'
-        }, {
-            display : 'NUPTK',
-            name : 'ddc_classification_number',
-            width : 100,
-            sortable : true,
-            align : 'center'
-        }, {
-            display : 'Nama',
-            name : 'ddc_title',
-            width : 250,
-            sortable : true,
-            align : 'left'
-        }, {
-            display : 'Jenis Kelamin',
-            name : 'ddc_title',
-            width : 80,
-            sortable : true,
-            align : 'center'
-        }, {
-            display : 'Tanggal',
-            name : 'ddc_classification_number',
-            width : 80,
-            sortable : true,
-            align : 'center'
-        }, {
-            display : 'Jam Datang',
-            name : 'ddc_level',
-            width : 100,
+            display : 'Nomor Induk Buku',
+            name : 'language_status',
+            width : 120,
             sortable : true,
             align : 'center',
             hide : true
         }, {
-            display : 'Jam Pulang',
-            name : 'option',
-            width : 80,
+            display : 'Keterangan Buku',
+            name : 'language_name',
+            width : 400,
+            sortable : true,
+            align : 'left'
+        }, {
+            display : 'Waktu Peminjaman',
+            name : 'language_status',
+            width : 150,
+            sortable : true,
+            align : 'center',
+            hide : true
+        }, {
+            display : 'Status',
+            name : 'language_entry',
+            width : 100,
+            sortable : true,
             align : 'center'
         }, {
-            display : 'Catatan',
-            name : 'option',
-            width : 80,
+            display : 'Tanggal Pengembalian',
+            name : 'language_entry_update',
+            width : 150,
+            sortable : true,
             align : 'center'
         }, {
             display : 'Option',
-            name : 'ddc_classification_number',
+            name : 'option',
             width : 80,
-            sortable : true,
-            align : 'left'
+            align : 'center'
         }],
         buttons : [ {
-            name : 'Lupa Check In / Out',
+            name : 'Tambah',
             bclass : 'add',
             onpress : function() {
                 window.location = link_c
@@ -101,7 +73,7 @@ $(function(){
                 if (conf) {
                     if (leng > 0) {
                         var tempId = [];
-                        $(listId + ' .trSelected td[abbr=ddc_id] div').each(function() {
+                        $(listId + ' .trSelected td[abbr=language_id] div').each(function() {
                             tempId.push(parseInt($(this).text()));
                         });
                         
@@ -120,41 +92,56 @@ $(function(){
         }, {
             separator : true
         } ],
+        searchitems : [ {
+            display : 'ID',
+            name : 'language_id',
+            isdefault : true
+        }, {
+            display : 'Nama Bahasa',
+            name : 'language_name'            
+        } ],
         nowrap : false,
-        sortname : "ddc_id",
+        sortname : "language_id",
         sortorder : "asc",
         usepager : true,
         title : title,
-        useRp : false,
+        useRp : true,
         rp : 15,
         showTableToggleBtn : false,
         resizable : false,
         width : '100%',
-        height : screen.height - 350,
-        onSubmit: function() {
-            var dt = $('#fFilter').serializeArray();
-            $(listId).flexOptions({
-                params: dt
-            });
-            return true;
-        }
+        height : screen.height - 350
     };
     
-    $('#fFilter').live('submit',function(){
-        $(listId).flexOptions({
-            newp: 999
-        }).flexReload();
+    $(listId).flexigrid(option);
+        
+    /* SUBMIT ACTIONS */    
+    $('#fAdd').live('submit',function(){
+        frmID = $(this);
+        msgID = $('#message');
+        var url =  $(frmID).attr('action');
+        var data =  $(frmID).serialize();
+        
+        $(msgID).fadeOut('slow');
+        $.post(url, data, function(o){
+            if (o[0]) {
+                if (o[1]) {
+                    $(frmID)[0].reset();
+                }
+            }
+            $(msgID).html(o[2]).fadeIn('slow');
+        }, 'json');
+        
         return false;
     });
     
-    $(listId).flexigrid(option);   
-    
-    
-    $('#fTReport').live('submit');
-        
     /* BUTTON ACTION */
     $('#btnBack').live('click',function(){
         window.location = $(this).attr('link');
+    });
+    
+    $('#fSearchInfoMember').live('submit',function(){
+        return false;
     });
     
 });

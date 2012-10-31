@@ -21,35 +21,7 @@ class TeacherModel extends Model {
             return false;
         }
     }
-
-    public function selectAllAttendance() {
-
-        $sth = $this->db->prepare("
-                            SELECT * FROM USERINFO WHERE DEFAULTDEPTID = :deptid ORDER BY Name
-                        ");
-
-        $sth->bindValue(':deptid', $deptid);
-
-        if ($sth->execute()) {
-            $sth->setFetchMode(PDO::FETCH_ASSOC);
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
-    }
-
-    public function selectAllTimeTable() {
-        $sth = $this->db->prepare("
-                            SELECT * FROM SCHCLASS
-                        ");
-        if ($sth->execute()) {
-            $sth->setFetchMode(PDO::FETCH_ASSOC);
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
-    }
-
+    
     public function selectAllCheckTime() {
         $name = $this->method->post('name', 0);
         $nameid = $this->method->post('nameid', 0);

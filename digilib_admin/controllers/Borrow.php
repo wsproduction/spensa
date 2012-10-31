@@ -15,17 +15,20 @@ class Borrow extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Daftar Penerbit');
-        $this->view->link_r = $this->content->setLink('publisher/read');
-        $this->view->link_c = $this->content->setLink('publisher/add');
-        $this->view->link_d = $this->content->setLink('publisher/delete');
-        $this->view->render('publisher/index');
+        Web::setTitle('Daftar Peminjaman Buku');
+        $this->view->link_r = $this->content->setLink('borrow/read');
+        $this->view->link_c = $this->content->setLink('borrow/add');
+        $this->view->link_d = $this->content->setLink('borrow/delete');
+        $this->view->render('borrow/index');
     }
-
+    
     public function add() {
-        Web::setTitle('Tambah Data Penerbit');
-        $this->view->link_back = $this->content->setLink('publisher');
-        $this->view->render('publisher/add');
+        Web::setTitle('Tambah Data Peminjaman Buku');
+        $this->view->borrowTypeOption = $this->borrowTypeOption();
+        $this->view->link_r = $this->content->setLink('borrow/read');
+        $this->view->link_c = $this->content->setLink('borrow/add');
+        $this->view->link_d = $this->content->setLink('borrow/delete');
+        $this->view->render('borrow/temporer');
     }
 
     public function edit($id = 0) {
@@ -99,6 +102,15 @@ class Borrow extends Controller {
             $res = true;
         }
         echo json_encode($res);
+    }
+    
+    public function borrowTypeOption() {
+        $data = $this->model->selectAllBorrowType();
+        $option = array();
+        foreach ($data as $value) {
+            $option[$value['borrowed_type_id']] = $value['borrowed_type_title'];
+        }
+        return $option;
     }
 
 }

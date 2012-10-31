@@ -202,4 +202,13 @@ class Contents extends Controller {
         return number_format($number, 0, ',', '.');
     }
 
+    public function getMonthName($idx, $lang) {
+        $month = array(
+            'ina' => array('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'),
+            'eng' => array('January', 'February', 'Mart', 'April', 'May', 'Juny', 'July', 'Agust', 'September', 'October', 'November', 'Desember')
+            
+            );
+        return $month[$lang][$idx - 1];
+    }
+
 }

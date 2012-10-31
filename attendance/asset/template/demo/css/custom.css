@@ -412,6 +412,13 @@ legend {
 }
 
 .tips-eng {
+    border: 1px solid #ccc;
     font-style: italic;
     font-size: 10px;
+}
+
+.v-repots {
+    width: 99.8%;
+    margin: 5px 0 0 0;
+    height: 500px;
 }

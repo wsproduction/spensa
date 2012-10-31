@@ -17,7 +17,7 @@ class Index extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Beranda');
+        Web::setTitle('Login');
         $this->view->render('index/index');
     }
 

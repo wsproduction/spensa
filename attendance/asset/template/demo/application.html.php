@@ -50,21 +50,41 @@
                         <li>
                             <?php URL::link('#', 'Daftar Hadir'); ?>
                             <ul>
-                                <li><?php URL::link($link_path . '/teacher/attendance', 'Guru'); ?></li>
-                                <li><?php URL::link($link_path . '/staff/attendance', 'Staff TU'); ?></li>
-                                <li><?php URL::link($link_path . '/student/attendance', 'Siswa'); ?></li>
+                                <li><?php URL::link($link_path . '/teacher', 'Guru'); ?></li>
+                                <li><?php URL::link($link_path . '/staff', 'Tata Usaha'); ?></li>
+                                <li><?php URL::link($link_path . '/student', 'Siswa'); ?></li>
                             </ul>
                         </li>
                         <li>
                             <?php URL::link('#', 'Laporan'); ?>
-                            <ul>
-                                <li><?php URL::link('#', 'Kehadiran Guru'); ?></li>
+                            <ul style="width: 150px;">
+                                <li>
+                                    <?php URL::link('#', 'Kehadiran Guru'); ?>
+                                    <ul style="width: 150px;">
+                                        <li><?php URL::link($link_path . '/teacher/treport', 'Waktu Absen'); ?></li>
+                                        <li><?php URL::link($link_path . '/teacher/rreport', 'Rekap Absen'); ?></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <?php URL::link('#', 'Kehadiran Tata Usaha'); ?>
+                                    <ul style="width: 150px;">
+                                        <li><?php URL::link($link_path . '/teacher/treport', 'Waktu Absen'); ?></li>
+                                        <li><?php URL::link($link_path . '/teacher/rreport', 'Rekap Absen'); ?></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <?php URL::link('#', 'Kehadiran Siswa'); ?>
+                                    <ul style="width: 150px;">
+                                        <li><?php URL::link($link_path . '/teacher/treport', 'Waktu Absen'); ?></li>
+                                        <li><?php URL::link($link_path . '/teacher/rreport', 'Rekap Absen'); ?></li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
                         <li><?php URL::link($link_path . '/login/stop', 'Logout'); ?></li>
                     <?php
                     } else {
-                        echo '<li>' . URL::link('#', 'Login', 'attach') . '</li>';
+                        echo '<li>' . URL::link('#', 'Login',false) . '</li>';
                     }
                     ?>
                 </ul>

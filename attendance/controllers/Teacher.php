@@ -15,19 +15,12 @@ class Teacher extends Controller {
     }
 
     public function index() {
-        
-    }
-
-    public function attendance() {
         Web::setTitle('Daftar Hadir Guru');
         $this->view->link_r = $this->content->setLink('teacher/read');
         $this->view->link_c = $this->content->setLink('teacher/add');
         $this->view->link_d = $this->content->setLink('teacher/delete');
         $this->view->option_name = $this->optionName(2);
-
-        $this->timeTable();
-
-        $this->view->render('attendance/teacher');
+        $this->view->render('teacher/index');
     }
 
     public function add() {
@@ -40,39 +33,6 @@ class Teacher extends Controller {
 
     public function edit($id = 0) {
         Web::setTitle('Edit DDC');
-        $this->view->id = $id;
-        $this->view->link_back = $this->content->setLink('ddc');
-        $this->view->ddcLevel = $this->model->selectLevelDDC();
-        $data = $this->model->selectByID($id);
-        if ($data) {
-            $listData = $data[0];
-            $this->view->dataEdit = $listData;
-
-            switch ($listData['ddc_level']) {
-                case 2:
-                    foreach ($this->model->selectSub1() as $value) {
-                        $listSub1[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
-                    }
-                    $this->view->listSub1 = array($listSub1, $listData['ddc_main_parent']);
-                    $this->view->link_sub2 = $this->content->setLink('ddc/getSub2');
-                    break;
-                case 3:
-                    $this->view->link_sub2 = $this->content->setLink('ddc/getSub2');
-                    foreach ($this->model->selectSub1() as $value) {
-                        $listSub1[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
-                    }
-                    $this->view->listSub1 = array($listSub1, $listData['ddc_temp_parent']);
-
-                    foreach ($this->model->selectSub2($listData['ddc_temp_parent']) as $value) {
-                        $listSub2[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
-                    }
-                    $this->view->listSub2 = array($listSub2, $listData['ddc_main_parent']);
-                    break;
-            }
-            $this->view->render('ddc/edit');
-        } else {
-            $this->view->render('default/message/pnf');
-        }
     }
 
     public function create() {
@@ -211,37 +171,6 @@ class Teacher extends Controller {
         echo json_encode($res);
     }
 
-    public function getSub1() {
-        $list = array();
-        foreach ($this->model->selectSub1() as $value) {
-            $list[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
-        }
-
-        Form::create('select', 'sub1');
-        Form::tips('Chose Level DDC');
-        Form::validation()->requaired();
-        Form::option($list, ' ');
-        Form::properties(array('link' => $this->content->setLink('ddc/getSub2')));
-        $html = Form::commit('attach');
-
-        echo json_encode($html);
-    }
-
-    public function getSub2() {
-        $list = array();
-        foreach ($this->model->selectSub2($_GET['id']) as $value) {
-            $list[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
-        }
-
-        Form::create('select', 'sub2');
-        Form::tips('Chose Level DDC');
-        Form::validation()->requaired();
-        Form::option($list, ' ');
-        $html = Form::commit('attach');
-
-        echo json_encode($html);
-    }
-
     public function optionName($deptId = 0) {
         $list = $this->model->selectUserByDeptId($deptId);
         $name = array();
@@ -259,7 +188,220 @@ class Teacher extends Controller {
         foreach ($list as $value) {
             $time[$value['SCHCLASSID']] = $value;
         }
-        //print_r($time);
+    }
+
+    public function treport() {
+        Web::setTitle('Laporan Waktu Daftar Hadir Guru');
+        $this->view->link_r = $this->content->setLink('teacher/read');
+        $this->view->link_c = $this->content->setLink('teacher/add');
+        $this->view->link_d = $this->content->setLink('teacher/delete');
+        $this->view->option_name = $this->optionName(2);
+        $this->view->render('teacher/treport');
+    }
+
+    public function treportprint() {
+
+        $action = $this->method->post('page', 0);
+
+        $checktime = $this->model->selectAllCheckTime();
+        $checkinout = array();
+        foreach ($checktime as $value) {
+            //$checkinout['USERID']['TANGGAL']['INDEX'] = 'JAM'
+            $checkinout[$value['USERID']][date('d/m/Y', strtotime($value['CHECKTIME']))][] = date('H:i', strtotime($value['CHECKTIME']));
+        }
+
+        $sdate = $this->method->post('sdate', 0);
+        $fdate = $this->method->post('fdate', 0);
+
+        $dateList = array();
+        $begin = new DateTime(date('Y-m-d', strtotime($sdate)));
+        $end = new DateTime(date('Y-m-d', strtotime($fdate)));
+        $end = $end->modify('+1 day');
+        $interval = new DateInterval('P1D');
+        $daterange = new DatePeriod($begin, $interval, $end);
+
+        foreach ($daterange as $date) {
+            $dateList[] = $date->format('d/m/Y');
+        }
+
+        $listData = $this->model->selectUserInfo();
+
+        $pdf = Src::plugin()->tcPdf();
+
+        // set document information
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('Warman Suganda');
+        $pdf->SetTitle('TCPDF Example 061');
+        $pdf->SetSubject('TCPDF Tutorial');
+        $pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+
+        // set header and footer fonts
+        //$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        //$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+        // set default monospaced font
+        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+        //set margins
+        $pdf->SetMargins(PDF_MARGIN_LEFT, 12, PDF_MARGIN_RIGHT);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+        //set auto page breaks
+        $pdf->SetAutoPageBreak(TRUE, 17);
+
+        //set image scale factor
+        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+        // ---------------------------------------------------------
+        // set font
+        $pdf->SetFont('helvetica', '', 10);
+
+        foreach ($dateList as $dlRow) {
+
+            list($d, $m, $y) = explode('/', $dlRow);
+
+            $date = $d . ' ' . $this->content->getMonthName($m, 'ina') . ' ' . $y;
+
+            // add a page
+            $pdf->AddPage();
+
+            // define some HTML content with style
+            $html = '
+                    <style type="text/css">
+                        .header {
+                            text-align : center;
+                            font-size : 14pt;
+                            font-weight : bold;
+                        }
+                        .date {
+                            text-align : left;
+                            text-decoration : none;
+                        }
+                        .list-data {
+                        }
+                        .list-data .th {
+                            font-size : 10pt;
+                            border-top : 1px solid #000;
+                            border-bottom : 1px solid #000;
+                            border-right : 1px solid #000;
+                            text-align: center;
+                            font-weight : bold;
+                        }
+                        .list-data .first {
+                            border-left : 1px solid #000;
+                        }
+                        .list-data .td {
+                            font-size : 10pt;
+                            border-bottom : 1px solid #000;
+                            border-right : 1px solid #000;
+                        }
+                    </style>
+                 ';
+
+            $html .= '<div class="header">DAFTAR HADIR PEGAWAI<br>SMP NEGERI 1 SUBANG</div>';
+            $html .= '<br>';
+            $html .= '<table cellpadding="0" cellspacing="0" width="650">
+                        <tr>
+                            <td align="left" height="18"><b>Keterangan :</b> Guru</td>
+                            <td align="right"><b>Hari/Tanggal :</b> Senin, ' . $date . '</td>
+                        </tr>
+                     </table>';
+            $html .= '<table class="list-data" cellpadding="4" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <td class="th first" rowspan="2" width="50" align="center">&nbsp;<br>NO</td>
+                                <td class="th" rowspan="2" width="250">&nbsp;<br>NAMA</td>
+                                <td class="th" colspan="2" width="200">WAKTU</td>
+                                <td class="th" rowspan="2" width="150">&nbsp;<br>KETERANGAN</td>
+                            </tr>
+                            <tr>
+                                <td class="th" width="100" style="border-top:none;">DATANG</td>
+                                <td class="th" width="100" style="border-top:none;">PULANG</td>
+                            </tr>
+                        </thead>';
+            $html .= '  <tbody>';
+            $no = 1;
+            foreach ($listData as $userInfoRow) {
+
+                // START : Set Clock In / Clock Out
+                $clockin = '-';
+                $clockout = '-';
+                if (isset($checkinout[$userInfoRow['USERID']][$dlRow])) {
+                    $time = $checkinout[$userInfoRow['USERID']][$dlRow];
+                    $timecount = count($time);
+                    if ($timecount > 0) {
+                        sort($time);
+                        $clockfirst = $time[0];
+                        $clocklast = $time[$timecount - 1];
+
+                        if ($clockfirst >= date('H:i', strtotime(substr($userInfoRow['CHECKINTIME1'], -8, 8))) && $clockfirst <= date('H:i', strtotime(substr($userInfoRow['CHECKINTIME2'], -8, 8)))) {
+                            $clockin = $clockfirst;
+                        }
+
+                        if ($clocklast >= date('H:i', strtotime(substr($userInfoRow['CHECKOUTTIME1'], -8, 8))) && $clocklast <= date('H:i', strtotime(substr($userInfoRow['CHECKOUTTIME2'], -8, 8)))) {
+                            $clockout = $clocklast;
+                        }
+                    }
+                }
+
+                if ($clockin == '-' && $clockout == '-') {
+                    $note = 'Tanpa Keterangan';
+                    $style = 'style="color:red;"';
+                } else {
+                    $note = '';
+                    $style = 'style="color:black;"';
+                }
+                // END : Set Clock In / Clock Out
+
+                $html .= '   <tr>
+                            <td class="td first" align="center" width="50">' . $no . '.</td>
+                            <td class="td" width="250">' . $userInfoRow['Name'] . '</td>
+                            <td class="td" align="center" width="100">' . $clockin . '</td>
+                            <td class="td" align="center" width="100">' . $clockout . '</td>
+                            <td class="td" align="center" width="150">' . $note . '</td>
+                        </tr>';
+                $no++;
+            }
+            $html .= '  </tbody>';
+
+            $html .= '</table>';
+            $html .= '<br>';
+            $html .= '<table>';
+            $html .= '  <tr>';
+            $html .= '      <td width="450">Mengetahui,</td>';
+            $html .= '      <td>Subang, ' . date('d') . ' ' . $this->content->getMonthName(date('m'), 'ina') . ' ' . date('Y') . '</td>';
+            $html .= '  </tr>';
+            $html .= '  <tr>';
+            $html .= '      <td>Kepala Sekolah</td>';
+            $html .= '      <td>Wakabid Manajement</td>';
+            $html .= '  </tr>';
+            $html .= '  <tr>';
+            $html .= '      <td height="75">&nbsp;</td>';
+            $html .= '  </tr>';
+            $html .= '  <tr>';
+            $html .= '      <td><u>E. Heni Rodiah, S.Pd.,M.M.Pd.</u></td>';
+            $html .= '      <td><u>Sri Suryanti, S.Pd.</u></td>';
+            $html .= '  </tr>';
+            $html .= '  <tr>';
+            $html .= '      <td>NIP. 19283948488484994</td>';
+            $html .= '      <td>NIP. 19283948488484994</td>';
+            $html .= '  </tr>';
+            $html .= '</table>';
+
+            // output the HTML content
+            $pdf->writeHTML($html, true, false, true, false, '');
+        }
+
+        // ---------------------------------------------------------
+        //Close and output PDF document
+        $pdf->Output('example_061.pdf', 'I');
+
+        //============================================================+
+        // END OF FILE                                                
+        //============================================================+
     }
 
 }
