@@ -1,0 +1,183 @@
+/* 
+    Document   : custom
+    Created on : Jan 5, 2012, 2:06:15 AM
+    Author     : WS
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+#bones {
+    background: url('../images/map.gif') no-repeat;
+    background-color: #fff;
+    background-position: right -60px;
+    margin: 10px 0 10px 0;
+    width:950px;
+    text-align: left;
+    border : 2px solid #e4e4e4;
+    -webkit-box-shadow: 1px 1px 10px 2px rgba(205, 205, 205, 0.5);
+    box-shadow: 1px 1px 10px 2px rgba(205, 205, 205, 0.5);
+}
+
+#header {
+    background: url('../images/logo.png') no-repeat;
+    background-position: 18px 18px;
+    margin: 0;
+    padding-top: 10px;
+    height: 78px;
+    font-size: 24px;
+}
+
+#baner {
+    height: 280px;
+}
+
+#header font {
+    color : #000;
+    text-shadow: #fff 0px 0px 3px;
+}
+
+#content {
+    clear: both;
+    position: relative;
+    background: #fff;
+    padding: 5px;
+}
+
+#footer {
+    clear:both;
+    text-align: center;
+
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 11px;
+    color: #666;	
+}
+
+#page_menu {
+    clear:both;
+    padding: 0;
+    margin: 0;
+    height:37px;
+    background:url(../images/bg_menu.png) repeat-x;
+    background-color: #fff;
+    background-position:0 -2px;
+}
+
+#info {
+    clear: both;
+    padding:5px;
+    margin: 5px 0 0 0;
+    height: 36px;
+}
+
+#info .navigator {
+    float: left;
+    width:500px;
+    height: 18px;
+    padding: 12px 6px 6px 28px;
+    border:1px solid #CCC;
+    background: url('../images/list.png') no-repeat;
+    background-position: 7px 10px;
+
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 11px;
+    color: #d0943d;
+    text-decoration: none;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;	
+
+    -webkit-box-shadow: 0px 0px 4px #dbdbdb;
+    -moz-box-shadow: 0px 0px 4px #dbdbdb;
+    box-shadow: 0px 0px 4px #dbdbdb;
+}
+
+#info .translator {
+    float: left;
+    height: 28px;
+    margin:0 0 0 6px;
+    padding: 2px 6px 6px 6px;
+    border:1px solid #CCC;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;	
+
+    -webkit-box-shadow: 0px 0px 4px #dbdbdb;
+    -moz-box-shadow: 0px 0px 4px #dbdbdb;
+    box-shadow: 0px 0px 4px #dbdbdb;
+}
+
+#info .search {
+    float: right;
+    width:296px;
+    height: 25px;
+    margin-left: 6px;
+    padding: 2px 6px 6px 6px;
+    border:1px solid #CCC;
+
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 11px;
+    color: #d0943d;
+    text-decoration: none;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;	
+
+    -webkit-box-shadow: 0px 0px 4px #dbdbdb;
+    -moz-box-shadow: 0px 0px 4px #dbdbdb;
+    box-shadow: 0px 0px 4px #dbdbdb;
+}
+
+#info .search a {
+    color: #4407a9;
+}
+
+ #info .search #searching input[type=text] {
+    width: 215px;
+    margin: 2px 2px 0 0;
+    padding: 4px;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;	
+    
+    -webkit-box-shadow: 0px 0px 2px #dbdbdb;
+    -moz-box-shadow: 0px 0px 2px #dbdbdb;
+    box-shadow: 0px 0px 2px #dbdbdb;
+    font-family: ‘Lucida Sans Unicode’, ‘Lucida Grande’, sans-serif;
+    font-size: 11px;
+    font-style:  italic;
+}
+
+#info .search #searching input[type=submit] {
+    text-shadow: black 1px 1px 1px;
+    cursor: pointer;
+    padding : 4px 6px;
+    color: #fff;
+    font-size: 11px;
+    font-family: ‘Lucida Sans Unicode’, ‘Lucida Grande’, sans-serif;
+    border: 1px solid #419b0e;
+    background:url('../images/bg_btn.png') repeat-x;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;	
+    
+    -webkit-box-shadow: 0px 0px 4px #dbdbdb;
+    -moz-box-shadow: 0px 0px 4px #dbdbdb;
+    box-shadow: 0px 0px 4px #dbdbdb;
+} 
+
+#info .search #searching input[type=submit]:hover {
+    text-shadow: #1c4200 -1px -1px 1px;
+    border-color: #1c4200;
+}

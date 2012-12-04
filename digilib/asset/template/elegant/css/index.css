@@ -1,0 +1,127 @@
+/* 
+    Document   : index
+    Created on : Jan 24, 2012, 6:25:05 PM
+    Author     : WS
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+
+#index {
+    clear:both;
+    border-top:1px dashed #CCC;
+    padding-top:6px;
+}
+
+
+/* AWAL : Style Produk Terbaru KUMKM */
+#produk_terbaru {
+    border:1px solid #CCC;
+    padding:10px;
+    background:url(../images/newyellow.png) no-repeat right;
+    background-position:top right;
+}
+#produk_terbaru .judul {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    color: #8f1d02;	
+    padding-bottom:4px;
+
+    text-shadow: inset 1 1px 1px #000;
+    -moz-text-shadow: inset 1 1px 1px #000;
+    -webkit-text-shadow: inset 1 1px 1px #000;
+}
+#produk_terbaru .deskripsi {
+    clear:both;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 11px;
+    border-bottom:1px dotted #CCC;
+    padding-bottom:2px;
+    padding-top:4px;
+    margin-bottom:10px;
+}
+#produk_terbaru .lihat_semua {
+    clear:both;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 11px;
+    color:#03F;
+    border-top:1px dotted #CCC;
+    padding-bottom:2px;
+    padding-top:8px;
+    margin-bottom:10px;
+}
+
+/* Style Thumbnail Photo */
+#produk_terbaru .bingkai_thumbnail_photo {
+    float:left;
+    width:336px;
+    margin-bottom:15px;
+}
+#produk_terbaru .bingkai_thumbnail_photo .clipwrapper {
+    height:70px;
+    width:94px;
+    padding:8px;
+    float:left;
+    background:url(../images/bg_produk.gif) no-repeat;
+    background-color:#FFF;
+}
+#produk_terbaru .bingkai_thumbnail_photo .clip {
+    position:absolute;
+    clip:rect(0px 94px 70px 0px);
+}
+#produk_terbaru .bingkai_keterangan_produk {
+    float:left;
+}
+#produk_terbaru .bingkai_keterangan_produk .nama_produk{
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    color: #C30;
+}
+#produk_terbaru .ket_kumkm {
+    clear: both;
+    background:url(../images/grad_ket_kumkm.jpg) repeat-x;
+    width:310px;
+    margin-left:3px;
+    margin-top:2px;
+    padding:4px 4px 10px 4px;
+    border-top:1px dotted #CCC;
+}
+#produk_terbaru  .nama_kumkm {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;	
+}
+#produk_terbaru  .link_web_kumkm {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #000;	
+}
+#produk_terbaru .bingkai_keterangan_produk .link_web_kumkm a {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #06F;	
+}
+#produk_terbaru .bingkai_keterangan_produk .desprod {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #333;	
+    width:200px;
+    height:40px;
+    margin-top:4px;
+
+}
+#produk_terbaru .bingkai_keterangan_produk .link_lihat_detail {
+    margin-top:4px;	
+}
+#produk_terbaru .bingkai_keterangan_produk .link_lihat_detail a {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #000;	
+    text-decoration:underline;
+}
+#produk_terbaru .bingkai_keterangan_produk .link_lihat_detail a:hover {
+    text-decoration:underline;
+}
+/* AKHIR : Style Produk Terbaru KUMKM */
+

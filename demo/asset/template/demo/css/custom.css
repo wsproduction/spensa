@@ -1,0 +1,76 @@
+/* 
+    Document   : custom
+    Created on : Jan 5, 2012, 2:06:15 AM
+    Author     : WS
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+body {
+    background: silver;
+}
+
+#header {
+    padding: 20px;
+    background: darkcyan;
+}
+
+#header h1 {
+    color : #fff;
+}
+
+#content {
+    padding: 20px;
+    background: #fff;
+}
+
+#footer {
+    padding: 20px;
+    background: grey;
+    color: #fff;
+    text-align: right;
+}
+
+#page_menu {
+    background: #000;
+    padding-top: 10px;
+    height: 29px;
+}
+
+#page_menu a {
+    margin: 4px;
+    padding: 4px;
+    color: #fff;
+    border: 1px solid #fff;
+    text-decoration: none;
+}
+
+#page_menu a:hover {
+    color: gold;
+    border: 1px solid gold;
+}
+
+input[type=text], input[type=password], select {
+    padding : 4px;
+    border: 1px solid #ccc;
+}
+
+input[type=submit] {
+    padding : 4px;
+    background: #bbb;
+    border: 1px solid #aaa;
+}
+
+input[type=submit]:hover {
+    background: #ccc;
+}
+

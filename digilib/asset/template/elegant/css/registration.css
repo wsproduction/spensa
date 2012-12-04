@@ -1,0 +1,499 @@
+/* 
+    Document   : registration
+    Created on : Jan 27, 2012, 11:51:05 PM
+    Author     : WS
+    Description:
+        Purpose of the stylesheet follows.
+*/
+th {
+    text-align: right;
+}
+.descrption {
+    border: 1px solid #ccc;
+    padding:10px;
+    background:url(../images/text_edit2.png) no-repeat;
+    background-position:right -35px;
+}
+
+.requirements {
+    clear: both;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+}
+
+input[type=submit][name=btnRegister] {
+    margin-top:10px;
+    padding:15px 42px;
+    border:1px solid #999;
+    
+    text-align:justify;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 13px;
+    color: #333;	
+    font-weight:bold;
+    cursor:pointer;
+
+    background: #f8ffe8; /* old browsers */
+    background: -moz-linear-gradient(top, #f8ffe8 0%, #C7DD77 100%); /* firefox */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8ffe8), color-stop(100%,#C7DD77)); /* webkit */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8ffe8', endColorstr='#C7DD77',GradientType=0 ); /* ie */
+}
+
+input[type=submit][name=btnRegister]:hover {
+    color: #000;
+    border:1px solid #888;
+    -webkit-box-shadow: 0px 0px 6px #dbdbdb;-moz-box-shadow: 0px 0px 6px #dbdbdb;box-shadow: 0px 0px 6px #dbdbdb;
+    background: #f8ffe8; /* old browsers */
+    background: -moz-linear-gradient(top, #f8ffe8 0%, #C7DD77 100%); /* firefox */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8ffe8), color-stop(100%,#C7DD77)); /* webkit */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8ffe8', endColorstr='#C7DD77',GradientType=0 ); /* ie */
+}
+
+/* AWAL : Style Link Pendaftaran KUMKM */
+#ws_pendaftaran_kumkm {
+    float:left;
+    padding:10px;
+    border:1px solid #C90;
+    width:47%;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+
+    background: #feffe8; /* old browsers */
+
+}
+#ws_pendaftaran_kumkm .font_header {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 13px;
+    text-align:left;
+    font-weight: bold;
+    color: #8f1d02;
+    text-shadow: inset 1 1px 1px #000;
+    -moz-text-shadow: inset 1 1px 1px #000;
+    -webkit-text-shadow: inset 1 1px 1px #000;	
+}
+#ws_pendaftaran_kumkm .font_header span {
+    margin-left:12px;
+}
+#ws_pendaftaran_kumkm .deskripsi {
+    padding-top:6px;
+    text-align:justify;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 11px;
+    color: #300;
+}
+#ws_pendaftaran_kumkm .deskripsi ul {
+    margin-top:4px;
+}
+#ws_pendaftaran_kumkm .deskripsi ol {
+    margin-top:4px;
+}
+#ws_pendaftaran_kumkm .deskripsi li {
+    padding:0px;
+    margin-left:0;
+    margin-top:1px;
+}
+#ws_pendaftaran_kumkm .ws_button input {
+    margin-top:10px;
+    padding-left:42px;
+    padding-right:42px;
+    padding-top:15px;
+    padding-bottom:15px;
+    border:1px solid #999;
+    text-align:justify;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 13px;
+    color: #333;	
+    font-weight:bold;
+    cursor:pointer;
+
+
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+
+
+    background: #f8ffe8; /* old browsers */
+
+    background: -moz-linear-gradient(top, #f8ffe8 0%, #C7DD77 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8ffe8), color-stop(100%,#C7DD77)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8ffe8', endColorstr='#C7DD77',GradientType=0 ); /* ie */
+
+    /* Iner Shadow */
+    -webkit-box-shadow: inset 0px 0px 2px #cc7b02;
+    -moz-box-shadow: inset 0px 0px 2px #cc7b02;
+    box-shadow: inset 0px 0px 2px #cc7b02; 	
+}
+#ws_pendaftaran_kumkm .ws_button input:hover {
+    color: #000;
+    border:1px solid #666;
+
+    background: #f8ffe8; /* old browsers */
+
+    background: -moz-linear-gradient(top, #f8ffe8 0%, #b7df2d 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8ffe8), color-stop(100%,#b7df2d)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8ffe8', endColorstr='#b7df2d',GradientType=0 ); /* ie */
+}
+/* AKHIR : Style Link Pendaftaran KUMKM */
+
+/* AWAL : Style Link Pendaftaran pelanggan KUMKM */
+#ws_pendaftaran_pelanggan_kumkm {
+    margin-left:8px;
+    float:right;
+    padding:10px;
+    border:1px solid #C90;
+    width:47%;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+
+    background: #feffe8; /* old browsers */	
+}
+#ws_pendaftaran_pelanggan_kumkm .font_header {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    color: #8f1d02;
+    text-align:left;
+
+    text-shadow: inset 1 1px 1px #000;
+    -moz-text-shadow: inset 1 1px 1px #000;
+    -webkit-text-shadow: inset 1 1px 1px #000;	
+}
+#ws_pendaftaran_pelanggan_kumkm .font_header span {
+    padding-left:15px;
+}
+#ws_pendaftaran_pelanggan_kumkm .deskripsi {
+    padding-top:5px;
+    border-top:1px dashed #FFF;
+    text-align:justify;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 11px;
+    color: #000;
+}
+#ws_pendaftaran_pelanggan_kumkm .ws_button input {
+    margin-top:10px;
+    padding-left:40px;
+    padding-right:40px;
+    padding-top:15px;
+    padding-bottom:15px;
+    border:1px solid #999;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 13px;
+    font-weight:bold;
+    color: #333;	
+    cursor:pointer;
+
+
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+
+
+    background: #fefcea; /* old browsers */
+
+    background: -moz-linear-gradient(top, #fefcea 0%, #EDDC7D 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefcea), color-stop(100%,#EDDC7D)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#EDDC7D',GradientType=0 ); /* ie */
+
+    /* Iner Shadow */
+    -webkit-box-shadow: inset 0px 0px 2px #cc7b02;
+    -moz-box-shadow: inset 0px 0px 2px #cc7b02;
+    box-shadow: inset 0px 0px 2px #cc7b02; 	
+}
+#ws_pendaftaran_pelanggan_kumkm .ws_button input:hover {
+    color: #000;
+    border:1px solid #666;
+
+    background: -moz-linear-gradient(top, #fefcea 0%, #EFD217 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefcea), color-stop(100%,#EFD217)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#EFD217',GradientType=0 ); /* ie */
+
+}
+/* AKHIR : Style Link Pendaftaran pelanggan KUMKM */
+
+
+
+/* AWAL : Style Link Share ke sosial network */
+#share {
+    float:right;
+    padding:10px;
+    text-align:left;
+    border:1px solid #dad8d8;
+    width:200px;
+    margin-top:4px;
+    background:url(../images/1293114229_sharemanager.png) no-repeat;
+    background-position:-20px -30px;
+
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+
+    -webkit-box-shadow: 0px 0px 4px #dbdbdb;
+    -moz-box-shadow: 0px 0px 4px #dbdbdb;
+    box-shadow: 0px 0px 4px #dbdbdb;
+}
+#share .header {
+    font-family: Verdana, Geneva, sans-serif;
+    color:#333;
+    font-size: 12px;
+}
+#share .bingkai_img {
+    float:left;
+    padding-top:8px;
+    margin-left:10px;
+}
+#share .ini_link {
+    float:left;
+    text-align:center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    text-decoration: none;
+    margin-left:10px;
+}
+/* AKHIR : Style Link Share ke sosial network */
+
+/* AWAL : Style halaman pendaftaran */
+#halaman_pendaftaran #form_daftar {
+    text-align:left;
+    margin-top:10px;
+}
+#halaman_pendaftaran #form_daftar .bingkai_judul {
+    border:1px solid #CCC;
+    padding:10px;
+    background:url(../images/text_edit2.png) no-repeat;
+    background-position:right -35px;
+
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+#halaman_pendaftaran #form_daftar .judul_halaman {
+    text-align:left;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #C30;		
+}
+#halaman_pendaftaran #form_daftar .deskripsi {
+    text-align:left;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 11px;
+    color: #333;	
+    padding-top:4px;
+}
+#halaman_pendaftaran #form_daftar .subtitle {
+    text-align:left;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #C30;		
+}
+#halaman_pendaftaran #form_daftar font {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #900;		
+}
+#halaman_pendaftaran #form_daftar label {
+    cursor:pointer;	
+}
+#halaman_pendaftaran #form_daftar img {
+    display:none;	
+}
+#halaman_pendaftaran #form_daftar .contoh {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #666;		
+}
+#halaman_pendaftaran #form_daftar fieldset {
+    border:1px solid #CCC;
+    margin-top:10px;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+
+    background: #FFFFFF; /* old browsers */
+}
+#halaman_pendaftaran #form_daftar legend {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 12px;
+    color: #333;	
+    font-weight:bold;
+
+    padding:6px;
+    background-color:#ff662b;
+
+    border-left:1px solid #CCC;
+    border-right:1px solid #CCC;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+
+    background-color:#FFF;
+}
+#halaman_pendaftaran #form_daftar th {
+    text-align:right;
+    color:#333;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+}
+#halaman_pendaftaran #form_daftar td {
+    text-align:left;
+}
+#halaman_pendaftaran #form_daftar .form {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #333;	
+    padding:6px;
+
+    border:1px solid #C90;
+
+    background-color:#FFF;
+
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+
+    -webkit-box-shadow: 0px 0px 2px #d17d00;
+    -moz-box-shadow: 0px 0px 2px #d17d00;
+    box-shadow: 0px 0px 2px #d17d00; 
+}
+#halaman_pendaftaran #form_daftar .form_numeric {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #333;	
+    padding:6px;
+
+    border:1px solid #C90;
+
+    background-color: rgba(225, 225, 225, 0.1);
+
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+
+    -webkit-box-shadow: 0px 0px 2px #d17d00;
+    -moz-box-shadow: 0px 0px 2px #d17d00;
+    box-shadow: 0px 0px 2px #d17d00; 
+}
+#halaman_pendaftaran #form_daftar .password {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #333;	
+    padding:6px;
+
+    border:1px solid #C90;
+
+    background-color: rgba(225, 225, 225, 0.1);
+
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+
+    -webkit-box-shadow: 0px 0px 2px #d17d00;
+    -moz-box-shadow: 0px 0px 2px #d17d00;
+    box-shadow: 0px 0px 2px #d17d00; 
+}
+#halaman_pendaftaran #form_daftar #bingkai_button {
+    margin-top:10px;
+    margin-left:8px;
+    padding-right:10px;
+    padding-top:10px;
+    border-top:1px dashed #CCC;
+    text-align:right;
+}
+#halaman_pendaftaran #form_daftar #bingkai_button input {
+    border:1px solid #960;
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #930;
+    cursor:pointer;
+
+    border:1px solid #C90;
+
+    padding:10px;
+
+    background: #fefcea; /* old browsers */
+
+    background: -moz-linear-gradient(top, #fefcea 0%, #EDDC7D 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefcea), color-stop(100%,#EDDC7D)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#EDDC7D',GradientType=0 ); /* ie */
+
+
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+
+    /* Iner Shadow */
+    -webkit-box-shadow: inset 0px 0px 2px #cc7b02;
+    -moz-box-shadow: inset 0px 0px 2px #cc7b02;
+    box-shadow: inset 0px 0px 2px #cc7b02; 	
+}
+#halaman_pendaftaran #form_daftar #bingkai_button input:hover{
+    color: #FFF;
+
+    background: #eab92d; /* old browsers */
+
+    background: -moz-linear-gradient(top, #eab92d 0%, #c79810 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eab92d), color-stop(100%,#c79810)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eab92d', endColorstr='#c79810',GradientType=0 ); /* ie */
+}
+#halaman_pendaftaran #form_daftar #bingkai_button2 input {
+    border:1px solid #960;
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #930;
+    cursor:pointer;
+
+    border:1px solid #C90;
+
+    padding:5px 5px 5px 5px;
+
+    background: #fefcea; /* old browsers */
+
+    background: -moz-linear-gradient(top, #fefcea 0%, #EDDC7D 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefcea), color-stop(100%,#EDDC7D)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#EDDC7D',GradientType=0 ); /* ie */
+
+
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+
+    /* Iner Shadow */
+    -webkit-box-shadow: inset 0px 0px 2px #cc7b02;
+    -moz-box-shadow: inset 0px 0px 2px #cc7b02;
+    box-shadow: inset 0px 0px 2px #cc7b02; 	
+}
+#halaman_pendaftaran #form_daftar #bingkai_button2 input:hover{
+    color: #FFF;
+
+    background: #eab92d; /* old browsers */
+
+    background: -moz-linear-gradient(top, #eab92d 0%, #c79810 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eab92d), color-stop(100%,#c79810)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eab92d', endColorstr='#c79810',GradientType=0 ); /* ie */
+}
+/* AKHIR : Style halaman pendaftaran */
