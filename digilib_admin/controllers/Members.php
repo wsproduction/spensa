@@ -145,7 +145,7 @@ class Members extends Controller {
                 $xml .= "<cell><![CDATA[" . $row['members_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['members_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['gender_title'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['members_birthplace'] . ', ' . date('d', strtotime($row['members_birthdate'])) . ' ' . $this->listTextMonth(date('m', strtotime($row['members_birthdate']))) . ' ' . date('Y', strtotime($row['members_birthdate'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['members_birthplace'] . ', ' . date('d', strtotime($row['members_birthdate'])) . ' ' . $this->content->monthName(date('m', strtotime($row['members_birthdate']))) . ' ' . date('Y', strtotime($row['members_birthdate'])) . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['members_address'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['isa_title'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['members_desc'] . "]]></cell>";
@@ -156,11 +156,6 @@ class Members extends Controller {
             $xml .= "</rows>";
             echo $xml;
         }
-    }
-
-    public function listTextMonth($id) {
-        $list = array('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
-        return $list[$id - 1];
     }
 
     public function update($id = 0) {
@@ -409,7 +404,7 @@ class Members extends Controller {
                 $pdf->Text($node[$idx]['profile']['name']['x'], $node[$idx]['profile']['name']['y'], $value['members_name']);
                 $pdf->SetFont('helvetica', '', 6);
                 $pdf->Text($node[$idx]['profile']['gender']['x'], $node[$idx]['profile']['gender']['y'], $value['gender_title']);
-                $pdf->Text($node[$idx]['profile']['birthday']['x'], $node[$idx]['profile']['birthday']['y'], $value['members_birthplace'] . ', ' . date('d', strtotime($value['members_birthdate'])) . ' ' . $this->listTextMonth(date('m', strtotime($value['members_birthdate']))) . ' ' . date('Y', strtotime($value['members_birthdate'])));
+                $pdf->Text($node[$idx]['profile']['birthday']['x'], $node[$idx]['profile']['birthday']['y'], $value['members_birthplace'] . ', ' . date('d', strtotime($value['members_birthdate'])) . ' ' . $this->content->monthName(date('m', strtotime($value['members_birthdate']))) . ' ' . date('Y', strtotime($value['members_birthdate'])));
                 $pdf->MultiCell(52, 0, $value['members_address'], 0, 'L', false, 1, $node[$idx]['profile']['address']['x'], $node[$idx]['profile']['address']['y'], true, 0, false, true, 0, 'T', false);
 
                 list($isa_ina, $isa_eng) = explode('/', $value['isa_title']);

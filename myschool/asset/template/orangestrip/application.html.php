@@ -25,6 +25,7 @@ $protection = Session::get('login_status');
         Src::plugin()->rLoader();
 
         Src::css('layout');
+        Src::css('icon_colection');
         Src::css('style_menu');
         Src::javascript('autoload');
 
@@ -44,16 +45,16 @@ $protection = Session::get('login_status');
             <!-- BEGIN : Header box fixed -->
             <div id="header">
                 <div id="logo" class="fl-left">
-                    MySchool<sup><span style="font-size: 11px;">&nbsp;(beta)</span></sup>
+                    SekolahKu<sup><span style="font-size: 11px;">&nbsp;(beta)</span></sup>
                 </div>
                 <?php if ($protection) { ?>
                     <div id="m-account" class="fl-right">
                         <a id="m-account-parent" class="slide-of" href="#m-account-child">My Account</a>
                         <div class="cl">&nbsp;</div>
                         <ul id="m-account-child">
-                            <li><a href="#">Account Settings</a></li>
-                            <li><a href="#">Privacy Settings</a></li>
-                            <li><a href="http://myschool.spensa.ws/login/stop">Logout</a></li>
+                            <li><a href="#" class="orange16-ic-hireme">Account Settings</a></li>
+                            <li><a href="#" class="orange16-ic-lock">Privacy Settings</a></li>
+                            <li><a href="http://myschool.spensa.ws/login/stop" class="orange16-ic-signout">Logout</a></li>
                         </ul>
                     </div>
                 <?php } ?>

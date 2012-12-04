@@ -64,7 +64,7 @@ class Language extends Controller {
 
             foreach ($listData AS $row) {
 
-                $link_edit = URL::link($this->content->setLink('language/edit/' . $row['language_id']), 'Edit', 'attach');
+                $link_edit = URL::link($this->content->setLink('language/edit/' . $row['language_id']), 'Edit',false);
 
                 $xml .= "<row id='" . $row['language_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['language_id'] . "]]></cell>";

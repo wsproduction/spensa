@@ -6,6 +6,7 @@ class Pages extends Controller {
         parent::__construct();
         $this->content->protection(true);
         Src::css('style_pages');
+        Src::plugin()->flexiGrid();
     }
 
     public function index() {

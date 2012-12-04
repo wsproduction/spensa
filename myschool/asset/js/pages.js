@@ -1,4 +1,5 @@
 $(function () {
+    
     var protocol = window.location.protocol;
     var host = window.location.host;
     var loading = $('#loading-progress');
@@ -6,15 +7,26 @@ $(function () {
     var viewId = $('#live-view-content-page');
     var cssId = $('#for-css');
     
+    $('.cofig').mouseenter(function() {
+        $(this).css('background-color','#f9f9f9');
+        $(this).children('.content').slideDown('fast');
+    }).mouseleave(function(){
+        $(this).css('background-color','');
+        $(this).children('.content').slideUp('fast');
+    });
+    
     /* Handles response*/
     var handler = function(data) {
         $(data).find('data').each(function(){
             var css = $(this).find('css').text();
-            var script = $(this).find('script').text();
+            //var script = $(this).find('script').text();
             var content = $(this).find('content').text();
             
-            var newScriptName = script.split('|')[1];
-            
+            //var newScriptName = script.split('|')[1];
+             
+            $(cssId).html(css);
+            $(viewId).html(content);
+            /*
             $.rloader({
                 defaultcache : true,
                 defaultasync : false
@@ -23,15 +35,14 @@ $(function () {
             $.rloader({
                 src : newScriptName
             });
-            
-                
-            $(cssId).html(css);
-            $(viewId).html(content);
+            */
+           
             $(loading).slideUp('slow');
         });    
     };
     
     var ajaxLoader = function(target) {
+            
         /* Loads the page content and inserts it into the content area*/
         $.ajax({
             url: protocol + '//' + host + '/' + target,

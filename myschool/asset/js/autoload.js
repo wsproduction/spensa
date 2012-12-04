@@ -39,7 +39,7 @@ $(function () {
     $('body').live('click',function() {
         $('#m-account-parent').removeClass('slide-on').addClass('slide-of');
         $($('#m-account-parent').attr('href')).slideUp('fast');
-    })
+    });
     
     // Accordion Left Menu
     $('ul.m-left li[type=parent] a').live('click',function(){
@@ -84,7 +84,7 @@ $(function () {
         success: function(data) {
             var thumbnail = data.thumbnail;
             $('a#profile-name-left').html(data.name);
-            $('img#profile-thumbnail-small').attr('src', 'http://myschool.spensa.ws/web/src/myschool/asset/upload/images/thumbnail-small/' + thumbnail.small);
+            $('img#profile-thumbnail-small').attr('src', protocol + '//' + host + '/web/src/myschool/asset/upload/images/thumbnail-small/' + thumbnail.small);
         }
     });
     

@@ -6,42 +6,74 @@ class BorrowModel extends Model {
         parent::__construct();
     }
 
-    public function selectAllLanguage($page = 1) {
+    public function selectBorrowTypeById($id) {
+        $sth = $this->db->prepare(' SELECT 
+                                        digilib_borrowed_type.borrowed_type_id,
+                                        digilib_borrowed_type.borrowed_type_title,
+                                        digilib_borrowed_type.borrowed_type_interval,
+                                        digilib_borrowed_type.borrowed_type_max,
+                                        digilib_borrowed_type.borrowed_type_entry,
+                                        digilib_borrowed_type.borrowed_type_entry_update
+                                    FROM
+                                        digilib_borrowed_type
+                                    WHERE digilib_borrowed_type.borrowed_type_id = :id');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':id', $id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
 
+    public function selectAllBorrowed($page) {
         $rp = $this->method->post('rp', 10);
-        $sortname = $this->method->post('sortname', 'question_id');
-        $sortorder = $this->method->post('sortorder', 'desc');
+        $sortname = $this->method->post('sortname');
+        $sortorder = $this->method->post('sortorder');
         $query = $this->method->post('query', false);
         $qtype = $this->method->post('qtype', false);
 
         $listSelect = "
-            public_language.language_id,
-            public_language.language_name,
-            public_language.language_status,
-            public_language.language_entry,
-            public_language.language_entry_update";
+            digilib_borrowed_history.borrowed_history_id,
+            digilib_borrowed_history.borrowed_history_type,
+            digilib_borrowed_history.borrowed_history_members,
+            digilib_borrowed_history.borrowed_history_book,
+            digilib_borrowed_history.borrowed_history_star,
+            digilib_borrowed_history.borrowed_history_finish,
+            digilib_borrowed_history.borrowed_history_status,
+            digilib_borrowed_history.borrowed_history_return,
+            digilib_book.book_title,
+            digilib_borrowed_type.borrowed_type_title";
 
-        $prepare = 'SELECT ' . $listSelect . ' FROM public_language';
+        $prepare = 'SELECT ' . $listSelect . ' 
+                    FROM 
+                        digilib_borrowed_history 
+                        INNER JOIN digilib_borrowed_type ON (digilib_borrowed_history.borrowed_history_type = digilib_borrowed_type.borrowed_type_id)
+                        INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id)
+                        INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
+                    WHERE
+                        digilib_borrowed_history.borrowed_history_status = 0
+                    ';
+
         if ($query)
-            $prepare .= ' WHERE ' . $qtype . ' LIKE "%' . $query . '%" ';
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+
         $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
 
         $start = (($page - 1) * $rp);
         $prepare .= ' LIMIT ' . $start . ',' . $rp;
 
         $sth = $this->db->prepare($prepare);
+
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
     }
 
-    public function countAllLanguage() {
+    public function countAllBorrowed() {
         $query = $this->method->post('query', false);
         $qtype = $this->method->post('qtype', false);
 
-        $prepare = 'SELECT COUNT(language_id) AS cnt FROM public_language';
+        $prepare = 'SELECT COUNT(borrowed_history_id) AS cnt FROM digilib_borrowed_history WHERE digilib_borrowed_history.borrowed_history_status = 0';
         if ($query)
-            $prepare .= ' WHERE ' . $qtype . ' LIKE "%' . $query . '%" ';
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
 
         $sth = $this->db->prepare($prepare);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
@@ -50,19 +82,156 @@ class BorrowModel extends Model {
         $count = $tempCount[0];
         return $count['cnt'];
     }
+    
+    public function selectBorrowedHistory($memberid, $page) {
+        $rp = $this->method->post('rp', 10);
+        $sortname = $this->method->post('sortname');
+        $sortorder = $this->method->post('sortorder');
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
 
-    public function selectByID($id) {
-        $sth = $this->db->prepare('
-                            SELECT 
-                                public_language.language_id,
-                                public_language.language_name,
-                                public_language.language_status,
-                                public_language.language_entry,
-                                public_language.language_entry_update
-                            FROM
-                                public_language
-                            WHERE
-                                public_language.language_id = :id');
+        $listSelect = "
+            digilib_borrowed_history.borrowed_history_id,
+            digilib_borrowed_history.borrowed_history_type,
+            digilib_borrowed_history.borrowed_history_members,
+            digilib_borrowed_history.borrowed_history_book,
+            digilib_borrowed_history.borrowed_history_star,
+            digilib_borrowed_history.borrowed_history_finish,
+            digilib_borrowed_history.borrowed_history_status,
+            digilib_borrowed_history.borrowed_history_return,
+            digilib_book.book_title,
+            digilib_borrowed_type.borrowed_type_title";
+
+        $prepare = 'SELECT ' . $listSelect . ' 
+                    FROM 
+                        digilib_borrowed_history 
+                        INNER JOIN digilib_borrowed_type ON (digilib_borrowed_history.borrowed_history_type = digilib_borrowed_type.borrowed_type_id)
+                        INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id)
+                        INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
+                    WHERE digilib_borrowed_history.borrowed_history_members = :memberid';
+
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
+
+        $start = (($page - 1) * $rp);
+        $prepare .= ' LIMIT ' . $start . ',' . $rp;
+
+        $sth = $this->db->prepare($prepare);
+
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':memberid', $memberid);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function countBorrowedHistory($memberid) {
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $prepare = 'SELECT COUNT(borrowed_history_id) AS cnt FROM digilib_borrowed_history WHERE digilib_borrowed_history.borrowed_history_members = :memberid ';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':memberid', $memberid);
+        $sth->execute();
+        $tempCount = $sth->fetchAll();
+        $count = $tempCount[0];
+        return $count['cnt'];
+    }
+
+    public function selectBorrowedCart($memberid, $borrowtype, $page) {
+               
+        $rp = $this->method->post('rp', 10);
+        $sortname = $this->method->post('sortname');
+        $sortorder = $this->method->post('sortorder');
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $listSelect = "
+            digilib_borrowed_temp.borrowed_temp_id,
+            digilib_borrowed_temp.borrowed_temp_type,
+            digilib_borrowed_temp.borrowed_temp_book,
+            digilib_borrowed_temp.borrowed_temp_member,
+            digilib_borrowed_temp.borrowed_temp_start,
+            digilib_borrowed_temp.borrowed_temp_finish,
+            digilib_book.book_title";
+
+        $prepare = 'SELECT ' . $listSelect . ' 
+                    FROM 
+                        digilib_borrowed_temp
+                        INNER JOIN digilib_book_register ON (digilib_borrowed_temp.borrowed_temp_book = digilib_book_register.book_register_id)
+                        INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
+                    WHERE digilib_borrowed_temp.borrowed_temp_member = :memberid AND digilib_borrowed_temp.borrowed_temp_type = :borrowtype ';
+
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
+
+        $start = (($page - 1) * $rp);
+        $prepare .= ' LIMIT ' . $start . ',' . $rp;
+
+        $sth = $this->db->prepare($prepare);
+
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':memberid', $memberid);
+        $sth->bindValue(':borrowtype', $borrowtype);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function countBorrowedCart($memberid, $borrowtype) {
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $prepare = 'SELECT COUNT(digilib_borrowed_temp.borrowed_temp_id) AS cnt 
+                    FROM 
+                        digilib_borrowed_temp
+                        INNER JOIN digilib_book_register ON (digilib_borrowed_temp.borrowed_temp_book = digilib_book_register.book_register_id)
+                        INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
+                    WHERE digilib_borrowed_temp.borrowed_temp_member = :memberid AND digilib_borrowed_temp.borrowed_temp_type = :borrowtype ';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':memberid', $memberid);
+        $sth->bindValue(':borrowtype', $borrowtype);
+        $sth->execute();
+        $tempCount = $sth->fetchAll();
+        $count = $tempCount[0];
+        return $count['cnt'];
+    }
+
+    public function selectMemberInfo($id) {
+        $sth = $this->db->prepare(' SELECT 
+                                        digilib_members.members_id,
+                                        digilib_members.members_name,
+                                        digilib_members.members_gender,
+                                        digilib_members.members_birthplace,
+                                        digilib_members.members_birthdate,
+                                        digilib_members.members_address,
+                                        digilib_members.members_phone1,
+                                        digilib_members.members_phone2,
+                                        digilib_members.members_email,
+                                        digilib_members.members_photo,
+                                        digilib_members.members_isa,
+                                        digilib_members.members_desc,
+                                        digilib_members.members_status,
+                                        digilib_members.members_entry,
+                                        digilib_members.members_entry_update,
+                                        public_gender.gender_title,
+                                        digilib_isa.isa_title
+                                    FROM
+                                        digilib_members
+                                        INNER JOIN public_gender ON (digilib_members.members_gender = public_gender.gender_id)
+                                        INNER JOIN digilib_isa ON (digilib_members.members_isa = digilib_isa.isa_id)
+                                    WHERE
+                                        digilib_members.members_id = :id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':id', $id);
         $sth->execute();
@@ -73,78 +242,151 @@ class BorrowModel extends Model {
         }
     }
 
-    public function createSave() {
+    public function selectBookInfo($id) {
+        $sth = $this->db->prepare(' SELECT 
+                                        digilib_book_register.book_register_id,
+                                        digilib_book_register.book_id,
+                                        digilib_book_register.book_condition,
+                                        digilib_book_register.book_entry
+                                    FROM
+                                        digilib_book_register
+                                    WHERE
+                                        digilib_book_register.book_register_id = :id');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':id', $id);
+        $sth->execute();
+        if ($sth->rowCount() > 0) {
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
+    }
 
-        $title = $this->method->post('title');
-        $status = $this->method->post('status');
+    public function clearBorrowedCart($id) {
+        $sth = $this->db->prepare('DELETE FROM digilib_borrowed_temp WHERE digilib_borrowed_temp.borrowed_temp_member = :memberid');
+        $sth->bindValue(':memberid', $id);
+        return $sth->execute();
+    }
 
+    public function deleteBorrowHistory() {
+        $id = $this->method->post('id', 0);
+        $sth = $this->db->prepare('DELETE FROM digilib_borrowed_history WHERE digilib_borrowed_history.borrowed_history_id IN (' . $id . ')');
+        return $sth->execute();
+    }
+
+    public function deleteBorrowCart() {
+        $id = $this->method->post('id', 0);
+        $sth = $this->db->prepare('DELETE FROM digilib_borrowed_temp WHERE digilib_borrowed_temp.borrowed_temp_id IN (' . $id . ')');
+        return $sth->execute();
+    }
+
+    public function saveAddBookCart($interval) {
+        $bookregister = $this->method->post('bookregister');
+        $borrowedtype = $this->method->post('borrowedtype');
+        $memberidtemp = $this->method->post('memberidtemp');
         $sth = $this->db->prepare('
                     INSERT INTO
-                    public_language(
-                        language_id,
-                        language_name,
-                        language_status,
-                        language_entry,
-                        language_entry_update)
+                        digilib_borrowed_temp(
+                        borrowed_temp_id,
+                        borrowed_temp_type,
+                        borrowed_temp_book,
+                        borrowed_temp_member,
+                        borrowed_temp_start,
+                        borrowed_temp_finish
+                        )
                     VALUES(
                         (SELECT IF(
-                            (SELECT COUNT(pl.language_id) 
-                             FROM public_language AS pl) > 0, 
-                                (SELECT pl.language_id 
-                                 FROM public_language AS pl 
-                                 ORDER BY pl.language_id DESC LIMIT 1) + 1,
+                            (SELECT COUNT(dbt.borrowed_temp_id) 
+                             FROM digilib_borrowed_temp AS dbt) > 0, 
+                                (SELECT dbt.borrowed_temp_id 
+                                 FROM digilib_borrowed_temp AS dbt 
+                                 ORDER BY dbt.borrowed_temp_id DESC LIMIT 1) + 1,
                             1)
                         ),
-                        :title,
-                        :status,
+                        :borrowedtype,
+                        :bookregister,
+                        :memberid,
                         NOW(),
-                        NOW())
-                ');
-
-        $sth->bindValue(':title', $title);
-        $sth->bindValue(':status', $status);
-
-        return $sth->execute();
+                        DATE_ADD(NOW(),INTERVAL ' . $interval . ' DAY)
+                )');
+        $sth->bindValue(':borrowedtype', $borrowedtype);
+        $sth->bindValue(':bookregister', $bookregister);
+        $sth->bindValue(':memberid', $memberidtemp);
+        $sth->execute();
     }
 
-    public function updateSave($id = 0) {
-
-        $title = $this->method->post('title');
-        $status = $this->method->post('status');
-
-        $sth = $this->db->prepare('
-                    UPDATE
-                        public_language
-                    SET
-                        language_name = :title,
-                        language_status = :status,
-                        language_entry_update = NOW()
-                    WHERE
-                        public_language.language_id = :id
-                ');
-
-        $sth->bindValue(':title', $title);
-        $sth->bindValue(':status', $status);
-        $sth->bindValue(':id', $id);
-
-        return $sth->execute();
-    }
-
-    public function delete() {
-        $id = $this->method->post('id', 0);
-        $sth = $this->db->prepare('DELETE FROM public_language WHERE public_language.language_id IN (' . $id . ')');
-        return $sth->execute();
-    }
-    
-    public function selectAllBorrowType() {
-        $sth = $this->db->prepare(' SELECT 
-                                        digilib_borrowed_type.borrowed_type_id,
-                                        digilib_borrowed_type.borrowed_type_title
-                                    FROM
-                                        digilib_borrowed_type');
+    public function countCartListByBookRegister($bookregister) {
+        $prepare = 'SELECT COUNT(borrowed_temp_book) AS cnt FROM digilib_borrowed_temp WHERE digilib_borrowed_temp.borrowed_temp_book = :bookregister ';
+        $sth = $this->db->prepare($prepare);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':bookregister', $bookregister);
+        $sth->execute();
+        $tempCount = $sth->fetchAll();
+        $count = $tempCount[0];
+        return $count['cnt'];
+    }
+
+    public function selectBorrowingCartByMemberId($memberid) {
+        $sth = $this->db->prepare('
+                                SELECT 
+                                    digilib_borrowed_temp.borrowed_temp_id,
+                                    digilib_borrowed_temp.borrowed_temp_type,
+                                    digilib_borrowed_temp.borrowed_temp_book,
+                                    digilib_borrowed_temp.borrowed_temp_member,
+                                    digilib_borrowed_temp.borrowed_temp_start,
+                                    digilib_borrowed_temp.borrowed_temp_finish,
+                                    digilib_book.book_title
+                                FROM
+                                    digilib_borrowed_temp
+                                    INNER JOIN digilib_book_register ON (digilib_borrowed_temp.borrowed_temp_book = digilib_book_register.book_register_id)
+                                    INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
+                                WHERE
+                                    digilib_borrowed_temp.borrowed_temp_member = :memberid
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':memberid', $memberid);
         $sth->execute();
         return $sth->fetchAll();
+    }
+
+    public function saveBorrowingCart($cart) {
+        $prepare = '
+                    INSERT INTO
+                        digilib_borrowed_history(
+                        borrowed_history_id,
+                        borrowed_history_type,
+                        borrowed_history_members,
+                        borrowed_history_book,
+                        borrowed_history_star,
+                        borrowed_history_finish,
+                        borrowed_history_status,
+                        borrowed_history_return)
+                    VALUES';
+        $idx = count($cart);
+        foreach ($cart as $rowcart) {
+            $prepare .= '(  (SELECT IF(
+                                (SELECT COUNT(dbh.borrowed_history_id) 
+                                FROM digilib_borrowed_history AS dbh) > 0, 
+                                    (SELECT dbh.borrowed_history_id 
+                                    FROM digilib_borrowed_history AS dbh 
+                                    ORDER BY dbh.borrowed_history_id DESC LIMIT 1) + 1,
+                                1)
+                            ),
+                            "' . $rowcart['borrowed_temp_type'] . '",
+                            "' . $rowcart['borrowed_temp_member'] . '",
+                            "' . $rowcart['borrowed_temp_book'] . '",
+                            "' . $rowcart['borrowed_temp_start'] . '",
+                            "' . $rowcart['borrowed_temp_finish'] . '",
+                            0,
+                            NULL)';
+            
+            $idx--;
+            if ($idx!=0) {
+                $prepare .= ',';
+            }
+        }
+        $sth = $this->db->prepare($prepare);
+        return $sth->execute();
     }
 
 }

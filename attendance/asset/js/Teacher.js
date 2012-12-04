@@ -74,7 +74,7 @@ $(function(){
             width : 80,
             align : 'center'
         }, {
-            display : 'Catatan',
+            display : 'Keterangan',
             name : 'option',
             width : 80,
             align : 'center'

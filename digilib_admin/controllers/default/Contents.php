@@ -201,5 +201,10 @@ class Contents extends Controller {
     public function numberFormat($number = 0) {
         return number_format($number, 0, ',', '.');
     }
+    
+    public function monthName($id) {
+        $list = array('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
+        return $list[$id - 1];
+    }
 
 }

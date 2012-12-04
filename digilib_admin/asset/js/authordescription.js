@@ -51,13 +51,13 @@ $(function(){
             align : 'center'
         }],
         buttons : [ {
-            name : 'Add',
+            name : 'Tambah',
             bclass : 'add',
             onpress : function() {
                 window.location = link_c
             }
         }, {
-            name : 'Delete',
+            name : 'Hapus',
             bclass : 'delete',
             onpress : function() {
                 var leng = $(listId + ' .trSelected').length;

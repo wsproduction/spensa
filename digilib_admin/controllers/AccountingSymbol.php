@@ -64,7 +64,7 @@ class AccountingSymbol extends Controller {
 
             foreach ($listData AS $row) {
 
-                $link_edit = URL::link($this->content->setLink('accountingsymbol/edit/' . $row['accounting_symbol_id']), 'Edit', 'attach');
+                $link_edit = URL::link($this->content->setLink('accountingsymbol/edit/' . $row['accounting_symbol_id']), 'Edit',false);
 
                 $xml .= "<row id='" . $row['accounting_symbol_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['accounting_symbol_id'] . "]]></cell>";

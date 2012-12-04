@@ -22,11 +22,9 @@ class TeacherModel extends Model {
         }
     }
     
-    public function selectAllCheckTime() {
+    public function selectAllCheckTime($sdate, $fdate) {
         $name = $this->method->post('name', 0);
         $nameid = $this->method->post('nameid', 0);
-        $sdate = $this->method->post('sdate', 0);
-        $fdate = $this->method->post('fdate', 0);
 
         $newfdate = new DateTime(date('Y-m-d', strtotime($fdate)));
         $newfdate = $newfdate->modify('+1 day');

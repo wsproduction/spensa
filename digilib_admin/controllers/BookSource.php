@@ -64,7 +64,7 @@ class BookSource extends Controller {
 
             foreach ($listData AS $row) {
 
-                $link_edit = URL::link($this->content->setLink('booksource/edit/' . $row['book_fund_id']), 'Edit', 'attach');
+                $link_edit = URL::link($this->content->setLink('booksource/edit/' . $row['book_fund_id']), 'Edit',false);
 
                 $xml .= "<row id='" . $row['book_fund_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['book_fund_id'] . "]]></cell>";

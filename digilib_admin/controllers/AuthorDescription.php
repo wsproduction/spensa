@@ -64,7 +64,7 @@ class AuthorDescription extends Controller {
 
             foreach ($listData AS $row) {
 
-                $link_edit = URL::link($this->content->setLink('authordescription/edit/' . $row['author_description_id']), 'Edit', 'attach');
+                $link_edit = URL::link($this->content->setLink('authordescription/edit/' . $row['author_description_id']), 'Edit',false);
 
                 $xml .= "<row id='" . $row['author_description_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['author_description_id'] . "]]></cell>";

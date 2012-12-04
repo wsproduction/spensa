@@ -7,23 +7,21 @@ class CatalogueModel extends Model {
     }
 
     public function selectAllCatalogue($page = 1) {
-        
+
         $rp = $this->method->post('rp', 10);
-        $sortname = $this->method->post('sortname', 'question_id');
+        $sortname = $this->method->post('sortname');
         $sortorder = $this->method->post('sortorder', 'desc');
         $query = $this->method->post('query', false);
         $qtype = $this->method->post('qtype', false);
-        
+
         $listSelect = "
                     digilib_book.book_id,
                     digilib_book.book_title,
-                    digilib_book.book_sub_title,
-                    (SELECT dp.publisher_name FROM digilib_publisher AS dp WHERE dp.publisher_id = digilib_book.book_publisher) AS publisher_name,
-                    (SELECT pc.city_name FROM public_city AS pc WHERE pc.city_id = digilib_book.book_city_launching) AS city_name,
-                    digilib_book.book_year_launching,
-                    digilib_book.book_language,
+                    digilib_book.book_foreign_title,
+                    digilib_book.book_publisher,
+                    digilib_book.book_publishing,
                     digilib_book.book_edition,
-                    digilib_book.book_print,
+                    digilib_book.book_copy,
                     digilib_book.book_isbn,
                     digilib_book.book_roman_number,
                     digilib_book.book_pages_number,
@@ -33,20 +31,26 @@ class CatalogueModel extends Model {
                     digilib_book.book_width,
                     digilib_book.book_height,
                     digilib_book.book_weight,
-                    digilib_book.book_quantity,
                     digilib_book.book_accounting_symbol,
                     digilib_book.book_price,
-                    (SELECT dr.resource_name FROM digilib_resource AS dr WHERE dr.resource_id = digilib_book.book_resource) AS resource_name,
-                    (SELECT dn.fund_name FROM digilib_fund AS dn WHERE dn.fund_id = digilib_book.book_fund ) AS fund_name,
+                    digilib_book.book_resource,
+                    digilib_book.book_fund,
                     digilib_book.book_review,
-                    digilib_book.book_type,
-                    (SELECT dbbd.borrowed_title FROM digilib_book_borrowed_description AS dbbd WHERE dbbd.borrowed_description_id = digilib_book.book_length_borrowed) AS length_borrowed,
-                    digilib_book.book_status,
-                    (SELECT ddc.ddc_classification_number FROM digilib_ddc AS ddc WHERE ddc.ddc_id = digilib_book.book_classification ) AS classification_number,
+                    digilib_book.book_classification,
                     digilib_book.book_cover,
-                    digilib_book.book_entry_date";
+                    digilib_book.book_file,
+                    digilib_book.book_entry,
+                    digilib_book.book_entry_update,
+                    digilib_ddc.ddc_classification_number,
+                    (SELECT COUNT(digilib_book_register.book_register_id) FROM digilib_book_register WHERE digilib_book_register.book_id = digilib_book.book_id) AS book_quantity,
+                    (SELECT digilib_book_fund.book_fund_title FROM digilib_book_fund WHERE digilib_book_fund.book_fund_id = digilib_book.book_fund) AS fund,
+                    (SELECT digilib_book_resource.book_resource_title FROM digilib_book_resource WHERE digilib_book_resource.book_resource_id = digilib_book.book_resource) AS resource
+                    ";
 
-        $prepare = 'SELECT ' . $listSelect . ' FROM digilib_book';
+        $prepare = 'SELECT ' . $listSelect . ' 
+                    FROM 
+                        digilib_book 
+                        INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id) ';
         if ($query)
             $prepare .= ' WHERE ' . $qtype . ' LIKE "%' . $query . '%" ';
         $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
@@ -59,7 +63,7 @@ class CatalogueModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectAllCollection($id = 0, $start = 0, $count = 100) {
         $sth = $this->db->prepare('SELECT 
                                         dbr.book_register_id,
@@ -110,7 +114,7 @@ class CatalogueModel extends Model {
         $count = $tempCount[0];
         return $count['cnt'];
     }
-    
+
     public function countAllCollection($id = 0) {
         $sth = $this->db->prepare('SELECT * FROM digilib_book_register WHERE book_id = :id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
@@ -121,14 +125,12 @@ class CatalogueModel extends Model {
 
     public function createSave() {
 
+        Session::init();
+
         $title = $this->method->post('title');
-        $sub_title = $this->method->post('sub_title');
         $foreign_title = $this->method->post('foreign_title');
-        $desc_title = $this->method->post('desc_title');
         $publisher = $this->method->post('publisher');
-        $city = $this->method->post('city');
         $year = $this->method->post('year');
-        $language = $this->method->post('language');
         $edition = $this->method->post('edition');
         $print_out = $this->method->post('print_out');
         $isbn = $this->method->post('isbn');
@@ -146,51 +148,38 @@ class CatalogueModel extends Model {
         $resource = $this->method->post('resource');
         $fund = $this->method->post('fund');
         $reviews = $this->method->post('reviews');
-        $book_type = $this->method->post('book_type');
-        $length_borrowed = $this->method->post('length_borrowed');
-        $hard_copy = $this->method->post('hard_copy', 0);
-        $soft_copy = $this->method->post('soft_copy', 0);
-        $classification = $this->method->post('tempSelectId3');
-        $status = $this->method->post('status', 0);
-        $sessionAuthor = $this->method->post('sessionAuthor');
+        $classification = $this->method->post('ddcid');
 
         $sth = $this->db->prepare('
                     INSERT INTO
                         digilib_book(
-                        book_id,
-                        book_title,
-                        book_sub_title,
-                        book_foreign_title,
-                        book_description_title,
-                        book_publisher,
-                        book_city_launching,
-                        book_year_launching,
-                        book_language,
-                        book_edition,
-                        book_print,
-                        book_isbn,
-                        book_roman_number,
-                        book_pages_number,
-                        book_bibliography,
-                        book_ilustration,
-                        book_index,
-                        book_width,
-                        book_height,
-                        book_weight,
-                        book_quantity,
-                        book_accounting_symbol,
-                        book_price,
-                        book_resource,
-                        book_fund,
-                        book_review,
-                        book_type,
-                        book_length_borrowed,
-                        book_hard_copy,
-                        book_electronic,
-                        book_status,
-                        book_classification,
-                        book_cover,
-                        book_entry_date)
+                            book_id,
+                            book_title,
+                            book_foreign_title,
+                            book_publisher,
+                            book_publishing,
+                            book_edition,
+                            book_copy,
+                            book_isbn,
+                            book_roman_number,
+                            book_pages_number,
+                            book_bibliography,
+                            book_ilustration,
+                            book_index,
+                            book_width,
+                            book_height,
+                            book_weight,
+                            book_accounting_symbol,
+                            book_price,
+                            book_resource,
+                            book_fund,
+                            book_review,
+                            book_classification,
+                            book_cover,
+                            book_file,
+                            book_entry,
+                            book_entry_update
+                        )
                     VALUES(
                         ( SELECT IF (
                         (SELECT COUNT(cdm . book_id) FROM digilib_book AS cdm 
@@ -202,15 +191,11 @@ class CatalogueModel extends Model {
                                 ORDER BY dm . book_id DESC LIMIT 1),
                         (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%m%d"),"001"))) AS dd ),
                         :title,
-                        :sub_title,
                         :foreign_title,
-                        :desc_title,
                         :publisher,
-                        :city,
-                        :year,
-                        :language,
+                        :publishing,
                         :edition,
-                        :print,
+                        :copy,
                         :isbn,
                         :roman_number,
                         :pages_number,
@@ -220,32 +205,24 @@ class CatalogueModel extends Model {
                         :width,
                         :height,
                         :weight,
-                        :quantity,
                         :accounting_symbol,
                         :price,
                         :resource,
                         :fund,
                         :review,
-                        :type,
-                        :length_borrowed,
-                        :book_hard_copy,
-                        :book_electronic,
-                        :status,
                         :classification_number,
                         NULL,
+                        NULL,
+                        NOW(),
                         NOW());
                 ');
 
         $sth->bindValue(':title', $title);
-        $sth->bindValue(':sub_title', $sub_title);
         $sth->bindValue(':foreign_title', $foreign_title);
-        $sth->bindValue(':desc_title', $desc_title);
         $sth->bindValue(':publisher', $publisher);
-        $sth->bindValue(':city', $city);
-        $sth->bindValue(':year', $year);
-        $sth->bindValue(':language', $language);
+        $sth->bindValue(':publishing', $year);
         $sth->bindValue(':edition', $edition);
-        $sth->bindValue(':print', $print_out);
+        $sth->bindValue(':copy', $print_out);
         $sth->bindValue(':isbn', $isbn);
         $sth->bindValue(':roman_number', $roman_count);
         $sth->bindValue(':pages_number', $page_count);
@@ -255,52 +232,24 @@ class CatalogueModel extends Model {
         $sth->bindValue(':width', $width);
         $sth->bindValue(':height', $height);
         $sth->bindValue(':weight', $weight);
-        $sth->bindValue(':quantity', $quantity);
         $sth->bindValue(':accounting_symbol', $accounting_symbol, PDO::PARAM_NULL);
-        $sth->bindValue(':price', $price);
+        $sth->bindValue(':price', str_replace(',', '', $price));
         $sth->bindValue(':resource', $resource, PDO::PARAM_NULL);
         $sth->bindValue(':fund', $fund, PDO::PARAM_NULL);
         $sth->bindValue(':review', $reviews);
-        $sth->bindValue(':type', $book_type);
-        $sth->bindValue(':length_borrowed', $length_borrowed, PDO::PARAM_NULL);
-        $sth->bindValue(':book_hard_copy', $hard_copy);
-        $sth->bindValue(':book_electronic', $soft_copy);
-        $sth->bindValue(':status', $status);
         $sth->bindValue(':classification_number', $classification);
 
         if ($sth->execute()) {
+
             $lastBookID = $this->db->lastInsID('book_id', 'digilib_book');
 
-            $this->saveBukuInduk($quantity, $lastBookID);
+            $this->saveRegisterBook($quantity, $lastBookID);
+            $this->saveLanguageBook($lastBookID);
+            $this->saveAuthorBook($lastBookID);
+            $this->updateAuthorStatus();
 
-            $sthAuthor = $this->db->prepare('SELECT * FROM digilib_author_temp WHERE session_id=:id');
-            $sthAuthor->setFetchMode(PDO::FETCH_ASSOC);
-            $sthAuthor->execute(array(':id' => $sessionAuthor));
-            $dataAuthor = $sthAuthor->fetchAll();
-
-            if ($sthAuthor->rowCount() > 0) {
-                $sql = '';
-                foreach ($dataAuthor as $value) {
-                    $sql .= 'INSERT INTO
-                                digilib_author(
-                                author_first_name,
-                                author_last_name,
-                                author_description,
-                                author_front_degree,
-                                author_back_degree,
-                                book_id)
-                            VALUES(
-                                "' . $value['author_first_name'] . '",
-                                "' . $value['author_last_name'] . '",
-                                ' . $value['author_description'] . ',
-                                "' . $value['author_front_degree'] . '",
-                                "' . $value['author_back_degree'] . '",
-                                "' . $lastBookID . '");';
-                }
-
-                if ($this->saveAuthor($sql))
-                    $this->deleteAuthorTempSession($sessionAuthor);
-            }
+            $this->clearAuthorTemp();
+            $this->clearLanguageTemp();
 
             $upload = Src::plugin()->PHPUploader();
             if ($this->method->files('cover', 'tmp_name')) {
@@ -328,7 +277,96 @@ class CatalogueModel extends Model {
         }
     }
 
-    public function saveBukuInduk($ekemplar, $book_id) {
+    public function saveLanguageBook($bookid) {
+        $languagetemp = $this->selectLanguageTempBySession();
+        if ($languagetemp) {
+            $prepare = '';
+            foreach ($languagetemp as $rowlanguage) {
+                $prepare .= '
+                        INSERT INTO
+                            digilib_book_language(
+                            book_language_id,
+                            book_id,
+                            book_language)
+                        VALUES (
+                            (SELECT IF(
+                                (SELECT COUNT(dbl.book_language_id) 
+                                    FROM digilib_book_language AS dbl) > 0, 
+                                        (SELECT dbl.book_language_id  
+                                        FROM digilib_book_language AS dbl 
+                                        ORDER BY dbl.book_language_id DESC LIMIT 1) + 1,
+                                1)
+                            ),
+                            "' . $bookid . '",
+                            "' . $rowlanguage['book_language'] . '"
+                         );';
+            }
+            $sth = $this->db->prepare($prepare);
+            $sth->execute();
+        }
+    }
+
+    public function saveAuthorBook($bookid) {
+        $authortemp = $this->selectAuthorTempBySession();
+        if ($authortemp) {
+            $prepare = '';
+            foreach ($authortemp as $rowauthor) {
+                $prepare .= '
+                        INSERT INTO
+                            digilib_book_aurthor(
+                            book_aurthor_id,
+                            book_aurthor_book,
+                            book_aurthor_name,
+                            book_aurthor_primary)
+                        VALUES(
+                            (SELECT IF(
+                                (SELECT COUNT(dba.book_aurthor_id) 
+                                    FROM digilib_book_aurthor AS dba) > 0, 
+                                        (SELECT dba.book_aurthor_id  
+                                        FROM digilib_book_aurthor AS dba 
+                                        ORDER BY dba.book_aurthor_id DESC LIMIT 1) + 1,
+                                1)
+                            ),
+                            "' . $bookid . '",
+                            "' . $rowauthor['book_author_temp_name'] . '",
+                            "' . $rowauthor['book_author_temp_primary'] . '");';
+            }
+            $sth = $this->db->prepare($prepare);
+            if ($sth->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public function updateAuthorStatus() {
+        $authortemp = $this->selectAuthorTempBySession();
+        if ($authortemp) {
+            $authorid = '0';
+            foreach ($authortemp as $rowauthor) {
+                $authorid .= ',' . $rowauthor['book_author_temp_name'];
+            }
+            $sth = $this->db->prepare('
+                                UPDATE
+                                    digilib_author
+                                SET
+                                    author_status = 1
+                                WHERE
+                                    digilib_author.author_id IN (' . $authorid . ')
+                            ');
+
+            if ($sth->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function saveRegisterBook($ekemplar, $book_id) {
 
         if ($ekemplar > 0) {
             $sql = '';
@@ -338,27 +376,19 @@ class CatalogueModel extends Model {
                             book_register_id,
                             book_id,
                             book_condition,
-                            entry_date)
+                            book_entry)
                         VALUES(
                             (SELECT IF (
                             (SELECT COUNT(cdm.book_register_id) FROM digilib_book_register AS cdm WHERE cdm.book_register_id  LIKE  "' . $book_id . '%") > 0,
                             (SELECT ( dm.book_register_id + 1 ) FROM digilib_book_register AS dm WHERE dm.book_register_id  LIKE  "' . $book_id . '%" ORDER BY dm.book_register_id DESC LIMIT 1), "' . $book_id . '001")),
                             "' . $book_id . '",
-                            "1",
+                            1,
                             NOW());';
             }
         }
 
         $sth = $this->db->prepare($sql);
         $sth->execute();
-    }
-
-    public function saveAuthor($statement) {
-        $sth = $this->db->prepare($statement);
-        if ($sth->execute())
-            return true;
-        else
-            return false;
     }
 
     public function updateSave($id = 0) {
@@ -423,45 +453,6 @@ class CatalogueModel extends Model {
         }
     }
 
-    public function deleteAuthorTemp() {
-        $delete_id = $_POST['val'];
-        $sth = $this->db->prepare('DELETE FROM digilib_author_temp WHERE author_id = :id');
-
-        try {
-            $sth->execute(array(':id' => $delete_id));
-            return true;
-        } catch (Exception $exc) {
-            $this->db->rollBack();
-            return false;
-        }
-    }
-
-    public function deleteAuthorTempSession($session) {
-        $sth = $this->db->prepare('DELETE FROM digilib_author_temp WHERE session_id = :id');
-        $sth->execute(array(':id' => $session));
-    }
-
-    public function selectAuthorTempBySession() {
-        $sth = $this->db->prepare('
-                            SELECT 
-                                digilib_author_temp.author_first_name,
-                                digilib_author_temp.author_last_name,
-                                digilib_author_temp.author_description,
-                                digilib_author_temp.author_front_degree,
-                                digilib_author_temp.author_back_degree,
-                                digilib_author_temp.session_id
-                            FROM
-                                digilib_author_temp
-                            WHERE
-                                digilib_author_temp.session_id = :session');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute(array(':session' => $this->method->get('sa')));
-        if ($sth->rowCount() > 0)
-            return $sth->fetchAll();
-        else
-            return false;
-    }
-
     public function selectAuthorByBookID($id) {
         $sth = $this->db->prepare('
                             SELECT 
@@ -478,22 +469,6 @@ class CatalogueModel extends Model {
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array(':id' => $id));
         return $sth->fetchAll();
-    }
-
-    public function selectAuthorByName() {
-        $sth = $this->db->prepare('
-                        SELECT *
-                        FROM
-                            digilib_author
-                        ORDER BY digilib_author.author_first_name, digilib_author.author_last_name');
-
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        if ($sth->rowCount() > 0) {
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
     }
 
     public function listYear() {
@@ -527,7 +502,13 @@ class CatalogueModel extends Model {
     }
 
     public function selectBookResource() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_resource ORDER BY resource_name');
+        $sth = $this->db->prepare('
+                                SELECT 
+                                    digilib_book_resource.book_resource_id,
+                                    digilib_book_resource.book_resource_title
+                                FROM
+                                    digilib_book_resource
+                          ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         if ($sth->rowCount() > 0) {
@@ -538,7 +519,17 @@ class CatalogueModel extends Model {
     }
 
     public function selectBookFund() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_fund ORDER BY fund_name');
+        $sth = $this->db->prepare('
+                                SELECT 
+                                    digilib_book_fund.book_fund_id,
+                                    digilib_book_fund.book_fund_title,
+                                    digilib_book_fund.book_fund_status,
+                                    digilib_book_fund.book_fund_entry,
+                                    digilib_book_fund.book_fund_entry_update
+                                FROM
+                                    digilib_book_fund
+                                ORDER BY book_fund_title
+                            ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         if ($sth->rowCount() > 0) {
@@ -548,71 +539,114 @@ class CatalogueModel extends Model {
         }
     }
 
-    public function selectPublisher() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_publisher ORDER BY publisher_name');
+    public function selectAllPublisher($page = 1) {
+
+        $rp = $this->method->post('rp', 10);
+        $sortname = $this->method->post('sortname');
+        $sortorder = $this->method->post('sortorder', 'desc');
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $cityid = $this->method->post('city', 0);
+
+        $listSelect = "
+            digilib_publisher_office.publisher_office_id,
+            digilib_publisher_office.publisher_office_address,
+            digilib_publisher_office.publisher_office_city,
+            digilib_publisher_office.publisher_office_zipcode,
+            digilib_publisher_office.publisher_office_phone,
+            digilib_publisher_office.publisher_office_fax,
+            digilib_publisher_office.publisher_office_email,
+            digilib_publisher_office.publisher_office_website,
+            digilib_publisher_office.publisher_office_department,
+            digilib_publisher_office.publisher_office_entry,
+            digilib_publisher_office.publisher_office_entry_update,
+            digilib_publisher.publisher_name,
+            digilib_publisher.publisher_description,
+            digilib_publisher_office_department.publisher_office_department_name";
+
+        $prepare = 'SELECT ' . $listSelect . ' 
+                    FROM
+                        digilib_publisher_office
+                        INNER JOIN digilib_publisher ON (digilib_publisher_office.publisher_office_name = digilib_publisher.publisher_id)
+                        INNER JOIN digilib_publisher_office_department ON (digilib_publisher_office.publisher_office_department = digilib_publisher_office_department.publisher_office_department_id)
+                    WHERE
+                        digilib_publisher_office.publisher_office_city = :city ';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+        $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
+
+        $start = (($page - 1) * $rp);
+        $prepare .= ' LIMIT ' . $start . ',' . $rp;
+
+        $sth = $this->db->prepare($prepare);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':city', $cityid);
         $sth->execute();
-        if ($sth->rowCount() > 0) {
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
+        return $sth->fetchAll();
     }
 
-    public function selectPublisherByID() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_publisher WHERE publisher_id = :id');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->bindValue(':id', $this->method->get('id'));
-        $sth->execute();
-        if ($sth->rowCount() > 0) {
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
-    }
+    public function countAllPublisher() {
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
 
-    public function selectCountry() {
-        $sth = $this->db->prepare('SELECT * FROM public_country ORDER BY country_name');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        if ($sth->rowCount() > 0) {
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
-    }
+        $cityid = $this->method->post('city', 0);
 
-    public function selectCity($country_id = 0) {
-        $sth = $this->db->prepare('SELECT * FROM public_city WHERE country_id=:cid ORDER BY city_name');
+        $prepare = 'SELECT COUNT(publisher_office_id) AS cnt 
+                    FROM
+                        digilib_publisher_office
+                        INNER JOIN digilib_publisher ON (digilib_publisher_office.publisher_office_name = digilib_publisher.publisher_id)
+                        INNER JOIN digilib_publisher_office_department ON (digilib_publisher_office.publisher_office_department = digilib_publisher_office_department.publisher_office_department_id)
+                    WHERE
+                        digilib_publisher_office.publisher_office_city = :city ';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $sth = $this->db->prepare($prepare);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute(array(':cid' => $country_id));
-        if ($sth->rowCount() > 0) {
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
+        $sth->bindValue(':city', $cityid);
+        $sth->execute();
+        $tempCount = $sth->fetchAll();
+        $count = $tempCount[0];
+        return $count['cnt'];
     }
 
     public function selectDdcByLevel($level = 0) {
-        $sth = $this->db->prepare('SELECT * FROM digilib_ddc WHERE ddc_level=:level ORDER BY ddc_classification_number, ddc_title DESC');
+        $sth = $this->db->prepare('
+                                SELECT 
+                                    digilib_ddc.ddc_id,
+                                    digilib_ddc.ddc_classification_number,
+                                    digilib_ddc.ddc_title,
+                                    digilib_ddc.ddc_description,
+                                    digilib_ddc.ddc_level,
+                                    digilib_ddc.ddc_parent
+                                FROM
+                                    digilib_ddc
+                                WHERE
+                                    digilib_ddc.ddc_level = :level
+                            ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute(array(':level' => $level));
-        if ($sth->rowCount() > 0) {
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
+        return $sth->fetchAll();
     }
 
-    public function selectDdcByParent($id = 0) {
-        $sth = $this->db->prepare('SELECT * FROM digilib_ddc WHERE ddc_parent=:id ORDER BY ddc_classification_number, ddc_title DESC');
+    public function selectDdcByParentId($parentid) {
+        $sth = $this->db->prepare('
+                                SELECT 
+                                    digilib_ddc.ddc_id,
+                                    digilib_ddc.ddc_classification_number,
+                                    digilib_ddc.ddc_title,
+                                    digilib_ddc.ddc_description,
+                                    digilib_ddc.ddc_level,
+                                    digilib_ddc.ddc_parent
+                                FROM
+                                    digilib_ddc
+                                WHERE
+                                    digilib_ddc.ddc_parent = :parentid
+                            ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute(array(':id' => $id));
-        if ($sth->rowCount() > 0) {
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
+        $sth->execute(array(':parentid' => $parentid));
+        return $sth->fetchAll();
     }
 
     public function selectAllDdcByLevel($level = 0, $start = 1, $count = 100) {
@@ -644,14 +678,16 @@ class CatalogueModel extends Model {
     }
 
     public function selectAllAuthorDescription() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_author_description ORDER BY author_description DESC');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-    
-    public function selectAllLengthBorrowed() {
-        $sth = $this->db->prepare('SELECT * FROM digilib_book_borrowed_description ORDER BY borrowed_title DESC');
+        $sth = $this->db->prepare('
+                            SELECT 
+                                digilib_author_description.author_description_id,
+                                digilib_author_description.author_description_title,
+                                digilib_author_description.author_description_level,
+                                digilib_author_description.author_description_entry,
+                                digilib_author_description.author_description_entry_update
+                            FROM
+                                digilib_author_description
+                            ORDER BY digilib_author_description.author_description_level');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -662,71 +698,6 @@ class CatalogueModel extends Model {
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
-    }
-
-    public function addAuthorTempSave() {
-        Session::init();
-        $sth = $this->db->prepare('
-                    INSERT INTO
-                        digilib_author_temp(
-                        author_first_name,
-                        author_last_name,
-                        author_description,
-                        author_front_degree,
-                        author_back_degree,
-                        session_id,
-                        insert_date)
-                    VALUES(
-                        :first_name,
-                        :last_name,
-                        :description,
-                        :front_degree,
-                        :back_degree,
-                        :session_id,
-                        NOW())
-                ');
-
-        $first_name = trim($_POST['first_name_author']);
-        $last_name = trim($_POST['last_name_author']);
-        $description = trim($_POST['description_author']);
-        $front_degree = trim($_POST['front_degree_author']);
-        $back_degree = trim($_POST['back_degree_author']);
-        $session_id = trim($_POST['sa']);
-
-        return $sth->execute(array(
-                    ':first_name' => $first_name,
-                    ':last_name' => $last_name,
-                    ':description' => $description,
-                    ':front_degree' => $front_degree,
-                    ':back_degree' => $back_degree,
-                    ':session_id' => $session_id
-                ));
-    }
-
-    public function selectAllAuthorTemp($start = 1, $count = 100, $sessionAuthor = 0) {
-        $sth = $this->db->prepare('SELECT 
-                                        digilib_author_temp.author_id,
-                                        digilib_author_temp.author_first_name,
-                                        digilib_author_temp.author_last_name,
-                                        (SELECT author_description FROM digilib_author_description WHERE digilib_author_description.author_description_id = digilib_author_temp.author_description) AS "author_description",
-                                        digilib_author_temp.author_front_degree,
-                                        digilib_author_temp.author_back_degree,
-                                        digilib_author_temp.session_id
-                                   FROM
-                                        digilib_author_temp
-                                   WHERE
-                                        digilib_author_temp.session_id = :session
-                                   ORDER BY digilib_author_temp.author_description, digilib_author_temp.author_id LIMIT ' . $start . ',' . $count);
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute(array(':session' => $sessionAuthor));
-        return $sth->fetchAll();
-    }
-
-    public function countAllAuthorTemp($sessionAuthor = 0) {
-        $sth = $this->db->prepare('SELECT * FROM digilib_author_temp WHERE session_id=:session');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute(array(':session' => $sessionAuthor));
-        return $sth->rowCount();
     }
 
     public function selectWriterTempBySession($sid = 0) {
@@ -742,16 +713,6 @@ class CatalogueModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectBookType() {
-        $sth = $this->db->prepare('SELECT *
-                                   FROM
-                                        digilib_book_type
-                                   ORDER BY book_type');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-    
     public function selectCatalogueById($id) {
         $sth = $this->db->prepare('SELECT 
                                         digilib_book.book_title,
@@ -766,7 +727,7 @@ class CatalogueModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectAllCollectionByBookId($id = 0) {
         $sth = $this->db->prepare('SELECT 
                                         dbr.book_register_id,
@@ -783,6 +744,602 @@ class CatalogueModel extends Model {
         $sth->bindValue(':id', $id);
         $sth->execute();
         return $sth->fetchAll();
+    }
+
+    public function selectLanguageTemp($page = 1) {
+        Session::init();
+        $rp = $this->method->post('rp', 10);
+        $sortname = $this->method->post('sortname', 'question_id');
+        $sortorder = $this->method->post('sortorder', 'desc');
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $listSelect = "
+            digilib_book_language_temp.book_language_temp_id,
+            digilib_book_language_temp.book_language_temp_session,
+            digilib_book_language_temp.book_language,
+            public_language.language_name";
+
+        $prepare = 'SELECT ' . $listSelect . ' 
+                    FROM 
+                        digilib_book_language_temp 
+                        INNER JOIN public_language ON (digilib_book_language_temp.book_language = public_language.language_id)                        
+                    WHERE digilib_book_language_temp.book_language_temp_session = :sessoion';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+        $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
+
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':sessoion', Session::id());
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function countLanguageTemp() {
+        Session::init();
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $prepare = 'SELECT COUNT(book_language_temp_id) AS cnt FROM digilib_book_language_temp WHERE digilib_book_language_temp.book_language_temp_session = :sessoion';
+        if ($query)
+            $prepare .= ' WHERE ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':sessoion', Session::id());
+        $sth->execute();
+        $tempCount = $sth->fetchAll();
+        $count = $tempCount[0];
+        return $count['cnt'];
+    }
+
+    public function clearLanguageTemp() {
+        Session::init();
+        $sth = $this->db->prepare('DELETE FROM digilib_book_language_temp WHERE digilib_book_language_temp.book_language_temp_session = :sessoion');
+        $sth->bindValue(':sessoion', Session::id());
+        $sth->execute();
+    }
+
+    public function selectLanguageByName($name) {
+        $sth = $this->db->prepare(' SELECT 
+                                        public_language.language_id,
+                                        public_language.language_name,
+                                        public_language.language_status,
+                                        public_language.language_entry,
+                                        public_language.language_entry_update
+                                    FROM
+                                        public_language
+                                    WHERE
+                                        public_language.language_name = :name');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':name', $name);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function saveLanguage($name) {
+        $sth = $this->db->prepare('
+                    INSERT INTO
+                    public_language(
+                        language_id,
+                        language_name,
+                        language_status,
+                        language_entry,
+                        language_entry_update)
+                    VALUES(
+                        (SELECT IF(
+                            (SELECT COUNT(pl.language_id) 
+                             FROM public_language AS pl) > 0, 
+                                (SELECT pl.language_id 
+                                 FROM public_language AS pl 
+                                 ORDER BY pl.language_id DESC LIMIT 1) + 1,
+                            1)
+                        ),
+                        :title,
+                        0,
+                        NOW(),
+                        NOW())
+                ');
+
+        $sth->bindValue(':title', $name);
+
+        return $sth->execute();
+    }
+
+    public function saveLanguageTemp($lang) {
+        Session::init();
+        $sth = $this->db->prepare('
+                    INSERT INTO
+                    digilib_book_language_temp(
+                        book_language_temp_id,
+                        book_language_temp_session,
+                        book_language)
+                    VALUES(
+                        (SELECT IF(
+                            (SELECT COUNT(dblt.book_language_temp_id) 
+                             FROM digilib_book_language_temp AS dblt) > 0, 
+                                (SELECT dblt.book_language_temp_id 
+                                 FROM digilib_book_language_temp AS dblt 
+                                 ORDER BY dblt.book_language_temp_id DESC LIMIT 1) + 1,
+                            1)
+                        ),
+                        :session,
+                        :language)
+                ');
+
+        $sth->bindValue(':session', Session::id());
+        $sth->bindValue(':language', $lang);
+
+        return $sth->execute();
+    }
+
+    public function lastLanguageId() {
+        return $this->db->lastInsID('language_id', 'public_language');
+    }
+
+    public function deleteLanguageTemp() {
+        $id = $this->method->post('id', 0);
+        $sth = $this->db->prepare('DELETE FROM digilib_book_language_temp WHERE digilib_book_language_temp.book_language_temp_id IN (' . $id . ')');
+        return $sth->execute();
+    }
+
+    public function deleteLanguage($id) {
+        $sth = $this->db->prepare('
+            DELETE
+            FROM
+                public_language
+            WHERE
+                public_language.language_id  IN (' . $id . ') AND 
+                public_language.language_status = 0
+            ');
+        return $sth->execute();
+    }
+
+    public function selectLanguageTempById() {
+        $id = $this->method->post('id', 0);
+        $sth = $this->db->prepare('
+            SELECT * FROM digilib_book_language_temp WHERE digilib_book_language_temp.book_language_temp_id IN (' . $id . ')');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectLanguageTempBySession() {
+        Session::init();
+        $sth = $this->db->prepare('
+                            SELECT 
+                                digilib_book_language_temp.book_language_temp_id,
+                                digilib_book_language_temp.book_language_temp_session,
+                                digilib_book_language_temp.book_language
+                            FROM
+                                digilib_book_language_temp
+                            WHERE
+                                digilib_book_language_temp.book_language_temp_session = :session
+                         ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':session', Session::id());
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectCountry() {
+        $sth = $this->db->prepare('SELECT * FROM public_country ORDER BY country_name');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        if ($sth->rowCount() > 0) {
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
+    }
+
+    public function selectProvinceByCountryId($id) {
+        $sth = $this->db->prepare('
+                            SELECT 
+                                public_province.province_id,
+                                public_province.province_name,
+                                public_province.province_country,
+                                public_province.province_status,
+                                public_province.province_entry,
+                                public_province.province_entry_update
+                            FROM
+                                public_province
+                            WHERE
+                                public_province.province_country = :id
+                            ORDER BY public_province.province_name
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':id', $id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectCityByProvinceId($id) {
+        $sth = $this->db->prepare('
+                            SELECT 
+                                public_city.city_id,
+                                public_city.city_name,
+                                public_city.city_province,
+                                public_city.city_status,
+                                public_city.city_entry,
+                                public_city.city_entry_update
+                            FROM
+                                public_city
+                            WHERE
+                                public_city.city_province = :id
+                            ORDER BY public_city.city_name
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':id', $id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectAuthorByDescrtiptionId($id) {
+        $sth = $this->db->prepare('
+                            SELECT 
+                                digilib_author.author_id,
+                                CONCAT_WS(" ",
+                                    digilib_author.author_front_degree,
+                                    digilib_author.author_firstname,
+                                    digilib_author.author_lastname,
+                                    digilib_author.author_back_degree
+                                    ) AS author_name,
+                                digilib_author.author_entry,
+                                digilib_author.author_entry_update,
+                                digilib_author.author_status,
+                                digilib_author.author_description
+                            FROM
+                                digilib_author
+                            WHERE
+                                digilib_author.author_description = :id
+                            ORDER BY author_name
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':id', $id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function saveAuthorTemp($author) {
+        Session::init();
+        $sth = $this->db->prepare('
+                    INSERT INTO
+                        digilib_book_author_temp(
+                        book_author_temp_id,
+                        book_author_temp_session,
+                        book_author_temp_name,
+                        book_author_temp_primary)
+                    VALUES(
+                        (SELECT IF(
+                            (SELECT COUNT(dbat.book_author_temp_id) 
+                             FROM digilib_book_author_temp AS dbat) > 0, 
+                                (SELECT dbat.book_author_temp_id 
+                                 FROM digilib_book_author_temp AS dbat 
+                                 ORDER BY dbat.book_author_temp_id DESC LIMIT 1) + 1,
+                            1)
+                        ),
+                        :session,
+                        :author,
+                        0)
+                ');
+
+        $sth->bindValue(':session', Session::id());
+        $sth->bindValue(':author', $author);
+
+        return $sth->execute();
+    }
+
+    public function selectAllAuthorTemp($page = 1) {
+        Session::init();
+
+        $rp = $this->method->post('rp', 10);
+        $sortname = $this->method->post('sortname');
+        $sortorder = $this->method->post('sortorder', 'desc');
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $listSelect = "
+            digilib_book_author_temp.book_author_temp_id,
+            digilib_book_author_temp.book_author_temp_session,
+            digilib_book_author_temp.book_author_temp_name,
+            digilib_book_author_temp.book_author_temp_primary,
+            CONCAT_WS(' ',
+                digilib_author.author_front_degree,
+                digilib_author.author_firstname,
+                digilib_author.author_lastname,
+                digilib_author.author_back_degree
+            ) AS author_name,
+            digilib_author_description.author_description_title,
+            digilib_author_description.author_description_level";
+
+        $prepare = 'SELECT ' . $listSelect . ' 
+                    FROM
+                        digilib_book_author_temp
+                        INNER JOIN digilib_author ON (digilib_book_author_temp.book_author_temp_name = digilib_author.author_id)
+                        INNER JOIN digilib_author_description ON (digilib_author.author_description = digilib_author_description.author_description_id)
+                    WHERE
+                        digilib_book_author_temp.book_author_temp_session = :session ';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+        $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
+
+        $start = (($page - 1) * $rp);
+        $prepare .= ' LIMIT ' . $start . ',' . $rp;
+
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':session', Session::id());
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function countAllAuthorTemp() {
+        Session::init();
+
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $prepare = 'SELECT COUNT(book_author_temp_id) AS cnt 
+                    FROM
+                        digilib_book_author_temp
+                    WHERE
+                        digilib_book_author_temp.book_author_temp_session = :session ';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':session', Session::id());
+        $sth->execute();
+        $tempCount = $sth->fetchAll();
+        $count = $tempCount[0];
+        return $count['cnt'];
+    }
+
+    public function deleteAuthorTemp($id) {
+        $sth = $this->db->prepare('DELETE FROM digilib_book_author_temp WHERE digilib_book_author_temp.book_author_temp_id IN (' . $id . ')');
+        return $sth->execute();
+    }
+
+    public function deleteAuthor($id) {
+        $sth = $this->db->prepare('
+                            DELETE
+                            FROM
+                                digilib_author
+                            WHERE
+                                digilib_author.author_id IN (' . $id . ') AND 
+                                digilib_author.author_status = 0');
+        return $sth->execute();
+    }
+
+    public function clearAuthorTemp() {
+        Session::init();
+        $sth = $this->db->prepare('DELETE FROM digilib_book_author_temp WHERE digilib_book_author_temp.book_author_temp_session = :sessoion');
+        $sth->bindValue(':sessoion', Session::id());
+        $sth->execute();
+    }
+
+    public function saveAuthor() {
+        $first_name = $this->method->post('first_name');
+        $last_name = $this->method->post('last_name');
+        $front_degree = $this->method->post('front_degree');
+        $back_degree = $this->method->post('back_degree');
+        $desc_author = $this->method->post('desc_author');
+        $sth = $this->db->prepare('
+                            INSERT INTO
+                                digilib_author(
+                                author_id,
+                                author_firstname,
+                                author_lastname,
+                                author_front_degree,
+                                author_back_degree,
+                                author_entry,
+                                author_entry_update,
+                                author_status,
+                                author_description)
+                            VALUES(
+                                (SELECT IF(
+                                    (SELECT COUNT(da.author_id) 
+                                    FROM digilib_author AS da) > 0, 
+                                        (SELECT da.author_id 
+                                        FROM digilib_author AS da 
+                                        ORDER BY da.author_id DESC LIMIT 1) + 1,
+                                    1)
+                                ),
+                                :first_name,
+                                :last_name,
+                                :front_degree,
+                                :back_degree,
+                                NOW(),
+                                NOW(),
+                                0,
+                                :desc_author)
+                        ');
+
+        $sth->bindValue(':first_name', $first_name);
+        $sth->bindValue(':last_name', $last_name);
+        $sth->bindValue(':front_degree', $front_degree);
+        $sth->bindValue(':back_degree', $back_degree);
+        $sth->bindValue(':desc_author', $desc_author);
+
+        return $sth->execute();
+    }
+
+    public function lastAuthorId() {
+        return $this->db->lastInsID('author_id', 'digilib_author');
+    }
+
+    public function selectAuthorByNameAndAuthorDescription() {
+
+        $first_name = $this->method->post('first_name');
+        $last_name = $this->method->post('last_name');
+        $front_degree = $this->method->post('front_degree');
+        $back_degree = $this->method->post('back_degree');
+        $desc_author = $this->method->post('desc_author');
+
+        $author_name = '';
+
+        if (!empty($front_degree))
+            $author_name .= $front_degree . ' ';
+
+        if (!empty($first_name))
+            $author_name .= $first_name . ' ';
+
+        if (!empty($last_name))
+            $author_name .= $last_name . ' ';
+
+        if (!empty($back_degree))
+            $author_name .= $back_degree . ' ';
+
+        $sth = $this->db->prepare('
+                            SELECT 
+                                digilib_author.author_id,
+                                CONCAT_WS(" ", 
+                                    digilib_author.author_front_degree, 
+                                    digilib_author.author_firstname, 
+                                    digilib_author.author_lastname, 
+                                    digilib_author.author_back_degree
+                                ),
+                                digilib_author.author_entry,
+                                digilib_author.author_entry_update,
+                                digilib_author.author_status,
+                                digilib_author.author_description
+                            FROM
+                                digilib_author
+                            WHERE
+                                CONCAT_WS(" ", 
+                                    digilib_author.author_front_degree, 
+                                    digilib_author.author_firstname, 
+                                    digilib_author.author_lastname, 
+                                    digilib_author.author_back_degree
+                                ) = :author_name AND
+                                digilib_author.author_description = :author_desc
+                        ');
+
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':author_name', $author_name);
+        $sth->bindValue(':author_desc', $desc_author);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectAuthorTempByID($id) {
+
+        $sth = $this->db->prepare('
+                            SELECT 
+                                digilib_book_author_temp.book_author_temp_id,
+                                digilib_book_author_temp.book_author_temp_session,
+                                digilib_book_author_temp.book_author_temp_name,
+                                digilib_book_author_temp.book_author_temp_primary
+                            FROM
+                                digilib_book_author_temp
+                            WHERE
+                                digilib_book_author_temp.book_author_temp_id IN (' . $id . ')
+                        ');
+
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectAuthorTempBySession() {
+        Session::init();
+        $sth = $this->db->prepare('
+                            SELECT 
+                                digilib_book_author_temp.book_author_temp_id,
+                                digilib_book_author_temp.book_author_temp_session,
+                                digilib_book_author_temp.book_author_temp_name,
+                                digilib_book_author_temp.book_author_temp_primary
+                            FROM
+                                digilib_book_author_temp
+                            WHERE
+                                digilib_book_author_temp.book_author_temp_session = :session
+                        ');
+
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':session', Session::id());
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectAllDdc($page = 1) {
+
+        $rp = $this->method->post('rp', 10);
+        $sortname = $this->method->post('sortname');
+        $sortorder = $this->method->post('sortorder', 'desc');
+        $query = $this->method->post('ddckeyword', false);
+        $qtype = $this->method->post('keyword_categories', false);
+
+        $parentid = $this->method->post('ddcLevel2', -1);
+
+        $listSelect = "
+            digilib_ddc.ddc_id,
+            digilib_ddc.ddc_classification_number,
+            digilib_ddc.ddc_title,
+            digilib_ddc.ddc_description,
+            digilib_ddc.ddc_level,
+            digilib_ddc.ddc_parent";
+
+        $prepare = 'SELECT ' . $listSelect . ' 
+                    FROM
+                        digilib_ddc
+                    WHERE
+                        digilib_ddc.ddc_parent = :parentid ';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+        $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
+
+        $start = (($page - 1) * $rp);
+        $prepare .= ' LIMIT ' . $start . ',' . $rp;
+
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':parentid', $parentid);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function countAllDdc() {
+        $query = $this->method->post('ddckeyword', false);
+        $qtype = $this->method->post('keyword_categories', false);
+
+        $parentid = $this->method->post('ddcLevel2', -1);
+
+        $prepare = 'SELECT COUNT(ddc_id) AS cnt 
+                    FROM
+                        digilib_ddc
+                    WHERE
+                        digilib_ddc.ddc_parent = :parentid ';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':parentid', $parentid);
+        $sth->execute();
+        $tempCount = $sth->fetchAll();
+        $count = $tempCount[0];
+        return $count['cnt'];
+    }
+
+    public function saveSetPrimaryAuthor($conditon, $id, $isprimary) {
+
+        $setprimary = 0;
+        if ($isprimary)
+            $setprimary = 1;
+
+        $sth = $this->db->prepare('
+                                UPDATE
+                                    digilib_book_author_temp
+                                SET
+                                    book_author_temp_primary = :setprimary
+                                WHERE
+                                    digilib_book_author_temp.book_author_temp_id ' . $conditon . ' (' . $id . ')
+                          ');
+        $sth->bindValue(':setprimary', $setprimary);
+        return $sth->execute();
     }
 
 }

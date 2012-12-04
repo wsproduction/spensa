@@ -5,6 +5,13 @@
 
 $(function(){
     
+    var form_requaired_validation = function(id,status) {
+        $(id).rules("add",{
+            required : status
+        });
+    };
+    
+    /* FLEXYGRID INDEX*/
     var listId = '#list';
     var title = $(listId).attr('title');
     var link_r = $(listId).attr('link_r');
@@ -28,7 +35,7 @@ $(function(){
             align : 'left'
         }, {
             display : 'Keterangan Buku',
-            name : 'ddc_title',
+            name : 'book_title',
             width : 450,
             sortable : true,
             align : 'left'
@@ -54,7 +61,7 @@ $(function(){
             align : 'center',
             hide : true
         }, {
-            display : 'Lama Pinjam',
+            display : 'Stok',
             name : 'length_borrowed',
             width : 100,
             sortable : true,
@@ -74,13 +81,13 @@ $(function(){
             align : 'center'
         }],
         buttons : [ {
-            name : 'Add',
+            name : 'Tambah',
             bclass : 'add',
             onpress : function() {
                 window.location = link_c
             }
         }, {
-            name : 'Delete',
+            name : 'Hapus',
             bclass : 'delete',
             onpress : function() {
                 var leng = $(listId + ' .trSelected').length;
@@ -114,7 +121,7 @@ $(function(){
             isdefault : true
         }, {
             display : 'Judul Buku',
-            name : 'ddc_classification_number'
+            name : 'book_title'
         }, {
             display : 'Pengarang',
             name : 'ddc_title'
@@ -143,8 +150,493 @@ $(function(){
     
     $(listId).flexigrid(option);
     
-    // Tab
+    /* FLEXYGRID LANGUAGE*/
+    var listId2 = '#language-list';
+    var title2 = $(listId2).attr('title');
+    var link_r2 = $(listId2).attr('link_r');
+    var link_d2 = $(listId2).attr('link_d');
+    
+    var option2 = {
+        url : link_r2,
+        dataType : 'xml',
+        colModel : [ {
+            display : 'ID', 
+            name : 'book_language_temp_id', 
+            width : 70,
+            sortable : true,
+            align : 'center'
+        }, {
+            display : 'Bahasa',
+            name : 'language_name',
+            width : 440,
+            sortable : true,
+            align : 'left'
+        }],
+        buttons : [{
+            name : 'Hapus',
+            bclass : 'delete',
+            onpress : function() {
+                var leng = $(listId2 + ' .trSelected').length;
+                var conf = confirm('Delete ' + leng + ' items?');
+                
+                if (conf) {
+                    if (leng > 0) {
+                        var tempId = [];
+                        $(listId2 + ' .trSelected td[abbr=book_language_temp_id] div').each(function() {
+                            tempId.push(parseInt($(this).text()));
+                        });
+                        
+                        $.post(link_d2, {
+                            id : tempId.join(',')
+                        }, function(o){
+                            if (o) {
+                                $(listId2).flexReload();
+                            } else {
+                                alert('Proses delete gagal.');
+                            }                            
+                        }, 'json');
+                    }
+                }
+            }
+        }],
+        nowrap : false,
+        sortname : "book_language_temp_id",
+        sortorder : "asc",
+        usepager : false,
+        title : title2,
+        useRp : false,
+        rp : 15,
+        showTableToggleBtn : true,
+        resizable : false,
+        width : 540,
+        height : 100
+    };
+    
+    $(listId2).flexigrid(option2);
+    
+    /* ADD LANGUAGE */
+    $('#btnAddLanguage').live('click',function(){
+        
+        var language = $('#language').val();
+        
+        if (language == -1) {
+            // Enabled Validation
+            $("#language").rules("add",{
+                required : true
+            });
+            $("#otherlanguage").rules("add",{
+                required : true
+            });
+            
+            // Validation Check
+            if ($('#language').valid() && $('#otherlanguage').valid()) {
+                language = $('#otherlanguage').val();
+                $.post('addlanguagetemp', {
+                    other : 'yes',
+                    val: language
+                }, function(o){
+                    if (o) {
+                        $('#language-list').flexReload();
+                    } else {
+                        alert('Proses Gagal.');
+                    }
+                }, 'json');
+                
+            }   
+            
+            // Disabled Validation
+            $("#language").rules("add",{
+                required : false
+            });
+            $("#otherlanguage").rules("add",{
+                required : false
+            });
+        } else {
+            // Enabled Validation
+            $("#language").rules("add",{
+                required : true
+            });
+            
+            // Validation Check
+            if ($('#language').valid()) {
+                $.post('addlanguagetemp', {
+                    other : 'no',
+                    val: language
+                }, function(o){
+                    if (o) {
+                        $('#language-list').flexReload();
+                    } else {
+                        alert('Proses Gagal.');
+                    }
+                }, 'json');
+                
+            } 
+            
+            // Disabled Validation
+            $("#language").rules("add",{
+                required : false
+            });
+        }
+        
+    });
+    
+    /* LIVE PUBLISHER */
+    $('#language').live('change',function(){
+        if ($(this).val()==-1) 
+            $('#otherlanguage').fadeIn('fast').val('').focus();
+        else 
+            $('#otherlanguage').fadeOut('fast');
+    });
+    
+    /* FLEXYGRID LANGUAGE*/
+    var listId3 = '#publisher-list';
+    var title3 = $(listId3).attr('title');
+    var link_r3 = $(listId3).attr('link_r');
+    
+    var option3 = {
+        url : link_r3,
+        dataType : 'xml',
+        colModel : [ {
+            display : 'ID', 
+            name : 'publisher_office_id', 
+            width : 40,
+            sortable : true,
+            align : 'center'
+        }, {
+            display : 'Nama Penerbit',
+            name : 'publisher_name',
+            width : 200,
+            sortable : true,
+            align : 'left'
+        }, {
+            display : 'Keterangan',
+            name : 'publisher_description',
+            width : 300,
+            align : 'left'
+        }, {
+            display : 'Alamat',
+            name : 'publisher_office_address',
+            width : 400,
+            align : 'left'
+        }, {
+            display : 'Kantor',
+            name : 'publisher_office_department_name',
+            width : 60,
+            sortable : true,
+            align : 'left'
+        } ],
+        nowrap : false,
+        sortname : "publisher_office_id",
+        sortorder : "asc",
+        usepager : true,
+        title : title3,
+        useRp : false,
+        rp : 15,
+        showTableToggleBtn : true,
+        resizable : false,
+        singleSelect: true,
+        width : 700,
+        height : 150,
+        onSubmit: function() {
+            var dt = $('#fAdd').serializeArray();
+            $(listId3).flexOptions({
+                params: dt
+            });
+            return true;
+        }
+    };
+    
+    $(listId3).flexigrid(option3);
+    
+    /* PUBLISHER FILTER */
+    $('#country').live('change',function(){
+        var url = $(this).attr('link');
+        var id = $(this).val();
+        $('#province').html('<option>Loading...</option>');
+        $.get(url, {
+            id:id
+        }, function(o){
+            $('#province').html(o);
+        }, 'json');
+    });
+    $('#province').live('change',function(){
+        var url = $(this).attr('link');
+        var id = $(this).val();
+        $('#city').html('<option>Loading...</option>');
+        $.get(url, {
+            id:id
+        }, function(o){
+            $('#city').html(o);
+        }, 'json');
+    });
+    $('#city').live('change',function(){
+        $('#publisher-list').flexOptions({
+            newp: 1
+        }).flexReload();
+    });
+    $('#publisher-list tbody tr[id*="row"]').live('click', function(){
+        var id = '';
+        var status = $(this).attr('class');
+        if (status == 'trSelected' || status == 'erow trSelected') {
+            id = $(this).attr('id').substr(3);
+        }
+        $('#publisher').val(id);
+    });
+    
+    /* AUTHOR FILTER */
+    $('#form-add-author').css('display','none');
+    $('#description_author').live('change', function() {
+        var url = $(this).attr('link');
+        var id = $(this).val();
+        $('#option_author').html('<option>Loading...</option>');
+        $.get(url, {
+            id:id
+        }, function(o){
+            $('#option_author').html(o);
+        }, 'json');
+    });
+    $('#option_author').live('change', function() {
+        var id = $(this).val();
+        if (id == "-1") {
+            $('#form-add-author').fadeIn('slow');
+        } else {
+            $('#form-add-author').fadeOut('slow');
+        }
+    });
+    $('#btnAddAuthor').live('click',function(){
+        var id = $('#option_author').val();
+        form_requaired_validation('#description_author', true);
+        form_requaired_validation('#option_author', true);
+        
+        if (id == '-1') {
+            form_requaired_validation('#first_name_author', true);
+            if ($('#description_author').valid() && $('#option_author').valid() && $('#first_name_author').valid()) {
+                
+                var desc_author = $('#description_author').val();
+                var first_name = $('#first_name_author').val();
+                var last_name = $('#last_name_author').val();
+                var front_degree = $('#front_degree_author').val();
+                var back_degree = $('#back_degree_author').val();
+                
+                $.post('addauthortemp', {
+                    other : 'yes',
+                    desc_author : desc_author,
+                    first_name : first_name,
+                    last_name : last_name,
+                    front_degree : front_degree,
+                    back_degree : back_degree
+                }, function(o){
+                    if (o) {
+                        $('#list-author-selected').flexReload();
+                    } else {
+                        alert('Proses Gagal.');
+                    }
+                }, 'json');
+            }
+        } else {
+            if ($('#description_author').valid() && $('#option_author').valid()) {
+                $.post('addauthortemp', {
+                    other : 'no',
+                    val: id
+                }, function(o){
+                    if (o) {
+                        $('#list-author-selected').flexReload();
+                    } else {
+                        alert('Proses Gagal.');
+                    }
+                }, 'json');
+            }
+        }
+        form_requaired_validation('#description_author', false);
+        form_requaired_validation('#option_author', false);
+        form_requaired_validation('#first_name_author', false);
+    });
+    $('#list-author-selected a[href=#setprimary]').live('click',function(){
+        var id = $(this).attr('rel');
+        $.post('setprimaryauthor', {
+            val: id
+        }, function(o){
+            if (o) {
+                $('#list-author-selected').flexReload();
+            } else {
+                alert('Proses Gagal.');
+            }
+        }, 'json');
+        return false;
+    });
+    
+    /* FLEXYGRID AUTHOR*/
+    var listId4 = '#list-author-selected';
+    var title4 = $(listId4).attr('title');
+    var link_r4 = $(listId4).attr('link_r');
+    var link_d4 = $(listId4).attr('link_d');
+    
+    var option4 = {
+        url : link_r4,
+        dataType : 'xml',
+        colModel : [ {
+            display : 'ID', 
+            name : 'book_author_temp_id', 
+            width : 40,
+            sortable : true,
+            align : 'center'
+        }, {
+            display : 'Nama',
+            name : 'author_name',
+            width : 250,
+            sortable : true,
+            align : 'left'
+        }, {
+            display : 'Keterangan',
+            name : 'author_description_title',
+            width : 150,
+            sortable : true,
+            align : 'center'
+        }, {
+            display : 'Status',
+            name : 'publisher_description',
+            width : 100,
+            align : 'center'
+        }, {
+            display : 'Option',
+            width : 120,
+            align : 'center'
+        } ],
+        buttons : [{
+            name : 'Hapus',
+            bclass : 'delete',
+            onpress : function() {
+                var leng = $(listId4 + ' .trSelected').length;
+                var conf = confirm('Delete ' + leng + ' items?');
+                
+                if (conf) {
+                    if (leng > 0) {
+                        var tempId = [];
+                        $(listId4 + ' .trSelected td[abbr=book_author_temp_id] div').each(function() {
+                            tempId.push(parseInt($(this).text()));
+                        });
+                        
+                        $.post(link_d4, {
+                            id : tempId.join(',')
+                        }, function(o){
+                            if (o) {
+                                $(listId4).flexReload();
+                            } else {
+                                alert('Proses delete gagal.');
+                            }                            
+                        }, 'json');
+                    }
+                }
+            }
+        }],
+        nowrap : false,
+        sortname : "book_author_temp_id",
+        sortorder : "asc",
+        usepager : true,
+        title : title4,
+        useRp : false,
+        rp : 15,
+        showTableToggleBtn : true,
+        resizable : false,
+        width : 700,
+        height : 150
+    };
+    
+    $(listId4).flexigrid(option4);
+    
+    
+    /* FLEXYGRID DDC*/
+    var listId5 = '#list-ddc';
+    var title5 = $(listId5).attr('title');
+    var link_r5 = $(listId5).attr('link_r');
+    
+    var option5 = {
+        url : link_r5,
+        dataType : 'xml',
+        colModel : [ {
+            display : 'ID', 
+            name : 'ddc_id', 
+            width : 80,
+            sortable : true,
+            align : 'center'
+        }, {
+            display : 'Nomor Klasifikasi',
+            name : 'ddc_classification_number',
+            width : 150,
+            sortable : true,
+            align : 'center'
+        }, {
+            display : 'Keterangan',
+            name : 'ddc_title',
+            width : 700,
+            align : 'left'
+        }],
+        nowrap : false,
+        sortname : "ddc_id",
+        sortorder : "asc",
+        usepager : true,
+        title : title5,
+        useRp : false,
+        rp : 15,
+        showTableToggleBtn : true,
+        resizable : false,
+        singleSelect: true,
+        width : '100%',
+        height : 300,
+        onSubmit: function() {
+            var dt = $('#fAdd').serializeArray();
+            $(listId5).flexOptions({
+                params: dt
+            });
+            return true;
+        }
+    };
+    
+    $(listId5).flexigrid(option5);
+    
+    /* FILTER DDC */
+    $('#ddcLevel1').live('change',function(){
+        var id = $(this).val();
+        var url = $(this).attr('link');
+        $('#ddcLevel2').html('<option>Loading...</option>');
+        $.get(url, {
+            id:id
+        }, function(o){
+            $('#ddcLevel2').html(o);
+        }, 'json');
+    });
+    $('#btnFilterDdc').live('click',function(){
+        $('#list-ddc').flexOptions({
+            newp: 1
+        }).flexReload();
+    });
+    $('#list-ddc tbody tr[id*="row"]').live('click', function(){
+        var id = '';
+        var class_number = '';
+        var status = $(this).attr('class');
+        if (status == 'trSelected' || status == 'erow trSelected') {
+            id = $(this).attr('id').substr(3);
+            class_number = $('#row' + id + ' td[abbr=ddc_classification_number] div').html();
+        }
+        $('#ddcid').val(id);
+        $('#preview_call_number .print_row_1').html(class_number);
+    });
+    
+    /* TABS INPUT*/
+    var $tabs = $('#tabs').tabs();
+    $tabs.tabs('enable', 0)
+    .tabs('select', 0)
+    .tabs("option","disabled", [0, 1, 2, 3, 4])
+    .tabs('enable', 0);
+    
+    var tabnavigator = function(tabIndex) {
+        $tabs.tabs('enable', tabIndex)
+        .tabs('select', tabIndex)
+        .tabs("option","disabled", [0, 1, 2, 3, 4]).tabs('enable', tabIndex);
+    }
+    
     $('#detailTab').tabs();
+    
     
     /* WYSIWYG elRTE */
     elRTE.prototype.options.panels.web2pyPanel = [
@@ -169,90 +661,29 @@ $(function(){
         aPad: false
     });
     
-    /* CHANGE VALUE ACTIONS */  
-    $('#country').live('change',function(){
-        var url = $(this).attr('link');
-        var id = $(this).val();
-        $.get(url, {
-            id:id
-        }, function(o){
-            $('#city').html(o);
-        }, 'json');
-    });
-    $('#publisher').live('change',function(){
-        var url = $(this).attr('link');
-        var id = $(this).val();
-        $.get(url, {
-            id:id
-        }, function(o){
-            $('#view_info_publisher').html(o);
-        }, 'json');
-    });
-    $('#ddcLevel1').live('change',function(){
-        var url = $(this).attr('link');
-        var id = $(this).val();
-        $.get(url, {
-            id:id
-        }, function(o){
-            $('#ddcLevel2').html(o);
-        }, 'json');
-    });
-    $('#ddcLevel2').live('change',function(){
-        var url = $(this).attr('link');
-        var id = $(this).val();
-        $.get(url, {
-            id:id
-        }, function(o){
-            $('#ddcLevel3').html(o);
-        }, 'json');
-    });
-    
-    /* SUBMIT ACTIONS */    
+    /* ADD ACTIONS */    
     $('#fAdd').live('submit',function(){
-       
-        var ddc = $('#tempSelectId3').val();
+        
         var stepStatus = $('#stepStatus').val();
-        
-        var stepStatusCurent = stepStatus;
-        if (ddc == 0 && stepStatus ==3) {
-            alert('Silahkan tentukan terlebih dahulu DDC buku yang diinputkan.');
-        } else {
-            stepStatusCurent = parseInt(stepStatus) + 1;            
-        }
-        
-        if (stepStatus<5) {
-            // TabStatus
-            $('li#s1').css('background','#ccc');
-            $('li#s2').css('background','#ccc');
-            $('li#s3').css('background','#ccc');
-            $('li#s4').css('background','#ccc');
-            $('li#s5').css('background','#ccc');
-            $('li#s' + stepStatusCurent) .css('background','#fff');
-        
-            $('#addStep' + stepStatus).fadeOut('slow',function(){
-                $('#addStep' + stepStatusCurent).fadeIn('slow');
-            });
-        }
-            
-        if (stepStatus == 2) {            
-            $.get('getWriter', {
-                sa : $('#sessionAuthor').val()
-            }, function(o){
-                if (o[0]) {
-                    row2 = o[1];
-                    row3 = $('#title').val();
-                    header = o[1];
-                } else {
-                    row2 = $('#title').val().replace(' ', '');
-                    row3 = '';
-                    header = '';
-                }
-                $('.print_row_2').text(row2.substr(0,3).toUpperCase());
-                $('.print_row_3').text(row3.substr(0,1).toLowerCase());
-                $('.authorName').text(header);
-            }, 'json');
-            generateCatalogue();
-        } else if (stepStatus == 5) {
+        var curentTab = 0 ;
+         
+        if (stepStatus == '1') {
+            var publisher = $('#publisher').val();
+            if (publisher == '') {
+                curentTab = 1;
+                alert('Silahkan pilih penerbit buku!');
+            } else {
+                curentTab = parseInt(stepStatus) + 1;
+            }
+        } else if (stepStatus == '2') {
+            var ddcid = $('#ddcid').val();
+            if (ddcid == '') {
+                curentTab = 2;
+                alert('Silahkan tentukan nomor klasifikasi!');
+            } else {
+                curentTab = parseInt(stepStatus) + 1;
+            }
+        } else if (stepStatus == '4') {
             frmID = $(this);
             msgID = $('#message');
             $(frmID).ajaxSubmit({
@@ -263,54 +694,37 @@ $(function(){
                         var obj = eval('(' + parOut +')');
                         //console.log(obj.html); 
                         $(msgID).html($.base64.decode(obj.html)).fadeIn('slow');
-                        $(frmID)[0].reset();
-                        $('table#listAuthorSelected tbody').html('<tr><td colspan="4" class="first" style="text-align: center;"><i>Data Not Found</i></td></tr>');
-                        
-                        // TabStatus
-                        $('li#s1').css('background','#fff');
-                        $('li#s2').css('background','#ccc');
-                        $('li#s3').css('background','#ccc');
-                        $('li#s4').css('background','#ccc');
-                        $('li#s5').css('background','#ccc');
-        
-                        $('#addStep5').fadeOut('slow',function(){
-                            $('#addStep1').fadeIn('slow');
-                        });
+                        $(frmID)[0].reset();     
+                        $('#language-list').flexReload();
+                        $('#publisher-list').flexReload();
+                        $('#list-author-selected').flexReload();
+                        $('#list-ddc').flexReload();
                     }
                 }
             });
+            
+        /*$.post($(this).attr('action'), $(this).serialize(), function(o){
+                alert(o);                          
+            }, 'json');*/
+        } else {
+            curentTab = parseInt(stepStatus) + 1;
         }
         
-        if (stepStatus != 5) {
-            $('#stepStatus').val(stepStatusCurent);
-        } else {
-            $('#stepStatus').val(1);
-        }
+        tabnavigator(curentTab);
+        $('#stepStatus').val(curentTab);
         
         return false;
     });
     
-    $('#fUpload').live('submit',function(){
-        /*
-        $(this).ajaxSubmit({
-            success : function(o) {
-                var parOut = o.replace('<div id="LCS_336D0C35_8A85_403a_B9D2_65C292C39087_communicationDiv"></div>','');
-                //console.log(parOut); 
-                if (parOut) {
-                    var obj = eval('(' + parOut +')');
-                    console.log(obj.html); 
-                    $('#pesan').html($.base64.decode(obj.html));
-                    //$('#pesan').html($.base64.decode(parOut));
-                }
-            }
-        });
-        return false;*/
-        });
-    
-    /* BUTTON ACTION */
-    $('#btnAddData').live('click',function(){
-        window.location = $(this).attr('link');
+    // TAB ACTION
+    $('#btnPrev').live('click',function(){
+        var stepStatus = $('#stepStatus').val();
+        var curentTab = parseInt(stepStatus) - 1;
+        tabnavigator(curentTab);
+        $('#stepStatus').val(curentTab);
     });
+        
+    /* BUTTON ACTION */
     $('#btnBack').live('click',function(){
         window.location = $(this).attr('link');
     });
@@ -320,448 +734,7 @@ $(function(){
     $('#btnPrintLabel').live('click',function(){
         window.open($(this).attr('link'),'_blank');
     });
-    $('#btnDeleteData').live('click',function(){
-        var hiddenID = $('#hiddenID').val();
-        var splitID = hiddenID.split(',');
-        var arrayID = new Array();
-        var idxArray = 0;
-        var tempID;
-        for (var i = 0 ; i < splitID.length ; i++) {
-            tempID = splitID[i];
-            if ($('#list_' + tempID).is(':checked')) {
-                arrayID[idxArray] = tempID;
-                idxArray++;
-            }
-        }
-        
-        if (arrayID.length > 0) {
-            var conf = confirm("Are you sure to delete data?");
-            if (conf) {
-                $.post('catalogue/delete', {
-                    val:arrayID
-                }, function(o){
-                    $.get('catalogue/read', {
-                        p:Get_Cookie('_page')
-                    }, function(o){
-                        $('table#list tbody').html(o);
-                    }, 'json');
-                }, 'json');
-            }
-        } else {
-            alert('No item Selected');
-        }
-    });
-    $('#btnAddAuthor').live('click',function(){
-        $("#fAdd #first_name_author").rules("add",{
-            required : true
-        });
-        $("#fAdd #description_author").rules("add",{
-            required : true
-        });
-        
-        if ($('#first_name_author').valid() && $('#description_author').valid()) {
-            $.post('addAuthorTemp', {
-                sa : $('#sessionAuthor').val(),
-                first_name_author : $('#first_name_author').val(),
-                last_name_author : $('#last_name_author').val(),
-                front_degree_author : $('#front_degree_author').val(),
-                back_degree_author : $('#back_degree_author').val(),
-                description_author : $('#description_author').val()
-            }, function(o){
-                var status = o[0];
-                var message = o[2];
-                if (status) {
-                    $.get('readAuthorTemp', {
-                        p:Get_Cookie('_page_author'),
-                        sa : $('#sessionAuthor').val()
-                    }, function(o){
-                        $('table#listAuthorSelected tbody').html(o);
-                        $('#first_name_author').val('');
-                        $('#last_name_author').val('');
-                        $('#front_degree_author').val('');
-                        $('#back_degree_author').val('');
-                        $('#description_author').val('');
-                    }, 'json');
-                }
-                $('#messageAuthor').html(message);
-                setTimeout(function(){
-                    $("#messageAuthor").html('');
-                }, 3000);
-            }, 'json'); 
-        }
-        $("#fAdd #first_name_author").rules("add",{
-            required : false
-        });
-        $("#fAdd #description_author").rules("add",{
-            required : false
-        });
-    });
-    $('#listAuthorSelected a.delete').live('click',function(){
-        thisID = $(this);
-        var conf = confirm("Are you sure to delete?");
-        if (conf) {
-            $.post('deleteAuthorTemp', {
-                val: $(thisID).attr('value')
-            }, function(o){
-                $.get('readAuthorTemp', {
-                    p:Get_Cookie('_page_author'),
-                    sa : $('#sessionAuthor').val()
-                }, function(o){
-                    $('table#listAuthorSelected tbody').html(o);
-                }, 'json');
-            }, 'json');
-        }
-        return false;
-    });
     
-    // TAB ACTION
-    $('#btnPrev').live('click',function(){
-        var stepStatus = $('#stepStatus').val();
-        var stepStatusCurent = parseInt(stepStatus) - 1;
-        
-        // TabStatus
-        $('li#s1').css('background','#ccc');
-        $('li#s2').css('background','#ccc');
-        $('li#s3').css('background','#ccc');
-        $('li#s4').css('background','#ccc');
-        $('li#s5').css('background','#ccc');
-        $('li#s' + stepStatusCurent).css('background','#fff');
-        
-        $('#addStep' + stepStatus).fadeOut('slow',function(){
-            $('#addStep' + stepStatusCurent).fadeIn('slow');
-        }); 
-        
-        stepStatus--;
-        $('#stepStatus').val(stepStatus);
-    });
-    
-    /* CHECKBOX ACTION */
-    $('#cbSelectAll').live('click',function(){
-        var hiddenID = $('#hiddenID').val();
-        var splitID = hiddenID.split(',');
-        var i;
-        
-        if($(this).is(':checked')){
-            for (i=1; i<=splitID.length;i++) {
-                $('#row_' + splitID[i]).removeClass().addClass('selected');
-            }
-            $('.cbList').attr('checked', true);
-        } else {            
-            for (i=1; i<splitID.length;i++) {
-                $('#row_' + splitID[i]).removeClass().addClass($('#row_' + splitID[i]).attr('temp'));
-            }
-            $('.cbList').attr('checked', false);
-        }
-    });
-    $('.cbList').live('click',function(){
-        $('#cbSelectAll').attr('checked', false);
-        if($(this).is(':checked')){
-            $('#row_' + $(this).val()).removeClass().addClass('selected');
-        } else {
-            $('#row_' + $(this).val()).removeClass().addClass($('#row_' + $(this).val()).attr('temp'));
-        }
-    });
-    $('#fAdd input[type=checkbox]').live('click',function(){
-        key = '#' + $(this).attr('id');
-        if ($(key).is(':checked')) {
-            $(key).val(1);
-        }
-    });
-    
-    /* SET COOKIE */
-    Set_Cookie('_page', 1, '', '/', '', '');
-    Set_Cookie('_page_author', 1, '', '/', '', '');
-    
-    /* PAGING */
-    // INDEX
-    $('#pagePaging').live('change',function(){
-        keyID = $(this);
-        var page = parseInt($(keyID).val());
-        $.get('catalogue/read', {
-            p:page
-        }, function(o){
-            Set_Cookie('_page', page, '', '/', '', '');
-            $('table#list tbody').html(o);
-        }, 'json');
-    });
-    $('#prevPaging').live('click',function(){
-        keyID = $('#pagePaging');
-        var page = parseInt($(keyID).val())-1;
-        if (page>0) {
-            $.get('catalogue/read', {
-                p:page
-            }, function(o){
-                Set_Cookie('_page', page, '', '/', '', '');
-                $('table#list tbody').html(o);
-            }, 'json');
-        }
-    });
-    $('#nextPaging').live('click',function(){
-        keyID = $('#pagePaging');
-        var page = parseInt($(keyID).val())+1;
-        if (page<$('#maxPaging').val()) {
-            $.get('catalogue/read', {
-                p:page
-            }, function(o){
-                Set_Cookie('_page', page, '', '/', '', '');
-                $('table#list tbody').html(o);
-            }, 'json');
-        }
-        
-    });
-    // ADD - LEVEL 1
-    $('#pagePagingLevel1').live('change',function(){
-        keyID = $(this);
-        var page = parseInt($(keyID).val());
-        $.get('readDdc', {
-            p:page,
-            parent:0,
-            level:1
-        }, function(o){
-            Set_Cookie('_page', page, '', '/', '', '');
-            $('table#list1 tbody').html(o);
-        }, 'json');
-    });
-    $('#prevPagingLevel1').live('click',function(){
-        keyID = $('#pagePagingLevel1');
-        var page = parseInt($(keyID).val())-1;
-        if (page>0) {
-            $.get('readDdc', {
-                p:page,
-                parent:0,
-                level:1
-            }, function(o){
-                Set_Cookie('_page', page, '', '/', '', '');
-                $('table#list1 tbody').html(o);
-            }, 'json');
-        }
-    });
-    $('#nextPagingLevel1').live('click',function(){
-        keyID = $('#pagePagingLevel1');
-        var page = parseInt($(keyID).val())+1;
-        if (page<$('#maxPagingLevel1').val()) {
-            $.get('readDdc', {
-                p:page,
-                parent:0,
-                level:1
-            }, function(o){
-                Set_Cookie('_page', page, '', '/', '', '');
-                $('table#list1 tbody').html(o);
-            }, 'json');
-        }
-    });
-    // ADD - LEVEL 2
-    $('#pagePagingLevel2').live('change',function(){
-        keyID = $(this);
-        var page = parseInt($(keyID).val());
-        var parentId = parseInt($('#tempSelectId1').val());
-        $.get('readDdc', {
-            p:page,
-            parent:parentId,
-            level:2
-        }, function(o){
-            Set_Cookie('_page', page, '', '/', '', '');
-            $('table#list2 tbody').html(o);
-        }, 'json');
-    });
-    $('#prevPagingLevel2').live('click',function(){
-        keyID = $('#pagePagingLevel2');
-        var page = parseInt($(keyID).val())-1;
-        var parentId = parseInt($('#tempSelectId1').val());
-        if (page>0) {
-            $.get('readDdc', {
-                p:page,
-                parent:parentId,
-                level:2
-            }, function(o){
-                Set_Cookie('_page', page, '', '/', '', '');
-                $('table#list2 tbody').html(o);
-            }, 'json');
-        }
-    });
-    $('#nextPagingLevel2').live('click',function(){
-        keyID = $('#pagePagingLevel2');
-        var page = parseInt($(keyID).val())+1;
-        var parentId = parseInt($('#tempSelectId1').val());
-        if (page<$('#maxPagingLevel2').val()) {
-            $.get('readDdc', {
-                p:page,
-                parent:parentId,
-                level:2
-            }, function(o){
-                Set_Cookie('_page', page, '', '/', '', '');
-                $('table#list2 tbody').html(o);
-            }, 'json');
-        }
-    });
-    // ADD - LEVEL 3
-    $('#pagePagingLevel3').live('change',function(){
-        keyID = $(this);
-        var page = parseInt($(keyID).val());
-        var parentId = parseInt($('#tempSelectId2').val());
-        $.get('readDdc', {
-            p:page,
-            parent:parentId,
-            level:3
-        }, function(o){
-            Set_Cookie('_page', page, '', '/', '', '');
-            $('table#list3 tbody').html(o);
-        }, 'json');
-    });
-    $('#prevPagingLevel3').live('click',function(){
-        keyID = $('#pagePagingLevel3');
-        var page = parseInt($(keyID).val())-1;
-        var parentId = parseInt($('#tempSelectId2').val());
-        if (page>0) {
-            $.get('readDdc', {
-                p:page,
-                parent:parentId,
-                level:3
-            }, function(o){
-                Set_Cookie('_page', page, '', '/', '', '');
-                $('table#list3 tbody').html(o);
-            }, 'json');
-        }
-    });
-    $('#nextPagingLevel3').live('click',function(){
-        keyID = $('#pagePagingLevel3');
-        var page = parseInt($(keyID).val())+1;
-        var parentId = parseInt($('#tempSelectId2').val());
-        if (page<$('#maxPagingLevel3').val()) {
-            $.get('readDdc', {
-                p:page,
-                parent:parentId,
-                level:3
-            }, function(o){
-                Set_Cookie('_page', page, '', '/', '', '');
-                $('table#list3 tbody').html(o);
-            }, 'json');
-        }
-    });
-    // AUTHOR Temp
-    $('#pagePagingAuthor').live('change',function(){
-        keyID = $(this);
-        var page = parseInt($(keyID).val());
-        $.get('readAuthorTemp', {
-            p:page,
-            sa : $('#sessionAuthor').val()
-        }, function(o){
-            Set_Cookie('_page_author', page, '', '/', '', '');
-            $('table#listAuthorSelected tbody').html(o);
-        }, 'json');
-    });
-    $('#prevPagingAuthor').live('click',function(){
-        keyID = $('#pagePagingAuthor');
-        var page = parseInt($(keyID).val())-1;
-        if (page>0) {
-            $.get('readAuthorTemp', {
-                p:page,
-                sa : $('#sessionAuthor').val()
-            }, function(o){
-                Set_Cookie('_page_author', page, '', '/', '', '');
-                $('table#listAuthorSelected tbody').html(o);
-            }, 'json');
-        }
-    });
-    $('#nextPagingAuthor').live('click',function(){
-        keyID = $('#pagePagingAuthor');
-        var page = parseInt($(keyID).val())+1;
-        if (page<$('#maxPagingAuthor').val()) {
-            $.get('readAuthorTemp', {
-                p:page,
-                sa : $('#sessionAuthor').val()
-            }, function(o){
-                Set_Cookie('_page_author', page, '', '/', '', '');
-                $('table#listAuthorSelected tbody').html(o);
-            }, 'json');
-        }
-    });
-    
-    /* ROW SELECTED */
-    /*
-    $('#listAuthor tbody tr[isa=option]').live('click',function(){
-        thisId = $(this);
-        var html;
-        var tempID = $(thisId).attr('value');
-        var tempAuhtorSelected = $("#tempAuthorSelected").val();
-        var splitTempAuthorSelected = tempAuhtorSelected.split(',');
-        
-        var ket = true;
-        for (var i = 0; i<=splitTempAuthorSelected.length;i++) {
-            if (splitTempAuthorSelected[i]==tempID) {
-                ket = false;
-                break;
-            }
-        }
-        
-        if (ket) {
-            tempAuhtorSelected += ',' + tempID;
-            $("#tempAuthorSelected").val(tempAuhtorSelected);
-        }
-        
-        html = '<tr>';
-        html += '   <td class="first" style="text-align:center;">' + splitTempAuthorSelected.length + '</td>';
-        html += '   <td>kkfkfk</td>';
-        html += '   <td style="text-align:center;">Delete</td>';
-        html += '</tr>';
-        
-        if (splitTempAuthorSelected.length > 1) {
-            if (ket) {
-                $('#listAuthorSelected tbody').append(html); 
-            }
-        } else {
-            $('#listAuthorSelected tbody').html(html);
-        }
-    });
-     */
-    $('#list1 tbody tr[isa=option]').live('click',function(){
-        id = $(this).attr('value');
-        tempSelectId = $('#tempSelectId1').val();
-        $('#tempSelectId1').val(id);
-        
-        $('#row_' + tempSelectId).removeClass().addClass($('#row_' + tempSelectId).attr('temp'));
-        $('#row_' + id).removeClass().addClass('selected');
-        
-        if (id != tempSelectId) {
-            $.get('readDdc', {
-                parent:id,
-                level:2
-            }, function(o){
-                $('table#list2 tbody').html(o);
-                $('table#list3 tbody').html('<tr><td colspan="2" class="first" style="text-align: center;">Data Not Found</td></tr>');
-            }, 'json');
-        } 
-    });
-    $('#list2 tbody tr[isa=option]').live('click',function(){
-        id = $(this).attr('value');
-        tempSelectId = $('#tempSelectId2').val();
-        $('#tempSelectId2').val(id);
-        
-        $('#row_' + tempSelectId).removeClass().addClass($('#row_' + tempSelectId).attr('temp'));
-        $('#row_' + id).removeClass().addClass('selected');
-        
-        if (id != tempSelectId) {
-            $.get('readDdc', {
-                parent:id,
-                level:3
-            }, function(o){
-                $('table#list3 tbody').html(o);
-            }, 'json');
-        } 
-    });
-    $('#list3 tbody tr[isa=option]').live('click',function(){
-        id = $(this).attr('value');
-        callNumber = $('#row_' + id + ' td[is=call_number]').text();
-        tempSelectId = $('#tempSelectId3').val();
-        $('#tempSelectId3').val(id);
-        
-        $('#row_' + tempSelectId).removeClass().addClass($('#row_' + tempSelectId).attr('temp'));
-        $('#row_' + id).removeClass().addClass('selected');
-        
-        if (id != tempSelectId) {
-            $('.print_row_1').html(callNumber);
-        }
-    });
     
 });
 

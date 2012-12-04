@@ -1,12 +1,12 @@
 <div class="box">
     <fieldset>
-        <legend>Data Filter</legend>
+        <legend>Data Filter Laporan</legend>
         <div>
             <?php Form::begin('fTReport', 'teacher/treportprint', 'post', true, 'viewreport'); ?>
 
             <table>
                 <tr>
-                    <td style="width: 80px;"><?php Form::label('Nama', 'sdate'); ?></td>
+                    <td style="width: 120px;"><?php Form::label('Nama', 'sdate'); ?></td>
                     <td>:</td>
                     <td>
                         <?php

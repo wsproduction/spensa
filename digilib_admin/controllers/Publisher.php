@@ -25,6 +25,13 @@ class Publisher extends Controller {
     public function add() {
         Web::setTitle('Tambah Data Penerbit');
         $this->view->link_back = $this->content->setLink('publisher');
+        $this->view->option_department = $this->optionDepartment();
+        $this->view->option_country = $this->optionCountry();
+        $this->view->link_province = $this->content->setLink('publisher/getprovince');
+        $this->view->link_city = $this->content->setLink('publisher/getcity');
+        $this->view->link_r_office = $this->content->setLink('publisher/readoffice');
+        $this->view->link_d_office = $this->content->setLink('publisher/deleteoffice');
+        $this->view->link_add_office = $this->content->setLink('publisher/addofficetemp');
         $this->view->render('publisher/add');
     }
 
@@ -32,6 +39,14 @@ class Publisher extends Controller {
         Web::setTitle('Edit Data Penerbit');
         $this->view->id = $id;
         $this->view->link_back = $this->content->setLink('publisher');
+        $this->view->option_department = $this->optionDepartment();
+        $this->view->option_country = $this->optionCountry();
+        $this->view->link_province = $this->content->setLink('publisher/getprovince');
+        $this->view->link_city = $this->content->setLink('publisher/getcity');
+        $this->view->link_r_office = $this->content->setLink('publisher/readoffice');
+        $this->view->link_d_office = $this->content->setLink('publisher/deleteoffice');
+        $this->view->link_add_office = $this->content->setLink('publisher/addofficetemp');
+        
         $data = $this->model->selectByID($id);
         if ($data) {
             $listData = $data[0];
@@ -66,16 +81,43 @@ class Publisher extends Controller {
 
             foreach ($listData AS $row) {
 
-                $link_detail = URL::link($this->content->setLink('publisher/detail/' . $row['publisher_id']), 'Detail', 'attach');
-                $link_edit = URL::link($this->content->setLink('publisher/edit/' . $row['publisher_id']), 'Edit', 'attach');
+                $link_detail = URL::link($this->content->setLink('publisher/detail/' . $row['publisher_id']), 'Detail',false);
+                $link_edit = URL::link($this->content->setLink('publisher/edit/' . $row['publisher_id']), 'Edit',false);
 
                 $xml .= "<row id='" . $row['publisher_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['publisher_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['publisher_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['publisher_description'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['publisher_office'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . date('d/m/Y',  strtotime($row['publisher_entry'])) . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . date('d/m/Y',  strtotime($row['publisher_entry_update'])) . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $link_detail . " | " . $link_edit . "]]></cell>";
+                $xml .= "</row>";
+            }
+
+            $xml .= "</rows>";
+            echo $xml;
+        }
+    }
+
+    public function readOffice() {
+
+        if ($this->method->isAjax()) {
+            $page = $this->method->post('page', 1);
+            $listData = $this->model->selectAllOffice($page);
+            $total = $this->model->countAllOffice();
+
+            header("Content-type: text/xml");
+            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            $xml .= "<rows>";
+            $xml .= "<page>$page</page>";
+            $xml .= "<total>$total</total>";
+
+            foreach ($listData AS $row) {
+                $xml .= "<row id='" . $row['publisher_office_temp_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $row['publisher_office_temp_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['publisher_office_department_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['publisher_office_temp_address'] . "]]></cell>";
                 $xml .= "</row>";
             }
 
@@ -95,8 +137,83 @@ class Publisher extends Controller {
 
     public function delete() {
         $res = false;
-        if ($this->model->delete()) {
+        $id = $this->method->post('id', 0);
+        if ($this->model->delete($id)) {
             $res = true;
+        }
+        echo json_encode($res);
+    }
+
+    public function deleteOffice() {
+        $res = false;
+        $id = $this->method->post('id', 0);
+        if ($this->model->deleteOffice($id)) {
+            $res = true;
+        }
+        echo json_encode($res);
+    }
+    
+    public function optionDepartment() {
+        $option = array();
+        $list = $this->model->selectDepartment();
+        foreach ($list as $row) {
+            $option[$row['publisher_office_department_id']] = $row['publisher_office_department_name'];
+        }
+        return $option;
+    }
+    
+    public function optionCountry() {
+        $option = array();
+        $list = $this->model->selectCountry();
+        foreach ($list as $row) {
+            $option[$row['country_id']] = $row['country_name'];
+        }
+        return $option;
+    }
+    
+    public function optionProvince($id) {
+        $option = array();
+        $list = $this->model->selectProvinceByCountryId($id);
+        foreach ($list as $row) {
+            $option[$row['province_id']] = $row['province_name'];
+        }
+        return $option;
+    }
+    
+    public function getProvince() {
+        $countryid = $this->method->get('id');
+        $list = $this->optionProvince($countryid);
+        $option = '<option value=""></option>';
+        foreach ($list as $key => $value) {
+            $option .= '<option value="' . $key . '">' . $value . '</option>';
+        }
+        echo json_encode($option);
+    }
+    
+    public function optionCity($id) {
+        $option = array();
+        $list = $this->model->selectCityByProvinceId($id);
+        foreach ($list as $row) {
+            $option[$row['city_id']] = $row['city_name'];
+        }
+        return $option;
+    }
+    
+    public function getCity() {
+        $provinceid = $this->method->get('id');
+        $list = $this->optionCity($provinceid);
+        $option = '<option value=""></option>';
+        foreach ($list as $key => $value) {
+            $option .= '<option value="' . $key . '">' . $value . '</option>';
+        }
+        echo json_encode($option);
+    }
+    
+    public function addOfficeTemp() {
+        if ($this->model->saveOfficeTemp()) {
+            $res = true;
+        } else {
+            $res = false;
         }
         echo json_encode($res);
     }
