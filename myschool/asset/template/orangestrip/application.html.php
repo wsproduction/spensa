@@ -21,13 +21,12 @@ $protection = Session::get('login_status');
         /* jQuery Plugin */
         Src::plugin()->jQuery();
         Src::plugin()->jQueryUI();
-        Src::plugin()->jQueryAddress();
-        Src::plugin()->rLoader();
 
         Src::css('layout');
         Src::css('icon_colection');
         Src::css('style_menu');
         Src::javascript('autoload');
+        Src::javascript('jquery.custom.plugin');
 
         /* Loader */
         echo Src::getJavascript();
@@ -54,7 +53,10 @@ $protection = Session::get('login_status');
                         <ul id="m-account-child">
                             <li><a href="#" class="orange16-ic-hireme">Account Settings</a></li>
                             <li><a href="#" class="orange16-ic-lock">Privacy Settings</a></li>
-                            <li><a href="http://myschool.spensa.ws/login/stop" class="orange16-ic-signout">Logout</a></li>
+                            <li><a href="http://sekolahku.spensa.ws/login/stop" class="orange16-ic-signout">Logout</a></li>
+                            <li><div class="hr-solid-grey"></div></li>
+                            <li><a href="http://sekolahku.spensa.ws/login/stop" class="orange16-ic-lightbulb">Bantuan</a></li>
+                            <li><a href="http://sekolahku.spensa.ws/login/stop" class="orange16-ic-collaboration">Tentang SekolahKu</a></li>
                         </ul>
                     </div>
                 <?php } ?>
@@ -71,13 +73,13 @@ $protection = Session::get('login_status');
                             <div class="left-thumbnail fl-left"> <?php echo Src::image('default-thumbnail-small.png', null, array('id' => 'profile-thumbnail-small')); ?> </div>
                             <div class="left-title fl-left"> 
                                 <div class="left-name"><a id="profile-name-left" href="#"></a></div>
-                                <div class="left-btn-blue"><a href="http://myschool.spensa.ws/profile/edit">Edit Profile</a></div>
+                                <div><a href="http://myschool.spensa.ws/profile/edit" class="btn-blue">Edit Profile</a></div>
                             </div>
                             <div class="cl">&nbsp;</div>
                         </div>
                         <ul class="m-left">
-                            <li type="parent" class="toggle-on"><a href="#list-m-pages" class="pages border-bottom arrow-grey">Pages</a></li>
-                            <ul id="list-m-pages" style="display: block;"></ul>
+                            <li type="parent" class="toggle-on"><a href="#list-m-apps" class="apps border-bottom arrow-grey">Aplikasi</a></li>
+                            <ul id="list-m-apps" style="display: block;"></ul>
                         </ul>
                     </div>
                     <!-- END : Left box fixed -->

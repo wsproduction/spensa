@@ -11,7 +11,7 @@ class Score extends Controller {
         $this->view->link_r = $this->content->setLink('score/read');
         $this->view->link_p = $this->content->setLink('score/printreportcard');
 
-        $this->view->option_period = $this->optionPeriod();
+        $this->view->option_period = array();//$this->optionPeriod();
         $this->view->option_recapitulation = $this->optionRecapitulation();
         $this->view->option_subject = $this->optionSubject();
 

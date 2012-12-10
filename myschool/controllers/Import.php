@@ -374,7 +374,7 @@ class Import extends Controller {
         $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(40);
         $objPHPExcel->getActiveSheet()->getRowDimension('4')->setRowHeight(120);
         $objPHPExcel->getActiveSheet()->getStyle('A4:C4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
-
+        
         $defaultBorder = array(
             'style' => PHPExcel_Style_Border::BORDER_THIN,
             'color' => array('rgb' => '1006A3')

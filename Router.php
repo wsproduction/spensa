@@ -8,7 +8,7 @@ switch (Web::getSubDomain()) {
         Web::child('ADMIN SMPN 1 SUBANG', 'admin_main', 'demo');
         break;
     case 'sekolahku':
-        Web::main('MY SCHOOL SMPN 1 SUBANG', 'myschool', 'orangestrip');
+        Web::main('SEKOLAHKU SMPN 1 SUBANG', 'myschool', 'orangestrip');
         Web::child('ONLINE SCORE', 'nilaionline', 'nilaionline', 'orangestrip');
         break;
     case 'akademik':

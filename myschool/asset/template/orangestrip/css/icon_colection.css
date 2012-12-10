@@ -1,0 +1,47 @@
+/* 
+    Document   : icon_colection
+    Created on : Dec 4, 2012, 4:26:38 PM
+    Author     : ws
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* BLACK ICON */
+.black16-ic-bag {
+    background: url(../images/black16/bag.png) no-repeat;
+}
+
+.black16-ic-percent {
+    background: url(../images/black16/percent.png) no-repeat;
+}
+
+.black16-ic-home {
+    background: url(../images/black16/home.png) no-repeat;
+}
+
+.black16-ic-cv {
+    background: url(../images/black16/cv.png) no-repeat;
+}
+
+
+/* ORANGE ICON */
+.orange16-ic-lock {
+    background: url(../images/orange16/lock.png) no-repeat;
+}
+
+.orange16-ic-signout {
+    background: url(../images/orange16/sign-out.png) no-repeat;
+}
+
+.orange16-ic-hireme {
+    background: url(../images/orange16/hire-me.png) no-repeat;
+}
+
+.orange16-ic-lightbulb {
+    background: url(../images/orange16/lightbulb.png) no-repeat;
+}
+
+.orange16-ic-collaboration {
+    background: url(../images/orange16/collaboration.png) no-repeat;
+}
+

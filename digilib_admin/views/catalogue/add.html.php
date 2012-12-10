@@ -370,7 +370,7 @@
                                             Form::tips('Select Country');
                                             Form::option($country, ' ');
                                             Form::validation()->requaired();
-                                            Form::properties(array('link' => $link_province));
+                                            Form::properties(array('link' => $link_province, 'style' => 'max-width:250px;'));
                                             Form::commit();
                                             ?>
                                         </td>
@@ -394,7 +394,7 @@
                                             Form::create('select', 'province');
                                             Form::tips('Select Country');
                                             Form::validation()->requaired();
-                                            Form::properties(array('link' => $link_city));
+                                            Form::properties(array('link' => $link_city,'style' => 'max-width:250px;'));
                                             Form::commit();
                                             ?>
                                         </td>
@@ -410,6 +410,7 @@
                                             Form::create('select', 'city');
                                             Form::tips('Select City');
                                             Form::validation()->requaired();
+                                            Form::properties(array('style' => 'max-width:250px;'));
                                             Form::commit();
                                             ?>
                                         </td>
@@ -453,7 +454,7 @@
                                                         Form::create('select', 'description_author');
                                                         Form::tips('Pilih keterangan penanggun jawab');
                                                         Form::option($author_description, ' ');
-                                                        FOrm::properties(array('link' => $link_author));
+                                                        Form::properties(array('link' => $link_author, 'style' => 'max-width:250px;'));
                                                         Form::commit();
                                                         ?>
                                                     </td>
@@ -468,6 +469,7 @@
                                                         <?php
                                                         Form::create('select', 'option_author');
                                                         Form::tips('Pilih keterangan penanggun jawab');
+                                                        Form::properties(array('style' => 'max-width:250px;'));
                                                         Form::commit();
                                                         ?>
                                                     </td>
@@ -587,8 +589,8 @@
                                         <td>
                                             <?php
                                             Form::create('select', 'ddcLevel1');
-                                            Form::option($ddc_level1,' ');
-                                            Form::properties(array('link'=>$link_ddc_level2));
+                                            Form::option($ddc_level1, ' ');
+                                            Form::properties(array('link' => $link_ddc_level2));
                                             Form::validation()->requaired('* Level 1 harus diisi.');
                                             Form::commit();
                                             ?>
@@ -616,7 +618,7 @@
                                         <td>
                                             <?php
                                             Form::create('select', 'keyword_categories');
-                                            Form::option(array('ddc_classification_number'=>'Nomor Klasifikasi','ddc_title'=>'Judul Klasifikasi','ddc_description'=>'Keteragan Klasifikasi'));
+                                            Form::option(array('ddc_classification_number' => 'Nomor Klasifikasi', 'ddc_title' => 'Judul Klasifikasi', 'ddc_description' => 'Keteragan Klasifikasi'));
                                             Form::commit();
                                             Form::create('text', 'ddckeyword');
                                             Form::size(50);
@@ -644,7 +646,7 @@
                     <tr>
                         <td style="padding-top: 10px;">
                             <?php
-                            Form::create('hidden','ddcid');
+                            Form::create('hidden', 'ddcid');
                             Form::commit();
                             ?>
                             <fieldset>

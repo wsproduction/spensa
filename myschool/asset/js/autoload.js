@@ -1,23 +1,8 @@
 $(function () {
     var protocol = window.location.protocol;
     var host = window.location.host;
-    
-    //alert(window.location.protocol);
-    //alert(window.location.hash); // read achor (#) URL
-    
-    $('#live-view').css({
-        //'min-height':parseInt(screen.height) - 148 + 'px'
-        'min-height' : parseInt(screen.height) + 'px'
-    });
-    /**/
-   
-    /*
-    *$('#live-view').mCustomScrollbar({
-        scrollEasing:"easeOutQuint",
-        scrollButtons:{
-            enable:false
-        }
-    });*/
+        
+    $('#live-view').css('min-height' , screen.height);
    
     // Accordion Top Menu 
     $('#m-account-parent').live('click',function(){
@@ -60,11 +45,11 @@ $(function () {
    
     // Load Page List
     $.ajax({
-        url : protocol + '//' + host + '/menu/pages',
+        url : protocol + '//' + host + '/menu/apps',
         dataType : 'json',
         contentType: "application/json; charset=utf-8",
         beforeSend : function() {
-            $('#list-m-pages').html('Loading...');
+            $('#list-m-apps').html('Loading...');
         },
         success :function(o){
             var m = '';
@@ -73,7 +58,7 @@ $(function () {
                 t = o[i];
                 m += '<li><a href="' + t.url + '">' + t.title + '</a></li>';
             }
-            $('#list-m-pages').html(m);
+            $('#list-m-apps').html(m);
         }
     });
     

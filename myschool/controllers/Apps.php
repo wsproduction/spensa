@@ -1,34 +1,40 @@
 <?php
 
-class Pages extends Controller {
+class Apps extends Controller {
 
     public function __construct() {
         parent::__construct();
         $this->content->protection(true);
-        Src::css('style_pages');
-        Src::plugin()->flexiGrid();
     }
 
     public function index() {
-        $this->view->render('pages/404');
+        $this->view->render('apps/404');
     }
 
-    /* LOADER PAGES */
+    /* LOADER Apps */
 
-    public function load($pa = null) {
-        $this->view->page_alias = $pa;
-        $this->view->page_info = $this->model->selectPagesByAlias($pa);
-        if (count($this->view->page_info) > 0) {
+    public function load($apps_alias = null) {
+        
+        Src::css('style_apps');
+        Src::plugin()->jQueryAddress();
+        Src::plugin()->flexiGrid();
+        Src::plugin()->jQueryAlphaNumeric();
+        Src::plugin()->jQueryValidation();
+        
+        $this->view->apps_alias = $apps_alias;
+        $apps_info = $this->model->selectAppsByAlias($apps_alias);
+        if (count($apps_info) > 0) {
             Src::plugin()->jQuerySelectBox();
-            $this->view->page_menu = $this->splitMenu($pa);
-            $this->view->render('pages/index');
+            $this->view->apps_info = $apps_info;
+            $this->view->apps_menu = $this->splitMenu($apps_info[0]['apps_id']);
+            $this->view->render('apps/index');
         } else {
-            $this->view->render('pages/404');
+            $this->view->render('apps/404');
         }
     }
 
     public function splitMenu($pa) {
-        $list = $this->model->selectPagesMenuByAlias($pa);
+        $list = $this->model->selectAppsMenuByAlias($pa);
         $level1 = array();
         $level2 = array();
         $level3 = array();

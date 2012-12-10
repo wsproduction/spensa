@@ -6,17 +6,17 @@ class Menu extends Controller {
         parent::__construct();
     }
 
-    public function pages() {
+    public function Apps() {
         if (isset($_SERVER['HTTP_REFERER'])) {
             $data = $this->model->selectPage();
             $list = array();
-            $host = 'http://' . Web::getHost() . '/pages/load/';
+            $host = 'http://' . Web::getHost() . '/apps/load/';
             //$host = '#!/pages/load/';
             //$host = '';
             foreach ($data as $value) {
                 $list[] = array(
-                    'title' => $value['page_name'],
-                    'url' => $host . $value['page_alias']
+                    'title' => $value['apps_name'],
+                    'url' => $host . $value['apps_alias']
                 );
             }
             echo json_encode($list);
