@@ -9,14 +9,31 @@ class Profile extends Controller {
     public function me() {
         if ($this->method->isAjax()) {
             Session::init();
-            Session::get('user_id');
+            $profile = $this->model->selectUserProfile(Session::get('user_id'));
+            $photo_root = URL::getService() . '://' . Web::getHost() . '/web/src/' . Web::$webFolder . '/asset/upload/images/';
+
+            $name = '-';
+            $photo = '';
             
-            $profile = $this->model->selectMyProfile();
-            
-            $json = array('name' => 'Warman Suganda',
-                'first_name' => 'Warman',
-                'last_name' => 'Suganda',
-                'thumbnail' => array('small' => 'default-thumbnail-small.jpg', 'big' => 'default-thumbnail-big.png'));
+            if ($profile) {
+                $myprofile = $profile[0];
+                $photo = $myprofile['user_photo_profile'];
+
+                if ($myprofile['isa_dbroot'] == 'employees') {
+                    $employees_list = $this->model->selectEmployeesById($myprofile['user_references']);
+                    $employees = $employees_list[0];
+                    $name = $employees['employess_name'];
+                } 
+                
+            }
+
+            $json = array(
+                'name' => $name,
+                'thumbnail' => array(
+                    'small' => $photo_root . 'thumbnail-small/' . $photo,
+                    'big' => $photo_root . 'thumbnail-big/' . $photo)
+            );
+
             echo json_encode($json);
         }
     }

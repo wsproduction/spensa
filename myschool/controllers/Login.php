@@ -22,6 +22,10 @@ class Login extends Controller {
                 Session::init();
                 Session::set('login_status', 1);
                 Session::set('user_id', $data_user['user_id']);
+                Session::set('user_references', $data_user['user_references']);
+                Session::set('isa_title', $data_user['isa_title']);
+                Session::set('isa_dbroot', $data_user['isa_dbroot']);
+                
                 $xml .= '<status>1</status>';
                 $xml .= '<direct><![CDATA[' . $this->content->setLink('home') . ']]></direct>';
             } else {

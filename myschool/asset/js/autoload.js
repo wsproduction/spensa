@@ -69,7 +69,7 @@ $(function () {
         success: function(data) {
             var thumbnail = data.thumbnail;
             $('a#profile-name-left').html(data.name);
-            $('img#profile-thumbnail-small').attr('src', protocol + '//' + host + '/web/src/myschool/asset/upload/images/thumbnail-small/' + thumbnail.small);
+            $('img#profile-thumbnail-small').attr('src', thumbnail.small);
         }
     });
     

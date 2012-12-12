@@ -6,7 +6,7 @@ class TeachingModel extends Model {
         parent::__construct();
     }
 
-    public function selectTeaching() {
+    public function selectTeaching($teacher_id, $periodid) {
         $sth = $this->db->prepare('
                                 SELECT
                                     academic_teaching.teaching_id,
@@ -24,7 +24,14 @@ class TeachingModel extends Model {
                                     INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
                                     INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
                                     INNER JOIN employees ON (academic_classgroup.classgroup_guardian = employees.employees_id)
+                                WHERE
+                                    academic_teaching.teaching_teacher = :teacherid AND
+                                    academic_classgroup.classgroup_period = :periodid
                           ');
+        
+        $sth->bindValue(':teacherid', $teacher_id);
+        $sth->bindValue(':periodid', $periodid);
+        
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -58,7 +65,7 @@ class TeachingModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectClassListByTeachingId($teachingid) {
+    public function selectClassListByTeachingId($teachingid, $user_references) {
         $sth = $this->db->prepare('
                                 SELECT 
                                     academic_teaching.teaching_total_time,
@@ -82,10 +89,12 @@ class TeachingModel extends Model {
                                     INNER JOIN academic_subject ON (academic_teaching.teaching_subject = academic_subject.subject_id)
                                     INNER JOIN academic_period ON (academic_classgroup.classgroup_period = academic_period.period_id)
                                 WHERE
-                                    academic_teaching.teaching_id = :teachingid
+                                    academic_teaching.teaching_id = :teachingid AND
+                                    academic_teaching.teaching_teacher = :user_references
                           ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':teachingid', $teachingid);
+        $sth->bindValue(':user_references', $user_references);
         $sth->execute();
         return $sth->fetchAll();
     }
@@ -111,7 +120,7 @@ class TeachingModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectBaseCompetence() {
+    public function selectBaseCompetence($period, $semester) {
         $sth = $this->db->prepare('
                                 SELECT 
                                     academic_base_competence.base_competence_id,
@@ -126,7 +135,14 @@ class TeachingModel extends Model {
                                 FROM
                                     academic_base_competence
                                     INNER JOIN academic_base_competence_symbol ON (academic_base_competence.base_competence_symbol = academic_base_competence_symbol.base_competence_symbol_id)
+                                WHERE
+                                    academic_base_competence.base_competence_period = :period AND
+                                    academic_base_competence.base_competence_semester = :semester
                           ');
+        
+        $sth->bindValue(':period', $period);
+        $sth->bindValue(':semester', $semester);
+        
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -271,6 +287,22 @@ class TeachingModel extends Model {
                           ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':score_type_id', $score_type_id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectSemesterById($semester_id) {
+        $sth = $this->db->prepare('
+                                  SELECT 
+                                    academic_semester.semester_id,
+                                    academic_semester.semester_name
+                                  FROM
+                                    academic_semester
+                                  WHERE
+                                    academic_semester.semester_id = :semester_id
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':semester_id', $semester_id);
         $sth->execute();
         return $sth->fetchAll();
     }

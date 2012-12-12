@@ -4,16 +4,19 @@ $(function () {
     var host = window.location.host;
     var lastTarget = '';
     
-    var navId = $('#list-m-nav-apps-top a');
-    var viewId = $('#live-view-content-apps');
-    var cssId = $('#for-css');
+    $('.cofig .parent-title').live('click',function() {
+        $('.cofig').css('background-color','#f9f9f9');
+        $('.cofig').children('.content').slideDown('fast');
+    });
     
-    $('.cofig').live('click',function() {
-        $(this).css('background-color','#f9f9f9');
-        $(this).children('.content').slideDown('fast');
-    }).mouseleave(function(){
+    $('.cofig').mouseleave(function(){
         $(this).css('background-color','');
         $(this).children('.content').slideUp('fast');
+    });
+    
+    $('.cofig .content a').live('click',function(){
+        $('.cofig').css('background-color','');
+        $('.cofig').children('.content').slideUp('fast');
     });
     
     /* Handles response */
@@ -22,8 +25,8 @@ $(function () {
             var css = $(this).find('css').text();
             var content = $(this).find('content').text();
              
-            $(cssId).html(css);
-            $(viewId).html(content);
+            $('#for-css').html(css);
+            $('#live-view-content-apps').html(content);
             $(this).loadingProgress('stop');
         });    
     };
@@ -62,7 +65,7 @@ $(function () {
     
     /* Adress jQuery */
     $.address.state('/').init(function() {
-        $(navId).address();
+        $('#list-m-nav-apps-top a').address();
     }).change(function(event) {
         ajaxLoader(getTargetUrl(event.path));                
     });

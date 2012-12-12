@@ -304,13 +304,13 @@
 
 #online-score #cb-period .slide-of {
     background: url('../images/cb-arrow-of.png') no-repeat;
-    background-position:  735px center;
+    background-position:  750px center;
     background-color: #f9f9f9;
 }
 
 #online-score #cb-period .slide-on {
     background: url('../images/cb-arrow-on.png') no-repeat;
-    background-position:  735px center;
+    background-position:  750px center;
     background-color: #f9f9f9;
 }
 
@@ -505,4 +505,10 @@
 
 #online-score .class-info {
     margin: 5px;
+}
+
+#online-score .information-box {
+    border : 1px solid #e2c822;
+    background-color: #fff9d7;
+    padding: 4px;
 }

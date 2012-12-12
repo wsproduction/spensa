@@ -45,6 +45,7 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
     z-index: 99;
     left: 0;
     top:43px;
+    width: 230px;
 }
 
 #fix-right {
@@ -60,7 +61,7 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
 
 #live-view {
     margin-left: 230px;
-    width: 780px;
+    width: 800px;
 }
 
 #footer {
@@ -97,12 +98,12 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
 
 #m-account a.slide-on {
     background: url('../images/down-arrow-white-on.png') no-repeat;
-    background-position: 80px 10px;
+    background-position: 75px 10px;
 }
 
 #m-account a.slide-of {
     background: url('../images/down-arrow-white-on.png') no-repeat;
-    background-position: 80px 10px;
+    background-position: 75px 10px;
 }
 
 #m-account ul#m-account-child {
@@ -168,7 +169,6 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
 
 .left-user-info .left-name {
     height: 30px;
-    width: 160px;
 }
 
 .left-user-info .left-name a {

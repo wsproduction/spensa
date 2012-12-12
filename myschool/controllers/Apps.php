@@ -18,8 +18,10 @@ class Apps extends Controller {
         Src::css('style_apps');
         Src::plugin()->jQueryAddress();
         Src::plugin()->flexiGrid();
-        Src::plugin()->jQueryAlphaNumeric();
+        Src::plugin()->jQueryForm();
         Src::plugin()->jQueryValidation();
+        Src::plugin()->jQueryAlphaNumeric();
+        Src::plugin()->jQueryBase64();
         
         $this->view->apps_alias = $apps_alias;
         $apps_info = $this->model->selectAppsByAlias($apps_alias);

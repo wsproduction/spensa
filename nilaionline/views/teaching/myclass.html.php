@@ -31,7 +31,10 @@
                     Form::create('hidden', 'hidden_period_id');
                     Form::value($class_info['period_id']);
                     Form::commit();
-                    echo $class_info['period_years_start'] . '/' . $class_info['period_years_end'] . ' - Semester 1';
+                    Form::create('hidden', 'hidden_semester_id');
+                    Form::value($semester_info['semester_id']);
+                    Form::commit();
+                    echo $class_info['period_years_start'] . '/' . $class_info['period_years_end'] . ' - ' . $semester_info['semester_name'];
                     ?>
                 </td>
             </tr>
@@ -165,7 +168,15 @@
                             <td style="width: 80px;" align="center" >NISN</td>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <tr>
+                            <td class="first" colspan="6">
+                                <div class="information-box">
+                                    Silahkan lakukan filter data terlebih dahulu!
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             <div id="fragment-2">2</div>
@@ -174,7 +185,32 @@
     </div>
 </div>
 
-<div id="box-import-daily-score">Import</div>
+<div id="box-import-daily-score">
+    <?php
+    Form::begin('form-import-daily-score', 'teaching/importdailyscore', 'post', true);
+    ?>
+
+    <div>File Nilai :</div>
+    <div>
+        <?php
+        Form::create('file', 'file');
+        Form::validation()->requaired();
+        Form::validation()->accept('xls');
+        Form::commit();
+        ?>
+    </div>
+    <div style="margin: 5px 0;">
+        <?php
+        Form::create('submit');
+        Form::value('Upload');
+        Form::commit();
+        ?>
+    </div>
+
+    <?php
+    Form::end();
+    ?>
+</div>
 
 </div>
 
@@ -182,7 +218,6 @@
     $(function(){
         
         var $score_list = $('.score_list');
-        
         $("#tabs-score").tabs();
        
         $score_list.live('change', function() {
@@ -208,6 +243,7 @@
             var id = new Array();
             var val, nis;
             var period = $('#hidden_period_id').val();
+            var semester = $('#hidden_semester_id').val();
             var base_competence = $('#base_competence').val();
             var score_type = $('#score_type').val();
             var error_count = 0;
@@ -228,7 +264,7 @@
             }
                 
             if (error_count == 0) {
-                $.post(url, {period:period, data:id, base_competence:base_competence, score_type:score_type}, function(o){
+                $.post(url, {period:period, semester:semester, data:id, base_competence:base_competence, score_type:score_type}, function(o){
                     if (o) {
                         alert('Data Nilai Telah Disimpan.');
                     } else {
@@ -244,22 +280,48 @@
         var readDailyScore = function() {
             var link = $('#fFilterDailyScore').attr('action');
             var period = $('#hidden_period_id').val();
+            var semester = $('#hidden_semester_id').val();
             var base_competence = $('#base_competence').val();
             var score_type = $('#score_type').val();
             var mlc = $('#hidden_mlc').val();
             
             $(this).loadingProgress('start');
             
-            $.post(link, {period:period, base_competence:base_competence, score_type:score_type, mlc:mlc}, function (o){
-                $('#list-daily-score').children('tbody').attr('count',o['count']);
-                $('#list-daily-score').children('tbody').html(o['row']);
+            $.post(link, {period:period, semester:semester, base_competence:base_competence, score_type:score_type, mlc:mlc}, function (o){
+                $('#list-daily-score').children('tbody').attr('count',o.count);
+                $('#list-daily-score').children('tbody').html(o.row);
                 
                 $(this).loadingProgress('stop');
+                disabled_button(false);
+                if (o.count > 0) {
+                    
+                }
                 
             }, 'json');
         };
         
-        readDailyScore();
+        
+        var disabled_button = function(bool) {
+            var style = {'opacity':'1','filter':'alpha(opacity=100)'};
+            
+            $('#button_save').removeAttr('disabled');
+            $('#button_export').removeAttr('disabled');
+            $('#button_import').removeAttr('disabled');
+            
+            if (bool) {
+                style = {'opacity':'0.8','filter':'alpha(opacity=80)'};
+                $('#button_save').attr('disabled', 'disabled');
+                $('#button_export').attr('disabled', 'disabled');
+                $('#button_import').attr('disabled', 'disabled');
+            }
+            
+            $('#button_save').css(style);
+            $('#button_export').css(style);
+            $('#button_import').css(style);
+        };
+        
+        disabled_button(true);
+        
         
         $('#fFilterDailyScore').submit(function(){
             readDailyScore();
@@ -267,13 +329,14 @@
         });
         
         $('#box-import-daily-score').dialog({
+            title : 'Import Nilai Harian',
             closeOnEscape: false,
             autoOpen: false,
-            height: screen.height - 200,
-            width: 700,
+            height: 200,
+            width: 300,
             modal: true,
             resizable: false,
-            draggable: false,
+            draggable: true,
             open : function() {
                 $(this).parent().children().children('.ui-dialog-titlebar-close').hide();
             }
@@ -286,7 +349,29 @@
         $('#button_export').live('click', function(){
             var base_competence = $('#base_competence').val();
             var score_type = $('#score_type').val();
-            window.location =  $(this).attr('link') + '_' + base_competence + '_' + score_type;
+            var semester = $('#hidden_semester_id').val();
+            window.location =  $(this).attr('link') + '_' + base_competence + '_' + score_type + '_' + semester;
+        });
+        
+        $('#base_competence').live('change', function(){
+            disabled_button(true);
+        });
+        
+        $('#score_type').live('change', function(){
+            disabled_button(true);
+        });
+        
+        $('#form-import-daily-score').live('submit',function(){
+            $(this).ajaxSubmit({
+                success : function(o) {
+                    var parOut = o.replace('<div id="LCS_336D0C35_8A85_403a_B9D2_65C292C39087_communicationDiv"></div>','');
+                    /* console.log(parOut); */
+                    if (parOut) {
+                        var obj = eval('(' + parOut +')');
+                    }
+                }
+            });
+            return false;
         });
         
     });
