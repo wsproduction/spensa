@@ -365,13 +365,13 @@
             $(this).ajaxSubmit({
                 success : function(o) {
                     var parOut = o.replace('<div id="LCS_336D0C35_8A85_403a_B9D2_65C292C39087_communicationDiv"></div>','');
-                    /* console.log(parOut); */
                     if (parOut) {
                         var obj = eval('(' + parOut +')');
                     }
                 }
             });
             return false;
+            
         });
         
     });
