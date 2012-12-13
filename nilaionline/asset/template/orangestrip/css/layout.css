@@ -286,8 +286,19 @@
     margin: 0 1px;
 }
 
+#online-score #cb-period #cb-period-parent{
+    cursor: pointer;
+}
+
 #online-score #cb-period #cb-period-child{
     display: none;
+    list-style: none;
+    position: absolute;
+    z-index: 99;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    width: 776px;
 }
 
 #online-score #cb-period a {
@@ -325,17 +336,6 @@
 
 #online-score #cb-period a span {
     display: block;
-}
-
-#online-score #cb-period ul {
-    list-style: none;
-    display: block;
-    width: 756px;
-    position: absolute;
-    z-index: 99;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
 }
 
 #online-score .box-static {

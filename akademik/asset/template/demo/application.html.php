@@ -6,13 +6,9 @@
         <meta charset="utf-8" />
 
         <?php
-        /* jQuery Plugin*/
+        /* jQuery Plugin */
         Src::plugin()->jQuery();
-        Src::plugin()->jQueryCookie();
-        Src::plugin()->jQueryJson();
         Src::plugin()->jQueryUI();
-        Src::plugin()->jDialogBox(); 
-        Src::plugin()->flexDropDown();
         
         
         Src::css('layout');

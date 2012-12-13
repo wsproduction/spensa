@@ -98,7 +98,7 @@ $protection = Session::get('login_status');
 
                     <!-- BEGIN : Right box fixed-->
                     <div id="fix-right" style="width: 235px;padding-top: 10px;">
-                        <?php echo Src::image('chat-sample.png', null, array('style', 'padding:10px 10px 0 0;')); ?>
+                        <?php  /* echo Src::image('chat-sample.png', null, array('style', 'padding:10px 10px 0 0;')); */ ?>
                     </div>
                     <!-- END : Left box fixed -->
                 <?php } else { ?>

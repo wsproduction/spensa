@@ -148,6 +148,60 @@ class TeachingModel extends Model {
         return $sth->fetchAll();
     }
 
+    public function selectTaskDescription($period, $semester) {
+        $sth = $this->db->prepare('
+                                  SELECT 
+                                    academic_task_description.task_description_id,
+                                    academic_task_description.task_description_subject,
+                                    academic_task_description.task_description_teacher,
+                                    academic_task_description.task_description_period,
+                                    academic_task_description.task_description_semester,
+                                    academic_task_description.task_description_garde,
+                                    academic_task_description.task_description_title,
+                                    academic_task_description.task_description,
+                                    academic_task_description.task_description_entry,
+                                    academic_task_description.task_description_entry_update
+                                  FROM
+                                    academic_task_description
+                                  WHERE
+                                    academic_task_description.task_description_period = :period AND
+                                    academic_task_description.task_description_semester = :semester
+                          ');
+        
+        $sth->bindValue(':period', $period);
+        $sth->bindValue(':semester', $semester);
+        
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectTaskDescriptionById($task_description_id) {
+        $sth = $this->db->prepare('
+                                  SELECT 
+                                    academic_task_description.task_description_id,
+                                    academic_task_description.task_description_subject,
+                                    academic_task_description.task_description_teacher,
+                                    academic_task_description.task_description_period,
+                                    academic_task_description.task_description_semester,
+                                    academic_task_description.task_description_garde,
+                                    academic_task_description.task_description_title,
+                                    academic_task_description.task_description,
+                                    academic_task_description.task_description_entry,
+                                    academic_task_description.task_description_entry_update
+                                  FROM
+                                    academic_task_description
+                                  WHERE
+                                    academic_task_description.task_description_id = :task_description_id
+                          ');
+        
+        $sth->bindValue(':task_description_id', $task_description_id);
+        
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
     public function selectScoreType() {
         $sth = $this->db->prepare('
                                 SELECT 
@@ -190,6 +244,27 @@ class TeachingModel extends Model {
         return $sth->fetchAll();
     }
 
+    public function selectTaskSocoreByScoreFilter($student_id, $periode, $semester, $task_description) {
+        $sth = $this->db->prepare('
+                                  SELECT 
+                                    academic_score_task.score_task_id,
+                                    academic_score_task.score_task_value,
+                                    academic_score_task.score_task_student,
+                                    academic_score_task.score_task_description,
+                                    academic_score_task.score_task_entry,
+                                    academic_score_task.score_task_entry_update
+                                  FROM
+                                    academic_score_task
+                                  WHERE
+                                    academic_score_task.score_task_student IN (' . $student_id . ') AND 
+                                    academic_score_task.score_task_description = :task_description
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':task_description', $task_description);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
     public function saveDailyScore($student_id, $score, $periode, $semester, $base_competence, $score_type) {
         $sth = $this->db->prepare('
                                 INSERT INTO
@@ -223,7 +298,6 @@ class TeachingModel extends Model {
                                 NOW(),
                                 NOW());
                           ');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':student_id', $student_id);
         $sth->bindValue(':score', $score);
         $sth->bindValue(':period', $periode);
@@ -239,11 +313,59 @@ class TeachingModel extends Model {
                                     academic_score_daily
                                 SET
                                     score_daily_value = :score,
-                                    score_daily_entry = NOW()
+                                    score_daily_entry_update = NOW()
                                 WHERE
                                     academic_score_daily.score_daily_id = :scoreid ;
                           ');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':scoreid', $scoreid);
+        $sth->bindValue(':score', $score);
+        return $sth->execute();
+    }
+    
+    
+    public function saveTaskScore($student_id, $score, $task_description) {
+        $sth = $this->db->prepare('
+                                  INSERT INTO
+                                    academic_score_task(
+                                    score_task_id,
+                                    score_task_value,
+                                    score_task_student,
+                                    score_task_description,
+                                    score_task_entry,
+                                    score_task_entry_update)
+                                  VALUES(
+                                    ( SELECT IF (
+                                        (SELECT COUNT(e.score_task_id) FROM academic_score_task AS e 
+                                                WHERE e.score_task_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
+                                                ORDER BY e.score_task_id DESC LIMIT 1
+                                        ) > 0,
+                                        (SELECT ( e.score_task_id + 1 ) FROM academic_score_task AS e 
+                                                WHERE e.score_task_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
+                                                ORDER BY e.score_task_id DESC LIMIT 1),
+                                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"0001")))
+                                    ),
+                                    :score,
+                                    :student_id,
+                                    :task_description,
+                                    NOW(),
+                                    NOW());
+                          ');
+        $sth->bindValue(':student_id', $student_id);
+        $sth->bindValue(':score', $score);
+        $sth->bindValue(':task_description', $task_description);
+        return $sth->execute();
+    }
+    
+    public function updateTaskScore($scoreid, $score) {
+        $sth = $this->db->prepare('
+                                UPDATE
+                                    academic_score_task
+                                SET
+                                    score_task_value = :score,
+                                    score_task_entry_update = NOW()
+                                WHERE
+                                    academic_score_task.score_task_id = :scoreid ;
+                          ');
         $sth->bindValue(':scoreid', $scoreid);
         $sth->bindValue(':score', $score);
         return $sth->execute();

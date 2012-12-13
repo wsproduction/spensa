@@ -1,6 +1,6 @@
 <?php
 
-class Classgroup extends Controller {
+class Teaching extends Controller {
 
     public function __construct() {
         parent::__construct();
@@ -9,21 +9,21 @@ class Classgroup extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Daftar Rombongan Belajar');
+        Web::setTitle('Daftar Tugas Mengajar Mengajar');
         $this->view->period = array();
-        $this->view->link_r = $this->content->setLink('classgroup/add');
-        $this->view->link_d = $this->content->setLink('classgroup/delete');
-        $this->view->render('classgroup/index');
+        $this->view->link_r = $this->content->setLink('teaching/add');
+        $this->view->link_d = $this->content->setLink('teaching/delete');
+        $this->view->render('teaching/index');
     }
     
     public function add() {
         Web::setTitle('Tambah Daftar Rombongan Belajar');
-        
         $this->view->option_period = $this->optionPeriod();
-        $this->view->option_class = $this->optionClass();
-        $this->view->option_guardian = $this->optionGuardian();
-        $this->view->link_back = $this->content->setLink('classgroup/index');
-        $this->view->render('classgroup/add');
+        $this->view->option_teacher = $this->optionTeacher();
+        $this->view->option_subject= $this->optionTeacher();
+        $this->view->link_back = $this->content->setLink('teaching/index');
+        $this->view->ling_get_class = $this->content->setLink('teaching/getclass');
+        $this->view->render('teaching/add');
     }
 
     public function create() {
@@ -69,8 +69,8 @@ class Classgroup extends Controller {
         return $option;
     }
     
-    public function optionGuardian() {
-        $list = $this->model->selectAllGuardian();
+    public function optionTeacher() {
+        $list = $this->model->selectAllTeacher();
         $option = array();
         foreach ($list as $row) {
             $option[$row['employees_id']] = $row['employess_name'];
