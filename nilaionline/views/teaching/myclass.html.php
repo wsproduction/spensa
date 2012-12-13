@@ -41,11 +41,11 @@
                 <td><b>Mata Pelajaran</b></td>
                 <td><b>:</b></td>
                 <td>
-                    <?php 
+                    <?php
                     Form::create('hidden', 'hidden_subject_id');
                     Form::value($class_info['subject_id']);
                     Form::commit();
-                    echo $class_info['subject_name']; 
+                    echo $class_info['subject_name'];
                     ?>
                 </td>
             </tr>
@@ -321,8 +321,146 @@
                     </tbody>
                 </table>
             </div>
-            <div id="fragment-4">Saatnya Niiali UTS</div>
-            <div id="fragment-5">Saatnya Nilai Ulum</div>
+            <div id="fragment-4">
+                <?php
+                Form::begin('fFilterMidScore', 'teaching/readmidscore/' . $class_info['classgroup_id'], 'post', true);
+                ?>
+                <table style="width: 100%">
+                    <tr>
+                        <td>
+                            <?php
+                            Form::create('submit');
+                            Form::value('Filter');
+                            Form::commit();
+                            ?>
+                        </td>
+                        <td>
+                            &nbsp;
+                        </td>
+                        <td align="right">
+                            <?php
+                            Form::create('button', 'button_save_mid_score');
+                            Form::value('Simpan');
+                            Form::properties(array('link' => $link_save_mid_score));
+                            Form::commit();
+                            echo ' | ';
+                            Form::create('button', 'button_export_mid_score');
+                            Form::properties(array('link' => $link_export_midscore));
+                            Form::value('Export');
+                            Form::commit();
+                            echo ' ';
+                            Form::create('button', 'button_import_mid_score');
+                            Form::value('Import');
+                            Form::commit();
+                            ?>
+                        </td>
+                    </tr>
+                </table>
+                <?php
+                Form::end();
+                ?>
+                <table id="list-mid-score" class="table-list" style="width: 100%;margin: 5px 0;" cellspacing="0" cellpading="0">
+                    <thead>
+                        <tr>
+                            <td align="center" class="first" colspan="3" style="border-bottom: none;">NOMOR</td>
+                            <td rowspan="2" align="center">NAMA SISWA</td>
+                            <td style="width: 100px;" align="center" rowspan="2">NILAI</td>
+                            <td style="width: 100px;" align="center" rowspan="2">KETERANGAN</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 40px;" align="center" class="first">URUT</td>
+                            <td style="width: 80px;" align="center" >INDUK</td>
+                            <td style="width: 80px;" align="center" >NISN</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="first" colspan="6">
+                                <div class="information-box">
+                                    Silahkan lakukan filter data terlebih dahulu!
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="fragment-5">
+                <?php
+                Form::begin('fFilterFinalScore', 'teaching/readfinalscore/' . $class_info['classgroup_id'], 'post', true);
+                ?>
+                <table style="width: 100%">
+                    <tr>
+                        <td style="width: 80px;">Type :</td>
+                        <td></td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <?php
+                            Form::create('select', 'score_type_final');
+                            Form::option($option_scoretype);
+                            Form::properties(array('style' => 'width:80px;'));
+                            Form::commit();
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            Form::create('submit');
+                            Form::value('Filter');
+                            Form::commit();
+                            ?>
+                        </td>
+                        <td>
+                            &nbsp;
+                        </td>
+                        <td align="right">
+                            <?php
+                            Form::create('button', 'button_save_final_score');
+                            Form::value('Simpan');
+                            Form::properties(array('link' => $link_save_final_score));
+                            Form::commit();
+                            echo ' | ';
+                            Form::create('button', 'button_export_final_score');
+                            Form::properties(array('link' => $link_export_finalscore));
+                            Form::value('Export');
+                            Form::commit();
+                            echo ' ';
+                            Form::create('button', 'button_import_final_score');
+                            Form::value('Import');
+                            Form::commit();
+                            ?>
+                        </td>
+                    </tr>
+                </table>
+                <?php
+                Form::end();
+                ?>
+                <table id="list-final-score" class="table-list" style="width: 100%;margin: 5px 0;" cellspacing="0" cellpading="0">
+                    <thead>
+                        <tr>
+                            <td align="center" class="first" colspan="3" style="border-bottom: none;">NOMOR</td>
+                            <td rowspan="2" align="center">NAMA SISWA</td>
+                            <td style="width: 100px;" align="center" rowspan="2">NILAI</td>
+                            <td style="width: 100px;" align="center" rowspan="2">KETERANGAN</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 40px;" align="center" class="first">URUT</td>
+                            <td style="width: 80px;" align="center" >INDUK</td>
+                            <td style="width: 80px;" align="center" >NISN</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="first" colspan="6">
+                                <div class="information-box">
+                                    Silahkan lakukan filter data terlebih dahulu!
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -390,6 +528,64 @@
 <div id="box-import-attitude-score">
     <?php
     Form::begin('form-import-attitude-score', 'teaching/importattitudescore', 'post', true);
+    ?>
+    <div>File Nilai :</div>
+    <div>
+        <?php
+        Form::create('file', 'file');
+        Form::validation()->requaired();
+        Form::validation()->accept('xls');
+        Form::commit();
+        ?>
+    </div>
+    <div style="margin: 5px 0;">
+        <?php
+        Form::create('submit');
+        Form::value('Upload');
+        Form::commit();
+        echo ' ';
+        Form::create('button');
+        Form::value('Tutup');
+        Form::commit();
+        ?>
+    </div>
+    <?php
+    Form::end();
+    ?>
+</div>
+
+<div id="box-import-mid-score">
+    <?php
+    Form::begin('form-import-mid-score', 'teaching/importmidscore', 'post', true);
+    ?>
+    <div>File Nilai :</div>
+    <div>
+        <?php
+        Form::create('file', 'file');
+        Form::validation()->requaired();
+        Form::validation()->accept('xls');
+        Form::commit();
+        ?>
+    </div>
+    <div style="margin: 5px 0;">
+        <?php
+        Form::create('submit');
+        Form::value('Upload');
+        Form::commit();
+        echo ' ';
+        Form::create('button');
+        Form::value('Tutup');
+        Form::commit();
+        ?>
+    </div>
+    <?php
+    Form::end();
+    ?>
+</div>
+
+<div id="box-import-final-score">
+    <?php
+    Form::begin('form-import-final-score', 'teaching/importfinalscore', 'post', true);
     ?>
     <div>File Nilai :</div>
     <div>
@@ -514,7 +710,7 @@
             $(this).loadingProgress('start');
             
             for (var i = 1 ; i <= $('#list-daily-score').children('tbody').attr('count');i++) {
-                $list = $('#score_list_' + i);
+                $list = $('#list-daily-score #score_list_' + i);
                 nis = $list.attr('order');
                 val = $list.val();
                 id[i] = [nis,val];
@@ -771,7 +967,6 @@
             window.location =  $(this).attr('link') + '_' + semester;
         });
         
-        
         $('#box-import-attitude-score').dialog({
             title : 'Import Nilai Sikap',
             closeOnEscape: false,
@@ -801,6 +996,230 @@
                     disabled_button(false,['#form-import-attitude-score input[type=button]','#form-import-attitude-score input[type=submit]']);
                     $("#box-import-attitude-score").dialog( "close" );
                     readAttitudeScore();
+                }
+            });
+            return false;
+        });
+        
+        /* MID SCORE */
+        disabled_button(true,['#button_save_mid_score','#button_export_mid_score','#button_import_mid_score']);
+        
+        var readMidScore = function() {
+            var link = $('#fFilterMidScore').attr('action');
+            var subject = $('#hidden_subject_id').val();
+            var period = $('#hidden_period_id').val();
+            var semester = $('#hidden_semester_id').val();
+            var mlc = $('#hidden_mlc').val();
+            
+            $(this).loadingProgress('start');
+            
+            $.post(link, {subject:subject, period:period, semester:semester, mlc:mlc}, function (o){
+                $('#list-mid-score').children('tbody').attr('count',o.count);
+                $('#list-mid-score').children('tbody').html(o.row);
+                
+                $(this).loadingProgress('stop');
+                disabled_button(false,['#button_save_mid_score','#button_export_mid_score','#button_import_mid_score']);
+                if (o.count > 0) {
+                    
+                }
+                
+            }, 'json');
+        };
+        
+        $('#fFilterMidScore').submit(function(){
+            readMidScore();
+            return false;
+        });
+        
+        $('#button_save_mid_score').live('click', function(){
+            var url = $(this).attr('link');
+            var id = new Array();
+            var val, nis;
+            var subject = $('#hidden_subject_id').val();
+            var period = $('#hidden_period_id').val();
+            var semester = $('#hidden_semester_id').val();
+            var error_count = 0;
+            var $list;
+            
+            $(this).loadingProgress('start');
+            
+            for (var i = 1 ; i <= $('#list-mid-score').children('tbody').attr('count');i++) {
+                $list = $('#list-mid-score #score_list_' + i);
+                nis = $list.attr('order');
+                val = $list.val();
+                id[i] = [nis,val];
+                if ( parseInt(val) >= 0 && parseInt(val) <= 100) {
+                    $list.css('border','1px solid #ccc');
+                } else {
+                    $list.css('border','1px solid red');
+                    error_count++;
+                }
+            }
+                
+            if (error_count == 0) {
+                $.post(url, {subject:subject, period:period, semester:semester, data:id}, function(o){
+                    if (o) {
+                        alert('Data Nilai Telah Disimpan.');
+                    } else {
+                        alert('Data Nilai Gagal Disimpan.');
+                    }
+                    $(this).loadingProgress('stop');
+                }, 'json');
+            } else {
+                $(this).loadingProgress('stop');
+            }
+            
+            error_count = 0;
+        });
+                
+        $('#button_export_mid_score').live('click', function(){
+            var semester = $('#hidden_semester_id').val();
+            window.location =  $(this).attr('link') + '_' + semester;
+        });
+        
+        $('#box-import-mid-score').dialog({
+            title : 'Import Nilai UTS',
+            closeOnEscape: false,
+            autoOpen: false,
+            height: 180,
+            width: 300,
+            modal: true,
+            resizable: false,
+            draggable: true,
+            open : function() {
+                $(this).parent().children().children('.ui-dialog-titlebar-close').hide();
+            }
+        });
+        
+        $('#button_import_mid_score').live('click', function(){
+            $("#box-import-mid-score").dialog( "open" );
+        });
+        
+        $('#form-import-mid-score input[type=button]').live('click', function(){
+            $("#box-import-mid-score").dialog( "close" );
+        });
+        
+        $('#form-import-mid-score').live('submit',function(){
+            disabled_button(true,['#form-import-mid-score input[type=button]','#form-import-mid-score input[type=submit]']);
+            $(this).ajaxSubmit({
+                success : function(o) {
+                    disabled_button(false,['#form-import-mid-score input[type=button]','#form-import-mid-score input[type=submit]']);
+                    $("#box-import-mid-score").dialog( "close" );
+                    readMidScore();
+                }
+            });
+            return false;
+        });
+        
+        /* FINAL SCORE */
+        disabled_button(true,['#button_save_final_score','#button_export_final_score','#button_import_final_score']);
+        
+        var readFinalScore = function() {
+            var link = $('#fFilterFinalScore').attr('action');
+            var score_type = $('#score_type_final').val();
+            var subject = $('#hidden_subject_id').val();
+            var period = $('#hidden_period_id').val();
+            var semester = $('#hidden_semester_id').val();
+            var mlc = $('#hidden_mlc').val();
+            
+            $(this).loadingProgress('start');
+            
+            $.post(link, {score_type:score_type, subject:subject, period:period, semester:semester, mlc:mlc}, function (o){
+                $('#list-final-score').children('tbody').attr('count',o.count);
+                $('#list-final-score').children('tbody').html(o.row);
+                
+                $(this).loadingProgress('stop');
+                disabled_button(false,['#button_save_final_score','#button_export_final_score','#button_import_final_score']);
+                if (o.count > 0) {
+                    
+                }
+                
+            }, 'json');
+        };
+        
+        $('#fFilterFinalScore').submit(function(){
+            readFinalScore();
+            return false;
+        });
+        
+        
+        $('#button_save_final_score').live('click', function(){
+            var url = $(this).attr('link');
+            var id = new Array();
+            var val, nis;
+            var score_type = $('#score_type_final').val();
+            var subject = $('#hidden_subject_id').val();
+            var period = $('#hidden_period_id').val();
+            var semester = $('#hidden_semester_id').val();
+            var error_count = 0;
+            var $list;
+            
+            $(this).loadingProgress('start');
+            
+            for (var i = 1 ; i <= $('#list-final-score').children('tbody').attr('count');i++) {
+                $list = $('#list-final-score #score_list_' + i);
+                nis = $list.attr('order');
+                val = $list.val();
+                id[i] = [nis,val];
+                if ( parseInt(val) >= 0 && parseInt(val) <= 100) {
+                    $list.css('border','1px solid #ccc');
+                } else {
+                    $list.css('border','1px solid red');
+                    error_count++;
+                }
+            }
+                
+            if (error_count == 0) {
+                $.post(url, {score_type:score_type, subject:subject, period:period, semester:semester, data:id}, function(o){
+                    if (o) {
+                        alert('Data Nilai Telah Disimpan.');
+                    } else {
+                        alert('Data Nilai Gagal Disimpan.');
+                    }
+                    $(this).loadingProgress('stop');
+                }, 'json');
+            } else {
+                $(this).loadingProgress('stop');
+            }
+            
+            error_count = 0;
+        });
+        
+        $('#button_export_final_score').live('click', function(){
+            var score_type = $('#score_type_final').val();
+            var semester = $('#score_type_final').val();
+            window.location =  $(this).attr('link') + '_' + semester + '_' + score_type;
+        });
+        
+        $('#box-import-final-score').dialog({
+            title : 'Import Nilai ULUM',
+            closeOnEscape: false,
+            autoOpen: false,
+            height: 180,
+            width: 300,
+            modal: true,
+            resizable: false,
+            draggable: true,
+            open : function() {
+                $(this).parent().children().children('.ui-dialog-titlebar-close').hide();
+            }
+        });
+        
+        $('#button_import_final_score').live('click', function(){
+            $("#box-import-final-score").dialog( "open" );
+        });
+        
+        $('#form-import-final-score input[type=button]').live('click', function(){
+            $("#box-import-final-score").dialog( "close" );
+        });
+        
+        $('#form-import-final-score').live('submit',function(){
+            disabled_button(true,['#form-import-final-score input[type=button]','#form-import-final-score input[type=submit]']);
+            $(this).ajaxSubmit({
+                success : function(o) {
+                    disabled_button(false,['#form-import-final-score input[type=button]','#form-import-final-score input[type=submit]']);
+                    $("#box-import-final-score").dialog( "close" );
+                    readFinalScore();
                 }
             });
             return false;
