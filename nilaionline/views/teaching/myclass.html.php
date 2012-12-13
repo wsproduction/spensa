@@ -40,7 +40,14 @@
             <tr>
                 <td><b>Mata Pelajaran</b></td>
                 <td><b>:</b></td>
-                <td><?php echo $class_info['subject_name']; ?></td>
+                <td>
+                    <?php 
+                    Form::create('hidden', 'hidden_subject_id');
+                    Form::value($class_info['subject_id']);
+                    Form::commit();
+                    echo $class_info['subject_name']; 
+                    ?>
+                </td>
             </tr>
             <tr>
                 <td><b>KKM</b></td>
@@ -271,11 +278,11 @@
                             <?php
                             Form::create('button', 'button_save_attitude_score');
                             Form::value('Simpan');
-                            Form::properties(array('link' => $link_save_task_score));
+                            Form::properties(array('link' => $link_save_attitude_score));
                             Form::commit();
                             echo ' | ';
                             Form::create('button', 'button_export_attitude_score');
-                            Form::properties(array('link' => $link_export_taskscore));
+                            Form::properties(array('link' => $link_export_attitudescore));
                             Form::value('Export');
                             Form::commit();
                             echo ' ';
@@ -354,6 +361,35 @@
 <div id="box-import-task-score">
     <?php
     Form::begin('form-import-task-score', 'teaching/importtaskscore', 'post', true);
+    ?>
+    <div>File Nilai :</div>
+    <div>
+        <?php
+        Form::create('file', 'file');
+        Form::validation()->requaired();
+        Form::validation()->accept('xls');
+        Form::commit();
+        ?>
+    </div>
+    <div style="margin: 5px 0;">
+        <?php
+        Form::create('submit');
+        Form::value('Upload');
+        Form::commit();
+        echo ' ';
+        Form::create('button');
+        Form::value('Tutup');
+        Form::commit();
+        ?>
+    </div>
+    <?php
+    Form::end();
+    ?>
+</div>
+
+<div id="box-import-attitude-score">
+    <?php
+    Form::begin('form-import-attitude-score', 'teaching/importattitudescore', 'post', true);
     ?>
     <div>File Nilai :</div>
     <div>
@@ -581,7 +617,6 @@
             disabled_button(true,['#button_save_task_score','#button_export_task_score','#button_import_task_score']);
         });
         
-        
         $('#button_save_task_score').live('click', function(){
             var url = $(this).attr('link');
             var id = new Array();
@@ -665,13 +700,14 @@
         
         var readAttitudeScore = function() {
             var link = $('#fFilterAttitudeScore').attr('action');
+            var subject = $('#hidden_subject_id').val();
             var period = $('#hidden_period_id').val();
             var semester = $('#hidden_semester_id').val();
             var mlc = $('#hidden_mlc').val();
             
             $(this).loadingProgress('start');
             
-            $.post(link, {period:period, semester:semester, mlc:mlc}, function (o){
+            $.post(link, {subject:subject, period:period, semester:semester, mlc:mlc}, function (o){
                 $('#list-attitude-score').children('tbody').attr('count',o.count);
                 $('#list-attitude-score').children('tbody').html(o.row);
                 
@@ -686,6 +722,87 @@
         
         $('#fFilterAttitudeScore').submit(function(){
             readAttitudeScore();
+            return false;
+        });
+        
+        $('#button_save_attitude_score').live('click', function(){
+            var url = $(this).attr('link');
+            var id = new Array();
+            var val, nis;
+            var subject = $('#hidden_subject_id').val();
+            var period = $('#hidden_period_id').val();
+            var semester = $('#hidden_semester_id').val();
+            var error_count = 0;
+            var $list;
+            
+            $(this).loadingProgress('start');
+            
+            for (var i = 1 ; i <= $('#list-attitude-score').children('tbody').attr('count');i++) {
+                $list = $('#list-attitude-score #score_list_' + i);
+                nis = $list.attr('order');
+                val = $list.val();
+                id[i] = [nis,val];
+                if ( parseInt(val) >= 0 && parseInt(val) <= 100) {
+                    $list.css('border','1px solid #ccc');
+                } else {
+                    $list.css('border','1px solid red');
+                    error_count++;
+                }
+            }
+                
+            if (error_count == 0) {
+                $.post(url, {subject:subject, period:period, semester:semester, data:id}, function(o){
+                    if (o) {
+                        alert('Data Nilai Telah Disimpan.');
+                    } else {
+                        alert('Data Nilai Gagal Disimpan.');
+                    }
+                    $(this).loadingProgress('stop');
+                }, 'json');
+            } else {
+                $(this).loadingProgress('stop');
+            }
+            
+            error_count = 0;
+        });
+        
+        $('#button_export_attitude_score').live('click', function(){
+            var semester = $('#hidden_semester_id').val();
+            window.location =  $(this).attr('link') + '_' + semester;
+        });
+        
+        
+        $('#box-import-attitude-score').dialog({
+            title : 'Import Nilai Sikap',
+            closeOnEscape: false,
+            autoOpen: false,
+            height: 180,
+            width: 300,
+            modal: true,
+            resizable: false,
+            draggable: true,
+            open : function() {
+                $(this).parent().children().children('.ui-dialog-titlebar-close').hide();
+            }
+        });
+        
+        $('#button_import_attitude_score').live('click', function(){
+            $("#box-import-attitude-score").dialog( "open" );
+        });
+        
+        $('#form-import-attitude-score input[type=button]').live('click', function(){
+            $("#box-import-attitude-score").dialog( "close" );
+        });
+        
+        $('#form-import-attitude-score').live('submit',function(){
+            disabled_button(true,['#form-import-attitude-score input[type=button]','#form-import-attitude-score input[type=submit]']);
+            $(this).ajaxSubmit({
+                success : function(o) {
+                    disabled_button(false,['#form-import-attitude-score input[type=button]','#form-import-attitude-score input[type=submit]']);
+                    $("#box-import-attitude-score").dialog( "close" );
+                    readAttitudeScore();
+                }
+            });
             return false;
         });
         

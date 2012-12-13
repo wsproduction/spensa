@@ -43,6 +43,10 @@ class Teaching extends Controller {
             $this->view->link_export_taskscore = $this->content->setLink('teaching/exporttaskscore/' . $teachingid);
             $this->view->link_save_task_score = $this->content->setLink('teaching/savetaskscore');
 
+            // Attitude Score
+            $this->view->link_export_attitudescore = $this->content->setLink('teaching/exportattitudescore/' . $teachingid);
+            $this->view->link_save_attitude_score = $this->content->setLink('teaching/saveattitudescore');
+
             $this->view->render('teaching/myclass');
         } else {
             $this->view->render('teaching/404');
@@ -126,6 +130,26 @@ class Teaching extends Controller {
                     $this->model->updateTaskScore($data['score_task_id'], $row[1]);
                 } else {
                     $this->model->saveTaskScore($row[0], $row[1], $task_description);
+                }
+            }
+        }
+    }
+
+    public function saveAttitudeScore() {
+        if (isset($_POST['data'])) {
+            $data = $_POST['data'];
+
+            $subject_id = $this->method->post('subject');
+            $period_id = $this->method->post('period');
+            $semester_id = $this->method->post('semester');
+
+            foreach ($data as $row) {
+                $score_list = $this->model->selectAttitudeSocoreByScoreFilter($row[0], $subject_id, $period_id, $semester_id);
+                if ($score_list) {
+                    $data = $score_list[0];
+                    $this->model->updateAttitudeScore($data['score_attitude_id'], $row[1]);
+                } else {
+                    $this->model->saveAttitudeScore($row[0], $row[1], $subject_id, $period_id, $semester_id);
                 }
             }
         }
@@ -215,13 +239,12 @@ class Teaching extends Controller {
         }
         echo json_encode(array('count' => $no - 1, 'row' => $html_list));
     }
-    
-    
+
     public function readAttitudeScore($class_group_id) {
 
+        $subject = $this->method->post('subject');
         $period = $this->method->post('period');
         $semester = $this->method->post('semester');
-        $task_description = $this->method->post('task_description');
         $mlc = $this->method->post('mlc');
 
         $student_list = $this->model->selectStudentByClassGroupId($class_group_id);
@@ -229,11 +252,11 @@ class Teaching extends Controller {
         $no = 1;
         foreach ($student_list as $row) {
 
-            $score_list = $this->model->selectTaskSocoreByScoreFilter($row['student_nis'], $period, $semester, $task_description);
+            $score_list = $this->model->selectAttitudeSocoreByScoreFilter($row['student_nis'], $subject, $period, $semester);
             $score = '';
             if ($score_list) {
                 $data = $score_list[0];
-                $score = $data['score_task_value'];
+                $score = $data['score_attitude_value'];
             }
 
             $desc = '-';
@@ -373,7 +396,7 @@ class Teaching extends Controller {
 
             // Redirect output to a client’s web browser (Excel5)
             header('Content-Type: application/vnd.ms-excel');
-            header('Content-Disposition: attachment;filename="NILAI_HARIAN-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $semester_info['semester_id'] . '-'. $class_info['grade_title'] . $class_info['classroom_name'] . '.xls"');
+            header('Content-Disposition: attachment;filename="NILAI_HARIAN-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $semester_info['semester_id'] . '-' . $class_info['grade_title'] . $class_info['classroom_name'] . '.xls"');
             header('Cache-Control: max-age=0');
 
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
@@ -495,6 +518,125 @@ class Teaching extends Controller {
             // Redirect output to a client’s web browser (Excel5)
             header('Content-Type: application/vnd.ms-excel');
             header('Content-Disposition: attachment;filename="NILAI_TUGAS-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $semester_info['semester_id'] . '-' . $class_info['grade_title'] . $class_info['classroom_name'] . '.xls"');
+            header('Cache-Control: max-age=0');
+
+            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+            $objWriter->save('php://output');
+            exit;
+        }
+    }
+
+    public function exportAttitudeScore($id) {
+
+        Session::init();
+        $user_references = Session::get('user_references');
+        list($teachingid, $semester_id) = explode('_', $id);
+
+        $class_list = $this->model->selectClassListByTeachingId($teachingid, $user_references);
+
+        if ($class_list) {
+            $class_info = $class_list[0];
+
+            $semester_list = $this->model->selectSemesterById($semester_id);
+            $semester_info = $semester_list[0];
+
+            Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
+            // Create new PHPExcel object
+            $objPHPExcel = new PHPExcel();
+
+            // Set Active Sheet 1
+            $objPHPExcel->setActiveSheetIndex(0);
+
+            // Defult Border
+            $defaultBorder = array(
+                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                'color' => array('rgb' => '000000')
+            );
+
+            $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
+            $objPHPExcel->getDefaultStyle()->getFont()->setSize(9);
+            $objPHPExcel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+            $objPHPExcel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(15);
+            $objPHPExcel->getActiveSheet()->getProtection()->setSheet(true);
+            $objPHPExcel->getActiveSheet()->getProtection()->setPassword('subangmaju');
+
+            /* BEGIN : Layouting */
+            // Header
+            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(0);
+            $objPHPExcel->getActiveSheet()->setCellValue('B1', 'DAFTAR NILAI TUGAS SISWA');
+            $objPHPExcel->getActiveSheet()->mergeCells('B1:G1');
+            $objPHPExcel->getActiveSheet()->setCellValue('B2', 'SMP NEGERI 1 SUBANG');
+            $objPHPExcel->getActiveSheet()->mergeCells('B2:G2');
+            $objPHPExcel->getActiveSheet()->getStyle('B1:B2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            $objPHPExcel->getActiveSheet()->getStyle('B1:B2')->applyFromArray(array('font' => array('bold' => true)));
+
+            // Document Description
+            $objPHPExcel->getActiveSheet()->setCellValue('A4', $class_info['classgroup_id'])->setCellValue('B4', 'Kelas')->setCellValue('D4', ': ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
+            $objPHPExcel->getActiveSheet()->setCellValue('A5', $class_info['period_id'] . '_' . $semester_info['semester_id'])->setCellValue('B5', 'Tahun Akademik')->setCellValue('D5', ': ' . $class_info['period_years_start'] . '/' . $class_info['period_years_end'] . ' - ' . $semester_info['semester_name']);
+            $objPHPExcel->getActiveSheet()->setCellValue('A6', $class_info['subject_id'])->setCellValue('B6', 'Mata Pelajaran')->setCellValue('D6', ': ' . $class_info['subject_name']);
+            $objPHPExcel->getActiveSheet()->setCellValue('A7', $class_info['mlc_value'])->setCellValue('B7', 'KKM')->setCellValue('D7', ': ' . $class_info['mlc_value']);
+            //$objPHPExcel->getActiveSheet()->setCellValueExplicit('A8', $task_description_id, PHPExcel_Cell_DataType::TYPE_STRING)->setCellValue('B8', 'Keterangan Tugas')->setCellValue('D8', ': ' . $task_description_info['task_description_title']);
+            //$objPHPExcel->getActiveSheet()->setCellValue('A9', $score_type_id)->setCellValue('B9', 'Type')->setCellValue('D9', ': ' . $score_type_info['score_type_symbol'] . ' - ' . $score_type_info['score_type_description']);
+
+            $objPHPExcel->getActiveSheet()->getStyle('B4:B9')->applyFromArray(array('font' => array('bold' => true)));
+
+            // HEADER LIST DATA
+            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(5.43);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10.71);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(13.43);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(43.43);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(7.14);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(13.71);
+            $objPHPExcel->getActiveSheet()->getStyle('B11:G12')->applyFromArray(array('font' => array('bold' => true)));
+            $objPHPExcel->getActiveSheet()->getStyle('B11:G12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            $objPHPExcel->getActiveSheet()->getStyle('B11:G12')->applyFromArray(array('borders' => array('inside' => $defaultBorder, 'outline' => $defaultBorder)));
+
+            $objPHPExcel->getActiveSheet()->setCellValue('B11', 'NOMOR');
+            $objPHPExcel->getActiveSheet()->mergeCells('B11:D11');
+            $objPHPExcel->getActiveSheet()->setCellValue('E11', 'NAMA SISWA');
+            $objPHPExcel->getActiveSheet()->mergeCells('E11:E12');
+            $objPHPExcel->getActiveSheet()->setCellValue('F11', 'NILAI');
+            $objPHPExcel->getActiveSheet()->mergeCells('F11:F12');
+            $objPHPExcel->getActiveSheet()->setCellValue('G11', 'KETERANGAN');
+            $objPHPExcel->getActiveSheet()->mergeCells('G11:G12');
+            $objPHPExcel->getActiveSheet()->setCellValue('B12', 'URUT');
+            $objPHPExcel->getActiveSheet()->setCellValue('C12', 'INDUK');
+            $objPHPExcel->getActiveSheet()->setCellValue('D12', 'NISN');
+
+            // List Data
+            $student_list = $this->model->selectStudentByClassGroupId($class_info['classgroup_id']);
+            $nourut = 0;
+            $rowno = 12;
+            foreach ($student_list as $row) {
+                $nourut++;
+                $rowno++;
+
+                $cell_value = 'F' . $rowno;
+                $score_list = $this->model->selectAttitudeSocoreByScoreFilter($row['student_nis'], $class_info['subject_id'], $class_info['period_id'], $semester_id);
+                $score = '';
+                if ($score_list) {
+                    $data = $score_list[0];
+                    $score = $data['score_attitude_value'];
+                }
+
+                $objPHPExcel->getActiveSheet()->getStyle('D' . $rowno)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
+                $objPHPExcel->getActiveSheet()->setCellValue('B' . $rowno, $nourut)
+                        ->setCellValueExplicit('C' . $rowno, $row['student_nis'], PHPExcel_Cell_DataType::TYPE_STRING)
+                        ->setCellValueExplicit('D' . $rowno, $row['student_nisn'], PHPExcel_Cell_DataType::TYPE_STRING)
+                        ->setCellValue('E' . $rowno, $row['student_name'])
+                        ->setCellValue('F' . $rowno, $score)
+                        ->setCellValue('G' . $rowno, '=IF(ISBLANK(' . $cell_value . '),"-",IF(' . $cell_value . '>A$7,"Terlampaui", IF(' . $cell_value . '=A$7,"Tercapai","Tidak Tercapai")))');
+            }
+
+            $objPHPExcel->getActiveSheet()->setCellValue('A12', $nourut);
+            $objPHPExcel->getActiveSheet()->getStyle('B12' . ':G' . $rowno)->applyFromArray(array('borders' => array('inside' => $defaultBorder, 'outline' => $defaultBorder)));
+            $objPHPExcel->getActiveSheet()->getStyle('B12:D' . $rowno)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            $objPHPExcel->getActiveSheet()->getStyle('F12:G' . $rowno)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            $objPHPExcel->getActiveSheet()->getStyle('F12:F' . $rowno)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+
+            // Redirect output to a client’s web browser (Excel5)
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="NILAI_SIKAP-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $semester_info['semester_id'] . '-' . $class_info['grade_title'] . $class_info['classroom_name'] . '.xls"');
             header('Cache-Control: max-age=0');
 
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
@@ -648,6 +790,59 @@ class Teaching extends Controller {
                         $this->model->updateTaskScore($data['score_task_id'], $score);
                     } else {
                         $this->model->saveTaskScore($nis, $score, $task_description);
+                    }
+
+                    $numrow++;
+                }
+
+                $upload->RemoveFile($inputFileName);
+            }
+        } else {
+            echo 'error';
+        }
+    }
+
+    public function importAttitudeScore() {
+
+        if ($this->method->files('file', 'tmp_name')) {
+            $upload = Src::plugin()->PHPUploader();
+            $upload->SetFileName($this->method->files('file', 'name'));
+            $upload->ChangeFileName('import_' . date('Ymd') . time());
+            $upload->SetTempName($this->method->files('file', 'tmp_name'));
+            $upload->SetUploadDirectory(Web::path() . 'asset/upload/file/');
+            if ($upload->UploadFile()) {
+
+                $inputFileName = Web::path() . 'asset/upload/file/' . $upload->GetFileName();
+                Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
+                $objReader = PHPExcel_IOFactory::createReader('Excel5');
+                $objPHPExcel = $objReader->load($inputFileName);
+
+                //echo '<pre>';
+                //echo ' Kelas : ' . $objPHPExcel->getActiveSheet()->getCell('A4')->getValue();
+                //echo ' Tahun Akademik : ' . $objPHPExcel->getActiveSheet()->getCell('A5')->getValue();
+                //echo ' Mata Pelajaran : ' . $objPHPExcel->getActiveSheet()->getCell('A6')->getValue();
+                //echo ' Kompetensi Dasar : ' . $objPHPExcel->getActiveSheet()->getCell('A8')->getValue();
+                //echo ' Type : ' . $objPHPExcel->getActiveSheet()->getCell('A9')->getValue();
+                //echo ' Jumlah Siswa : ' . $objPHPExcel->getActiveSheet()->getCell('A12')->getValue();
+                //echo '</pre>';
+
+                $subject_id = $objPHPExcel->getActiveSheet()->getCell('A6')->getValue();
+                list($period_id, $semester_id) = explode('_', $objPHPExcel->getActiveSheet()->getCell('A5')->getValue());
+                $task_description = $objPHPExcel->getActiveSheet()->getCell('A8')->getValue();
+
+                $count_student = $objPHPExcel->getActiveSheet()->getCell('A12')->getValue();
+                $numrow = 13;
+                for ($i = 1; $i <= $count_student; $i++) {
+                    $nis = $objPHPExcel->getActiveSheet()->getCell('C' . $numrow)->getValue();
+                    $score = $objPHPExcel->getActiveSheet()->getCell('F' . $numrow)->getValue();
+                    //echo '<br>' . $i . '. ' . $nis . ' => ' . $score;
+
+                    $score_list = $this->model->selectAttitudeSocoreByScoreFilter($nis, $subject_id, $period_id, $semester_id);
+                    if ($score_list) {
+                        $data = $score_list[0];
+                        $this->model->updateAttitudeScore($data['score_attitude_id'], $score);
+                    } else {
+                        $this->model->saveAttitudeScore($nis, $score, $subject_id, $period_id, $semester_id);
                     }
 
                     $numrow++;

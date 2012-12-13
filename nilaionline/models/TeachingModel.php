@@ -265,6 +265,33 @@ class TeachingModel extends Model {
         return $sth->fetchAll();
     }
 
+    public function selectAttitudeSocoreByScoreFilter($student_id, $subject, $period, $semester) {
+        $sth = $this->db->prepare('
+                                  SELECT 
+                                    academic_score_attitude.score_attitude_id,
+                                    academic_score_attitude.score_attitude_value,
+                                    academic_score_attitude.score_attitude_student,
+                                    academic_score_attitude.score_attitude_period,
+                                    academic_score_attitude.score_attitude_semester,
+                                    academic_score_attitude.score_attitude_subject,
+                                    academic_score_attitude.score_attitude_entry,
+                                    academic_score_attitude.score_attitude_entry_update
+                                  FROM
+                                    academic_score_attitude
+                                  WHERE
+                                    academic_score_attitude.score_attitude_student IN (' . $student_id . ') AND 
+                                    academic_score_attitude.score_attitude_period = :period AND 
+                                    academic_score_attitude.score_attitude_semester = :semester AND 
+                                    academic_score_attitude.score_attitude_subject = :subject
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':period', $period);
+        $sth->bindValue(':semester', $semester);
+        $sth->bindValue(':subject', $subject);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
     public function saveDailyScore($student_id, $score, $periode, $semester, $base_competence, $score_type) {
         $sth = $this->db->prepare('
                                 INSERT INTO
@@ -322,7 +349,6 @@ class TeachingModel extends Model {
         return $sth->execute();
     }
     
-    
     public function saveTaskScore($student_id, $score, $task_description) {
         $sth = $this->db->prepare('
                                   INSERT INTO
@@ -365,6 +391,60 @@ class TeachingModel extends Model {
                                     score_task_entry_update = NOW()
                                 WHERE
                                     academic_score_task.score_task_id = :scoreid ;
+                          ');
+        $sth->bindValue(':scoreid', $scoreid);
+        $sth->bindValue(':score', $score);
+        return $sth->execute();
+    }
+    
+    public function saveAttitudeScore($student_id, $score, $subject_id, $peiod_id, $semester_id) {
+        $sth = $this->db->prepare('
+                                INSERT INTO
+                                    academic_score_attitude(
+                                    score_attitude_id,
+                                    score_attitude_value,
+                                    score_attitude_student,
+                                    score_attitude_period,
+                                    score_attitude_semester,
+                                    score_attitude_subject,
+                                    score_attitude_entry,
+                                    score_attitude_entry_update)
+                                  VALUES(
+                                    ( SELECT IF (
+                                        (SELECT COUNT(e.score_attitude_id) FROM academic_score_attitude AS e 
+                                                WHERE e.score_attitude_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
+                                                ORDER BY e.score_attitude_id DESC LIMIT 1
+                                        ) > 0,
+                                        (SELECT ( e.score_attitude_id + 1 ) FROM academic_score_attitude AS e 
+                                                WHERE e.score_attitude_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
+                                                ORDER BY e.score_attitude_id DESC LIMIT 1),
+                                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"0001")))
+                                    ),
+                                    :score,
+                                    :student_id,
+                                    :period_id,
+                                    :semester_id,
+                                    :subject_id,
+                                    NOW(),
+                                    NOW());
+                          ');
+        $sth->bindValue(':student_id', $student_id);
+        $sth->bindValue(':score', $score);
+        $sth->bindValue(':period_id', $peiod_id);
+        $sth->bindValue(':semester_id', $semester_id);
+        $sth->bindValue(':subject_id', $subject_id);
+        return $sth->execute();
+    }
+    
+    public function updateAttitudeScore($scoreid, $score) {
+        $sth = $this->db->prepare('
+                                UPDATE
+                                    academic_score_attitude
+                                SET
+                                    score_attitude_value = :score,
+                                    score_attitude_entry_update = NOW()
+                                WHERE
+                                    academic_score_attitude.score_attitude_id = :scoreid ;
                           ');
         $sth->bindValue(':scoreid', $scoreid);
         $sth->bindValue(':score', $score);
