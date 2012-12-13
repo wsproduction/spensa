@@ -36,6 +36,7 @@
 <div class="box-static">
     <div class="title"><?php echo Web::getTitle(false); ?></div>
     <div class="description">Berikut adalah daftar mengajar Warman Suaganda Pada Tahun Akademik 2012/2013.</div>
+    <div style="padding: 5px;"><b>&bullet; MATA PELAJARAN</b></div>
     <div>
         <table id="list-teaching" cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching; ?>">
             <thead>
@@ -46,7 +47,57 @@
                     <td style="width: 100px;text-align: center;">Total Mengajar</td>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+                <tr>
+                    <td class="first" colspan="4">
+                        <div class="information-box">
+                            Loading...
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="padding: 5px;"><b>&bullet; PBKL</b></div>
+    <div style="padding: 5px;">
+        <table id="list-teaching-pbkl" style="width: 100%" class="table-list"  cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching_pbkl; ?>">
+            <thead>
+                <tr>
+                    <td class="first" style="width: 50px;text-align: center;">No.</td>
+                    <td>Nama PBKL</td>
+                    <td style="width: 100px;text-align: center;">Total Mengajar</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="first" colspan="3">
+                        <div class="information-box">
+                            Data mengajar tidak ditemukan.
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="padding: 5px;"><b>&bullet; Ekstrakurikuler</b></div>
+    <div style="padding: 5px;">
+        <table id="list-teaching-ekskul" style="width: 100%" class="table-list"  cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching_ekskul; ?>">
+            <thead>
+                <tr>
+                    <td class="first" style="width: 50px;text-align: center;">No.</td>
+                    <td>Nama PBKL</td>
+                    <td style="width: 100px;text-align: center;">Total Mengajar</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="first" colspan="3">
+                        <div class="information-box">
+                            Loading...
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </div>
@@ -71,7 +122,43 @@
             }, 'json');
         };
         
+        var read_pbkl = function() {
+            var link = $('#list-teaching-pbkl').attr('link_r');       
+            var period = $('#hidden_option_period').val();
+            
+            var period_split = period.split('_');
+            
+            $(this).loadingProgress('start');
+            
+            $.post(link, { p : period_split[0],  s : period_split[1]}, function (o){
+                $('#list-teaching-pbkl').children('tbody').attr('count',o['count']);
+                $('#list-teaching-pbkl').children('tbody').html(o['row']);
+                
+                $(this).loadingProgress('stop');
+                
+            }, 'json');
+        };
+        
+        var read_eksul = function() {
+            var link = $('#list-teaching-ekskul').attr('link_r');       
+            var period = $('#hidden_option_period').val();
+            
+            var period_split = period.split('_');
+            
+            $(this).loadingProgress('start');
+            
+            $.post(link, { p : period_split[0],  s : period_split[1]}, function (o){
+                $('#list-teaching-ekskul').children('tbody').attr('count',o['count']);
+                $('#list-teaching-ekskul').children('tbody').html(o['row']);
+                
+                $(this).loadingProgress('stop');
+                
+            }, 'json');
+        };
+        
         read_teaching();
+        /* read_pbkl(); */
+        read_eksul();
         
         /* Checkbox Period */
         $('#cb-period').live('click',function(){
@@ -94,6 +181,7 @@
             
             if (newid != oldid) {
                 read_teaching();
+                read_eksul();
             }
             
             return false;

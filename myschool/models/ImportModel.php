@@ -5,7 +5,7 @@ class ImportModel extends Model {
     public function __construct() {
         parent::__construct();
     }
-    
+
     public function saveStudent($data) {
         $sth = $this->db->prepare('
                                 INSERT INTO
@@ -74,37 +74,37 @@ class ImportModel extends Model {
                                         NOW(),
                                         1);
                             ');
-        $sth->bindValue(':nis', $data['nis']);      
-        $sth->bindValue(':name', $data['name']);      
-        $sth->bindValue(':gender', $data['gender']);      
-        $sth->bindValue(':nisn', $data['nisn']);      
-        $sth->bindValue(':nik', $data['nik']);      
-        $sth->bindValue(':birthplace', $data['birthplace']);      
-        $sth->bindValue(':birthdate', $data['birthdate']);      
-        $sth->bindValue(':religion', $data['religion']);      
-        $sth->bindValue(':religionother', $data['religionother']); 
-        $sth->bindValue(':residance', $data['residance']);      
-        $sth->bindValue(':residance', $data['residance']);      
-        $sth->bindValue(':residanceother', $data['residanceother']);      
-        $sth->bindValue(':address', $data['address']);      
-        $sth->bindValue(':rt', $data['rt']);      
-        $sth->bindValue(':rw', $data['rw']);      
-        $sth->bindValue(':village', $data['village']);      
-        $sth->bindValue(':subdisctrict', $data['subdisctrict']);      
-        $sth->bindValue(':city', $data['city']);      
-        $sth->bindValue(':zipcode', $data['zipcode']);      
-        $sth->bindValue(':distance', $data['distance']);      
-        $sth->bindValue(':distanceother', $data['distanceother']);      
-        $sth->bindValue(':transportation', $data['transportation']);      
-        $sth->bindValue(':phonenumber1', $data['phonenumber1']);      
-        $sth->bindValue(':phonenumber2', $data['phonenumber2']);      
-        $sth->bindValue(':email', $data['email']);      
-        $sth->bindValue(':height', $data['height']);      
-        $sth->bindValue(':weight', $data['weight']);      
-        $sth->bindValue(':specialneeds', $data['specialneeds']);      
+        $sth->bindValue(':nis', $data['nis']);
+        $sth->bindValue(':name', $data['name']);
+        $sth->bindValue(':gender', $data['gender']);
+        $sth->bindValue(':nisn', $data['nisn']);
+        $sth->bindValue(':nik', $data['nik']);
+        $sth->bindValue(':birthplace', $data['birthplace']);
+        $sth->bindValue(':birthdate', $data['birthdate']);
+        $sth->bindValue(':religion', $data['religion']);
+        $sth->bindValue(':religionother', $data['religionother']);
+        $sth->bindValue(':residance', $data['residance']);
+        $sth->bindValue(':residance', $data['residance']);
+        $sth->bindValue(':residanceother', $data['residanceother']);
+        $sth->bindValue(':address', $data['address']);
+        $sth->bindValue(':rt', $data['rt']);
+        $sth->bindValue(':rw', $data['rw']);
+        $sth->bindValue(':village', $data['village']);
+        $sth->bindValue(':subdisctrict', $data['subdisctrict']);
+        $sth->bindValue(':city', $data['city']);
+        $sth->bindValue(':zipcode', $data['zipcode']);
+        $sth->bindValue(':distance', $data['distance']);
+        $sth->bindValue(':distanceother', $data['distanceother']);
+        $sth->bindValue(':transportation', $data['transportation']);
+        $sth->bindValue(':phonenumber1', $data['phonenumber1']);
+        $sth->bindValue(':phonenumber2', $data['phonenumber2']);
+        $sth->bindValue(':email', $data['email']);
+        $sth->bindValue(':height', $data['height']);
+        $sth->bindValue(':weight', $data['weight']);
+        $sth->bindValue(':specialneeds', $data['specialneeds']);
         return $sth->execute();
     }
-    
+
     public function saveEmployees($data) {
         $sth = $this->db->prepare('
                                 INSERT INTO
@@ -182,37 +182,116 @@ class ImportModel extends Model {
                                         NOW(),
                                         NOW());
                             ');
-        $sth->bindValue(':nik', $data['nik']);    
-        $sth->bindValue(':nip', $data['nip']);    
-        $sth->bindValue(':nuptk', $data['nuptk']);    
-        $sth->bindValue(':name', $data['name']);    
-        $sth->bindValue(':gender', $data['gender']);    
-        $sth->bindValue(':birthplace', $data['birthplace']);    
-        $sth->bindValue(':birthdate', $data['birthdate']);    
-        $sth->bindValue(':religion', $data['religion']);    
-        $sth->bindValue(':religionother', $data['religionother']);    
-        $sth->bindValue(':address', $data['address']);    
-        $sth->bindValue(':rt', $data['rt']);    
-        $sth->bindValue(':rw', $data['rw']);    
-        $sth->bindValue(':village', $data['village']);    
-        $sth->bindValue(':subdisctrict', $data['subdisctrict']);    
-        $sth->bindValue(':city', $data['city']);    
-        $sth->bindValue(':zipcode', $data['zipcode']);    
-        $sth->bindValue(':transportation', $data['transportation']);    
-        $sth->bindValue(':distance', $data['distance']);    
-        $sth->bindValue(':distanceother', $data['distanceother']);    
-        $sth->bindValue(':phone1', $data['phone1']);    
-        $sth->bindValue(':phone2', $data['phone2']);    
-        $sth->bindValue(':email', $data['email']);    
-        $sth->bindValue(':photo', $data['photo']);    
-        $sth->bindValue(':desc', $data['desc']);    
-        $sth->bindValue(':marriage_status', $data['marriage_status']);    
-        $sth->bindValue(':total_children', $data['total_children']);    
-        $sth->bindValue(':mother_name', $data['mother_name']);    
-        $sth->bindValue(':status', $data['status']);    
+        $sth->bindValue(':nik', $data['nik']);
+        $sth->bindValue(':nip', $data['nip']);
+        $sth->bindValue(':nuptk', $data['nuptk']);
+        $sth->bindValue(':name', $data['name']);
+        $sth->bindValue(':gender', $data['gender']);
+        $sth->bindValue(':birthplace', $data['birthplace']);
+        $sth->bindValue(':birthdate', $data['birthdate']);
+        $sth->bindValue(':religion', $data['religion']);
+        $sth->bindValue(':religionother', $data['religionother']);
+        $sth->bindValue(':address', $data['address']);
+        $sth->bindValue(':rt', $data['rt']);
+        $sth->bindValue(':rw', $data['rw']);
+        $sth->bindValue(':village', $data['village']);
+        $sth->bindValue(':subdisctrict', $data['subdisctrict']);
+        $sth->bindValue(':city', $data['city']);
+        $sth->bindValue(':zipcode', $data['zipcode']);
+        $sth->bindValue(':transportation', $data['transportation']);
+        $sth->bindValue(':distance', $data['distance']);
+        $sth->bindValue(':distanceother', $data['distanceother']);
+        $sth->bindValue(':phone1', $data['phone1']);
+        $sth->bindValue(':phone2', $data['phone2']);
+        $sth->bindValue(':email', $data['email']);
+        $sth->bindValue(':photo', $data['photo']);
+        $sth->bindValue(':desc', $data['desc']);
+        $sth->bindValue(':marriage_status', $data['marriage_status']);
+        $sth->bindValue(':total_children', $data['total_children']);
+        $sth->bindValue(':mother_name', $data['mother_name']);
+        $sth->bindValue(':status', $data['status']);
+        return $sth->execute();
+    }
+
+    public function saveAccount($data) {
+        $sth = $this->db->prepare('
+                                INSERT INTO
+                                    myschool_user(
+                                    user_id,
+                                    user_references,
+                                    user_name,
+                                    user_password,
+                                    user_about,
+                                    user_photo_profile,
+                                    user_isa,
+                                    user_entry,
+                                    user_update,
+                                    user_status)
+                                  VALUES(
+                                    ( SELECT IF (
+                                        (SELECT COUNT(e.user_id) FROM myschool_user AS e 
+                                                WHERE e.user_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
+                                                ORDER BY e.user_id DESC LIMIT 1
+                                        ) > 0,
+                                        (SELECT ( e.user_id + 1 ) FROM myschool_user AS e 
+                                                WHERE e.user_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
+                                                ORDER BY e.user_id DESC LIMIT 1),
+                                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"0000001")))
+                                    ),
+                                    :references,
+                                    :username,
+                                    PASSWORD(:password),
+                                    NULL,
+                                    "default-thumbnail.png",
+                                    2,
+                                    NOW(),
+                                    NOW(),
+                                    1);
+                            ');
+        
+        $sth->bindValue(':references', $data['references']);
+        $sth->bindValue(':username', $data['username']);
+        $sth->bindValue(':password', $data['password']);
         return $sth->execute();
     }
     
+    public function saveMlc($data) {
+        $sth = $this->db->prepare('
+                                INSERT INTO
+                                    academic_mlc(
+                                    mlc_id,
+                                    mlc_subject,
+                                    mlc_period,
+                                    mlc_grade,
+                                    mlc_value,
+                                    mlc_entry,
+                                    mlc_entry_update)
+                                  VALUES(
+                                    ( SELECT IF (
+                                        (SELECT COUNT(e.mlc_id) FROM academic_mlc AS e 
+                                                WHERE e.mlc_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m"),"%")) 
+                                                ORDER BY e.mlc_id DESC LIMIT 1
+                                        ) > 0,
+                                        (SELECT ( e.mlc_id + 1 ) FROM academic_mlc AS e 
+                                                WHERE e.mlc_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m"),"%")) 
+                                                ORDER BY e.mlc_id DESC LIMIT 1),
+                                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m"),"0001")))
+                                    ),
+                                    :subject,
+                                    :period,
+                                    :grade,
+                                    :value,
+                                    NOW(),
+                                    NOW());
+                            ');
+        
+        $sth->bindValue(':subject', $data['subject']);
+        $sth->bindValue(':period', $data['period']);
+        $sth->bindValue(':grade', $data['grade']);
+        $sth->bindValue(':value', $data['value']);
+        return $sth->execute();
+    }
+
     public function saveClassGroup($data) {
         $sth = $this->db->prepare('
                                 INSERT INTO
@@ -238,13 +317,13 @@ class ImportModel extends Model {
                                     NOW(),
                                     NOW());
                             ');
-        $sth->bindValue(':nis', $data['nis']);    
-        $sth->bindValue(':class_group', $data['class_group']);    
+        $sth->bindValue(':nis', $data['nis']);
+        $sth->bindValue(':class_group', $data['class_group']);
         $sth->bindValue(':status', $data['status']);
-        
+
         return $sth->execute();
     }
-    
+
     public function selectAllClassHistory() {
         $sth = $this->db->prepare('
                                 SELECT 
@@ -256,12 +335,12 @@ class ImportModel extends Model {
                                     academic_classhistory.classhistory_entry_update
                                 FROM
                                     academic_classhistory
-                            ');        
+                            ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function updateClassHistory($newid, $oldid) {
         $sth = $this->db->prepare('
                                 UPDATE
@@ -270,10 +349,10 @@ class ImportModel extends Model {
                                     classhistory_id = :newid
                                 WHERE
                                     academic_classhistory.classhistory_id = :oldid
-                            ');        
-        $sth->bindValue(':newid' , $newid);
-        $sth->bindValue(':oldid' , $oldid);
+                            ');
+        $sth->bindValue(':newid', $newid);
+        $sth->bindValue(':oldid', $oldid);
         return $sth->execute();
     }
-    
+
 }

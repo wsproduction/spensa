@@ -414,7 +414,7 @@ class Import extends Controller {
     
     public function importTest() {
         $inputFileType = 'Excel5';
-        $inputFileName = Web::path() . 'asset/upload/file/formula.xls';
+        $inputFileName = Web::path() . 'asset/upload/file/mlc.xls';
 
         if (file_exists($inputFileName)) {
 
@@ -437,15 +437,10 @@ class Import extends Controller {
             
             $html = '<table border=1>';
             $html .= '<tr>';
-            $html .= '<td>NO</td>';
-            $html .= '<td>X</td>';
-            $html .= '<td>Y</td>';
-            $html .= '<td>JUMLAH</td>';
-            $html .= '<td>Rata-Rata</td>';
-            $html .= '<td>Max</td>';
-            $html .= '<td>Kurangi</td>';
-            $html .= '<td>LookUp</td>';
-            $html .= '<td>Percabangan</td>';
+            $html .= '<td>ID</td>';
+            $html .= '<td>NAMA</td>';
+            $html .= '<td>USERNAME</td>';
+            $html .= '<td>PASSWORD</td>';
             $html .= '</tr>';
             foreach ($sheetData as $key => $row) {
                 $html .= '<tr>';
@@ -454,13 +449,14 @@ class Import extends Controller {
                 $html .= '<td>' . $row['B'] . '</td>';
                 $html .= '<td>' . $row['C'] . '</td>';
                 $html .= '<td>' . $row['D'] . '</td>';
-                $html .= '<td>' . $row['E'] . '</td>';
-                $html .= '<td>' . $row['F'] . '</td>';
-                $html .= '<td>' . $row['G'] . '</td>';
-                $html .= '<td>' . $row['H'] . '</td>';
-                $html .= '<td>' . $row['I'] . '</td>';
 
                 $html .= '</tr>';
+                
+                $data['subject'] = $row['A'];
+                $data['period'] = $row['D'];
+                $data['grade'] = $row['E'];
+                $data['value'] = $row['C'];
+                $this->model->saveMlc($data);
             }
             $html .= '</table>';
             echo $html;

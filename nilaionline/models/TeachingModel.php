@@ -37,6 +37,33 @@ class TeachingModel extends Model {
         return $sth->fetchAll();
     }
 
+    public function selectTeachingEkskul($teacher_id, $periodid) {
+        $sth = $this->db->prepare('
+                                SELECT 
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_id,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_name,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_period,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_totaltime,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_entry,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_entry_update,
+                                    academic_extracurricular.extracurricular_name,
+                                    academic_extracurricular.extracurricular_id
+                                  FROM
+                                    academic_extracurricular_coach_history
+                                    INNER JOIN academic_extracurricular ON (academic_extracurricular_coach_history.extracurricular_coach_history_field = academic_extracurricular.extracurricular_id)
+                                  WHERE
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_period = :periodid AND 
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_name = :teacherid
+                          ');
+
+        $sth->bindValue(':teacherid', $teacher_id);
+        $sth->bindValue(':periodid', $periodid);
+
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
     public function selectAllSemester() {
         $sth = $this->db->prepare('
                             SELECT 
@@ -91,6 +118,35 @@ class TeachingModel extends Model {
                                 WHERE
                                     academic_teaching.teaching_id = :teachingid AND
                                     academic_teaching.teaching_teacher = :user_references
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':teachingid', $teachingid);
+        $sth->bindValue(':user_references', $user_references);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectClassEkskulListByTeachingId($teachingid, $user_references) {
+        $sth = $this->db->prepare('
+                                SELECT 
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_id,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_name,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_period,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_totaltime,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_entry,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_entry_update,
+                                    academic_extracurricular.extracurricular_name,
+                                    academic_extracurricular.extracurricular_id,
+                                    academic_period.period_id,
+                                    academic_period.period_years_start,
+                                    academic_period.period_years_end
+                                  FROM
+                                    academic_extracurricular_coach_history
+                                    INNER JOIN academic_extracurricular ON (academic_extracurricular_coach_history.extracurricular_coach_history_field = academic_extracurricular.extracurricular_id)
+                                    INNER JOIN academic_period ON (academic_extracurricular_coach_history.extracurricular_coach_history_period = academic_period.period_id)
+                                  WHERE
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_id = :teachingid AND
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_name = :user_references
                           ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':teachingid', $teachingid);
@@ -673,6 +729,26 @@ class TeachingModel extends Model {
                           ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':semester_id', $semester_id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectClassGroupByPeriodId($period_id) {
+        $sth = $this->db->prepare('
+                                  SELECT 
+                                    academic_grade.grade_title,
+                                    academic_classroom.classroom_name,
+                                    academic_classgroup.classgroup_id,
+                                    academic_grade.grade_name
+                                  FROM
+                                    academic_classgroup
+                                    INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
+                                    INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
+                                  WHERE
+                                    academic_classgroup.classgroup_period = :period_id
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':period_id', $period_id);
         $sth->execute();
         return $sth->fetchAll();
     }

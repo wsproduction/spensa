@@ -10,6 +10,8 @@ class Teaching extends Controller {
         Web::setTitle('Tugas Mengajar');
         $this->view->option_period = $this->optionPeriod();
         $this->view->link_r_teaching = $this->content->setLink('teaching/readteaching');
+        $this->view->link_r_teaching_pbkl = $this->content->setLink('teaching/readteachingpbkl');
+        $this->view->link_r_teaching_ekskul = $this->content->setLink('teaching/readteachingekskul');
         $this->view->render('teaching/index');
     }
 
@@ -59,6 +61,41 @@ class Teaching extends Controller {
         } else {
             $this->view->render('teaching/404');
         }
+    }
+
+    public function myclassekskul($statusid = 0) {
+
+        Session::init();
+        $user_references = Session::get('user_references');
+
+        $teachingid = substr($statusid, 1);
+        $semesterid = substr($statusid, 0, 1);
+
+        $class_list = $this->model->selectClassEkskulListByTeachingId($teachingid, $user_references);
+        $semester_list = $this->model->selectSemesterById($semesterid);
+        if ($class_list) {
+            $class_info = $class_list[0];
+            $this->view->class_info = $class_info;
+            $semester_info = $semester_list[0];
+            $this->view->semester_info = $semester_info;
+
+            Web::setTitle('Kelas ' . $class_info['extracurricular_name']);
+            
+            $this->view->option_class = $this->optionClass($class_info['period_id']);
+
+            $this->view->render('teaching/myclassekskul');
+        } else {
+            $this->view->render('teaching/404');
+        }
+    }
+    
+    public function optionClass($period_id) {
+        $option = array();
+        $class = $this->model->selectClassGroupByPeriodId($period_id);
+        foreach ($class as $row) {
+            $option[$row['classgroup_id']] = $row['grade_title'] . ' (' . $row['grade_name'] . ') ' . $row['classroom_name'];
+        }
+        return $option;
     }
 
     public function optionPeriod() {
@@ -1019,58 +1056,6 @@ class Teaching extends Controller {
         }
     }
 
-    public function readteaching() {
-        Session::init();
-        $teacher_id = Session::get('user_references');
-
-        $periodid = $this->method->post('p');
-        $semesterid = $this->method->post('s');
-
-        $myteaching = $this->model->selectTeaching($teacher_id, $periodid);
-        $teaching_list = '';
-        $idx = 1;
-
-        if ($myteaching) {
-            foreach ($myteaching as $row) {
-                $teaching_list .= '<tr>';
-                $teaching_list .= '
-                    <td valign="top" class="first" align="center">' . $idx . '</td>
-                    <td valign="top">
-                        <div class="class-title">' . $row['subject_name'] . '</div>
-                        <div class="link">
-                            <a href="#">6 Kompetensi Dasar</a> &bullet; <a href="#">7 Tugas</a> &bullet; <a href="teaching/myclass/' . $semesterid . $row['teaching_id'] . '" class="go-to-class">Masuk Kelas</a>
-                        </div>
-                    </td>';
-
-                $teaching_list .= '
-                    <td valign="top">
-                        <div class="class-title">' . $row['grade_title'] . ' (' . $row['grade_name'] . ') ' . $row['classroom_name'] . ' </div>
-                        <div class="class-description">
-                            <b>Jumlah Siswa : </b> 30 (15 Laki-Laki, 15 Perempuan)
-                        </div>
-                        <div class="class-description">
-                            <b>Wali Kelas : </b> ' . $row['employess_name'] . '
-                        </div>
-                    </td>
-                    <td valign="top" align="center">' . $row['teaching_total_time'] . ' Jam</td>
-                </tr>';
-
-                $idx++;
-            }
-        } else {
-            $teaching_list .= '
-                            <tr>
-                                <td class="first" colspan="4">
-                                    <div class="information-box">
-                                        Data mengajar tidak ditemukan.
-                                    </div>
-                                </td>
-                            </tr>';
-        }
-
-        echo json_encode(array('count' => 1, 'row' => $teaching_list));
-    }
-
     public function importDailyScore() {
 
         if ($this->method->files('file', 'tmp_name')) {
@@ -1334,6 +1319,101 @@ class Teaching extends Controller {
         } else {
             echo 'error';
         }
+    }
+    
+    public function readTeaching() {
+        Session::init();
+        $teacher_id = Session::get('user_references');
+
+        $periodid = $this->method->post('p');
+        $semesterid = $this->method->post('s');
+
+        $myteaching = $this->model->selectTeaching($teacher_id, $periodid);
+        $teaching_list = '';
+        $idx = 1;
+
+        if ($myteaching) {
+            foreach ($myteaching as $row) {
+                $teaching_list .= '<tr>';
+                $teaching_list .= '
+                    <td valign="top" class="first" align="center">' . $idx . '</td>
+                    <td valign="top">
+                        <div class="class-title">' . $row['subject_name'] . '</div>
+                        <div class="link">
+                            <a href="#">6 Kompetensi Dasar</a> &bullet; <a href="#">7 Tugas</a> &bullet; <a href="teaching/myclass/' . $semesterid . $row['teaching_id'] . '" class="go-to-class">Masuk Kelas</a>
+                        </div>
+                    </td>';
+
+                $teaching_list .= '
+                    <td valign="top">
+                        <div class="class-title">' . $row['grade_title'] . ' (' . $row['grade_name'] . ') ' . $row['classroom_name'] . ' </div>
+                        <div class="class-description">
+                            <b>Jumlah Siswa : </b> 30 (15 Laki-Laki, 15 Perempuan)
+                        </div>
+                        <div class="class-description">
+                            <b>Wali Kelas : </b> ' . $row['employess_name'] . '
+                        </div>
+                    </td>
+                    <td valign="top" align="center">' . $row['teaching_total_time'] . ' Jam</td>
+                </tr>';
+
+                $idx++;
+            }
+        } else {
+            $teaching_list .= '
+                            <tr>
+                                <td class="first" colspan="4">
+                                    <div class="information-box">
+                                        Data mengajar tidak ditemukan.
+                                    </div>
+                                </td>
+                            </tr>';
+        }
+
+        echo json_encode(array('count' => 1, 'row' => $teaching_list));
+    }
+    
+    public function readTeachingEkskul() {
+        Session::init();
+        $teacher_id = Session::get('user_references');
+
+        $periodid = $this->method->post('p');
+        $semesterid = $this->method->post('s');
+
+        $myteaching = $this->model->selectTeachingEkskul($teacher_id, $periodid);
+        $teaching_list = '';
+        $idx = 1;
+
+        if ($myteaching) {
+            foreach ($myteaching as $row) {
+                $teaching_list .= '<tr>';
+                $teaching_list .= '
+                    <td valign="top" class="first" align="center">' . $idx . '</td>
+                    <td valign="top">
+                        <div class="class-title">' . $row['extracurricular_name'] . '</div>
+                        <div class="link">
+                            &bullet; <a href="teaching/myclassekskul/' . $semesterid . $row['extracurricular_coach_history_id'] . '" class="go-to-class">Masuk Kelas</a>
+                        </div>
+                    </td>';
+
+                $teaching_list .= '
+                    <td valign="top" align="center">' . $row['extracurricular_coach_history_totaltime'] . ' Jam</td>
+                </tr>';
+
+                $idx++;
+            }
+        } else {
+            $teaching_list .= '
+                            <tr>
+                                <td class="first" colspan="4">
+                                    <div class="information-box">
+                                        Data mengajar tidak ditemukan.
+                                    </div>
+                                </td>
+                            </tr>';
+        }
+
+        echo json_encode(array('count' => 1, 'row' => $teaching_list));
     }
 
 }
