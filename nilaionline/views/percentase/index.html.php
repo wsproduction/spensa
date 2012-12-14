@@ -33,6 +33,30 @@
 
 <div class="hr"></div>
 
+<div class="box-static">
+    <div class="title"><?php echo Web::getTitle(false); ?></div>
+    <div class="description">Berikut adalah daftar persentase nilai : </div>
+    <div style="padding: 5px;">
+        <table id="list-percentase" style="width: 100%" class="table-list" cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_percentase; ?>">
+            <thead>
+                <tr>
+                    <td class="first" style="width: 50px;text-align: center;">No.</td>
+                    <td>Mata Pelajaran</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="first" colspan="2">
+                        <div class="information-box">
+                            Loading...
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <script type="text/javascript">
     $(function(){
         
@@ -60,5 +84,25 @@
             
             return false;
         });
+        
+        var readPercentase = function() {
+            var link = $('#list-percentase').attr('link_r');       
+            var period = $('#hidden_option_period').val();
+            
+            var period_split = period.split('_');
+            
+            $(this).loadingProgress('start');
+            
+            $.post(link, { p : period_split[0],  s : period_split[1]}, function (o){
+                $('#list-percentase').children('tbody').attr('count',o['count']);
+                $('#list-percentase').children('tbody').html(o['row']);
+                
+                $(this).loadingProgress('stop');
+                
+            }, 'json');
+        };
+        
+        /* Auto Load */
+        readPercentase(); 
     });
 </script>
