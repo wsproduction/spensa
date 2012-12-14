@@ -5,7 +5,7 @@ class Index extends Controller {
     public function __construct() {
         parent::__construct();
         $this->content->protection(false);
-        Src::css('style_login');
+        Src::plugin()->jQueryValidation();
     }
 
     public function index() {

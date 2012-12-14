@@ -1,3 +1,11 @@
+/* 
+    Document   : MAIN LAYOUT
+    Created on : Oct 14, 2012, 8:24:40 PM
+    Author     : Warman Suganda
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
 * { padding:0;margin:0;outline:0; }
 body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 11px; }
 .cl { font-size:0;line-height:0;height:0;display:block;clear:both; }
@@ -211,4 +219,266 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
 
 .hr-solid-grey {
     border-top: 1px solid #ccc;
+}
+
+/* 
+    Document   : ICON COLECTION
+    Created on : Oct 14, 2012, 8:24:40 PM
+    Author     : Warman Suganda
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.black16-ic-bag {
+    background: url(../images/black16/bag.png) no-repeat;
+}
+
+.black16-ic-percent {
+    background: url(../images/black16/percent.png) no-repeat;
+}
+
+.black16-ic-home {
+    background: url(../images/black16/home.png) no-repeat;
+}
+
+.black16-ic-cv {
+    background: url(../images/black16/cv.png) no-repeat;
+}
+.orange16-ic-lock {
+    background: url(../images/orange16/lock.png) no-repeat;
+}
+
+.orange16-ic-signout {
+    background: url(../images/orange16/sign-out.png) no-repeat;
+}
+
+.orange16-ic-hireme {
+    background: url(../images/orange16/hire-me.png) no-repeat;
+}
+
+.orange16-ic-lightbulb {
+    background: url(../images/orange16/lightbulb.png) no-repeat;
+}
+
+.orange16-ic-collaboration {
+    background: url(../images/orange16/collaboration.png) no-repeat;
+}
+
+/* 
+    Document   : MENU STYLE
+    Created on : Oct 14, 2012, 8:24:40 PM
+    Author     : Warman Suganda
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+ul.m-left {
+    
+}
+
+ul.m-left li.toggle-on {
+    background: url('../images/down-arrow-grey-on.png') no-repeat;
+    background-position: 210px 16px;
+}
+
+ul.m-left li.toggle-of {
+    background: url('../images/down-arrow-grey-of.png') no-repeat;
+    background-position: 210px 16px;
+}
+
+ul.m-left li a{
+    display: block;
+    padding: 15px 15px 15px 35px;
+    text-decoration: none;
+    color: #32415a;
+    font-weight: bold;
+}
+
+ul.m-left li a.user{
+    background: url('../images/user.png') no-repeat;
+    background-position: 10px center;
+}
+
+ul.m-left li a.apps{
+    background: url('../images/orange16/library.png') no-repeat;
+    background-position: 10px center;
+}
+
+ul.m-left li a.border-bottom{
+    border-color: #eeeeee;
+}
+
+ul.m-left ul {
+    display: none;
+    border-bottom: 1px solid #eeeeee;
+}
+
+ul.m-left ul li{
+    list-style: none;
+    border-left: 1px dashed #ccc;
+    margin: 0 0 0 25px;
+}
+
+ul.m-left ul li a {
+    padding: 15px 15px 15px 12px;
+    background: url('../images/dashed-grey.png') no-repeat;
+    background-position: left center;
+    font-weight: normal;
+}
+
+
+/* 
+    Document   : APLICATION STYLE
+    Created on : Oct 14, 2012, 8:24:40 PM
+    Author     : Warman Suganda
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.apps {
+    margin: 0;
+    padding: 0;
+}
+
+.apps-banner {
+    height: 120px;
+    background-color: #f9f9f9;
+    padding: 15px;
+}
+
+.apps-title {
+    color: #485b79;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;  
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.apps-description {
+    color: #666666;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;  
+    font-size: 11px;
+    margin: 2px 0 0 0;
+}
+
+.apps-menu {
+    background: url('../images/bg-menu-grey.png') repeat-x;
+    border-top: 1px solid #eeeeee;
+}
+
+.apps-menu ul li{
+    list-style: none;
+    float: left;
+    border-right: 1px solid #eeeeee;
+}
+
+.apps-menu ul li a {
+    padding: 10px;
+    text-decoration: none;
+    padding: 9px 20px;
+    display: block;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;  
+    color: #464646;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.apps-menu ul li a.active {
+    background-color: #fff;
+}
+
+.apps-menu ul li a:hover {
+    text-decoration: underline;
+}
+
+.apps-menu ul li.cofig {
+    right: 0;
+    float: right;
+    position: relative;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.apps-menu ul li.cofig div.parent-title {
+    background: url('../images/black16/settings.png') no-repeat;
+    background-position: 6px center;
+    padding: 8px 10px 8px 26px;
+    margin: 0 0 1px 0;
+    cursor: pointer;
+    z-index: 99;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.apps-menu ul li.cofig div.content {
+    right: -1px;
+    position:absolute;
+    border-bottom: 1px solid #c7c7c7;
+    border-left: 1px solid #c7c7c7;
+    border-right: 1px solid #c7c7c7;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    z-index: 999;
+    display: none;
+}
+
+.apps-menu ul li.cofig div.content ul li {
+    width: 99.9%;
+    display: block;
+    border-right: 1px solid #c7c7c7;
+}
+
+.apps-menu ul li.cofig div.content ul li:hover {
+    background-color: #eee;
+}
+
+.apps-menu ul li.cofig div.content a {
+    font-weight: normal;
+    display: block;
+    text-decoration: none;
+    background-position: 4px center;
+    padding-left: 25px;
+}
+
+/* 
+    Document   : LOGIN STYLE
+    Created on : Oct 14, 2012, 8:35:29 PM
+    Author     : ws
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+#form_login input[type=submit] {
+    background: url('../images/bg-btn-blue.png') repeat-x;
+    padding: 5px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid #3079ed;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    opacity:0.8;
+    filter:alpha(opacity=80); /* For IE8 and earlier */
+    cursor: pointer;
+}
+
+#form_login input[type=submit]:hover {
+    opacity:1.0;
+    filter:alpha(opacity=100); /* For IE8 and earlier */
+}
+
+#form_login input[type=text], input[type=password] {
+    padding: 5px;
+}
+
+#form_login .box-login {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+}
+
+#form_login .box-login div {
+    margin: 2px 0;
 }

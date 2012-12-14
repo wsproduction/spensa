@@ -15,7 +15,6 @@ class Apps extends Controller {
 
     public function load($apps_alias = null) {
         
-        Src::css('style_apps');
         Src::plugin()->jQueryAddress();
         Src::plugin()->flexiGrid();
         Src::plugin()->jQueryForm();

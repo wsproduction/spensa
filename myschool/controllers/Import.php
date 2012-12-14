@@ -4,7 +4,6 @@ class Import extends Controller {
 
     public function __construct() {
         parent::__construct();
-        Src::css('style_login');
         $this->content->protection(true);
     }
 
