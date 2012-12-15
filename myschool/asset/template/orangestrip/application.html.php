@@ -31,18 +31,7 @@ $protection = Session::get('login_status');
 
         <script>
             /* jQuery Custom */
-            jQuery.fn.extend({
-                loadingProgress : function(action) {
-                    return this.each(function(){
-                        if (action == 'start') {
-                            $('#loading-progress').slideDown('fast');
-                        } else if (action == 'stop') {
-                            $('#loading-progress').slideUp('fast');
-                        }
-                
-                    });
-                }
-            });
+            eval(function(p,a,c,k,e,r){e=function(c){return c.toString(a)};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('c.9.e({b:2(0){6 7.8(2(){1(0==\'a\'){$(\'#3-4\').d(\'5\')}f 1(0==\'g\'){$(\'#3-4\').h(\'5\')}})}});',18,18,'action|if|function|loading|progress|fast|return|this|each|fn|start|loadingProgress|jQuery|slideDown|extend|else|stop|slideUp'.split('|'),0,{}));
         </script>
     </head>
     <body>
@@ -128,7 +117,7 @@ $protection = Session::get('login_status');
 
         </div> 
 
-        <script type="text/javascript">
+        <script>
             $(function () {
                 var protocol = window.location.protocol;
                 var host = window.location.host;
