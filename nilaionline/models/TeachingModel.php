@@ -6,31 +6,70 @@ class TeachingModel extends Model {
         parent::__construct();
     }
 
-    public function selectTeaching($teacher_id, $periodid) {
+    public function selectTeaching($teacherid, $periodid, $semesterid) {
         $sth = $this->db->prepare('
-                                SELECT
-                                    academic_teaching.teaching_id,
-                                    academic_teaching.teaching_total_time,
+                                  SELECT 
+                                    academic_classgroup.classgroup_id,
                                     academic_subject.subject_id,
                                     academic_subject.subject_name,
+                                    academic_grade.grade_id,
                                     academic_grade.grade_title,
                                     academic_grade.grade_name,
+                                    academic_classroom.classroom_id,
                                     academic_classroom.classroom_name,
-                                    employees.employess_name
-                                FROM
+                                    SUM(academic_teaching.teaching_total_time) AS total_time,
+                                    ( SELECT 
+                                        COUNT(at.teaching_id) AS FIELD_1 
+                                      FROM 
+                                        academic_teaching AS at 
+                                        INNER JOIN academic_classgroup ac ON (at.teaching_classgroup = ac.classgroup_id) 
+                                      WHERE 
+                                        at.teaching_teacher = academic_teaching.teaching_teacher AND 
+                                        at.teaching_period = academic_teaching.teaching_period AND 
+                                        at.teaching_semester = academic_teaching.teaching_semester AND 
+                                        ac.classgroup_grade = academic_grade.grade_id
+                                     ) AS total_class,
+                                    ( SELECT 
+                                        COUNT(academic_task_description.task_description_id) AS FIELD_1 
+                                      FROM 
+                                        academic_task_description 
+                                      WHERE 
+                                        academic_task_description.task_description_subject = academic_teaching.teaching_subject AND 
+                                        academic_task_description.task_description_teacher = academic_teaching.teaching_teacher AND 
+                                        academic_task_description.task_description_period = academic_teaching.teaching_period AND 
+                                        academic_task_description.task_description_semester = academic_teaching.teaching_semester AND 
+                                        academic_task_description.task_description_garde = academic_grade.grade_id
+                                     ) AS total_task,
+                                    ( SELECT 
+                                        COUNT(academic_base_competence.base_competence_id) AS FIELD_1 
+                                      FROM 
+                                        academic_base_competence 
+                                      WHERE 
+                                        academic_base_competence.base_competence_subject = academic_teaching.teaching_subject AND 
+                                        academic_base_competence.base_competence_period = academic_teaching.teaching_period AND 
+                                        academic_base_competence.base_competence_semester = academic_teaching.teaching_semester AND 
+                                        academic_base_competence.base_competence_teacher = academic_teaching.teaching_teacher AND 
+                                        academic_base_competence.base_competence_grade = academic_grade.grade_id
+                                    ) AS count_basecompete
+                                  FROM
                                     academic_subject
                                     INNER JOIN academic_teaching ON (academic_subject.subject_id = academic_teaching.teaching_subject)
+                                    INNER JOIN employees ON (academic_teaching.teaching_teacher = employees.employees_id)
                                     INNER JOIN academic_classgroup ON (academic_teaching.teaching_classgroup = academic_classgroup.classgroup_id)
                                     INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
                                     INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
-                                    INNER JOIN employees ON (academic_classgroup.classgroup_guardian = employees.employees_id)
-                                WHERE
-                                    academic_teaching.teaching_teacher = :teacherid AND
-                                    academic_classgroup.classgroup_period = :periodid
+                                  WHERE
+                                    academic_teaching.teaching_teacher = :teacherid AND 
+                                    academic_teaching.teaching_period = :periodid AND 
+                                    academic_teaching.teaching_semester = :semesterid
+                                  GROUP BY
+                                    academic_subject.subject_name,
+                                    academic_grade.grade_id
                           ');
 
-        $sth->bindValue(':teacherid', $teacher_id);
+        $sth->bindValue(':teacherid', $teacherid);
         $sth->bindValue(':periodid', $periodid);
+        $sth->bindValue(':semesterid', $semesterid);
 
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();

@@ -1328,7 +1328,7 @@ class Teaching extends Controller {
         $periodid = $this->method->post('p');
         $semesterid = $this->method->post('s');
 
-        $myteaching = $this->model->selectTeaching($teacher_id, $periodid);
+        $myteaching = $this->model->selectTeaching($teacher_id, $periodid, $semesterid);
         $teaching_list = '';
         $idx = 1;
 
@@ -1340,21 +1340,15 @@ class Teaching extends Controller {
                     <td valign="top">
                         <div class="class-title">' . $row['subject_name'] . '</div>
                         <div class="link">
-                            <a href="#">6 Kompetensi Dasar</a> &bullet; <a href="#">7 Tugas</a> &bullet; <a href="teaching/myclass/' . $semesterid . $row['teaching_id'] . '" class="go-to-class">Masuk Kelas</a>
+                            <a href="basecompetence/index/' . $row['subject_id'] . '.' . $row['grade_id'] . '.' . $periodid . '.' . $semesterid . '">' . $row['count_basecompete'] . ' Kompetensi Dasar</a> &bullet; <a href="#">' . $row['total_task'] . ' Tugas</a> &bullet; <a href="teaching/myclass/' . $semesterid . '" class="go-to-class">' . $row['total_class'] . ' Daftar Kelas</a>
                         </div>
                     </td>';
 
                 $teaching_list .= '
                     <td valign="top">
-                        <div class="class-title">' . $row['grade_title'] . ' (' . $row['grade_name'] . ') ' . $row['classroom_name'] . ' </div>
-                        <div class="class-description">
-                            <b>Jumlah Siswa : </b> 30 (15 Laki-Laki, 15 Perempuan)
-                        </div>
-                        <div class="class-description">
-                            <b>Wali Kelas : </b> ' . $row['employess_name'] . '
-                        </div>
+                        <div class="class-title" align="center">' . $row['grade_title'] . ' (' . $row['grade_name'] . ') </div>
                     </td>
-                    <td valign="top" align="center">' . $row['teaching_total_time'] . ' Jam</td>
+                    <td valign="top" align="center">' . $row['total_time'] . ' Jam</td>
                 </tr>';
 
                 $idx++;

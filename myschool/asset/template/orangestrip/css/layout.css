@@ -49,10 +49,13 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
 }
 
 #fix-left {
+    /*
     position:fixed;
     z-index: 99;
     left: 0;
     top:43px;
+    */
+    float: left;
     width: 230px;
 }
 

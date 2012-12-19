@@ -512,3 +512,8 @@
     background-color: #fff9d7;
     padding: 4px;
 }
+
+/* ICON COLECTION */
+#online-score .icon-black-board {
+    background: url('../images/blackboard.png') no-repeat;
+}
