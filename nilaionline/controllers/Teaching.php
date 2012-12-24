@@ -1334,13 +1334,14 @@ class Teaching extends Controller {
 
         if ($myteaching) {
             foreach ($myteaching as $row) {
+                $tempid = $row['subject_id'] . '.' . $row['grade_id'] . '.' . $periodid . '.' . $semesterid;
                 $teaching_list .= '<tr>';
                 $teaching_list .= '
                     <td valign="top" class="first" align="center">' . $idx . '</td>
                     <td valign="top">
                         <div class="class-title">' . $row['subject_name'] . '</div>
                         <div class="link">
-                            <a href="basecompetence/index/' . $row['subject_id'] . '.' . $row['grade_id'] . '.' . $periodid . '.' . $semesterid . '">' . $row['count_basecompete'] . ' Kompetensi Dasar</a> &bullet; <a href="#">' . $row['total_task'] . ' Tugas</a> &bullet; <a href="teaching/myclass/' . $semesterid . '" class="go-to-class">' . $row['total_class'] . ' Daftar Kelas</a>
+                            <a href="basecompetence/index/' . $tempid . '">' . $row['count_basecompete'] . ' Kompetensi Dasar</a> &bullet; <a href="task/index/' . $tempid . '">' . $row['total_task'] . ' Tugas</a> &bullet; <a href="teaching/myclass/' . $semesterid . '" class="go-to-class">' . $row['total_class'] . ' Daftar Kelas</a>
                         </div>
                     </td>';
 
