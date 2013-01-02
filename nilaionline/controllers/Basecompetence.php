@@ -100,11 +100,12 @@ class Basecompetence extends Controller {
     }
     
     public function deleteBaseCompetence() {
-        
+        Session::init();
+        $teacher_id = Session::get('user_references');
         $id = $this->method->post('id');
         
         $result = false;
-        if ($this->model->deleteBaseCompetenceById($id)) {
+        if ($this->model->deleteBaseCompetenceById($id, $teacher_id)) {
             $result = true;
         }
         

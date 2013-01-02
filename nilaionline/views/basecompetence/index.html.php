@@ -331,7 +331,6 @@
                 mlc : mlc
             }, function (o){
                 if (o){
-                    $('#fAddData')[0].reset();
                     $('#box-edit-data').dialog('close');
                     read_base_competence();
                 }

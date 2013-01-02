@@ -6,25 +6,60 @@ class Percentase extends Controller {
         parent::__construct();
     }
 
-    public function index() {
+    public function index($id = 0) {
         Web::setTitle('Persentase Nilai');
-        $this->view->option_period = $this->optionPeriod();
-        $this->view->link_r_percentase = $this->content->setLink('percentase/readpercentase');
-        $this->view->render('percentase/index');
-    }
-    
-    public function optionPeriod() {
-        $option = array();
-        $semester = $this->model->selectAllSemester();
-        $period = $this->model->selectAllPeriod();
-        foreach ($period as $rowperiod) {
-            foreach ($semester as $rowsmester) {
-                $option[$rowperiod['period_id'] . '_' . $rowsmester['semester_id']] = $rowperiod['period_years_start'] . ' / ' . $rowperiod['period_years_end'] . ' - ' . $rowsmester['semester_name'];
+        if ($id) {
+            list($subject_id, $grade_id, $period_id, $semester_id) = explode('.', $id);
+
+            if (isset($subject_id) && isset($grade_id) && isset($period_id) && isset($semester_id)) {
+
+                $subject_list = $this->model->selectSubjectById($subject_id);
+                $subject_info = $subject_list[0];
+                $this->view->subject_info = $subject_info;
+
+                $grade_list = $this->model->selectGradeById($grade_id);
+                $grade_info = $grade_list[0];
+                $this->view->grade_info = $grade_info;
+
+                $period_list = $this->model->selectPeriodById($period_id);
+                $period_info = $period_list[0];
+                $this->view->period_info = $period_info;
+
+                $semester_list = $this->model->selectSemesterById($semester_id);
+                $semester_info = $semester_list[0];
+                $this->view->semester_info = $semester_info;
+
+                $this->view->recap_list = $this->percentaseList();
+
+                $this->view->link_r_percentase = $this->content->setLink('percentase/readpercentase');
+                $this->view->render('percentase/index');
             }
         }
-        return $option;
     }
-    
+
+    public function percentaseList() {
+
+        $recapitulation_list = $this->model->selectRecapType();
+        $list = '<tbody>';
+        $idx = 1;
+        foreach ($recapitulation_list as $row) {
+            $list .= '<tr>';
+            $list .= '  <td class="first" align="center">' . $idx . '</td>';
+            $list .= '  <td>' . $row['recapitulation_type_title'] . '</td>';
+            $list .= '  <td align="center"><input type="text" size="10" class="form_percentase" style="text-align:center;"> %</td>';
+            $list .= '</tr>';
+            $idx++;
+        }
+        
+        $list .= '<tr style="background-color:#fff9d7;">';
+        $list .= '  <td class="first" align="center" colspan="2"><b>Total</b></td>';
+        $list .= '  <td align="center"><b id="calculate_percentase">100 %</b></td>';
+        $list .= '</tr>';
+        
+        $list .= '</tbody>';
+        return $list;
+    }
+
     public function readPercentase() {
         Session::init();
         $teacher_id = Session::get('user_references');
@@ -32,7 +67,7 @@ class Percentase extends Controller {
         $periodid = $this->method->post('p');
         $semesterid = $this->method->post('s');
 
-        $myteaching = $this->model->selectSubjectTeaching($teacher_id, $periodid);
+        $myteaching = $this->model->selectRecapType();
         $teaching_list = '';
         $idx = 1;
 

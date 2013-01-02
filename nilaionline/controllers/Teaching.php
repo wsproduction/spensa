@@ -15,33 +15,55 @@ class Teaching extends Controller {
         $this->view->render('teaching/index');
     }
 
-    public function myClass($statusid = 0) {
+    public function myClass($id = 0) {
+        Web::setTitle('Daftar Kelas');
+        if ($id) {
+            list($subject_id, $grade_id, $period_id, $semester_id) = explode('.', $id);
+
+            if (isset($subject_id) && isset($grade_id) && isset($period_id) && isset($semester_id)) {
+                $subject_list = $this->model->selectSubjectById($subject_id);
+                $subject_info = $subject_list[0];
+                $this->view->subject_info = $subject_info;
+
+                $grade_list = $this->model->selectGradeById($grade_id);
+                $grade_info = $grade_list[0];
+                $this->view->grade_info = $grade_info;
+
+                $period_list = $this->model->selectPeriodById($period_id);
+                $period_info = $period_list[0];
+                $this->view->period_info = $period_info;
+
+                $semester_list = $this->model->selectSemesterById($semester_id);
+                $semester_info = $semester_list[0];
+                $this->view->semester_info = $semester_info;
+
+                $this->view->link_r_basecompetence = $this->content->setLink('teaching/readmyclass');
+                $this->view->render('teaching/myclass');
+            }
+        }
+    }
+
+    public function myClassRoom($teachingid = 0) {
 
         Session::init();
         $user_references = Session::get('user_references');
 
-        $teachingid = substr($statusid, 1);
-        $semesterid = substr($statusid, 0, 1);
-
         $class_list = $this->model->selectClassListByTeachingId($teachingid, $user_references);
-        $semester_list = $this->model->selectSemesterById($semesterid);
         if ($class_list) {
             $class_info = $class_list[0];
             $this->view->class_info = $class_info;
-            $semester_info = $semester_list[0];
-            $this->view->semester_info = $semester_info;
-
+            $semesterid = 1;
+            
             Web::setTitle('Kelas ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
 
             // Daily Score
-            // $this->view->student_list = $this->model->selectStudentByClassGroupId($class_info['classgroup_id']);
-            $this->view->option_basecompetance = $this->optionBaseCompetence($class_info['period_id'], $semesterid);
+            $this->view->option_basecompetance = $this->optionBaseCompetence($class_info['period_id'], $semesterid, $user_references, $class_info['subject_id'], $class_info['grade_id']);
             $this->view->option_scoretype = $this->optionScoreType();
             $this->view->link_export_dailyscore = $this->content->setLink('teaching/exportdailyscore/' . $teachingid);
             $this->view->link_save_daily_score = $this->content->setLink('teaching/savedailyscore');
 
-            // Task Score
-            $this->view->option_taskdescription = $this->optionTaskDescription($class_info['period_id'], $semesterid);
+            // Task Score $subject, $teacher, $period, $semester, $grade
+            $this->view->option_taskdescription = $this->optionTaskDescription($class_info['subject_id'], $user_references, $class_info['period_id'], $semesterid, $class_info['grade_id']);
             $this->view->link_export_taskscore = $this->content->setLink('teaching/exporttaskscore/' . $teachingid);
             $this->view->link_save_task_score = $this->content->setLink('teaching/savetaskscore');
 
@@ -57,7 +79,7 @@ class Teaching extends Controller {
             $this->view->link_export_finalscore = $this->content->setLink('teaching/exportfinalscore/' . $teachingid);
             $this->view->link_save_final_score = $this->content->setLink('teaching/savefinalscore');
 
-            $this->view->render('teaching/myclass');
+            $this->view->render('teaching/myclassroom');
         } else {
             $this->view->render('teaching/404');
         }
@@ -80,7 +102,7 @@ class Teaching extends Controller {
             $this->view->semester_info = $semester_info;
 
             Web::setTitle('Kelas ' . $class_info['extracurricular_name']);
-            
+
             $this->view->option_class = $this->optionClass($class_info['period_id']);
 
             $this->view->render('teaching/myclassekskul');
@@ -88,7 +110,7 @@ class Teaching extends Controller {
             $this->view->render('teaching/404');
         }
     }
-    
+
     public function optionClass($period_id) {
         $option = array();
         $class = $this->model->selectClassGroupByPeriodId($period_id);
@@ -110,19 +132,21 @@ class Teaching extends Controller {
         return $option;
     }
 
-    public function optionBaseCompetence($period, $semester) {
+    public function optionBaseCompetence($period, $semester, $teacher, $subject, $grade) {
         $option = array();
-        $basecompetence = $this->model->selectBaseCompetence($period, $semester);
+        $basecompetence = $this->model->selectBaseCompetence($period, $semester, $teacher, $subject, $grade);
+        $idx = 1;
         foreach ($basecompetence as $row) {
-            $option[$row['base_competence_id']] = $row['base_competence_symbol'] . ' - ' . $row['base_competence_title'];
+            $option[$row['base_competence_id']] = $idx . '. ' . $row['base_competence_title'];
+            $idx++;
         }
         return $option;
     }
 
-    public function optionTaskDescription($period, $semester) {
+    public function optionTaskDescription($subject, $teacher, $period, $semester, $grade) {
         $option = array();
         $no = 1;
-        $basecompetence = $this->model->selectTaskDescription($period, $semester);
+        $basecompetence = $this->model->selectTaskDescription($subject, $teacher, $period, $semester, $grade);
         foreach ($basecompetence as $row) {
             $option[$row['task_description_id']] = $no . '. ' . $row['task_description_title'];
             $no++;
@@ -1320,7 +1344,7 @@ class Teaching extends Controller {
             echo 'error';
         }
     }
-    
+
     public function readTeaching() {
         Session::init();
         $teacher_id = Session::get('user_references');
@@ -1341,7 +1365,7 @@ class Teaching extends Controller {
                     <td valign="top">
                         <div class="class-title">' . $row['subject_name'] . '</div>
                         <div class="link">
-                            <a href="basecompetence/index/' . $tempid . '">' . $row['count_basecompete'] . ' Kompetensi Dasar</a> &bullet; <a href="task/index/' . $tempid . '">' . $row['total_task'] . ' Tugas</a> &bullet; <a href="teaching/myclass/' . $semesterid . '" class="go-to-class">' . $row['total_class'] . ' Daftar Kelas</a>
+                            <a href="percentase/index/' . $tempid . '">Persentase Nilai</a> &bullet; <a href="basecompetence/index/' . $tempid . '">' . $row['count_basecompete'] . ' Kompetensi Dasar</a> &bullet; <a href="task/index/' . $tempid . '">' . $row['total_task'] . ' Tugas</a> &bullet; <a href="teaching/myclass/' . $tempid . '" class="go-to-class">' . $row['total_class'] . ' Daftar Kelas</a>
                         </div>
                     </td>';
 
@@ -1367,7 +1391,7 @@ class Teaching extends Controller {
 
         echo json_encode(array('count' => 1, 'row' => $teaching_list));
     }
-    
+
     public function readTeachingEkskul() {
         Session::init();
         $teacher_id = Session::get('user_references');
@@ -1403,6 +1427,47 @@ class Teaching extends Controller {
                                 <td class="first" colspan="4">
                                     <div class="information-box">
                                         Data mengajar tidak ditemukan.
+                                    </div>
+                                </td>
+                            </tr>';
+        }
+
+        echo json_encode(array('count' => 1, 'row' => $teaching_list));
+    }
+    
+    public function readMyClass() {
+        Session::init();
+        $teacher_id = Session::get('user_references');
+
+        $subject_id = $this->method->post('subject');
+        $period_id = $this->method->post('period');
+        $semester_id = $this->method->post('semester');
+        $grade_id = $this->method->post('grade');
+
+        $myteaching = $this->model->selectMyClass($teacher_id, $subject_id, $grade_id, $period_id, $semester_id);
+        $teaching_list = '';
+        $idx = 1;
+
+        if ($myteaching) {
+            foreach ($myteaching as $row) {
+                $teaching_list .= '<tr id="row_' . $row['teaching_id'] . '">';
+                $teaching_list .= '     <td class="first" align="center">' . $idx . '</td>';
+                $teaching_list .= '     <td align="center">' . $row['grade_title'] . ' (' . $row['grade_name'] . ') ' . $row['classroom_name'] . '</td>';
+                $teaching_list .= '     <td align="center">' . $row['student_count'] . '</td>';
+                $teaching_list .= '     <td>' . $row['employess_name'] . '</td>';
+                $teaching_list .= '     <td align="center">' . $row['teaching_total_time'] . ' Jam</td>';
+                $teaching_list .= '     <td>' . date('d-m-Y H:i:s', strtotime($row['teaching_entry_update'])) . '</td>';
+                $teaching_list .= '     <td align="center"><a href="../myclassroom/' . $row['teaching_id'] . '" rel="edit">Masuk Kelas</a> &bullet; <a href="' . $row['teaching_id'] . '" rel="delete">Rekapitulasi Nilai</a></td>';
+                $teaching_list .= '</tr>';
+
+                $idx++;
+            }
+        } else {
+            $teaching_list .= '
+                            <tr>
+                                <td class="first" colspan="5">
+                                    <div class="information-box">
+                                        Kompetensi dasar tidak ditemukan.
                                     </div>
                                 </td>
                             </tr>';

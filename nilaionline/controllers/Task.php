@@ -55,10 +55,11 @@ class Task extends Controller {
             foreach ($myteaching as $row) {
                 $teaching_list .= '<tr id="row_' . $row['task_description_id'] . '">';
                 $teaching_list .= '     <td class="first" align="center" valign="top">' . $idx . '</td>';
-                $teaching_list .= '     <td class="task_title">';
-                $teaching_list .= '         <div style="margin:0 5px;font-weight:bold;">' . $row['task_description_title'] . '</div>';
-                $teaching_list .= '         <div class="description" style="border: 1px solid #ccc;font-style: italic;">' . $row['task_description'] . '</div>';
+                $teaching_list .= '     <td>';
+                $teaching_list .= '         <div style="font-weight:bold;" class="task_title">' . $row['task_description_title'] . '</div>';
+                $teaching_list .= '         <div class="task_description" style="color:#666666;">' . $row['task_description'] . '</div>';
                 $teaching_list .= '     </td>';
+                $teaching_list .= '     <td valign="top" style="text-align:center;" class="task_mlc">' . $row['task_description_mlc'] . '</td>';
                 $teaching_list .= '     <td valign="top">' . date('d-m-Y H:i:s', strtotime($row['task_description_entry_update'])) . '</td>';
                 $teaching_list .= '     <td align="center" valign="top"><a href="' . $row['task_description_id'] . '" rel="edit">Edit</a> &bullet; <a href="' . $row['task_description_id'] . '" rel="delete">Hapus</a></td>';
                 $teaching_list .= '</tr>';
@@ -102,11 +103,12 @@ class Task extends Controller {
     }
     
     public function deleteTask() {
-        
+        Session::init();
+        $teacher_id = Session::get('user_references');
         $id = $this->method->post('id');
         
         $result = false;
-        if ($this->model->deleteBaseCompetenceById($id)) {
+        if ($this->model->deleteBaseCompetenceById($id, $teacher_id)) {
             $result = true;
         }
         

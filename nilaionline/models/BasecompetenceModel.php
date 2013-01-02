@@ -182,15 +182,17 @@ class BasecompetenceModel extends Model {
         return $sth->execute();
     }
 
-    public function deleteBaseCompetenceById($id) {
+    public function deleteBaseCompetenceById($id, $teacher_id) {
         $sth = $this->db->prepare('
                                 DELETE
                                 FROM
                                   academic_base_competence
                                 WHERE
-                                  academic_base_competence.base_competence_id = :id
+                                  academic_base_competence.base_competence_id = :id AND
+                                  academic_base_competence.base_competence_teacher = :teacher
                         ');
         $sth->bindValue(':id', $id);
+        $sth->bindValue(':teacher', $teacher_id);
         return $sth->execute();
     }
 

@@ -59,6 +59,7 @@
                 <tr>
                     <td class="first" style="width: 50px;text-align: center;" >No.</td>
                     <td>Keterangan Tugas</td>
+                    <td style="width: 60px;text-align: center;">KKM</td>
                     <td style="width: 100px;text-align: center;">Last Update</td>
                     <td style="width: 100px;text-align: center;">Pilihan</td>
                 </tr>
@@ -106,6 +107,21 @@
             </td>
         </tr>
         <tr>
+            <td>KKM</td>
+            <td>:</td>
+            <td>
+                <?php
+                Form::create('text', 'task_mlc');
+                Form::validation()->requaired();
+                Form::validation()->range(0, 100);
+                Form::size(5);
+                Form::maxlength(3);
+                Form::inputType()->numeric();
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>
@@ -130,7 +146,7 @@
 <div id="box-edit-data">
     <?php
     Form::begin('fEditData', 'task/update', 'post', true);
-    Form::create('hidden', 'base_competence_id');
+    Form::create('hidden', 'task_competence_id');
     Form::commit();
     ?>
 
@@ -154,6 +170,21 @@
                 <?php
                 Form::create('textarea', 'task_description');
                 Form::size(50,3);
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>KKM</td>
+            <td>:</td>
+            <td>
+                <?php
+                Form::create('text', 'task_mlc');
+                Form::validation()->requaired();
+                Form::validation()->range(0, 100);
+                Form::size(5);
+                Form::maxlength(3);
+                Form::inputType()->numeric();
                 Form::commit();
                 ?>
             </td>
@@ -220,7 +251,7 @@
             title : 'Tambah Tugas',
             closeOnEscape: false,
             autoOpen: false,
-            height: 180,
+            height: 210,
             width: 500,
             modal: true,
             resizable: false,
@@ -231,7 +262,7 @@
             title : 'Edit Tugas',
             closeOnEscape: false,
             autoOpen: false,
-            height: 180,
+            height: 210,
             width: 500,
             modal: true,
             resizable: false,
@@ -252,12 +283,14 @@
         
         $('a[rel=edit]').live('click',function() {
             var id = $(this).attr('href');
-            var title = $('#list-task #row_' + id).children('.competence_title').text();
-            var mlc = $('#list-task #row_' + id).children('.competence_mlc').text();
+            var title = $('#list-task #row_' + id).children().children('.task_title').text();
+            var description = $('#list-task #row_' + id).children().children('.task_description').text();
+            var mlc = $('#list-task #row_' + id).children('.task_mlc').text();
             
-            $('#fEditData #base_competence_id').val(id);
-            $('#fEditData #base_competence').val(title);
-            $('#fEditData #base_mlc').val(mlc);
+            $('#fEditData #task_competence_id').val(id);
+            $('#fEditData #task_title').val(title);
+            $('#fEditData #task_description').val(description);
+            $('#fEditData #task_mlc').val(mlc);
             
             $('#box-edit-data').dialog('open');
             return false;
@@ -286,8 +319,9 @@
             var period_id = $('#hidden_period_id').val();
             var semester_id = $('#hidden_semester_id').val();
             var grade_id = $('#hidden_grade_id').val();   
-            var title = $('#fAddData #base_competence').val();   
-            var mlc = $('#fAddData #base_mlc').val();   
+            var title = $('#fAddData #task_title').val();   
+            var description = $('#fAddData #task_description').val();   
+            var mlc = $('#fAddData #task_mlc').val();   
             
             $(this).loadingProgress('start');
             
@@ -297,6 +331,7 @@
                 semester : semester_id, 
                 grade : grade_id,
                 title : title,
+                description : description,
                 mlc : mlc
             }, function (o){
                 if (o){
@@ -311,18 +346,19 @@
         $('#fEditData').live('submit',function(){
             var link = $(this).attr('action');            
                
-            var id = $('#fEditData #base_competence_id').val();   
-            var title = $('#fEditData #base_competence').val();   
-            var mlc = $('#fEditData #base_mlc').val();   
+            var id = $('#fEditData #task_competence_id').val();   
+            var title = $('#fEditData #task_title').val();   
+            var description = $('#fEditData #task_description').val();   
+            var mlc = $('#fEditData #task_mlc').val();   
             
             $(this).loadingProgress('start');
             
             $.post(link + '/' + id, {
                 title : title,
+                description : description,
                 mlc : mlc
             }, function (o){
                 if (o){
-                    $('#fAddData')[0].reset();
                     $('#box-edit-data').dialog('close');
                     read_base_competence();
                 }

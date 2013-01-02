@@ -488,6 +488,15 @@
     
 }
 
+#online-score .table-list tbody a {
+    text-decoration: none;
+    color: #3b5998;
+}
+
+#online-score .table-list tbody a:hover {
+    text-decoration: underline;
+}
+
 #online-score .table-list .first{
     border-left: 1px solid #ccc;
 }

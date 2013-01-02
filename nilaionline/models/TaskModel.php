@@ -17,6 +17,7 @@ class TaskModel extends Model {
                                   academic_task_description.task_description_garde,
                                   academic_task_description.task_description_title,
                                   academic_task_description.task_description,
+                                  academic_task_description.task_description_mlc,
                                   academic_task_description.task_description_entry,
                                   academic_task_description.task_description_entry_update
                                 FROM
@@ -113,6 +114,7 @@ class TaskModel extends Model {
         $semester = $this->method->post('semester');
         $grade = $this->method->post('grade');
         $title = $this->method->post('title');
+        $description = $this->method->post('description');
         $mlc = $this->method->post('mlc');
 
         $sth = $this->db->prepare('
@@ -126,6 +128,7 @@ class TaskModel extends Model {
                                 task_description_garde,
                                 task_description_title,
                                 task_description,
+                                task_description_mlc,
                                 task_description_entry,
                                 task_description_entry_update)
                               VALUES(
@@ -146,15 +149,18 @@ class TaskModel extends Model {
                                 :grade,
                                 :title,
                                 :description,
+                                :mlc,
                                 NOW(),
                                 NOW())
                             ');
-        $sth->bindValue(':title', $title);
+        
+        $sth->bindValue(':subject', $subject);
+        $sth->bindValue(':teacher', $teacher_id);
         $sth->bindValue(':period', $period);
         $sth->bindValue(':semester', $semester);
-        $sth->bindValue(':teacher', $teacher_id);
-        $sth->bindValue(':subject', $subject);
         $sth->bindValue(':grade', $grade);
+        $sth->bindValue(':title', $title);
+        $sth->bindValue(':description', $description);
         $sth->bindValue(':mlc', $mlc);
         return $sth->execute();
     }
@@ -162,35 +168,40 @@ class TaskModel extends Model {
     public function updateTask($id, $teacher_id) {
 
         $title = $this->method->post('title');
+        $description = $this->method->post('description');
         $mlc = $this->method->post('mlc');
 
         $sth = $this->db->prepare('
                               UPDATE
-                                academic_base_competence
+                                academic_task_description
                               SET
-                                base_competence_title = :title,
-                                base_competence_mlc = :mlc,
-                                base_competence_entry_update = NOW()
+                                task_description_title = :title,
+                                task_description = :description,
+                                task_description_mlc = :mlc,
+                                task_description_entry_update = NOW()
                               WHERE
-                                academic_base_competence.base_competence_id = :id AND
-                                academic_base_competence.base_competence_teacher = :teacher
+                                academic_task_description.task_description_id = :id AND
+                                academic_task_description.task_description_teacher = :teacher
                         ');
-        $sth->bindValue(':id', $id);
         $sth->bindValue(':title', $title);
-        $sth->bindValue(':teacher', $teacher_id);
+        $sth->bindValue(':description', $description);
         $sth->bindValue(':mlc', $mlc);
+        $sth->bindValue(':id', $id);
+        $sth->bindValue(':teacher', $teacher_id);
         return $sth->execute();
     }
 
-    public function deleteBaseCompetenceById($id) {
+    public function deleteBaseCompetenceById($id, $teacher_id) {
         $sth = $this->db->prepare('
                                 DELETE
                                 FROM
-                                  academic_base_competence
+                                  academic_task_description
                                 WHERE
-                                  academic_base_competence.base_competence_id = :id
+                                  academic_task_description.task_description_id = :id AND
+                                  academic_task_description.task_description_teacher = :teacher
                         ');
         $sth->bindValue(':id', $id);
+        $sth->bindValue(':teacher', $teacher_id);
         return $sth->execute();
     }
 
