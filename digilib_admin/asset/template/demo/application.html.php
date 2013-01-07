@@ -42,17 +42,23 @@
         <div id="footer">
             <b>Digilib &copy; 2012 | Develope by : </b> <u>Warman Suganda</u>
         </div>
-        
+
         <script>
-        $(function(){
-            $('#navigation li').live('click', function(){
-                $(this).children('ul').slideDown('fast');
-                $(this).mouseleave(function(){
-                    $(this).children('ul').slideUp('fast');
+            $(function(){
+                
+                $("ul.dropdown li").hover(function(){
+    
+                    $(this).addClass("hover");
+                    $('ul:first',this).css('visibility', 'visible');
+    
+                }, function(){
+    
+                    $(this).removeClass("hover");
+                    $('ul:first',this).css('visibility', 'hidden');
+    
                 });
+               
             });
-            
-        });
         </script>
     </body>
 </html>
