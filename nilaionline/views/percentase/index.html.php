@@ -69,10 +69,22 @@
 
 <script type="text/javascript">
     $(function(){
+        
+        var is_empty = function(val) {
+            if (val == '' || val == ' ' || val == null) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+        
         $('.form_percentase').live('change', function() {
             var total = 0;
-            $('#list-percentase').find('.form_percentase').each(function(){
-                total += parseInt($(this).val());
+            $('.form_percentase').each(function(){
+                var val = $(this).val();
+                if (is_empty(val))
+                    val = 0;
+                total = total + parseInt(val);
             });
             $('#calculate_percentase').text(total + ' %');
         });
