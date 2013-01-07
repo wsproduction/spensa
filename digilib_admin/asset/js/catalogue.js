@@ -56,21 +56,28 @@ $(function(){
         }, {
             display : 'Eksemplar',
             name : 'book_quantity',
-            width : 100,
+            width : 60,
             sortable : true,
             align : 'center',
             hide : true
         }, {
             display : 'Stok',
             name : 'length_borrowed',
-            width : 100,
+            width : 50,
             sortable : true,
             align : 'center',
             hide : true
         }, {
-            display : 'Tanggal',
+            display : 'Tanggal Input',
             name : 'book_entry_date',
-            width : 100,
+            width : 80,
+            sortable : true,
+            align : 'center',
+            hide : true
+        }, {
+            display : 'Tanggal Update',
+            name : 'book_entry_date',
+            width : 80,
             sortable : true,
             align : 'center',
             hide : true

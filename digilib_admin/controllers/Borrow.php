@@ -109,6 +109,10 @@ class Borrow extends Controller {
                 $xml .= "<cell><![CDATA[<font color='blue'>" . date('d.m.Y', strtotime($row['borrowed_history_star'])) . '</font> s/d  <font color="blue">' . date('d.m.Y', strtotime($row['borrowed_history_finish'])) . "</font>]]></cell>";
                 $row['borrowed_history_status'] ? $status = 'Dikembalikan' : $status = 'Meminjam';
                 $xml .= "<cell><![CDATA[" . $status . "]]></cell>";
+                if (!empty($row['borrowed_history_return']))
+                    $xml .= "<cell><![CDATA[" . date('d.m.Y', strtotime($row['borrowed_history_return'])) . "]]></cell>";
+                else 
+                    $xml .= "<cell><![CDATA[-]]></cell>";
                 $xml .= "</row>";
             }
 

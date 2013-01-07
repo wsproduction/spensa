@@ -207,3 +207,8 @@ body {
     -webkit-box-shadow: 0px 0px 5px 1px #ccc;
     box-shadow:         0px 0px 5px 1px #ccc;
 }
+
+ul.dropdown li ul {
+    display: none;
+    position: absolute;
+} 

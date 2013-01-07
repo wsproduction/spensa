@@ -479,6 +479,10 @@ class Catalogue extends Controller {
             $xml .= "<total>$total</total>";
 
             foreach ($listData as $row) {
+                
+                $link_edit = $this->content->setLink('catalogue/edit/' . $row['book_id']);
+                $link_detail = $this->content->setLink('catalogue/detail/' . $row['book_id']);
+                
                 $xml .= "<row id='" . $row['book_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['book_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['ddc_classification_number'] . "]]></cell>";
@@ -486,6 +490,10 @@ class Catalogue extends Controller {
                 $xml .= "<cell><![CDATA[" . $row['resource'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['fund'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_quantity'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[-]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d.m.Y',  strtotime($row['book_entry'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d.m.Y',  strtotime($row['book_entry_update'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[<a href='" . $link_edit . "'>Edit</a> | <a href='" . $link_detail . "'>Detail</a>]]></cell>";
                 $xml .= "</row>";
             }
 

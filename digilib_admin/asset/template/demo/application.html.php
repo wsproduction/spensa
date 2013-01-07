@@ -8,16 +8,10 @@
         <?php
         /* jQuery Plugin */
         Src::plugin()->jQuery();
-        Src::plugin()->jQueryCookie();
-        Src::plugin()->jQueryJson();
         Src::plugin()->jQueryUI();
-        Src::plugin()->jDialogBox();
-        Src::plugin()->flexDropDown();
-
 
         Src::css('layout');
         Src::css('custom');
-
         Src::javascript('autoload');
 
         /* Loader */
@@ -48,5 +42,17 @@
         <div id="footer">
             <b>Digilib &copy; 2012 | Develope by : </b> <u>Warman Suganda</u>
         </div>
+        
+        <script>
+        $(function(){
+            $('#navigation li').live('click', function(){
+                $(this).children('ul').slideDown('fast');
+                $(this).mouseleave(function(){
+                    $(this).children('ul').slideUp('fast');
+                });
+            });
+            
+        });
+        </script>
     </body>
 </html>

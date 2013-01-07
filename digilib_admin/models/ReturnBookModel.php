@@ -157,8 +157,7 @@ class ReturnBookModel extends Model {
             digilib_borrowed_history.borrowed_history_star,
             digilib_borrowed_history.borrowed_history_finish,
             digilib_book_register.book_register_id,
-            digilib_book.book_title,
-            digilib_book.book_sub_title";
+            digilib_book.book_title";
 
         $prepare = 'SELECT ' . $listSelect . ' 
                     FROM 
@@ -353,8 +352,7 @@ class ReturnBookModel extends Model {
                                     digilib_borrowed_history.borrowed_history_type,
                                     digilib_borrowed_history.borrowed_history_star,
                                     digilib_borrowed_history.borrowed_history_finish,
-                                    digilib_book.book_title,
-                                    digilib_book.book_sub_title
+                                    digilib_book.book_title
                                 FROM
                                     digilib_borrowed_return_temp
                                     INNER JOIN digilib_borrowed_history ON (digilib_borrowed_return_temp.borrowed_return_temp_history = digilib_borrowed_history.borrowed_history_id)

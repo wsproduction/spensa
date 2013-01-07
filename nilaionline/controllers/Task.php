@@ -69,9 +69,9 @@ class Task extends Controller {
         } else {
             $teaching_list .= '
                             <tr>
-                                <td class="first" colspan="4">
+                                <td class="first" colspan="5">
                                     <div class="information-box">
-                                        Kompetensi dasar tidak ditemukan.
+                                        Keterangan tugas tidak ditemukan.
                                     </div>
                                 </td>
                             </tr>';
