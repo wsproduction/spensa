@@ -188,7 +188,7 @@ class Catalogue extends Controller {
         $this->view->link_back = $this->content->setLink('catalogue');
         $this->view->link_print_barcode = $this->content->setLink('catalogue/printBarcode/' . $id);
         $this->view->link_print_label = $this->content->setLink('catalogue/printLabel/' . $id);
-        $this->view->listDataCollection = $this->listDataCollection($id);
+        $this->view->link_r_collection = $this->content->setLink('catalogue/readcollectionbook/' . $id);
         $this->view->render('catalogue/detail');
     }
 
@@ -583,6 +583,31 @@ class Catalogue extends Controller {
               $xml .= "</row>";
               }
              */
+
+            $xml .= "</rows>";
+            echo $xml;
+        }
+    }
+
+    public function readCollectionBook($id=0) {
+
+        if ($this->method->isAjax()) {
+            $page = $this->method->post('page', 1);
+            $listData = $this->model->selectAllCollection($id, $page);
+            $total = $this->model->countAllCollection($id);
+
+            header("Content-type: text/xml");
+            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            $xml .= "<rows>";
+            $xml .= "<page>$page</page>";
+            $xml .= "<total>$total</total>";
+
+            foreach ($listData as $row) {                
+                $xml .= "<row id='" . $row['book_register_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $row['book_register_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['book_condition'] . "]]></cell>";
+                $xml .= "</row>";
+            }
 
             $xml .= "</rows>";
             echo $xml;

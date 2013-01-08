@@ -642,8 +642,6 @@ $(function(){
         .tabs("option","disabled", [0, 1, 2, 3, 4]).tabs('enable', tabIndex);
     }
     
-    $('#detailTab').tabs();
-    
     
     /* WYSIWYG elRTE */
     elRTE.prototype.options.panels.web2pyPanel = [

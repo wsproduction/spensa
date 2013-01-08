@@ -2,11 +2,11 @@
     <div id="box_title">
         <div class="left"><?php echo Web::getTitle(); ?></div>
         <div class="right">
-            <?php            
+            <?php
             Form::create('button', 'btnBack');
             Form::value('Back');
             Form::style('action_back');
-            Form::properties(array('link'=>$link_back));
+            Form::properties(array('link' => $link_back));
             Form::commit();
             ?>
         </div>
@@ -20,10 +20,10 @@
             </ul>
             <div id="fragment-1">
                 <?php
-                Form::create('button','btnPrintLabel');
+                Form::create('button', 'btnPrintLabel');
                 Form::value('Print Label');
                 Form::style('action_print');
-                Form::properties(array('link'=>$link_print_label));
+                Form::properties(array('link' => $link_print_label));
                 Form::commit();
                 ?>
                 <br><br>
@@ -33,38 +33,71 @@
                 Underconstruction!!!
             </div>
             <div id="fragment-3">
-                <div style="margin-bottom: 10px;text-align: right;">
-                    <?php
-                    Form::create('button', 'btnPrintBarcode');
-                    Form::value('Print Barcode');
-                    Form::style('action_print');
-                    Form::properties(array('link'=>$link_print_barcode));
-                    Form::commit();
-                    ?>
-                </div>
-                
-                <table id="list" class="list" style="width: 100%;" cellpadding="0" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th style="width: 10px;" class="first" >
-                                <?php
-                                Form::create('checkbox', 'cbSelectAll');
-                                Form::commit();
-                                ?>
-                            </th>
-                            <th style="width: 100px;">No. Indux</th>
-                            <th style="width: 100px;">Call Number</th>
-                            <th>Detail</th>
-                            <th style="width: 100px;">Kondisi</th>
-                            <th style="width: 100px;">Tanggal</th>
-                            <th style="width: 100px;">Status</th>
-                            <th style="width: 100px;">Pinj. Terakhir</th>
-                            <th style="width: 100px;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody><?php echo $listDataCollection; ?></tbody>
-                </table>
+                <table id="list-collection" link_r="<?php echo $link_r_collection; ?>"></table>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    $(function(){
+        $('#detailTab').tabs();
+        $('#list-collection').flexigrid({
+            url : $('#list-collection').attr('link_r'),
+            dataType : 'xml',
+            colModel : [ {
+                    display : 'Nomor Induk Buku', 
+                    name : 'book_register_id', 
+                    width : 170,
+                    sortable : true,
+                    align : 'center'
+                }, {
+                    display : 'Kondisi Buku',
+                    name : 'language_name',
+                    width : 100,
+                    sortable : true,
+                    align : 'center'
+                }, {
+                    display : 'Total Dipinjam',
+                    name : 'language_name',
+                    width : 200,
+                    sortable : true,
+                    align : 'left'
+                }, {
+                    display : 'Terakhir Pinjam',
+                    name : 'language_name',
+                    width : 200,
+                    sortable : true,
+                    align : 'left'
+                }, {
+                    display : 'Opsi',
+                    name : 'language_name',
+                    width : 200,
+                    sortable : true,
+                    align : 'left'
+                }],
+            buttons : [{
+                    name : 'Tambah',
+                    bclass : 'add',
+                    onpress : function() {
+                        
+                    }
+                }],searchitems : [ {
+                    display : 'Nomor Induk',
+                    name : 'book_register_id',
+                    isdefault : true
+                }],
+            nowrap : false,
+            sortname : "book_register_id",
+            sortorder : "asc",
+            usepager : true,
+            title : 'Daftar Koleksi Buku',
+            useRp : true,
+            rp : 15,
+            showTableToggleBtn : false,
+            resizable : false,
+            width : '100%',
+            height : screen.height - 450
+        });
+    });
+</script>

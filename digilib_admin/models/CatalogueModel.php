@@ -64,21 +64,36 @@ class CatalogueModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectAllCollection($id = 0, $start = 0, $count = 100) {
-        $sth = $this->db->prepare('SELECT 
-                                        dbr.book_register_id,
-                                        dbr.book_id,
-                                        (SELECT dbc.book_condition FROM digilib_book_condition AS dbc WHERE dbc.book_condition_id = dbr.book_condition) AS book_con,
-                                        dbr.entry_date,
-                                        dbr.last_borrow,
-                                        dbr.borrow_status
-                                   FROM
-                                        digilib_book_register AS dbr
-                                   WHERE
-                                        dbr.book_id = :id
-                                   ORDER BY dbr.book_register_id LIMIT ' . $start . ',' . $count);
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
+    public function selectAllCollection($id = 0, $page = 1) {
+
+        $rp = $this->method->post('rp', 10);
+        $sortname = $this->method->post('sortname');
+        $sortorder = $this->method->post('sortorder', 'desc');
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $prepare = 'SELECT 
+                        digilib_book_register.book_register_id,
+                        digilib_book_register.book_id,
+                        digilib_book_register.book_entry,
+                        digilib_book_condition.book_condition
+                    FROM 
+                        digilib_book_register
+                        INNER JOIN digilib_book_condition ON (digilib_book_register.book_condition = digilib_book_condition.book_condition_id) 
+                    WHERE
+                        digilib_book_register.book_id = :id ';
+
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+        $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
+
+        $start = (($page - 1) * $rp);
+        $prepare .= ' LIMIT ' . $start . ',' . $rp;
+        
+        $sth = $this->db->prepare($prepare);
         $sth->bindValue(':id', $id);
+        
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
     }
@@ -116,11 +131,21 @@ class CatalogueModel extends Model {
     }
 
     public function countAllCollection($id = 0) {
-        $sth = $this->db->prepare('SELECT * FROM digilib_book_register WHERE book_id = :id');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $prepare = 'SELECT COUNT(book_register_id) AS cnt FROM digilib_book_register WHERE digilib_book_register.book_id = :id ';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $sth = $this->db->prepare($prepare);
         $sth->bindValue(':id', $id);
+        
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
-        return $sth->rowCount();
+        $tempCount = $sth->fetchAll();
+        $count = $tempCount[0];
+        return $count['cnt'];
     }
 
     public function createSave() {
