@@ -99,19 +99,28 @@ class Members extends Controller {
 
             foreach ($listData AS $row) {
 
-                $link_detail = URL::link($this->content->setLink('members/detail/' . $row['members_id']), 'Detail', false);
                 $link_edit = URL::link($this->content->setLink('members/edit/' . $row['members_id']), 'Edit', false);
+                
+                $members_status = 'Disabled';
+                if ($row['members_status'])
+                    $members_status = 'Enabled';
+                $last_borrow = '-';
+                if (!empty($row['last_borrow']))
+                    $last_borrow = date('d.m.Y',  strtotime($row['last_borrow']));
 
                 $xml .= "<row id='" . $row['members_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['members_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['members_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['gender_title'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['members_address'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['isa_title'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['members_desc'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['borrow_count'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $last_borrow . "]]></cell>";
                 $xml .= "<cell><![CDATA[0]]></cell>";
                 $xml .= "<cell><![CDATA[0]]></cell>";
-                $xml .= "<cell><![CDATA[0]]></cell>";
-                $xml .= "<cell><![CDATA[0]]></cell>";
-                $xml .= "<cell><![CDATA[0]]></cell>";
-                $xml .= "<cell><![CDATA[" . $link_detail . " | " . $link_edit . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $members_status . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $link_edit . "]]></cell>";
                 $xml .= "</row>";
             }
 
@@ -138,7 +147,6 @@ class Members extends Controller {
 
             foreach ($listData AS $row) {
 
-                $link_detail = URL::link($this->content->setLink('members/detail/' . $row['members_id']), 'Detail', false);
                 $link_edit = URL::link($this->content->setLink('members/edit/' . $row['members_id']), 'Edit', false);
 
                 $xml .= "<row id='" . $row['members_id'] . "'>";
@@ -149,7 +157,7 @@ class Members extends Controller {
                 $xml .= "<cell><![CDATA[" . $row['members_address'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['isa_title'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['members_desc'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $link_detail . " | " . $link_edit . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $link_edit . "]]></cell>";
                 $xml .= "</row>";
             }
 
@@ -161,7 +169,10 @@ class Members extends Controller {
     public function update($id = 0) {
         $process = $this->model->updateSave($id);
         if ($process[0]) {
-            $ket = array(1, 0, base64_encode($this->message->saveSucces()), base64_encode(Src::image($process[1], 'http://' . Web::getHost() . '/web/src/digilib_admin/asset/upload/images/members/', array('style' => 'width:100px;border:1px solid #ccc;padding:4px;'))));
+            $photo = '';
+            if ($process[1]!='')
+                $photo = base64_encode(Src::image($process[1], 'http://' . Web::getHost() . '/web/src/digilib_admin/asset/upload/images/members/', array('style' => 'width:100px;border:1px solid #ccc;padding:4px;')));
+            $ket = array(1, 0, base64_encode($this->message->saveSucces()), $photo);
         } else {
             $ket = array(0, 0, base64_encode($this->message->saveError()), '');
         }
@@ -470,7 +481,140 @@ class Members extends Controller {
             }
             // ---------------------------------------------------------
             //Close and output PDF document
-            $pdf->Output('example_013.pdf', 'I');
+            $pdf->Output(date('dmYHis') . '.pdf', 'I');
+        }
+    }
+    
+    public function import() {
+        $inputFileType = 'Excel5';
+        $inputFileName = Web::path() . 'asset/upload/file/ptk.xls';
+
+        if (file_exists($inputFileName)) {
+
+            Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
+            $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+
+            $chunkSize = 649;
+            $startRow = 2;
+
+            /**  Create a new Instance of our Read Filter, passing in the limits on which rows we want to read  * */
+            $chunkFilter = new chunkReadFilter($startRow, $chunkSize);
+            /**  Tell the Reader that we want to use the new Read Filter that we've just Instantiated  * */
+            $objReader->setReadFilter($chunkFilter);
+            /**  Load only the rows that match our filter from $inputFileName to a PHPExcel Object  * */
+            $objPHPExcel = $objReader->load($inputFileName);
+
+            $sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
+
+            unset($sheetData[1]);
+
+            $data = array();
+
+            $html = '<table border=1>';
+            $html .= '<tr>';
+            $html .= '<td>NIS</td>';
+            $html .= '<td>Nama</td>';
+            $html .= '<td>L/P</td>';
+            $html .= '<td>NISN</td>';
+            $html .= '<td>NIK</td>';
+            $html .= '<td>TEMPAT LAHIR</td>';
+            $html .= '<td>TANGGAL LAHIR</td>';
+            $html .= '<td>AGAMA</td>';
+            $html .= '<td>JENIS TINGGAL</td>';
+            $html .= '<td>ALAMAT</td>';
+            $html .= '<td>RT</td>';
+            $html .= '<td>RW</td>';
+            $html .= '<td>KELURAHAN</td>';
+            $html .= '<td>KECAMATAN</td>';
+            $html .= '<td>KAB/KOTA</td>';
+            $html .= '<td>KODE POS</td>';
+            $html .= '<td>JARAK</td>';
+            $html .= '<td>JARAK OTHER</td>';
+            $html .= '<td>TRANSPORTASI</td>';
+            $html .= '<td>PHONE 1</td>';
+            $html .= '<td>PHONE 2</td>';
+            $html .= '<td>EMAIL</td>';
+            $html .= '<td>TINGGI</td>';
+            $html .= '<td>BERAT</td>';
+            $html .= '<td>KEBUTUHAN KHUSUS</td>';
+            $html .= '</tr>';
+            foreach ($sheetData as $key => $row) {
+                $html .= '<tr>';
+
+                $html .= '<td>' . $row['D'] . '</td>';
+                $html .= '<td>' . ucwords(strtolower($row['B'])) . '</td>';
+                $html .= '<td>' . $row['C'] . '</td>';
+                $html .= '<td>' . $row['E'] . '</td>';
+                $html .= '<td>' . $row['F'] . '</td>';
+                $html .= '<td>' . ucwords(strtolower($row['G'])) . '</td>';
+                $html .= '<td>' . $row['H'] . '</td>';
+                $html .= '<td>' . $row['I'] . '</td>';
+                $html .= '<td>' . $row['Z'] . '</td>';
+                $html .= '<td>' . ucwords(strtolower($row['AA'])) . '</td>';
+                $html .= '<td>' . $row['AB'] . '</td>';
+                $html .= '<td>' . $row['AC'] . '</td>';
+                $html .= '<td>' . ucwords(strtolower($row['AD'])) . '</td>';
+                $html .= '<td>' . $row['AE'] . '</td>';
+                $html .= '<td>' . $row['AF'] . '</td>';
+                $html .= '<td>' . $row['AG'] . '</td>';
+                $html .= '<td>' . $row['AM'] . '</td>';
+                $html .= '<td>' . $row['AN'] . '</td>';
+                $html .= '<td>' . $row['AO'] . '</td>';
+                $html .= '<td>' . $row['AK'] . '</td>';
+                $html .= '<td>' . $row['AL'] . '</td>';
+                $html .= '<td>' . $row['AP'] . '</td>';
+                $html .= '<td>' . $row['AH'] . '</td>';
+                $html .= '<td>' . $row['AI'] . '</td>';
+                $html .= '<td>' . $row['AJ'] . '</td>';
+
+                $html .= '</tr>';
+
+                $data['nis'] = $row['D'];
+                $data['name'] = ucwords(strtolower($row['D']));
+                $data['gender'] = $row['F'];
+                $data['nisn'] = $row['E'];
+                $data['nik'] = $row['F'];
+                $data['birthplace'] = ucwords(strtolower($row['M']));
+                $data['birthdate'] = date('Y-m-d', strtotime($row['N']));
+                $data['religion'] = $row['I'];
+                $data['religionother'] = '';
+
+                if ($row['Z'] == 0 || $row['Z'] == 99)
+                    $data['residance'] = -1;
+                else
+                    $data['residance'] = $row['Z'];
+
+                $data['residanceother'] = '';
+                $data['address'] = ucwords(strtolower($row['T']));
+                $data['rt'] = $row['AB'];
+                $data['rw'] = $row['AC'];
+                $data['village'] = ucwords(strtolower($row['AD']));
+                $data['subdisctrict'] = ''; //$row['AE'];
+                $data['city'] = $row['AF'];
+                $data['zipcode'] = $row['AG'];
+                $data['distance'] = $row['AM'];
+                $data['distanceother'] = $row['AN'];
+
+                if ($row['AO'] == 0 || $row['AO'] == 99)
+                    $data['transportation'] = -1;
+                else
+                    $data['transportation'] = $row['AO'];
+
+                $data['phonenumber1'] = $row['AA'];
+                $data['phonenumber2'] = $row['AB'];
+                $data['email'] = $row['AC'];
+                $data['height'] = $row['AH'];
+                $data['weight'] = $row['AI'];
+
+                if ($row['AJ'] == 0 || $row['AJ'] == 99)
+                    $data['specialneeds'] = -1;
+                else
+                    $data['specialneeds'] = $row['AJ'];
+
+                $this->model->saveMembers($data);
+            }
+            $html .= '</table>';
+            echo $html;
         }
     }
 

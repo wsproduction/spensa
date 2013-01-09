@@ -184,12 +184,16 @@ class Catalogue extends Controller {
 
     public function detail($id = 0) {
         Web::setTitle('Detail Catalogue');
-        $this->view->id = $id;
-        $this->view->link_back = $this->content->setLink('catalogue');
-        $this->view->link_print_barcode = $this->content->setLink('catalogue/printBarcode/' . $id);
-        $this->view->link_print_label = $this->content->setLink('catalogue/printLabel/' . $id);
-        $this->view->link_r_collection = $this->content->setLink('catalogue/readcollectionbook/' . $id);
-        $this->view->render('catalogue/detail');
+        $list = $this->model->selectBookById($id);
+        if (count($list) > 0) {
+            $this->view->id = $id;
+            $this->view->data = $list[0];
+            $this->view->link_back = $this->content->setLink('catalogue');
+            $this->view->link_print_barcode = $this->content->setLink('catalogue/printBarcode/' . $id);
+            $this->view->link_print_label = $this->content->setLink('catalogue/printLabel/' . $id);
+            $this->view->link_r_collection = $this->content->setLink('catalogue/readcollectionbook/' . $id);
+            $this->view->render('catalogue/detail');
+        }
     }
 
     public function listData($page = 1) {
@@ -479,20 +483,27 @@ class Catalogue extends Controller {
             $xml .= "<total>$total</total>";
 
             foreach ($listData as $row) {
-                
+
                 $link_edit = $this->content->setLink('catalogue/edit/' . $row['book_id']);
                 $link_detail = $this->content->setLink('catalogue/detail/' . $row['book_id']);
-                
+
+                $fund = '-';
+                if (!empty($row['fund'])) {
+                    $fund = $row['fund'];
+                }
+
+                $stock = $row['book_quantity'] - $row['count_borrowed'];
+
                 $xml .= "<row id='" . $row['book_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['book_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['ddc_classification_number'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_title'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['resource'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['fund'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $fund . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_quantity'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[-]]></cell>";
-                $xml .= "<cell><![CDATA[" . date('d.m.Y',  strtotime($row['book_entry'])) . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . date('d.m.Y',  strtotime($row['book_entry_update'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $stock . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d.m.Y', strtotime($row['book_entry'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d.m.Y', strtotime($row['book_entry_update'])) . "]]></cell>";
                 $xml .= "<cell><![CDATA[<a href='" . $link_edit . "'>Edit</a> | <a href='" . $link_detail . "'>Detail</a>]]></cell>";
                 $xml .= "</row>";
             }
@@ -589,7 +600,7 @@ class Catalogue extends Controller {
         }
     }
 
-    public function readCollectionBook($id=0) {
+    public function readCollectionBook($id = 0) {
 
         if ($this->method->isAjax()) {
             $page = $this->method->post('page', 1);
@@ -602,10 +613,17 @@ class Catalogue extends Controller {
             $xml .= "<page>$page</page>";
             $xml .= "<total>$total</total>";
 
-            foreach ($listData as $row) {                
+            foreach ($listData as $row) {
+                $last_borrowed = '-';
+                if (!empty($row['last_borrowed']))
+                    $last_borrowed = date('d.m.Y', strtotime($row['last_borrowed']));
+
                 $xml .= "<row id='" . $row['book_register_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['book_register_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_condition'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['total_borrowed'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $last_borrowed . "]]></cell>";
+                $xml .= "<cell><![CDATA[<a href=''>Edit</a>]]></cell>";
                 $xml .= "</row>";
             }
 
@@ -1281,10 +1299,10 @@ class Catalogue extends Controller {
         }
         echo json_encode($res);
     }
-    
+
     public function setPrimaryAuthor() {
         $res = false;
-        $id = $this->method->post('val');        
+        $id = $this->method->post('val');
         if ($this->model->saveSetPrimaryAuthor('IN', $id, true)) {
             $this->model->saveSetPrimaryAuthor('NOT IN', $id, false);
             $res = true;
@@ -1298,18 +1316,18 @@ class Catalogue extends Controller {
         foreach ($listddc as $rowddc) {
             $optionddc[$rowddc['ddc_id']] = '[' . $rowddc['ddc_classification_number'] . ']  ' . $rowddc['ddc_title'];
         }
-        
+
         return $optionddc;
     }
-    
+
     public function optionDdcLevel2() {
         $parentid = $this->method->get('id');
         $listddc = $this->model->selectDdcByParentId($parentid);
         $optionddc = '<option value=""></option>';
         foreach ($listddc as $rowddc) {
-            $optionddc .= '<option value="' . $rowddc['ddc_id'] . '">' .'[' . $rowddc['ddc_classification_number'] . ']  ' . $rowddc['ddc_title'] . '</option>';
+            $optionddc .= '<option value="' . $rowddc['ddc_id'] . '">' . '[' . $rowddc['ddc_classification_number'] . ']  ' . $rowddc['ddc_title'] . '</option>';
         }
-        
+
         echo json_encode($optionddc);
     }
 

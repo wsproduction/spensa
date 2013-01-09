@@ -23,7 +23,7 @@ $protection = Session::get('login_status');
         Src::plugin()->jQueryUI();
 
         Src::css('layout');
-        
+
         /* Loader */
         echo Src::getCss();
         echo Src::getJavascript();
@@ -45,6 +45,9 @@ $protection = Session::get('login_status');
             <div id="header">
                 <div id="logo" class="fl-left">
                     SekolahKu<sup><span style="font-size: 11px;">&nbsp;(beta)</span></sup>
+                </div>
+                <div>
+                    ss
                 </div>
                 <?php if ($protection) { ?>
                     <div id="m-account" class="fl-right">
@@ -77,10 +80,14 @@ $protection = Session::get('login_status');
                             </div>
                             <div class="cl">&nbsp;</div>
                         </div>
-                        <ul class="m-left">
-                            <li type="parent" class="toggle-on"><a href="#list-m-apps" class="apps border-bottom arrow-grey">Aplikasi</a></li>
-                            <ul id="list-m-apps" style="display: block;"></ul>
-                        </ul>
+                        <div>
+                            <ul class="m-left">
+                                <li type="parent" class="toggle-on">
+                                    <a href="#list-m-apps" class="apps border-bottom arrow-grey">Aplikasi</a>
+                                    <ul id="list-m-apps" style="display: block;"></ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <!-- END : Left box fixed -->
 
@@ -163,7 +170,7 @@ $protection = Session::get('login_status');
                     return false;
                 });
    
-                /* Load Page List */
+                /* Load Apps List */
                 $.ajax({
                     url : protocol + '//' + host + '/menu/apps',
                     dataType : 'json',

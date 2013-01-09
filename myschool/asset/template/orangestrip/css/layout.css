@@ -68,10 +68,11 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
 
 #content {
     margin-top: 43px;
+    min-width: 1035px;
 }
 
 #live-view {
-    margin-left: 230px;
+    float: left;
     width: 800px;
 }
 

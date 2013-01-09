@@ -14,40 +14,38 @@ class CatalogueModel extends Model {
         $query = $this->method->post('query', false);
         $qtype = $this->method->post('qtype', false);
 
-        $listSelect = "
-                    digilib_book.book_id,
-                    digilib_book.book_title,
-                    digilib_book.book_foreign_title,
-                    digilib_book.book_publisher,
-                    digilib_book.book_publishing,
-                    digilib_book.book_edition,
-                    digilib_book.book_copy,
-                    digilib_book.book_isbn,
-                    digilib_book.book_roman_number,
-                    digilib_book.book_pages_number,
-                    digilib_book.book_bibliography,
-                    digilib_book.book_ilustration,
-                    digilib_book.book_index,
-                    digilib_book.book_width,
-                    digilib_book.book_height,
-                    digilib_book.book_weight,
-                    digilib_book.book_accounting_symbol,
-                    digilib_book.book_price,
-                    digilib_book.book_resource,
-                    digilib_book.book_fund,
-                    digilib_book.book_review,
-                    digilib_book.book_classification,
-                    digilib_book.book_cover,
-                    digilib_book.book_file,
-                    digilib_book.book_entry,
-                    digilib_book.book_entry_update,
-                    digilib_ddc.ddc_classification_number,
-                    (SELECT COUNT(digilib_book_register.book_register_id) FROM digilib_book_register WHERE digilib_book_register.book_id = digilib_book.book_id) AS book_quantity,
-                    (SELECT digilib_book_fund.book_fund_title FROM digilib_book_fund WHERE digilib_book_fund.book_fund_id = digilib_book.book_fund) AS fund,
-                    (SELECT digilib_book_resource.book_resource_title FROM digilib_book_resource WHERE digilib_book_resource.book_resource_id = digilib_book.book_resource) AS resource
-                    ";
-
-        $prepare = 'SELECT ' . $listSelect . ' 
+        $prepare = 'SELECT 
+                        digilib_book.book_id,
+                        digilib_book.book_title,
+                        digilib_book.book_foreign_title,
+                        digilib_book.book_publisher,
+                        digilib_book.book_publishing,
+                        digilib_book.book_edition,
+                        digilib_book.book_copy,
+                        digilib_book.book_isbn,
+                        digilib_book.book_roman_number,
+                        digilib_book.book_pages_number,
+                        digilib_book.book_bibliography,
+                        digilib_book.book_ilustration,
+                        digilib_book.book_index,
+                        digilib_book.book_width,
+                        digilib_book.book_height,
+                        digilib_book.book_weight,
+                        digilib_book.book_accounting_symbol,
+                        digilib_book.book_price,
+                        digilib_book.book_resource,
+                        digilib_book.book_fund,
+                        digilib_book.book_review,
+                        digilib_book.book_classification,
+                        digilib_book.book_cover,
+                        digilib_book.book_file,
+                        digilib_book.book_entry,
+                        digilib_book.book_entry_update,
+                        digilib_ddc.ddc_classification_number,
+                        (SELECT COUNT(digilib_book_register.book_register_id) FROM digilib_book_register WHERE digilib_book_register.book_id = digilib_book.book_id) AS book_quantity,
+                        (SELECT digilib_book_fund.book_fund_title FROM digilib_book_fund WHERE digilib_book_fund.book_fund_id = digilib_book.book_fund) AS fund,
+                        (SELECT digilib_book_resource.book_resource_title FROM digilib_book_resource WHERE digilib_book_resource.book_resource_id = digilib_book.book_resource) AS resource,
+                        (SELECT COUNT(digilib_book_register.book_id) AS FIELD_1 FROM digilib_borrowed_history INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id) WHERE digilib_book_register.book_id = digilib_book.book_id) AS count_borrowed
                     FROM 
                         digilib_book 
                         INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id) ';
@@ -76,7 +74,9 @@ class CatalogueModel extends Model {
                         digilib_book_register.book_register_id,
                         digilib_book_register.book_id,
                         digilib_book_register.book_entry,
-                        digilib_book_condition.book_condition
+                        digilib_book_condition.book_condition,
+                        (SELECT COUNT(dbh.borrowed_history_id) FROM digilib_borrowed_history dbh WHERE dbh.borrowed_history_book = digilib_book_register.book_register_id) AS total_borrowed,
+                        (SELECT dbh.borrowed_history_star FROM digilib_borrowed_history dbh WHERE dbh.borrowed_history_book = digilib_book_register.book_register_id) AS last_borrowed
                     FROM 
                         digilib_book_register
                         INNER JOIN digilib_book_condition ON (digilib_book_register.book_condition = digilib_book_condition.book_condition_id) 
@@ -89,10 +89,10 @@ class CatalogueModel extends Model {
 
         $start = (($page - 1) * $rp);
         $prepare .= ' LIMIT ' . $start . ',' . $rp;
-        
+
         $sth = $this->db->prepare($prepare);
         $sth->bindValue(':id', $id);
-        
+
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -140,7 +140,7 @@ class CatalogueModel extends Model {
 
         $sth = $this->db->prepare($prepare);
         $sth->bindValue(':id', $id);
-        
+
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         $tempCount = $sth->fetchAll();
@@ -1365,6 +1365,52 @@ class CatalogueModel extends Model {
                           ');
         $sth->bindValue(':setprimary', $setprimary);
         return $sth->execute();
+    }
+
+    public function selectBookById($id = 0) {
+        $sth = $this->db->prepare('
+                            SELECT 
+                                digilib_book.book_id,
+                                digilib_book.book_title,
+                                digilib_book.book_foreign_title,
+                                digilib_book.book_publisher,
+                                digilib_book.book_publishing,
+                                digilib_book.book_edition,
+                                digilib_book.book_copy,
+                                digilib_book.book_isbn,
+                                digilib_book.book_roman_number,
+                                digilib_book.book_pages_number,
+                                digilib_book.book_bibliography,
+                                digilib_book.book_ilustration,
+                                digilib_book.book_index,
+                                digilib_book.book_width,
+                                digilib_book.book_height,
+                                digilib_book.book_weight,
+                                digilib_book.book_accounting_symbol,
+                                digilib_book.book_price,
+                                digilib_book.book_resource,
+                                digilib_book.book_fund,
+                                digilib_book.book_review,
+                                digilib_book.book_classification,
+                                digilib_book.book_cover,
+                                digilib_book.book_file,
+                                digilib_book.book_entry,
+                                digilib_book.book_entry_update,
+                                digilib_ddc.ddc_classification_number,
+                                (SELECT COUNT(digilib_book_register.book_register_id) AS FIELD_1 FROM digilib_book_register WHERE digilib_book_register.book_id = digilib_book.book_id) AS book_quantity,
+                                (SELECT digilib_book_fund.book_fund_title FROM digilib_book_fund WHERE digilib_book_fund.book_fund_id = digilib_book.book_fund) AS fund,
+                                (SELECT digilib_book_resource.book_resource_title FROM digilib_book_resource WHERE digilib_book_resource.book_resource_id = digilib_book.book_resource) AS resource,
+                                (SELECT COUNT(digilib_book_register.book_id) AS FIELD_1 FROM digilib_borrowed_history INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id) WHERE digilib_book_register.book_id = digilib_book.book_id) AS count_borrowed
+                              FROM
+                                digilib_book
+                                INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id)
+                            WHERE
+                                digilib_book.book_id IN (' . $id . ')
+                        ');
+
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
     }
 
 }

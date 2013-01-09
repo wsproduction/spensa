@@ -13,24 +13,30 @@ class MembersModel extends Model {
         $query = $this->method->post('query', false);
         $qtype = $this->method->post('qtype', false);
 
-        $listSelect = "
-            digilib_members.members_id,
-            digilib_members.members_name,
-            digilib_members.members_gender,
-            digilib_members.members_birthplace,
-            digilib_members.members_birthdate,
-            digilib_members.members_address,
-            digilib_members.members_phone1,
-            digilib_members.members_phone2,
-            digilib_members.members_email,
-            digilib_members.members_photo,
-            digilib_members.members_isa,
-            digilib_members.members_desc,
-            digilib_members.members_status,
-            digilib_members.members_entry,
-            digilib_members.members_entry_update";
-
-        $prepare = 'SELECT ' . $listSelect . ' FROM digilib_members';
+        $prepare = 'SELECT 
+                        digilib_members.members_id,
+                        digilib_members.members_name,
+                        digilib_members.members_gender,
+                        digilib_members.members_birthplace,
+                        digilib_members.members_birthdate,
+                        digilib_members.members_address,
+                        digilib_members.members_phone1,
+                        digilib_members.members_phone2,
+                        digilib_members.members_email,
+                        digilib_members.members_photo,
+                        digilib_members.members_isa,
+                        digilib_members.members_desc,
+                        digilib_members.members_status,
+                        digilib_members.members_entry,
+                        digilib_members.members_entry_update,
+                        public_gender.gender_title,
+                        digilib_isa.isa_title,
+                        (SELECT COUNT(dbh.borrowed_history_id) FROM digilib_borrowed_history dbh WHERE dbh.borrowed_history_members = digilib_members.members_id) AS borrow_count,
+                          (SELECT dbh.borrowed_history_star FROM digilib_borrowed_history dbh WHERE dbh.borrowed_history_members = digilib_members.members_id LIMIT 1) AS last_borrow
+                    FROM 
+                        digilib_members
+                        INNER JOIN public_gender ON (digilib_members.members_gender = public_gender.gender_id)
+                        INNER JOIN digilib_isa ON (digilib_members.members_isa = digilib_isa.isa_id)';
         if ($query)
             $prepare .= ' WHERE ' . $qtype . ' LIKE "%' . $query . '%" ';
         $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
@@ -456,6 +462,75 @@ class MembersModel extends Model {
         } else {
             return false;
         }
+    }
+
+    public function saveMembers($data) {
+        $name = $data['name'];
+        $gender = $data['gender'];
+        $birthplace = $data['birthplace'];
+        $birthdate = $data['birthdate'];
+        $address = $data['address'];
+        $phone1 = $data['phonenumber1'];
+        $phone2 = $data['phonenumber1'];
+        $email = $data['email'];
+        $isa = 1;
+        $desc = '';
+        $status = 1;
+
+        $sth = $this->db->prepare('
+                    INSERT INTO
+                    digilib_members(
+                        members_id,
+                        members_name,
+                        members_gender,
+                        members_birthplace,
+                        members_birthdate,
+                        members_address,
+                        members_phone1,
+                        members_phone2,
+                        members_email,
+                        members_isa,
+                        members_desc,
+                        members_status,
+                        members_entry,
+                        members_entry_update)
+                    VALUES(
+                    ( SELECT IF (
+                        (SELECT COUNT(cdm . members_id) FROM digilib_members AS cdm 
+                                WHERE cdm . members_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"%")) 
+                                ORDER BY cdm . members_id DESC LIMIT 1
+                        ) > 0,
+                        (SELECT ( dm.members_id + 1 ) FROM digilib_members AS dm 
+                                WHERE dm . members_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"%")) 
+                                ORDER BY dm . members_id DESC LIMIT 1),
+                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),DATE_FORMAT(CURDATE(),"%y")+1,DATE_FORMAT(CURDATE(),"%m"),"0001"))) AS dd ),
+                    :name,
+                    :gender,
+                    :birthplace,
+                    :birthdate,
+                    :address,
+                    :phone1,
+                    :phone2,
+                    :email,
+                    :isa,
+                    :desc,
+                    :status,
+                    NOW(),
+                    NOW())
+                ');
+
+        $sth->bindValue(':name', $name);
+        $sth->bindValue(':gender', $gender);
+        $sth->bindValue(':birthplace', $birthplace);
+        $sth->bindValue(':birthdate', $birthdate);
+        $sth->bindValue(':address', $address);
+        $sth->bindValue(':phone1', $phone1);
+        $sth->bindValue(':phone2', $phone2);
+        $sth->bindValue(':email', $email);
+        $sth->bindValue(':isa', $isa);
+        $sth->bindValue(':desc', $desc);
+        $sth->bindValue(':status', $status);
+        return $sth->execute();
     }
 
 }
