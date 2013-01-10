@@ -333,7 +333,8 @@
                                 $('#list-collection .trSelected td[abbr=book_register_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
-                        
+                                
+                                $(this).loadingProgress('start');
                                 $.post($('#list-collection').attr('link_d'), {
                                     id : tempId.join(',')
                                 }, function(o){
@@ -362,10 +363,12 @@
                                 $('#list-collection .trSelected td[abbr=book_register_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
-                        
+                                
+                                $(this).loadingProgress('start');
                                 $.post($('#list-collection').attr('link_p'), {
                                     id : tempId.join(',')
                                 }, function(o){
+                                    $(this).loadingProgress('stop');
                                     if (o) {
                                         alert(leng + ' Item has saved.');
                                         $('#list-collection').flexReload();

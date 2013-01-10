@@ -1488,5 +1488,17 @@ class CatalogueModel extends Model {
         $count = $tempCount[0];
         return $count['cnt'];
     }
-
+    
+    public function deletePrintListBarcode() {
+        $id = $this->method->post('id', 0);
+        $sth = $this->db->prepare('DELETE FROM digilib_book_temp_barcodeprint WHERE digilib_book_temp_barcodeprint.book_temp_barcodeprint IN (' . $id . ')');
+        return $sth->execute();
+    }
+    
+    public function deletePrintListBarcodeAll() {
+        Session::init();
+        $sth = $this->db->prepare('DELETE FROM digilib_book_temp_barcodeprint WHERE digilib_book_temp_barcodeprint.book_temp_barcodeprint_session = :sessionid');
+        $sth->bindValue(':sessionid', Session::id());
+        return $sth->execute();
+    }
 }

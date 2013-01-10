@@ -46,9 +46,6 @@ $protection = Session::get('login_status');
                 <div id="logo" class="fl-left">
                     SekolahKu<sup><span style="font-size: 11px;">&nbsp;(beta)</span></sup>
                 </div>
-                <div>
-                    ss
-                </div>
                 <?php if ($protection) { ?>
                     <div id="m-account" class="fl-right">
                         <a id="m-account-parent" class="slide-of" href="#m-account-child">My Account</a>

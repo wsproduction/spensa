@@ -99,7 +99,7 @@ class Ddc extends Controller {
                 $xml .= "<cell><![CDATA[" . $row['ddc_classification_number'] . "]]></cell>";
                 
                 if ($row['ddc_description'] == "") {
-                    $xml .= "<cell><![CDATA[<div>" . $row['ddc_title'] . "</div><div>" . $row['ddc_description'] . "</div>]]></cell>";
+                    $xml .= "<cell><![CDATA[" . $row['ddc_title'] . "</div>]]></cell>";
                 } else {
                     $xml .= "<cell><![CDATA[<div><b>" . $row['ddc_title'] . "</b></div><div>" . $row['ddc_description'] . "</div>]]></cell>";
                 }

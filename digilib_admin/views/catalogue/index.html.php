@@ -1,17 +1,18 @@
-<table id="list" title="<?php echo Web::getTitle(); ?>" link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_d="<?php echo $link_d; ?>" style="display: none;">
+<table id="list" title="<?php echo Web::getTitle(); ?>" link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_d="<?php echo $link_d; ?>" link_pl="<?php echo $link_pl; ?>" style="display: none;">
 </table>
 
 <script>
     $(function(){
+        
         /* FLEXYGRID INDEX*/
         var listId = '#list';
-        var title = $(listId).attr('title');
-        var link_r = $(listId).attr('link_r');
-        var link_c = $(listId).attr('link_c');
-        var link_d = $(listId).attr('link_d');
+        var title = $('#list').attr('title');
+        var link_r = $('#list').attr('link_r');
+        var link_c = $('#list').attr('link_c');
+        var link_d = $('#list').attr('link_d');
     
-        var option = {
-            url : link_r,
+        $('#list').flexigrid({
+            url : $('#list').attr('link_r'),
             dataType : 'xml',
             colModel : [ {
                     display : 'ID', 
@@ -83,23 +84,23 @@
                     name : 'Tambah',
                     bclass : 'add',
                     onpress : function() {
-                        window.location = link_c
+                        window.location = $('#list').attr('link_c')
                     }
                 }, {
                     name : 'Hapus',
                     bclass : 'delete',
                     onpress : function() {
-                        var leng = $(listId + ' .trSelected').length;
+                        var leng = $('#list .trSelected').length;
                         var conf = confirm('Delete ' + leng + ' items?');
                 
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $(listId + ' .trSelected td[abbr=book_id] div').each(function() {
+                                $('#list .trSelected td[abbr=book_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
                         
-                                $.post(link_d, {
+                                $.post($('#list').attr('link_d'), {
                                     id : tempId.join(',')
                                 }, function(o){
                                     if (o) {
@@ -113,6 +114,12 @@
                     }
                 }, {
                     separator : true
+                }, {
+                    name : 'Print List Preview',
+                    bclass : 'card',
+                    onpress : function() {
+                        window.location = $('#list').attr('link_pl');
+                    }
                 } ],
             searchitems : [ {
                     display : 'ID',
@@ -145,9 +152,7 @@
             resizable : false,
             width : '100%',
             height : screen.height - 350
-        };
-    
-        $(listId).flexigrid(option);
+        });
     });
 </script>
 

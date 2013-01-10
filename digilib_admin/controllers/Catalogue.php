@@ -30,6 +30,7 @@ class Catalogue extends Controller {
         $this->view->link_r = $this->content->setLink('catalogue/read');
         $this->view->link_c = $this->content->setLink('catalogue/add');
         $this->view->link_d = $this->content->setLink('catalogue/delete');
+        $this->view->link_pl = $this->content->setLink('catalogue/printlistbarcode');
         $this->view->render('catalogue/index');
     }
 
@@ -197,12 +198,13 @@ class Catalogue extends Controller {
             $this->view->render('catalogue/detail');
         }
     }
-    
+
     public function printListBarcode() {
         Web::setTitle('Daftar Print Barcode');
         $this->view->link_r = $this->content->setLink('catalogue/readprintlistbarcode');
         $this->view->link_p = $this->content->setLink('catalogue/printbarcode');
         $this->view->link_d = $this->content->setLink('catalogue/deleteprintlistbarcode');
+        $this->view->link_da = $this->content->setLink('catalogue/deleteprintlistbarcodeall');
         $this->view->render('catalogue/printlistbarcode');
     }
 
@@ -633,7 +635,7 @@ class Catalogue extends Controller {
                 $xml .= "<cell><![CDATA[" . $row['book_condition'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['total_borrowed'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $last_borrowed . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . date('d.m.Y',  strtotime($row['book_entry'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d.m.Y', strtotime($row['book_entry'])) . "]]></cell>";
                 $xml .= "<cell><![CDATA[<a href=''>Edit</a>]]></cell>";
                 $xml .= "</row>";
             }
@@ -756,7 +758,7 @@ class Catalogue extends Controller {
             echo $xml;
         }
     }
-    
+
     public function readPrintlistBarcode() {
 
         if ($this->method->isAjax()) {
@@ -1367,19 +1369,33 @@ class Catalogue extends Controller {
 
         echo json_encode($optionddc);
     }
-    
+
     public function addPrintBarcode() {
         if ($this->method->isAjax()) {
             Session::init();
             $sessionid = Session::id();
             $tempid = $this->method->post('id');
-            foreach (explode(',', $tempid) as $key=>$value) {
+            foreach (explode(',', $tempid) as $key => $value) {
                 $this->model->saveTempPrintBarcode($value, $sessionid);
             }
             echo json_encode(true);
         } else {
             echo json_encode(false);
         }
+    }
+    
+    public function deletePrintListBarcode() {
+        $res = false;
+        if ($this->model->deletePrintListBarcode()) 
+            $res = true;
+        echo json_encode($res);
+    }
+    
+    public function deletePrintListBarcodeAll() {
+        $res = false;
+        if ($this->model->deletePrintListBarcodeAll()) 
+            $res = true;
+        echo json_encode($res);
     }
 
 }

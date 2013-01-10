@@ -1,4 +1,4 @@
-<table id="printlist" title="<?php echo Web::getTitle(); ?>" link_r="<?php echo $link_r; ?>" link_p="<?php echo $link_p; ?>" link_d="<?php echo $link_d; ?>" style="display: none;">
+<table id="printlist" title="<?php echo Web::getTitle(); ?>" link_r="<?php echo $link_r; ?>" link_p="<?php echo $link_p; ?>" link_d="<?php echo $link_d; ?>" link_da="<?php echo $link_da; ?>" style="display: none;">
 </table>
 
 <script>
@@ -36,13 +36,15 @@
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $('#printlist .trSelected td[abbr=members_id] div').each(function() {
+                                $('#printlist .trSelected td[abbr=book_temp_barcodeprint] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
-                        
-                                $.post('', {
+                                
+                                $(this).loadingProgress('start');
+                                $.post($('#printlist').attr('link_d'), {
                                     id : tempId.join(',')
                                 }, function(o){
+                                    $(this).loadingProgress('stop');
                                     if (o) {
                                         alert(leng + ' Item has deleted.');
                                         $('#printlist').flexReload();
@@ -59,9 +61,11 @@
                     onpress : function() {
                         var conf = confirm('Are you delete all items?');
                         if (conf) {
-                            $.post('', {
+                            $(this).loadingProgress('start');
+                            $.post($('#printlist').attr('link_da'), {
                                 action : 'all'
                             }, function(o){
+                                $(this).loadingProgress('stop');
                                 if (o) {
                                     alert('All Item has deleted.');
                                     $('#printlist').flexReload();
