@@ -231,3 +231,9 @@ ul.dropdown ul li a { width: 100%; display: inline-block; }
 */
 ul.dropdown ul ul { left: 100%; top: 0; }
 ul.dropdown li:hover > ul { visibility: visible; }
+
+
+table.detail_form td {
+    border-bottom: 1px dotted #ccc;
+    padding: 4px 0;
+}

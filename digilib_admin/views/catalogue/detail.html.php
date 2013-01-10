@@ -12,136 +12,269 @@
         </div>
     </div>
     <div id="box_content">
-        
-        <div style="border: 1px solid #ccc;margin-bottom: 5px;">
-            <?php
-            /*
-              Form::create('button', 'btnPrintLabel');
-              Form::value('Print Label');
-              Form::style('action_print');
-              Form::properties(array('link' => $link_print_label));
-              Form::commit();
-             * 
-             */
-            ?>
-            <table style="width: 100%;">
-                <tr>
-                    <td style="width: 150px;">
-                        <div class="label-ina">ID Buku</div>
-                        <div class="label-eng">Book ID</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        <?php echo $data['book_id']; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="label-ina">Judul Buku</div>
-                        <div class="label-eng">Book Title</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        <?php echo $data['book_title']; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="label-ina">Judul Bahasa Lain</div>
-                        <div class="label-eng">Foreign Title</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        <?php echo $data['book_foreign_title']; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="label-ina">Bahasa</div>
-                        <div class="label-eng">Language</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        ??
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="label-ina">Edisi / Centakan</div>
-                        <div class="label-eng">Edition / Copies</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        ??
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="label-ina">ISBN</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        ??
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="label-ina">Halaman Angka / Halaman Romawi</div>
-                        <div class="label-eng">Page Number / Page Romance</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        ??
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="label-ina">Bibliografi</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        ??
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="label-ina">Ilustrasi / Index</div>
-                        <div class="label-eng">Ilustration / Index</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        ??
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="label-ina">Ukuran / Berat</div>
-                        <div class="label-eng">Size / Weight</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        ??
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="label-ina">Ukuran / Berat</div>
-                        <div class="label-eng">Size / Weight</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        ??
-                    </td>
-                </tr>
-            </table>
+        <div id="tab_detail">
+            <ul>
+                <li><a href="#tabs-1">1. Detail Buku</a></li>
+                <li><a href="#tabs-2">2. Koleksi Buku</a></li>
+            </ul>
+            <div id="tabs-1">
+
+                <?php
+                /*
+                  Form::create('button', 'btnPrintLabel');
+                  Form::value('Print Label');
+                  Form::style('action_print');
+                  Form::properties(array('link' => $link_print_label));
+                  Form::commit();
+                 * 
+                 */
+                ?>
+                <table style="width: 100%;" class="detail_form" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td style="width: 250px;">
+                            <div class="label-ina">ID Buku</div>
+                            <div class="label-eng">Book ID</div>
+                        </td>
+                        <td style="width: 20px;">:</td>
+                        <td>
+                            <?php
+                            $book_id = '-';
+                            if (!empty($data['book_id']))
+                                $book_id = $data['book_id'];
+                            echo $book_id;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Judul Buku</div>
+                            <div class="label-eng">Book Title</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php
+                            $book_title = '-';
+                            if (!empty($data['book_title']))
+                                $book_title = $data['book_title'];
+                            echo $book_title;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Judul Bahasa Lain</div>
+                            <div class="label-eng">Foreign Title</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php
+                            $book_foreign_title = '-';
+                            if (!empty($data['book_foreign_title']))
+                                $book_foreign_title = $data['book_foreign_title'];
+                            echo $book_foreign_title;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Bahasa</div>
+                            <div class="label-eng">Language</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            ??
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Edisi / Centakan</div>
+                            <div class="label-eng">Edition / Copies</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php
+                            $edition = '-';
+                            $copies = '-';
+                            if (!empty($data['book_edition']))
+                                $edition = $data['book_edition'];
+                            if (!empty($data['book_copy']))
+                                $copies = $data['book_copy'];
+                            echo $edition . ' / ' . $copies;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">ISBN</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php
+                            $book_isbn = '-';
+                            if (!empty($data['book_isbn']))
+                                $book_isbn = $data['book_isbn'];
+                            echo $book_isbn;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Halaman Angka / Halaman Romawi</div>
+                            <div class="label-eng">Page Number / Page Romance</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php
+                            $page_romance = '-';
+                            $page_number = '-';
+                            if (!empty($data['book_roman_number']))
+                                $page_romance = $data['book_roman_number'];
+                            if (!empty($data['book_pages_number']))
+                                $page_number = $data['book_pages_number'];
+                            echo $page_number . ' / ' . $page_romance;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Bibliografi</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php
+                            $book_bibliography = '-';
+                            if (!empty($data['book_bibliography']))
+                                $book_bibliography = 'Hlm. ' . $data['book_bibliography'];
+                            echo $book_bibliography;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Ilustrasi / Index</div>
+                            <div class="label-eng">Ilustration / Index</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php
+                            $ilustration = 'Tidak Ada';
+                            $index = 'Tidak Ada';
+                            if ($data['book_ilustration'])
+                                $ilustration = 'Ada';
+                            if ($data['book_index'])
+                                $index = 'Ada';
+                            echo $ilustration . ' / ' . $index;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Ukuran / Berat</div>
+                            <div class="label-eng">Size / Weight</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php echo $data['book_width'] . 'x' . $data['book_height'] . 'Cm / ' . $data['book_weight'] . 'Kg'; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Eksemplar</div>
+                            <div class="label-eng">Quantity</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php
+                            $book_quantity = '-';
+                            if (!empty($data['book_quantity']))
+                                $book_quantity = $data['book_quantity'] . ' Buku';
+                            echo $book_quantity;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Harga</div>
+                            <div class="label-eng">Price</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php
+                            echo $data['accounting_symbol'] . ' ' . $data['book_price'];
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Asal / Sumber</div>
+                            <div class="label-eng">Source / Fund</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php
+                            $fund = '-';
+                            $book_resource = '-';
+                            if (!empty($data['fund']))
+                                $fund = $data['fund'];
+                            if (!empty($data['resource']))
+                                $book_resource = $data['resource'];
+                            echo $book_resource . ' / ' . $fund;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Tahun Terbit</div>
+                            <div class="label-eng">Publish Years</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php echo $data['book_publishing']; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top">
+                            <div class="label-ina">Penanggung Jawab</div>
+                            <div class="label-eng">Author</div>
+                        </td>
+                        <td valign="top">:</td>
+                        <td>
+                            ??
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="label-ina">Klasifikasi Buku</div>
+                            <div class="label-eng">Book Classification</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            ??
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top">
+                            <div class="label-ina">Resensi</div>
+                            <div class="label-eng">Book Review</div>
+                        </td>
+                        <td valign="top">:</td>
+                        <td>
+                            <?php echo $data['book_review']; ?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="tabs-2">
+                <table id="list-collection" link_r="<?php echo $link_r_collection; ?>" link_p="<?php echo $link_p_collection; ?>" link_pl="<?php echo $link_pl_collection; ?>"></table>
+            </div>
         </div>
-        <table id="list-collection" link_r="<?php echo $link_r_collection; ?>"></table>
     </div>
 </div>
 </div>
 
 <script>
     $(function(){
+        $('#tab_detail').tabs();
         $('#list-collection').flexigrid({
             url : $('#list-collection').attr('link_r'),
             dataType : 'xml',
@@ -170,6 +303,12 @@
                     sortable : true,
                     align : 'center'
                 }, {
+                    display : 'Tanggal Input',
+                    name : 'language_name',
+                    width : 150,
+                    sortable : true,
+                    align : 'center'
+                }, {
                     display : 'Opsi',
                     width : 150,
                     sortable : false,
@@ -191,7 +330,7 @@
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $('#list-collection .trSelected td[abbr=members_id] div').each(function() {
+                                $('#list-collection .trSelected td[abbr=book_register_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
                         
@@ -215,23 +354,23 @@
                     bclass : 'issue',
                     onpress : function() {
                         var leng = $('#list-collection .trSelected').length;
-                        var conf = confirm('Delete ' + leng + ' items?');
+                        var conf = confirm('Print ' + leng + ' items?');
                 
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $('#list-collection .trSelected td[abbr=members_id] div').each(function() {
+                                $('#list-collection .trSelected td[abbr=book_register_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
                         
-                                $.post($('#list-collection').attr('link_d'), {
+                                $.post($('#list-collection').attr('link_p'), {
                                     id : tempId.join(',')
                                 }, function(o){
                                     if (o) {
-                                        alert(leng + ' Item has deleted.');
+                                        alert(leng + ' Item has saved.');
                                         $('#list-collection').flexReload();
                                     } else {
-                                        alert('Process delete failed.');
+                                        alert('Process saved failed.');
                                     }                            
                                 }, 'json');
                             }

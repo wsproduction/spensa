@@ -192,8 +192,18 @@ class Catalogue extends Controller {
             $this->view->link_print_barcode = $this->content->setLink('catalogue/printBarcode/' . $id);
             $this->view->link_print_label = $this->content->setLink('catalogue/printLabel/' . $id);
             $this->view->link_r_collection = $this->content->setLink('catalogue/readcollectionbook/' . $id);
+            $this->view->link_p_collection = $this->content->setLink('catalogue/addprintbarcode');
+            $this->view->link_pl_collection = $this->content->setLink('catalogue/printlistbarcode');
             $this->view->render('catalogue/detail');
         }
+    }
+    
+    public function printListBarcode() {
+        Web::setTitle('Daftar Print Barcode');
+        $this->view->link_r = $this->content->setLink('catalogue/readprintlistbarcode');
+        $this->view->link_p = $this->content->setLink('catalogue/printbarcode');
+        $this->view->link_d = $this->content->setLink('catalogue/deleteprintlistbarcode');
+        $this->view->render('catalogue/printlistbarcode');
     }
 
     public function listData($page = 1) {
@@ -623,6 +633,7 @@ class Catalogue extends Controller {
                 $xml .= "<cell><![CDATA[" . $row['book_condition'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['total_borrowed'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $last_borrowed . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d.m.Y',  strtotime($row['book_entry'])) . "]]></cell>";
                 $xml .= "<cell><![CDATA[<a href=''>Edit</a>]]></cell>";
                 $xml .= "</row>";
             }
@@ -738,6 +749,32 @@ class Catalogue extends Controller {
                 $xml .= "<cell><![CDATA[<div>" . $row['ddc_title'] . "</div><div>" . $row['ddc_description'] . "</div>]]></cell>";
                 $xml .= "<cell><![CDATA[-]]></cell>";
                 $xml .= "<cell><![CDATA[-]]></cell>";
+                $xml .= "</row>";
+            }
+
+            $xml .= "</rows>";
+            echo $xml;
+        }
+    }
+    
+    public function readPrintlistBarcode() {
+
+        if ($this->method->isAjax()) {
+            $page = $this->method->post('page', 1);
+            $listData = $this->model->selectPrintListBarcode($page);
+            $total = $this->model->countPrintListBarcode();
+
+            header("Content-type: text/xml");
+            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            $xml .= "<rows>";
+            $xml .= "<page>$page</page>";
+            $xml .= "<total>$total</total>";
+
+            foreach ($listData as $row) {
+                $xml .= "<row id='" . $row['book_temp_barcodeprint'] . "'>";
+                $xml .= "<cell><![CDATA[" . $row['book_temp_barcodeprint'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['book_temp_barcodeprint_register'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['book_title'] . "]]></cell>";
                 $xml .= "</row>";
             }
 
@@ -1329,6 +1366,20 @@ class Catalogue extends Controller {
         }
 
         echo json_encode($optionddc);
+    }
+    
+    public function addPrintBarcode() {
+        if ($this->method->isAjax()) {
+            Session::init();
+            $sessionid = Session::id();
+            $tempid = $this->method->post('id');
+            foreach (explode(',', $tempid) as $key=>$value) {
+                $this->model->saveTempPrintBarcode($value, $sessionid);
+            }
+            echo json_encode(true);
+        } else {
+            echo json_encode(false);
+        }
     }
 
 }

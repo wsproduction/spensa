@@ -1397,6 +1397,7 @@ class CatalogueModel extends Model {
                                 digilib_book.book_entry,
                                 digilib_book.book_entry_update,
                                 digilib_ddc.ddc_classification_number,
+                                (SELECT pas.accounting_symbol FROM public_accounting_symbol pas WHERE pas.accounting_symbol_id = digilib_book.book_accounting_symbol) AS accounting_symbol,
                                 (SELECT COUNT(digilib_book_register.book_register_id) AS FIELD_1 FROM digilib_book_register WHERE digilib_book_register.book_id = digilib_book.book_id) AS book_quantity,
                                 (SELECT digilib_book_fund.book_fund_title FROM digilib_book_fund WHERE digilib_book_fund.book_fund_id = digilib_book.book_fund) AS fund,
                                 (SELECT digilib_book_resource.book_resource_title FROM digilib_book_resource WHERE digilib_book_resource.book_resource_id = digilib_book.book_resource) AS resource,
@@ -1411,6 +1412,81 @@ class CatalogueModel extends Model {
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
+    }
+
+    public function saveTempPrintBarcode($bookid = 0, $sessionid = 0) {
+        $sth = $this->db->prepare('
+                    INSERT INTO
+                        digilib_book_temp_barcodeprint(
+                        book_temp_barcodeprint,
+                        book_temp_barcodeprint_register,
+                        book_temp_barcodeprint_session)
+                      VALUES(
+                        (SELECT IF(
+                            (SELECT COUNT(dbtb.book_temp_barcodeprint) 
+                            FROM digilib_book_temp_barcodeprint AS dbtb) > 0, 
+                                (SELECT dbtb.book_temp_barcodeprint 
+                                FROM digilib_book_temp_barcodeprint AS dbtb 
+                                ORDER BY dbtb.book_temp_barcodeprint DESC LIMIT 1) + 1,
+                            1)
+                        ),
+                        :book_id,
+                        :session_id)
+                    ');
+        $sth->bindValue(':book_id', $bookid);
+        $sth->bindValue(':session_id', $sessionid);
+        return $sth->execute();
+    }
+
+    public function selectPrintListBarcode($page = 1) {
+        Session::init();
+        $rp = $this->method->post('rp', 10);
+        $sortname = $this->method->post('sortname');
+        $sortorder = $this->method->post('sortorder', 'desc');
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $prepare = 'SELECT 
+                        digilib_book_temp_barcodeprint.book_temp_barcodeprint,
+                        digilib_book_temp_barcodeprint.book_temp_barcodeprint_register,
+                        digilib_book_temp_barcodeprint.book_temp_barcodeprint_session,
+                        digilib_book.book_title
+                      FROM
+                        digilib_book_temp_barcodeprint
+                        INNER JOIN digilib_book_register ON (digilib_book_temp_barcodeprint.book_temp_barcodeprint_register = digilib_book_register.book_register_id)
+                        INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
+                      WHERE
+                        digilib_book_temp_barcodeprint.book_temp_barcodeprint_session = :session ';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+        $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
+
+        $start = (($page - 1) * $rp);
+        $prepare .= ' LIMIT ' . $start . ',' . $rp;
+
+        $sth = $this->db->prepare($prepare);
+        $sth->bindValue(':session', Session::id());
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function countPrintListBarcode() {
+        Session::init();
+        $query = $this->method->post('query', false);
+        $qtype = $this->method->post('qtype', false);
+
+        $prepare = 'SELECT COUNT(book_temp_barcodeprint) AS cnt FROM digilib_book_temp_barcodeprint WHERE digilib_book_temp_barcodeprint.book_temp_barcodeprint_session = :session';
+        if ($query)
+            $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->bindValue(':session', Session::id());
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        $tempCount = $sth->fetchAll();
+        $count = $tempCount[0];
+        return $count['cnt'];
     }
 
 }
