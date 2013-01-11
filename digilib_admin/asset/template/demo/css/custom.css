@@ -422,6 +422,10 @@ legend {
     background: url(../images/earse.png) no-repeat center left;
 }
 
+.flexigrid div.fbutton .report {
+    background: url('../images/1357896914_report.png') no-repeat center left;
+}
+
 .label-ina {
     font-weight: bold;
 }

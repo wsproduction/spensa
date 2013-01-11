@@ -1501,4 +1501,25 @@ class CatalogueModel extends Model {
         $sth->bindValue(':sessionid', Session::id());
         return $sth->execute();
     }
+    
+    public function selectPrintBarcodeList() {
+        Session::init();
+        $prepare = 'SELECT 
+                        digilib_book_temp_barcodeprint.book_temp_barcodeprint,
+                        digilib_book_temp_barcodeprint.book_temp_barcodeprint_register,
+                        digilib_book_temp_barcodeprint.book_temp_barcodeprint_session,
+                        digilib_book.book_title
+                      FROM
+                        digilib_book_temp_barcodeprint
+                        INNER JOIN digilib_book_register ON (digilib_book_temp_barcodeprint.book_temp_barcodeprint_register = digilib_book_register.book_register_id)
+                        INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
+                      WHERE
+                        digilib_book_temp_barcodeprint.book_temp_barcodeprint_session = :session ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->bindValue(':session', Session::id());
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
 }

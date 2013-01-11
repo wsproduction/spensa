@@ -3,14 +3,7 @@
 
 <script>
     $(function(){
-        
-        /* FLEXYGRID INDEX*/
-        var listId = '#list';
-        var title = $('#list').attr('title');
-        var link_r = $('#list').attr('link_r');
-        var link_c = $('#list').attr('link_c');
-        var link_d = $('#list').attr('link_d');
-    
+           
         $('#list').flexigrid({
             url : $('#list').attr('link_r'),
             dataType : 'xml',
@@ -104,7 +97,7 @@
                                     id : tempId.join(',')
                                 }, function(o){
                                     if (o) {
-                                        $(listId).flexReload();
+                                        $('#list').flexReload();
                                     } else {
                                         alert('Process delete failed.');
                                     }                            
@@ -115,7 +108,7 @@
                 }, {
                     separator : true
                 }, {
-                    name : 'Print List Preview',
+                    name : 'Lihat Daftar Print',
                     bclass : 'card',
                     onpress : function() {
                         window.location = $('#list').attr('link_pl');
@@ -145,7 +138,7 @@
             sortname : "book_id",
             sortorder : "asc",
             usepager : true,
-            title : title,
+            title : $('#list').attr('title'),
             useRp : true,
             rp : 15,
             showTableToggleBtn : false,

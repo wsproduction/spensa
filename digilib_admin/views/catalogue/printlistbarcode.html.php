@@ -1,6 +1,10 @@
 <table id="printlist" title="<?php echo Web::getTitle(); ?>" link_r="<?php echo $link_r; ?>" link_p="<?php echo $link_p; ?>" link_d="<?php echo $link_d; ?>" link_da="<?php echo $link_da; ?>" style="display: none;">
 </table>
 
+<div id="box-print">
+    <iframe frameborder="0"></iframe>
+</div>
+
 <script>
     $(function(){
     
@@ -27,7 +31,7 @@
                     align : 'center'
                 }],
             buttons : [ {
-                    name : 'Delete',
+                    name : 'Hapus',
                     bclass : 'delete',
                     onpress : function() {
                         var leng = $('#printlist .trSelected').length;
@@ -56,7 +60,7 @@
                         }
                     }
                 }, {
-                    name : 'Delete All',
+                    name : 'Hapus Semua',
                     bclass : 'earse',
                     onpress : function() {
                         var conf = confirm('Are you delete all items?');
@@ -78,20 +82,18 @@
                 }, {
                     separator : true
                 }, {
-                    name : 'Print Card',
+                    name : 'Print Barcode',
                     bclass : 'print',
                     onpress : function() {
-                        window.location = '';
+                        $("#box-print").dialog( "open" );
+                        $("#box-print iframe").attr('src', $('#printlist').attr('link_p')).css({'width':'675px', 'height' : screen.height - 300});
                     }
                 }],
             searchitems : [ {
-                    display : 'ID',
-                    name : 'members_id',
+                    display : 'Nomor Induk Buku',
+                    name : 'book_temp_barcodeprint',
                     isdefault : true
-                }, {
-                    display : 'Nama Anggota',
-                    name : 'members_name'            
-                } ],
+                }],
             nowrap : false,
             sortname : "book_temp_barcodeprint",
             sortorder : "asc",
@@ -103,6 +105,16 @@
             resizable : false,
             width : '100%',
             height : screen.height - 350
+        });
+        
+        $('#box-print').dialog({
+            closeOnEscape: false,
+            autoOpen: false,
+            height: screen.height - 240,
+            width: 700,
+            modal: true,
+            resizable: false,
+            draggable: false
         });
     });
 </script>

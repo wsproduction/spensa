@@ -30,24 +30,34 @@ class BorrowModel extends Model {
         $query = $this->method->post('query', false);
         $qtype = $this->method->post('qtype', false);
 
-        $listSelect = "
-            digilib_borrowed_history.borrowed_history_id,
-            digilib_borrowed_history.borrowed_history_type,
-            digilib_borrowed_history.borrowed_history_members,
-            digilib_borrowed_history.borrowed_history_book,
-            digilib_borrowed_history.borrowed_history_star,
-            digilib_borrowed_history.borrowed_history_finish,
-            digilib_borrowed_history.borrowed_history_status,
-            digilib_borrowed_history.borrowed_history_return,
-            digilib_book.book_title,
-            digilib_borrowed_type.borrowed_type_title";
-
-        $prepare = 'SELECT ' . $listSelect . ' 
+        $prepare = 'SELECT 
+                        digilib_borrowed_history.borrowed_history_id,
+                        digilib_borrowed_history.borrowed_history_type,
+                        digilib_borrowed_history.borrowed_history_members,
+                        digilib_borrowed_history.borrowed_history_book,
+                        digilib_borrowed_history.borrowed_history_star,
+                        digilib_borrowed_history.borrowed_history_finish,
+                        digilib_borrowed_history.borrowed_history_status,
+                        digilib_borrowed_history.borrowed_history_return,
+                        digilib_book.book_title,
+                        digilib_book.book_foreign_title,
+                        digilib_borrowed_type.borrowed_type_title,
+                        digilib_members.members_name,
+                        digilib_members.members_id,
+                        digilib_ddc.ddc_classification_number,
+                        digilib_publisher.publisher_name,
+                        public_city.city_name,
+                        digilib_book.book_publishing
                     FROM 
-                        digilib_borrowed_history 
+                        digilib_borrowed_history
                         INNER JOIN digilib_borrowed_type ON (digilib_borrowed_history.borrowed_history_type = digilib_borrowed_type.borrowed_type_id)
                         INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id)
                         INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
+                        INNER JOIN digilib_members ON (digilib_borrowed_history.borrowed_history_members = digilib_members.members_id)
+                        INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id)
+                        INNER JOIN digilib_publisher_office ON (digilib_book.book_publisher = digilib_publisher_office.publisher_office_id)
+                        INNER JOIN digilib_publisher ON (digilib_publisher_office.publisher_office_name = digilib_publisher.publisher_id)
+                        INNER JOIN public_city ON (digilib_publisher_office.publisher_office_city = public_city.city_id)
                     WHERE
                         digilib_borrowed_history.borrowed_history_status = 0
                     ';
@@ -82,7 +92,7 @@ class BorrowModel extends Model {
         $count = $tempCount[0];
         return $count['cnt'];
     }
-    
+
     public function selectBorrowedHistory($memberid, $page) {
         $rp = $this->method->post('rp', 10);
         $sortname = $this->method->post('sortname');
@@ -90,25 +100,33 @@ class BorrowModel extends Model {
         $query = $this->method->post('query', false);
         $qtype = $this->method->post('qtype', false);
 
-        $listSelect = "
-            digilib_borrowed_history.borrowed_history_id,
-            digilib_borrowed_history.borrowed_history_type,
-            digilib_borrowed_history.borrowed_history_members,
-            digilib_borrowed_history.borrowed_history_book,
-            digilib_borrowed_history.borrowed_history_star,
-            digilib_borrowed_history.borrowed_history_finish,
-            digilib_borrowed_history.borrowed_history_status,
-            digilib_borrowed_history.borrowed_history_return,
-            digilib_book.book_title,
-            digilib_borrowed_type.borrowed_type_title";
-
-        $prepare = 'SELECT ' . $listSelect . ' 
+        $prepare = 'SELECT
+                        digilib_borrowed_history.borrowed_history_id,
+                        digilib_borrowed_history.borrowed_history_type,
+                        digilib_borrowed_history.borrowed_history_members,
+                        digilib_borrowed_history.borrowed_history_book,
+                        digilib_borrowed_history.borrowed_history_star,
+                        digilib_borrowed_history.borrowed_history_finish,
+                        digilib_borrowed_history.borrowed_history_status,
+                        digilib_borrowed_history.borrowed_history_return,
+                        digilib_book.book_title,
+                        digilib_borrowed_type.borrowed_type_title,
+                        digilib_publisher.publisher_name,
+                        public_city.city_name,
+                        digilib_book.book_publishing,
+                        digilib_book.book_foreign_title,
+                        digilib_ddc.ddc_classification_number
                     FROM 
-                        digilib_borrowed_history 
+                        digilib_borrowed_history
                         INNER JOIN digilib_borrowed_type ON (digilib_borrowed_history.borrowed_history_type = digilib_borrowed_type.borrowed_type_id)
                         INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id)
                         INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
-                    WHERE digilib_borrowed_history.borrowed_history_members = :memberid';
+                        INNER JOIN digilib_publisher_office ON (digilib_book.book_publisher = digilib_publisher_office.publisher_office_id)
+                        INNER JOIN digilib_publisher ON (digilib_publisher_office.publisher_office_name = digilib_publisher.publisher_id)
+                        INNER JOIN public_city ON (digilib_publisher_office.publisher_office_city = public_city.city_id)
+                        INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id)
+                    WHERE 
+                        digilib_borrowed_history.borrowed_history_members = :memberid';
 
         if ($query)
             $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
@@ -144,7 +162,7 @@ class BorrowModel extends Model {
     }
 
     public function selectBorrowedCart($memberid, $borrowtype, $page) {
-               
+
         $rp = $this->method->post('rp', 10);
         $sortname = $this->method->post('sortname');
         $sortorder = $this->method->post('sortorder');
@@ -225,7 +243,8 @@ class BorrowModel extends Model {
                                         digilib_members.members_entry,
                                         digilib_members.members_entry_update,
                                         public_gender.gender_title,
-                                        digilib_isa.isa_title
+                                        digilib_isa.isa_title,
+                                        (SELECT COUNT(dbh.borrowed_history_id) FROM digilib_borrowed_history dbh WHERE dbh.borrowed_history_type = 1 AND dbh.borrowed_history_status = 0 AND dbh.borrowed_history_members = digilib_members.members_id) AS temporer_status
                                     FROM
                                         digilib_members
                                         INNER JOIN public_gender ON (digilib_members.members_gender = public_gender.gender_id)
@@ -379,14 +398,35 @@ class BorrowModel extends Model {
                             "' . $rowcart['borrowed_temp_finish'] . '",
                             0,
                             NULL)';
-            
+
             $idx--;
-            if ($idx!=0) {
+            if ($idx != 0) {
                 $prepare .= ',';
             }
         }
         $sth = $this->db->prepare($prepare);
         return $sth->execute();
+    }
+    
+    public function selectBookBorrowedStatus($bookregister = 0) {
+        $sth = $this->db->prepare(' SELECT 
+                                        digilib_borrowed_history.borrowed_history_id,
+                                        digilib_borrowed_history.borrowed_history_type,
+                                        digilib_borrowed_history.borrowed_history_members,
+                                        digilib_borrowed_history.borrowed_history_book,
+                                        digilib_borrowed_history.borrowed_history_star,
+                                        digilib_borrowed_history.borrowed_history_finish,
+                                        digilib_borrowed_history.borrowed_history_status,
+                                        digilib_borrowed_history.borrowed_history_return
+                                      FROM
+                                        digilib_borrowed_history
+                                      WHERE
+                                        digilib_borrowed_history.borrowed_history_book = :bookregister AND 
+                                        digilib_borrowed_history.borrowed_history_status = 0');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':bookregister', $bookregister);
+        $sth->execute();
+        return $sth->fetchAll();
     }
 
 }

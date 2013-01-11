@@ -970,25 +970,12 @@ class Catalogue extends Controller {
         echo json_encode($keteranganAuthor);
     }
 
-    public function printBarcode($id = 0) {
+    public function printBarcode() {
 
-        $catalogue = $this->model->selectCatalogueById($id);
+        $data = $this->model->selectPrintBarcodeList();
 
-        if (count($catalogue) > 0) {
-            $listCatalogue = $catalogue[0];
-            $data = $this->model->selectAllCollectionByBookId($id);
-            $author = $this->model->selectAuthorByBookID($id);
-
-            $booktitle = $listCatalogue['book_title'];
-            if ($listCatalogue['book_sub_title'] != '')
-                $booktitle .= ' : ' . $listCatalogue['book_sub_title'];
-
-            if (count($author) > 0) {
-                $listAuthor = $author[0];
-                $call_number = $listCatalogue['class_number'] . ' / ' . strtoupper(substr(str_replace(' ', '', $listAuthor['author_first_name']), 0, 3)) . ' / ' . strtolower(substr(str_replace(' ', '', $listCatalogue['book_title']), 0, 1));
-            } else {
-                $call_number = $listCatalogue['class_number'] . ' / ' . strtoupper(substr(str_replace(' ', '', $listCatalogue['book_title']), 0, 3));
-            }
+        if (count($data) > 0) {
+            
 
             $pdf = Src::plugin()->tcPdf();
 
@@ -999,7 +986,7 @@ class Catalogue extends Controller {
             $pdf->SetSubject('Koleksi Buku');
 
             // set default header data
-            $pdf->SetHeaderData('', '', '[ ' . $id . ' ] ' . $booktitle, 'Call Number : ' . $call_number . ' | Jumlah Barcode : ' . count($data));
+            $pdf->SetHeaderData('', '', 'Print Barcode');
 
             // set header and footer fonts
             $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -1057,11 +1044,9 @@ class Catalogue extends Controller {
             $row = 1;
             $col = 1;
 
-            //var_dump($data);
-            //for ($idx = 1; $idx <= 53; $idx++) {
             foreach ($data as $value) {
 
-                $pdf->write1DBarcode($value['book_register_id'], 'C128C', $posX, $posY, 44, 18, 0.4, $style, '');
+                $pdf->write1DBarcode($value['book_temp_barcodeprint_register'], 'C128C', $posX, $posY, 44, 18, 0.4, $style, '');
 
                 $posX += 48;
 
@@ -1083,11 +1068,10 @@ class Catalogue extends Controller {
                 }
             }
 
-            // ---------------------------------------------------------
             //Close and output PDF document
-            $pdf->Output('example_027.pdf', 'I');
+            $pdf->Output('Barcode_' . date('dmYHis') . '.pdf', 'I');
         } else {
-            echo 'Sory, Catalogue Not Found!';
+            echo 'Maaf Daftar Print Tidak Ditemukan!';
         }
     }
 

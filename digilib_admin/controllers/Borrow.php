@@ -70,14 +70,19 @@ class Borrow extends Controller {
             $xml .= "<total>$total</total>";
 
             foreach ($listData AS $row) {
+
+                $foreign_title = '';
+                if (!empty($row['book_foreign_title']))
+                    $foreign_title = ' / ' . $row['book_foreign_title'];
+
                 $xml .= "<row id='" . $row['borrowed_history_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_book'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['book_title'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['ddc_classification_number'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[<b>" . $row['members_id'] . '</b><br> ' . $row['members_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_type_title'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[<font color='blue'>" . date('d.m.Y', strtotime($row['borrowed_history_star'])) . '</font> s/d  <font color="blue">' . date('d.m.Y', strtotime($row['borrowed_history_finish'])) . "</font>]]></cell>";
-                $row['borrowed_history_status'] ? $status = 'Dikembalikan' : $status = 'Meminjam';
-                $xml .= "<cell><![CDATA[" . $status . "]]></cell>";
                 $xml .= "</row>";
             }
 
@@ -101,17 +106,23 @@ class Borrow extends Controller {
             $xml .= "<total>$total</total>";
 
             foreach ($listData AS $row) {
+
+                $foreign_title = '';
+                if (!empty($row['book_foreign_title']))
+                    $foreign_title = ' / ' . $row['book_foreign_title'];
+
                 $xml .= "<row id='" . $row['borrowed_history_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_book'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['book_title'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['ddc_classification_number'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_type_title'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[<font color='blue'>" . date('d.m.Y', strtotime($row['borrowed_history_star'])) . '</font> s/d  <font color="blue">' . date('d.m.Y', strtotime($row['borrowed_history_finish'])) . "</font>]]></cell>";
                 $row['borrowed_history_status'] ? $status = 'Dikembalikan' : $status = 'Meminjam';
                 $xml .= "<cell><![CDATA[" . $status . "]]></cell>";
                 if (!empty($row['borrowed_history_return']))
                     $xml .= "<cell><![CDATA[" . date('d.m.Y', strtotime($row['borrowed_history_return'])) . "]]></cell>";
-                else 
+                else
                     $xml .= "<cell><![CDATA[-]]></cell>";
                 $xml .= "</row>";
             }
@@ -179,24 +190,31 @@ class Borrow extends Controller {
 
         if ($data) {
 
-            $listborrowedtype = $this->model->selectBorrowTypeById($borrowedtype);
+            $bookborrowedstatus = $this->model->selectBookBorrowedStatus($bookregister);
 
-            if (count($listborrowedtype) > 0) {
-                $databorrowedtype = $listborrowedtype[0];
-                $interval = $databorrowedtype['borrowed_type_interval'];
+            if (count($bookborrowedstatus) == 0) {
+                $listborrowedtype = $this->model->selectBorrowTypeById($borrowedtype);
 
-                if ($borrowedtype == 1) {
-                    $this->model->saveAddBookCart($interval);
-                } else if ($borrowedtype == 2) {
-                    $this->model->saveAddBookCart($interval);
-                } else if ($borrowedtype == 3) {
-                    $this->model->saveAddBookCart($interval);
+                if (count($listborrowedtype) > 0) {
+                    $databorrowedtype = $listborrowedtype[0];
+                    $interval = $databorrowedtype['borrowed_type_interval'];
+
+                    if ($borrowedtype == 1) {
+                        $this->model->saveAddBookCart($interval);
+                    } else if ($borrowedtype == 2) {
+                        $this->model->saveAddBookCart($interval);
+                    } else if ($borrowedtype == 3) {
+                        $this->model->saveAddBookCart($interval);
+                    }
+                    $res = array(true);
+                } else {
+                    $res = array(false, 'Type Peminjaman Tidak ditemukan');
                 }
+            } else {
+                $res = array(false, 'Buku ini sedang dipinjam');
             }
-
-            $res = true;
         } else {
-            $res = false;
+            $res = array(false, 'Buku tidak ditemukan');
         }
 
         echo json_encode($res);

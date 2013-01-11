@@ -14,7 +14,7 @@
     <div id="box_content">
         <div id="tab_detail">
             <ul>
-                <li><a href="#tabs-1">1. Detail Buku</a></li>
+                <li><a href="#tabs-1">1. Rincian Buku</a></li>
                 <li><a href="#tabs-2">2. Koleksi Buku</a></li>
             </ul>
             <div id="tabs-1">
@@ -321,7 +321,7 @@
                         
                     }
                 }, {
-                    name : 'Delete',
+                    name : 'Hapus',
                     bclass : 'delete',
                     onpress : function() {
                         var leng = $('#list-collection .trSelected').length;
@@ -351,7 +351,7 @@
                 }, {
                     separator : true
                 }, {
-                    name : 'Add Print List',
+                    name : 'Tambah Ke Daftar Print',
                     bclass : 'issue',
                     onpress : function() {
                         var leng = $('#list-collection .trSelected').length;
@@ -380,7 +380,7 @@
                         }
                     }
                 }, {
-                    name : 'Print List Preview',
+                    name : 'Lihat Daftar Print',
                     bclass : 'card',
                     onpress : function() {
                         window.location = $('#list-collection').attr('link_pl');
