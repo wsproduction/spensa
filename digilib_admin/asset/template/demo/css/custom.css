@@ -30,7 +30,7 @@ ul#navigation li:hover {
 
 ul#navigation li a {
     display: block;
-    padding: 2px 15px;
+    padding: 5px 15px;
     font-family: Arial,Helvetica,sans-serif;
     text-decoration: none;
     font-size: 12px;
@@ -60,13 +60,13 @@ ul#navigation li ul li a {
     font-family: Arial,Helvetica,sans-serif;
     font-size: 12px;
     color: #00102d;
-    background-color: #f0f0f0;
+    background-color: #ffeba4;
     border: none;
 }
 
 ul#navigation li ul li a:hover {
     color: #fff;
-    background-color: #3399ff;
+    background-color: #f7b74d;
     border: none;
     text-shadow: 1px 1px 1px #00102d;
 }
@@ -460,6 +460,7 @@ legend {
     border: 1px solid #ccc;
     padding: 2px;
     width: 70px;
+    height: 95px;
     -moz-box-shadow:    0px 0px 10px 1px #ccc;
     -webkit-box-shadow: 0px 0px 10px 1px #ccc;
     box-shadow:         0px 0px 10px 1px #ccc;
@@ -471,6 +472,7 @@ legend {
     border: 1px solid #ccc;
     padding: 10px;
     height: 80px;
+    min-width: 300px;
     -moz-box-shadow:    0px 0px 10px 1px #ccc;
     -webkit-box-shadow: 0px 0px 10px 1px #ccc;
     box-shadow:         0px 0px 10px 1px #ccc;

@@ -2,11 +2,13 @@
     <div id="box_title">
         <div class="left"><?php echo Web::getTitle(); ?></div>
     </div>
-    <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+    <div id="container" style="min-width: 400px; margin: 0 auto"></div>
 </div>
 
 <script>
     $(function(){
+        $('#container').css('height',screen.height - 300);
+        
         var chart;
         $(document).ready(function() {
             chart = new Highcharts.Chart({

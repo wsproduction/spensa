@@ -20,12 +20,6 @@
                     align : 'center',
                     hide : true
                 }, {
-                    display : 'Klasifikasi Buku',
-                    name : 'language_entry_update',
-                    width : 120,
-                    sortable : true,
-                    align : 'center'
-                }, {
                     display : 'Keterangan Buku',
                     name : 'book_title',
                     width : 350,
@@ -33,28 +27,27 @@
                     align : 'left'
                 }, {
                     display : 'Nama Peminjam',
-                    name : 'language_status',
+                    name : 'members_name',
                     width : 180,
                     sortable : true,
                     align : 'left',
                     hide : true
                 }, {
                     display : 'Jenis Peminjaman',
-                    name : 'language_status',
+                    name : 'borrowed_type_title',
                     width : 100,
                     sortable : true,
                     align : 'center',
                     hide : true
                 }, {
                     display : 'Waktu Peminjaman',
-                    name : 'language_status',
+                    name : 'borrowed_history_star',
                     width : 150,
                     sortable : true,
                     align : 'center',
                     hide : true
                 }, {
                     display : 'Option',
-                    name : 'option',
                     width : 80,
                     align : 'center'
                 }],
@@ -100,12 +93,12 @@
                     }
                 }],
             searchitems : [ {
-                    display : 'ID',
-                    name : 'borrowed_history_id',
+                    display : 'Nomor Induk Buku',
+                    name : 'borrowed_history_book',
                     isdefault : true
                 }, {
-                    display : 'Nama Bahasa',
-                    name : 'language_name'            
+                    display : 'Judul Buku',
+                    name : 'book_title'            
                 } ],
             nowrap : false,
             sortname : "borrowed_history_id",

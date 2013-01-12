@@ -60,8 +60,7 @@ class BorrowModel extends Model {
                         INNER JOIN public_city ON (digilib_publisher_office.publisher_office_city = public_city.city_id)
                     WHERE
                         digilib_borrowed_history.borrowed_history_status = 0
-                    ';
-
+                    ';        
         if ($query)
             $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
 
@@ -81,7 +80,25 @@ class BorrowModel extends Model {
         $query = $this->method->post('query', false);
         $qtype = $this->method->post('qtype', false);
 
-        $prepare = 'SELECT COUNT(borrowed_history_id) AS cnt FROM digilib_borrowed_history WHERE digilib_borrowed_history.borrowed_history_status = 0';
+        $prepare = 'SELECT 
+                        COUNT(borrowed_history_id) AS cnt 
+                    FROM 
+                        digilib_borrowed_history
+                        INNER JOIN digilib_borrowed_type ON (digilib_borrowed_history.borrowed_history_type = digilib_borrowed_type.borrowed_type_id)
+                        INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id)
+                        INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
+                        INNER JOIN digilib_members ON (digilib_borrowed_history.borrowed_history_members = digilib_members.members_id)
+                        INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id)
+                        INNER JOIN digilib_publisher_office ON (digilib_book.book_publisher = digilib_publisher_office.publisher_office_id)
+                        INNER JOIN digilib_publisher ON (digilib_publisher_office.publisher_office_name = digilib_publisher.publisher_id)
+                        INNER JOIN public_city ON (digilib_publisher_office.publisher_office_city = public_city.city_id) 
+                    WHERE 
+                        digilib_borrowed_history.borrowed_history_status = 0';
+        
+        
+        if ($qtype=='book_title')
+            $qtype = 'digilib_book.book_title';
+        
         if ($query)
             $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
 
@@ -169,16 +186,14 @@ class BorrowModel extends Model {
         $query = $this->method->post('query', false);
         $qtype = $this->method->post('qtype', false);
 
-        $listSelect = "
-            digilib_borrowed_temp.borrowed_temp_id,
-            digilib_borrowed_temp.borrowed_temp_type,
-            digilib_borrowed_temp.borrowed_temp_book,
-            digilib_borrowed_temp.borrowed_temp_member,
-            digilib_borrowed_temp.borrowed_temp_start,
-            digilib_borrowed_temp.borrowed_temp_finish,
-            digilib_book.book_title";
-
-        $prepare = 'SELECT ' . $listSelect . ' 
+        $prepare = 'SELECT 
+                        digilib_borrowed_temp.borrowed_temp_id,
+                        digilib_borrowed_temp.borrowed_temp_type,
+                        digilib_borrowed_temp.borrowed_temp_book,
+                        digilib_borrowed_temp.borrowed_temp_member,
+                        digilib_borrowed_temp.borrowed_temp_start,
+                        digilib_borrowed_temp.borrowed_temp_finish,
+                        digilib_book.book_title
                     FROM 
                         digilib_borrowed_temp
                         INNER JOIN digilib_book_register ON (digilib_borrowed_temp.borrowed_temp_book = digilib_book_register.book_register_id)

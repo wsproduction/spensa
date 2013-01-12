@@ -1,5 +1,5 @@
 
-<div id="box">
+<div style="margin-bottom: 10px;">
     <fieldset>
         <legend>Data Anggota</legend>
         <div class="borrowed-info">
@@ -121,6 +121,7 @@
     $(function(){
         var memberStatus = false;
         var borrowedTemporer = false;
+        
         var getInfoMembers = function() {
             frmID = $('#fSearchInfoMember');
             var url =  $(frmID).attr('action');
@@ -145,11 +146,16 @@
                     view += '</div>';
                     $('#memberidtemp').val(profile['memberid']);
                     memberStatus = true;
-                    if (profile['temporer_status'] <= 2)
+                    if (parseInt(profile['temporer_status']) < 2) {
                         borrowedTemporer = true;
+                    } else {
+                        borrowedTemporer = false;
+                    }
+                        
                 } else {
                     view = '<div class="float-right members-profile-not-found">Identias anggota tidak ditemukan.</div>';
                     memberStatus = false;
+                    borrowedTemporer = false;
                 }
             
                 $('.members-info').html(view).fadeIn('slow');

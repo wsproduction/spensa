@@ -171,7 +171,7 @@ body {
 #box {
     background-color: #f7f7f7;
     clear: both;
-    border: 1px solid #ccc;
+    border: 1px solid #e78f08;
     padding: 6px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
@@ -179,18 +179,28 @@ body {
 }
 
 #box div#box_title {
-    background-color: #dddddd;
     height: 32px;
     padding: 2px;
     font-family: Arial,Helvetica,sans-serif;
     font-weight: bold;
-    text-shadow: 1px 1px 1px #fff;
-    background: url('../images/bg_top.png') repeat-x;
+    color: #fff;
+    text-shadow: 1px 1px 1px #e78f08;
+
     background-position: 0 -80px;
     font-size: 14px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+
+    background: #ffc578; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ffc578 0%, #fb9d23 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffc578), color-stop(100%,#fb9d23)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffc578 0%,#fb9d23 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffc578 0%,#fb9d23 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffc578 0%,#fb9d23 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ffc578 0%,#fb9d23 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffc578', endColorstr='#fb9d23',GradientType=0 ); /* IE6-9 */
+
 }
 
 #box div#box_content {
