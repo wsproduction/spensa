@@ -61,7 +61,7 @@ body {
 
 #bound {
     min-width: 850px;
-    border: 1px solid #c0c0c0;
+    border: 1px solid #e78f08;
     padding: 3px;
 
     -webkit-border-radius: 2px;
@@ -71,7 +71,15 @@ body {
     -webkit-box-shadow: 0px 0px 10px 1px #ccc;
     box-shadow:         0px 0px 10px 1px #ccc;
 
-    background: #d6d6d6;
+    background: #ffaf4b; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ffaf4b 0%, #ff920a 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffaf4b), color-stop(100%,#ff920a)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffaf4b 0%,#ff920a 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffaf4b 0%,#ff920a 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffaf4b 0%,#ff920a 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ffaf4b 0%,#ff920a 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffaf4b', endColorstr='#ff920a',GradientType=0 ); /* IE6-9 */
+
 }
 
 #info_user {
@@ -87,12 +95,12 @@ body {
 #header {
     padding: 5px;
     height: 18px;
-    border-bottom: 1px solid #868686;
+    border-bottom: 1px solid #e78f08;
 }
 
 #header .title {
-    text-shadow: 1px 1px 1px #fff;
-    color: #00102d;
+    text-shadow: 1px 1px 1px #e78f08;
+    color: #fff;
     font-family: Arial,Helvetica,sans-serif;
     font-size: 13px;
     font-weight: bold;
@@ -113,8 +121,8 @@ body {
 #content {
     clear: both;
     padding: 10px;
-    background: #bfbfbf;
-    border: 1px solid #868686;
+    background: #f7f7f7;
+    border: 1px solid #e78f08;
 }
 
 #filter_box {
@@ -228,7 +236,7 @@ body {
 }
 
 /* 
-	LEVEL ONE
+        LEVEL ONE
 */
 ul.dropdown { position: relative; }
 ul.dropdown li a { display: block;}
@@ -237,16 +245,16 @@ ul.dropdown li.hover a { color: black; }
 
 
 /* 
-	LEVEL TWO
+        LEVEL TWO
 */
 ul.dropdown ul { visibility: hidden; position: absolute; top: 100%; left: 0; }
 ul.dropdown ul li { float: none; }
-									  
+
 /* IE 6 & 7 Needs Inline Block */
 ul.dropdown ul li a { width: 100%; display: inline-block; } 
 
 /* 
-	LEVEL THREE
+        LEVEL THREE
 */
 ul.dropdown ul ul { left: 100%; top: 0; }
 ul.dropdown li:hover > ul { visibility: visible; }

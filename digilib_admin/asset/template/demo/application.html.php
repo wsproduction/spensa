@@ -8,7 +8,7 @@
         <?php
         /* jQuery Plugin */
         Src::plugin()->jQuery();
-        Src::plugin()->jQueryUI();
+        Src::plugin()->jQueryUI('ui-lightness');
 
         Src::css('layout');
         Src::css('custom');
