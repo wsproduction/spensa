@@ -34,7 +34,12 @@ ul#navigation li a {
     font-family: Arial,Helvetica,sans-serif;
     text-decoration: none;
     font-size: 12px;
-    color: #00102d;
+    color: #fff;
+    text-shadow: 1px 1px 1px #00acf2;
+}
+
+ul#navigation li a:hover {
+    color: #00acf2;
     text-shadow: 1px 1px 1px #fff;
 }
 
@@ -52,6 +57,7 @@ ul#navigation li ul li {
 }
 
 ul#navigation li ul li:hover {
+    
 }
 
 ul#navigation li ul li a {
@@ -59,7 +65,8 @@ ul#navigation li ul li a {
     padding: 5px;
     font-family: Arial,Helvetica,sans-serif;
     font-size: 12px;
-    color: #00102d;
+    color: #00acf2;
+    text-shadow: 1px 1px 1px #fff;
     background-color: #ffeba4;
     border: none;
 }
