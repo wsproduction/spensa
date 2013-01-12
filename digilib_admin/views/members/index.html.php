@@ -3,16 +3,8 @@
 
 <script>
     $(function(){
-        var listId = '#list';
-        var title = $(listId).attr('title');
-        var link_r = $(listId).attr('link_r');
-        var link_c = $(listId).attr('link_c');
-        var link_d = $(listId).attr('link_d');
-        var link_pl = $(listId).attr('link_pl');
-        var link_apl = $(listId).attr('link_apl');
-    
-        var option = {
-            url : link_r,
+        $('#list').flexigrid({
+            url : $('#list').attr('link_r'),
             dataType : 'xml',
             colModel : [ {
                     display : 'ID', 
@@ -28,7 +20,7 @@
                     align : 'left'
                 }, {
                     display : 'Jenis Kelamin',
-                    name : 'members_name',
+                    name : 'gender_title',
                     width : 65,
                     sortable : true,
                     align : 'center'
@@ -40,85 +32,80 @@
                     align : 'left'
                 }, {
                     display : 'Jabatan',
-                    name : 'publisher_description',
+                    name : 'isa_title',
                     width : 50,
                     sortable : true,
                     align : 'center',
                     hide : true
                 }, {
                     display : 'Keterangan',
-                    name : 'publisher_description',
+                    name : 'members_desc',
                     width : 60,
                     sortable : true,
                     align : 'center',
                     hide : true
                 }, {
                     display : 'Peminjaman',
-                    name : 'publisher_description',
+                    name : 'borrow_count',
                     width : 60,
                     sortable : true,
                     align : 'center',
                     hide : true
                 },  {
                     display : 'Peminjaman Terakhir',
-                    name : 'publisher_description',
+                    name : 'last_borrow',
                     width : 100,
                     sortable : true,
                     align : 'center',
                     hide : true
                 }, {
                     display : 'Kunjungan',
-                    name : 'publisher_description',
                     width : 60,
-                    sortable : true,
                     align : 'center',
                     hide : true
                 }, {
                     display : 'Kunjungan Terakhir',
-                    name : 'publisher_description',
                     width : 100,
-                    sortable : true,
                     align : 'center',
                     hide : true
                 }, {
                     display : 'Status',
-                    name : 'publisher_description',
+                    name : 'members_status',
                     width : 60,
                     sortable : true,
                     align : 'center',
                     hide : true
                 },  {
                     display : 'Option',
-                    name : 'option',
                     width : 80,
                     align : 'center'
                 }],
             buttons : [ {
-                    name : 'Add',
+                    name : 'Tambah',
                     bclass : 'add',
                     onpress : function() {
-                        window.location = link_c
+                        window.location = $('#list').attr('link_c');
                     }
                 }, {
-                    name : 'Delete',
+                    name : 'Hapus',
                     bclass : 'delete',
                     onpress : function() {
-                        var leng = $(listId + ' .trSelected').length;
+                        var leng = $('#list .trSelected').length;
                         var conf = confirm('Delete ' + leng + ' items?');
                 
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $(listId + ' .trSelected td[abbr=members_id] div').each(function() {
+                                $('#list .trSelected td[abbr=members_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
                         
-                                $.post(link_d, {
+                                $.post($('#list').attr('link_d'), {
                                     id : tempId.join(',')
                                 }, function(o){
                                     if (o) {
                                         alert(leng + ' Item has deleted.');
-                                        $(listId).flexReload();
+                                        $('#list').flexReload();
                                     } else {
                                         alert('Process delete failed.');
                                     }                            
@@ -129,25 +116,25 @@
                 }, {
                     separator : true
                 }, {
-                    name : 'Add Print List',
+                    name : 'Tambah Ke Daftar Print',
                     bclass : 'issue',
                     onpress : function() {
-                        var leng = $(listId + ' .trSelected').length;
+                        var leng = $('#list .trSelected').length;
                         var conf = confirm('Add Print List ' + leng + ' items?');
                 
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $(listId + ' .trSelected td[abbr=members_id] div').each(function() {
+                                $('#list .trSelected td[abbr=members_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
                         
-                                $.post(link_apl, {
+                                $.post($('#list').attr('link_apl'), {
                                     id : tempId.join(',')
                                 }, function(o){
                                     if (o) {
                                         alert(leng + ' Item has saved.');
-                                        $(listId).flexReload();
+                                        $('#list').flexReload();
                                     } else {
                                         alert('No Item Saved.');
                                     }                            
@@ -156,10 +143,10 @@
                         }
                     }
                 }, {
-                    name : 'Print List Preview',
+                    name : 'Lihat Daftar Print',
                     bclass : 'card',
                     onpress : function() {
-                        window.location = link_pl
+                        window.location = $('#list').attr('link_pl');
                     }
                 }],
             searchitems : [ {
@@ -174,15 +161,14 @@
             sortname : "members_id",
             sortorder : "asc",
             usepager : true,
-            title : title,
+            title : $('#list').attr('title'),
             useRp : true,
             rp : 15,
             showTableToggleBtn : false,
             resizable : false,
             width : '100%',
             height : screen.height - 350
-        };
-        $(listId).flexigrid(option);
+        });
     });
 </script>
 
