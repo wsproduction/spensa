@@ -2,7 +2,7 @@
     <div id="box_title">
         <div class="left"><?php echo Web::getTitle(); ?></div>
     </div>
-    <div id="container" style="min-width: 400px; margin: 0 auto"></div>
+    <div id="container" style="min-width: 400px; margin: 10px 0 0 0"></div>
 </div>
 
 <script>
@@ -11,31 +11,33 @@
         
         var chart;
         $(document).ready(function() {
-            chart = new Highcharts.Chart({
+            var option = {
                 chart: {
                     renderTo: 'container',
                     type: 'column'
                 },
                 title: {
-                    text: 'GRAFIK PEMINJAMAN BUKU TAHUN AJARAN 2012 - 2013'
+                    text: 'Old Title'
                 },
                 subtitle: {
                     text: 'SMP NEGERI 1 SUBANG'
                 },
-                xAxis: {
+                xAxis: {title : {
+                        text: 'Bulan'
+                    },
                     categories: [
-                        'Jan',
-                        'Feb',
-                        'Mar',
-                        'Apr',
-                        'May',
-                        'Jun',
-                        'Jul',
-                        'Aug',
-                        'Sep',
-                        'Oct',
-                        'Nov',
-                        'Dec'
+                        'Juli',
+                        'Agustus',
+                        'September',
+                        'Oktober',
+                        'November',
+                        'Desember',
+                        'Januari',
+                        'Februari',
+                        'Maret',
+                        'April',
+                        'Mei',
+                        'Juni'
                     ]
                 },
                 yAxis: {
@@ -67,19 +69,113 @@
                     }
                 },
                 series: [{
-                        name: 'Karyawan',
-                        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-    
+                        name: 'Siswa'    
                     }, {
-                        name: 'Guru',
-                        data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
-    
+                        name: 'Guru' 
                     }, {
-                        name: 'Siswa',
-                        data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
-    
+                        name: 'Karyawan'    
                     }]
-            });
+            };
+            
+            $.get('dashboard/chart', function (o){
+                var title = o['title'];
+                var data = o['data'];
+                option.series[0].data = data[0];
+                option.series[1].data = data[1];
+                option.series[2].data = data[2];
+                chart = new Highcharts.Chart(option);
+                chart.setTitle({text: title});
+            }, 'json');
+            
+            Highcharts.theme = {
+                colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+                chart: {
+                    backgroundColor: {
+                        linearGradient: [0, 0, 500, 500],
+                        stops: [
+                            [0, 'rgb(255, 255, 255)'],
+                            [1, 'rgb(240, 240, 255)']
+                        ]
+                    },
+                    borderWidth: 2,
+                    plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+                    plotShadow: true,
+                    plotBorderWidth: 1
+                },
+                title: {
+                    style: {
+                        color: '#000',
+                        font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
+                    }
+                },
+                subtitle: {
+                    style: {
+                        color: '#666666',
+                        font: 'bold 12px "Trebuchet MS", Verdana, sans-serif'
+                    }
+                },
+                xAxis: {
+                    gridLineWidth: 1,
+                    lineColor: '#000',
+                    tickColor: '#000',
+                    labels: {
+                        style: {
+                            color: '#000',
+                            font: '11px Trebuchet MS, Verdana, sans-serif'
+                        }
+                    },
+                    title: {
+                        style: {
+                            color: '#333',
+                            fontWeight: 'bold',
+                            fontSize: '12px',
+                            fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+
+                        }
+                    }
+                },
+                yAxis: {
+                    minorTickInterval: 'auto',
+                    lineColor: '#000',
+                    lineWidth: 1,
+                    tickWidth: 1,
+                    tickColor: '#000',
+                    labels: {
+                        style: {
+                            color: '#000',
+                            font: '11px Trebuchet MS, Verdana, sans-serif'
+                        }
+                    },
+                    title: {
+                        style: {
+                            color: '#333',
+                            fontWeight: 'bold',
+                            fontSize: '12px',
+                            fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+                        }
+                    }
+                },
+                legend: {
+                    itemStyle: {
+                        font: '9pt Trebuchet MS, Verdana, sans-serif',
+                        color: 'black'
+
+                    },
+                    itemHoverStyle: {
+                        color: '#039'
+                    },
+                    itemHiddenStyle: {
+                        color: 'gray'
+                    }
+                },
+                labels: {
+                    style: {
+                        color: '#99b'
+                    }
+                }
+            };
+
+            var highchartsOptions = Highcharts.setOptions(Highcharts.theme);
         });
     });
 </script>

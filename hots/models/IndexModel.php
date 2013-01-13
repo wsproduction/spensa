@@ -5,7 +5,8 @@ class IndexModel extends Model {
     public function __construct() {
         parent::__construct();
     }
-
+    
+    
     public function selectChart($grade = 0, $mothYear=array()) {
         $sth = $this->db->prepare('
                                 SELECT
