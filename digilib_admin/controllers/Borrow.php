@@ -113,8 +113,7 @@ class Borrow extends Controller {
                 $xml .= "<row id='" . $row['borrowed_history_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_book'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['ddc_classification_number'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_type_title'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[<font color='blue'>" . date('d.m.Y', strtotime($row['borrowed_history_star'])) . '</font> s/d  <font color="blue">' . date('d.m.Y', strtotime($row['borrowed_history_finish'])) . "</font>]]></cell>";
                 $row['borrowed_history_status'] ? $status = 'Dikembalikan' : $status = 'Meminjam';
@@ -147,12 +146,16 @@ class Borrow extends Controller {
             $xml .= "<total>$total</total>";
 
             foreach ($listData AS $row) {
+                
+                $foreign_title = '';
+                if (!empty($row['book_foreign_title']))
+                    $foreign_title = ' / ' . $row['book_foreign_title'];
+                
                 $xml .= "<row id='" . $row['borrowed_temp_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_temp_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_temp_book'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['book_title'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
                 $xml .= "<cell><![CDATA[<font color='blue'>" . date('d.m.Y', strtotime($row['borrowed_temp_start'])) . '</font> s/d <font color="blue">' . date('d.m.Y', strtotime($row['borrowed_temp_finish'])) . "</font>]]></cell>";
-
                 $xml .= "</row>";
             }
 

@@ -184,13 +184,6 @@
                     align : 'center',
                     hide : true
                 }, {
-                    display : 'Klasifikasi Buku',
-                    name : 'borrowed_history_book',
-                    width : 100,
-                    sortable : true,
-                    align : 'center',
-                    hide : true
-                }, {
                     display : 'Keterangan Buku',
                     name : 'book_title',
                     width : 400,
@@ -240,7 +233,7 @@
                                 $("#borrowed-cart").dialog( "open" );
                                 $('#borrowedtype').val(1);
                                 $('#bookregister').val('');
-                                $(listId2).flexReload();
+                                $('#borrowed-cart-temporer-list').flexReload();
                                 $('#bookregister').focus();
                             }
                         } else {
@@ -258,7 +251,7 @@
                             $("#borrowed-cart").dialog( "open" );
                             $('#borrowedtype').val(2);
                             $('#bookregister').val('');
-                            $(listId2).flexReload();
+                            $('#borrowed-cart-temporer-list').flexReload();
                             $('#bookregister').focus();
                         }
                     }
@@ -273,7 +266,7 @@
                             $("#borrowed-cart").dialog( "open" );
                             $('#borrowedtype').val(3);
                             $('#bookregister').val('');
-                            $(listId2).flexReload();
+                            $('#borrowed-cart-temporer-list').flexReload();
                             $('#bookregister').focus();
                         }
                     }
@@ -347,14 +340,9 @@
         });    
         /* END : Borrowed History List */
     
-        /* BEGIN : Borrowed Cart Temporer List */
-        var listId2 = '#borrowed-cart-temporer-list';
-        var title2 = $(listId2).attr('title');
-        var link_r2 = $(listId2).attr('link_r');
-        var link_d2 = $(listId2).attr('link_d');
-    
+        /* BEGIN : Borrowed Cart Temporer List */    
         var option2 = {
-            url : link_r2,
+            url : $('#borrowed-cart-temporer-list').attr('link_r'),
             dataType : 'xml',
             colModel : [ {
                     display : 'ID',
@@ -366,19 +354,19 @@
                 }, {
                     display : 'Nomor Induk Buku',
                     name : 'borrowed_temp_book',
-                    width : 100,
+                    width : 95,
                     sortable : true,
                     align : 'center'
                 }, {
                     display : 'Keterangan Buku',
                     name : 'book_title',
-                    width : 350,
+                    width : 345,
                     sortable : true,
                     align : 'left'
                 }, {
                     display : 'Waktu Peminjaman',
                     name : 'borrowed_temp_book',
-                    width : 150,
+                    width : 140,
                     sortable : false,
                     align : 'center',
                     hide : true
@@ -387,21 +375,21 @@
                     name : 'Hapus',
                     bclass : 'delete',
                     onpress : function() {
-                        var leng = $(listId2 + ' .trSelected').length;
+                        var leng = $('#borrowed-cart-temporer-list .trSelected').length;
                         var conf = confirm('Delete ' + leng + ' items?');
                 
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $(listId2 + ' .trSelected td[abbr=borrowed_temp_id] div').each(function() {
+                                $('#borrowed-cart-temporer-list .trSelected td[abbr=borrowed_temp_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
                         
-                                $.post(link_d2, {
+                                $.post($('#borrowed-cart-temporer-list').attr('link_d'), {
                                     id : tempId.join(',')
                                 }, function(o){
                                     if (o) {
-                                        $(listId2).flexReload();
+                                        $('#borrowed-cart-temporer-list').flexReload();
                                     } else {
                                         alert('Process delete failed.');
                                     }                            
@@ -422,7 +410,7 @@
             sortname : "borrowed_temp_id",
             sortorder : "asc",
             usepager : true,
-            title : title2,
+            title : $('#borrowed-cart-temporer-list').attr('title'),
             useRp : true,
             rp : 15,
             showTableToggleBtn : false,
@@ -431,14 +419,14 @@
             height : screen.height - 550,
             onSubmit: function() {
                 var dt = $('#fSearchBookInfo').serializeArray();
-                $(listId2).flexOptions({
+                $('#borrowed-cart-temporer-list').flexOptions({
                     params: dt
                 });
                 return true;
             }
         };
     
-        $(listId2).flexigrid(option2);
+        $('#borrowed-cart-temporer-list').flexigrid(option2);
     
         $('#fSearchBookInfo').live('submit',function(){
                 
@@ -448,7 +436,7 @@
         
             $.post(url, data, function(o){
                 if (o[0]) {  
-                    $(listId2).flexOptions({
+                    $('#borrowed-cart-temporer-list').flexOptions({
                         newp: 1
                     }).flexReload();
                 } else {

@@ -74,18 +74,22 @@ class ReturnBook extends Controller {
                 $foreign_title = '';
                 if (!empty($row['book_foreign_title']))
                     $foreign_title = ' / ' . $row['book_foreign_title'];
+                
+                $pinalty = '-';
+                if ($row['borrowed_history_penalty'] > 0)
+                    $pinalty = 'Rp. ' . $row['borrowed_history_penalty'];
 
                 $xml .= "<row id='" . $row['borrowed_history_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_book'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['ddc_classification_number'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
                 $xml .= "<cell><![CDATA[<b>" . $row['members_id'] . '</b><br> ' . $row['members_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_type_title'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[<font color='blue'>" . date('d.m.Y', strtotime($row['borrowed_history_star'])) . '</font> s/d  <font color="blue">' . date('d.m.Y', strtotime($row['borrowed_history_finish'])) . "</font>]]></cell>";
+                $xml .= "<cell><![CDATA[" . $pinalty . "]]></cell>";
                 $xml .= "</row>";
             }
-            
+
             $xml .= "</rows>";
             echo $xml;
         }
@@ -110,13 +114,14 @@ class ReturnBook extends Controller {
                 if (!empty($row['book_foreign_title']))
                     $foreign_title = ' / ' . $row['book_foreign_title'];
 
+                $row['borrowed_history_status'] ? $status = 'Dikembalikan' : $status = 'Meminjam';
+
                 $xml .= "<row id='" . $row['borrowed_history_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_book'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_type_title'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[<font color='blue'>" . date('d.m.Y', strtotime($row['borrowed_history_star'])) . '</font> s/d  <font color="blue">' . date('d.m.Y', strtotime($row['borrowed_history_finish'])) . "</font>]]></cell>";
-                $row['borrowed_history_status'] ? $status = 'Dikembalikan' : $status = 'Meminjam';
                 $xml .= "<cell><![CDATA[" . $status . "]]></cell>";
                 if (!empty($row['borrowed_history_return']))
                     $xml .= "<cell><![CDATA[" . date('d.m.Y', strtotime($row['borrowed_history_return'])) . "]]></cell>";
@@ -146,17 +151,20 @@ class ReturnBook extends Controller {
             $xml .= "<total>$total</total>";
 
             foreach ($listData AS $row) {
-                
+
                 $foreign_title = '';
                 if (!empty($row['book_foreign_title']))
                     $foreign_title = ' / ' . $row['book_foreign_title'];
-                
+
                 $xml .= "<row id='" . $row['borrowed_return_temp_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_return_temp_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_register_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
                 $xml .= "<cell><![CDATA[<font color='blue'>" . date('d.m.Y', strtotime($row['borrowed_history_star'])) . '</font> s/d <font color="blue">' . date('d.m.Y', strtotime($row['borrowed_history_finish'])) . "</font>]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['book_title'] . "]]></cell>";
+                $pinalty = '-';
+                if ($row['borrow_time'] > 0)
+                    $pinalty = 'Rp. ' . $row['borrow_time'] * 2000;
+                $xml .= "<cell><![CDATA[" . $pinalty . "]]></cell>";
                 $xml .= "</row>";
             }
 
@@ -257,9 +265,14 @@ class ReturnBook extends Controller {
         $cart = $this->model->selectReturnCartByMemberId($memberid);
         if ($cart) {
             if (count($cart) > 0) {
-                if ($this->model->saveReturnCart($cart)) {
-                    $res = true;
+                foreach ($cart as $value) {
+                    $pinalty = 0;
+                    if ($value['borrow_time'] > 0)
+                        $pinalty = $value['borrow_time'] * 2000;
+                    
+                    $this->model->saveReturnCart($value['borrowed_history_id'], $pinalty);
                 }
+                $res = true;
             }
         }
         echo json_encode($res);

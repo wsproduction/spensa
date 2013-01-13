@@ -20,12 +20,6 @@
                     align : 'center',
                     hide : true
                 }, {
-                    display : 'Klasifikasi Buku',
-                    name : 'language_entry_update',
-                    width : 120,
-                    sortable : true,
-                    align : 'center'
-                }, {
                     display : 'Keterangan Buku',
                     name : 'book_title',
                     width : 350,
@@ -47,6 +41,13 @@
                     hide : true
                 }, {
                     display : 'Waktu Peminjaman',
+                    name : 'language_status',
+                    width : 150,
+                    sortable : true,
+                    align : 'center',
+                    hide : true
+                }, {
+                    display : 'Denda',
                     name : 'language_status',
                     width : 150,
                     sortable : true,

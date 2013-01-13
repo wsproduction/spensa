@@ -39,6 +39,7 @@ class ReturnBookModel extends Model {
                         digilib_borrowed_history.borrowed_history_finish,
                         digilib_borrowed_history.borrowed_history_status,
                         digilib_borrowed_history.borrowed_history_return,
+                        digilib_borrowed_history.borrowed_history_penalty,
                         digilib_book.book_title,
                         digilib_book.book_foreign_title,
                         digilib_borrowed_type.borrowed_type_title,
@@ -180,7 +181,8 @@ class ReturnBookModel extends Model {
                         digilib_publisher.publisher_name,
                         digilib_book.book_publishing,
                         public_city.city_name,
-                        digilib_ddc.ddc_classification_number
+                        digilib_ddc.ddc_classification_number,
+                        DATEDIFF(NOW(),digilib_borrowed_history.borrowed_history_finish) AS borrow_time
                     FROM 
                         digilib_borrowed_return_temp
                         INNER JOIN digilib_borrowed_history ON (digilib_borrowed_return_temp.borrowed_return_temp_history = digilib_borrowed_history.borrowed_history_id)
@@ -377,7 +379,8 @@ class ReturnBookModel extends Model {
                                     digilib_borrowed_history.borrowed_history_type,
                                     digilib_borrowed_history.borrowed_history_star,
                                     digilib_borrowed_history.borrowed_history_finish,
-                                    digilib_book.book_title
+                                    digilib_book.book_title,
+                                    DATEDIFF(NOW(),digilib_borrowed_history.borrowed_history_finish) AS borrow_time
                                 FROM
                                     digilib_borrowed_return_temp
                                     INNER JOIN digilib_borrowed_history ON (digilib_borrowed_return_temp.borrowed_return_temp_history = digilib_borrowed_history.borrowed_history_id)
@@ -392,19 +395,18 @@ class ReturnBookModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function saveReturnCart($cart) {
-        $id = '0';
-        foreach ($cart as $rowcart) {
-            $id .= ',' . $rowcart['borrowed_history_id'];
-        }
+    public function saveReturnCart($id = 0, $pinalty = 0) {
         $sth = $this->db->prepare('UPDATE
                                         digilib_borrowed_history
                                     SET
                                         borrowed_history_status = 1,
+                                        borrowed_history_penalty = :pinalty,
                                         borrowed_history_return = NOW()
                                     WHERE
-                                        digilib_borrowed_history.borrowed_history_id IN (' . $id . ')
+                                        digilib_borrowed_history.borrowed_history_id = :id
                                   ');
+        $sth->bindValue(':pinalty', $pinalty);
+        $sth->bindValue(':id', $id);
         return $sth->execute();
     }
 

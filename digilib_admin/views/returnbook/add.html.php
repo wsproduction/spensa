@@ -189,7 +189,7 @@
                     hide : true
                 }, {
                     display : 'Waktu Peminjaman',
-                    name : 'language_status',
+                    name : 'borrowed_history_star',
                     width : 150,
                     sortable : true,
                     align : 'center',
@@ -296,7 +296,7 @@
                 } ],
             nowrap : false,
             sortname : "borrowed_history_id",
-            sortorder : "asc",
+            sortorder : "desc",
             usepager : true,
             title : $('#return-history-list').attr('title'),
             useRp : true,
@@ -347,13 +347,13 @@
                 }, {
                     display : 'Keterangan Buku',
                     name : 'book_title',
-                    width : 200,
+                    width : 250,
                     sortable : true,
                     align : 'left'
                 }, {
                     display : 'Waktu Peminjaman',
                     name : 'borrowed_temp_book',
-                    width : 120,
+                    width : 150,
                     sortable : false,
                     align : 'center',
                     hide : true
