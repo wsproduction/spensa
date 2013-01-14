@@ -136,7 +136,7 @@
             showTableToggleBtn : false,
             resizable : false,
             width : '100%',
-            height : screen.height - 350
+            height : screen.height * 0.60
         });
         
         $('#box-print').dialog({

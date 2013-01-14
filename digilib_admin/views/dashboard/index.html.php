@@ -7,7 +7,7 @@
 
 <script>
     $(function(){
-        $('#container').css('height',screen.height - 300);
+        $('#container').css('height',screen.height * 0.65);
         
         var chart;
         $(document).ready(function() {

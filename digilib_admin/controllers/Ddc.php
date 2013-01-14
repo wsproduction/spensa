@@ -23,7 +23,7 @@ class Ddc extends Controller {
     }
 
     public function add() {
-        Web::setTitle('Add DDC');
+        Web::setTitle('Tambah DDC / Add DDC');
         $this->view->ddcLevel = $this->model->selectLevelDDC();
         $this->view->link_back = $this->content->setLink('ddc');
         $this->view->link_sub1 = $this->content->setLink('ddc/getSub1');
@@ -134,7 +134,7 @@ class Ddc extends Controller {
     public function getSub1() {
         $list = array();
         foreach ($this->model->selectSub1() as $value) {
-            $list[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
+            $list[$value['ddc_id']] = $value['ddc_classification_number'] . ' &rAarr; ' . $value['ddc_title'];
         }
 
         Form::create('select', 'sub1');
@@ -150,7 +150,7 @@ class Ddc extends Controller {
     public function getSub2() {
         $list = array();
         foreach ($this->model->selectSub2($_GET['id']) as $value) {
-            $list[$value['ddc_id']] = $value['ddc_classification_number'] . ' ' . $value['ddc_title'];
+            $list[$value['ddc_id']] = $value['ddc_classification_number'] . ' &rAarr; ' . $value['ddc_title'];
         }
 
         Form::create('select', 'sub2');

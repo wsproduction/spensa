@@ -37,7 +37,6 @@
     <div class="title"><?php echo Web::getTitle(false); ?></div>
     <div class="description">Berikut adalah daftar mengajar Warman Suaganda Pada Tahun Akademik 2012/2013.</div>
     <div style="padding: 5px;"><b>&bullet; MATA PELAJARAN</b></div>
-    <div style="padding: 5px;">Pengaturan Kompet</div>
     <div>
         <table id="list-teaching" cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching; ?>">
             <thead>

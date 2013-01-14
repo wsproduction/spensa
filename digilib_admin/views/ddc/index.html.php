@@ -56,10 +56,12 @@
                                 $('#list .trSelected td[abbr=ddc_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
-                        
+                                
+                                $(this).loadingProgress('start');                        
                                 $.post($('#list').attr('link_d'), {
                                     id : tempId.join(',')
                                 }, function(o){
+                                    $(this).loadingProgress('stop');
                                     if (o) {
                                         $('#list').flexReload();
                                     } else {
@@ -69,9 +71,7 @@
                             }
                         }
                     }
-                }, {
-                    separator : true
-                } ],
+                }],
             searchitems : [ {
                     display : 'ID',
                     name : 'ddc_id',
@@ -96,7 +96,7 @@
             showTableToggleBtn : false,
             resizable : false,
             width : '100%',
-            height : screen.height - 350
+            height : screen.height * 0.60
         });
     });
 </script>
