@@ -250,3 +250,41 @@
         ?>
     </div>
 </div>
+
+<script>
+    $(function(){
+        /* SUBMIT ACTIONS */    
+        $('#fAdd').live('submit',function(){
+            frmID = $(this);
+            msgID = $('#message');
+            $(this).loadingProgress('start');
+            $(frmID).ajaxSubmit({
+                success : function(o) {
+                    $(this).loadingProgress('stop');
+                    var parOut = o.replace('<div id="LCS_336D0C35_8A85_403a_B9D2_65C292C39087_communicationDiv"></div>','');
+                    if (parOut) {
+                        var obj = eval('(' + parOut +')');
+                        if (obj[0]) {
+                            if (obj[1]) {
+                                $(frmID)[0].reset();
+                            }
+                        
+                            if (obj[3]!='') {
+                                $('#photopreview').html($.base64.decode(obj[3]));
+                            }
+                        
+                        }
+                        $(msgID).html($.base64.decode(obj[2])).fadeIn('slow');
+                    }
+                }
+            });
+            return false;
+        });
+    
+        /* BUTTON ACTION */
+        $('#btnBack').live('click',function(){
+            window.location = $(this).attr('link');
+        });
+    
+    });
+</script>

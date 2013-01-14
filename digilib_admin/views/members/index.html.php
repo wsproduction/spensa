@@ -99,15 +99,17 @@
                                 $('#list .trSelected td[abbr=members_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
-                        
+                                
+                                $(this).loadingProgress('start');
                                 $.post($('#list').attr('link_d'), {
                                     id : tempId.join(',')
                                 }, function(o){
+                                    $(this).loadingProgress('stop');
                                     if (o) {
-                                        alert(leng + ' Item has deleted.');
+                                        alert(leng + ' Item Telah Dihapus.');
                                         $('#list').flexReload();
                                     } else {
-                                        alert('Process delete failed.');
+                                        alert('Process Hapus Gagal.');
                                     }                            
                                 }, 'json');
                             }
@@ -120,7 +122,7 @@
                     bclass : 'issue',
                     onpress : function() {
                         var leng = $('#list .trSelected').length;
-                        var conf = confirm('Add Print List ' + leng + ' items?');
+                        var conf = confirm('Tambah Daftar Print ' + leng + ' items?');
                 
                         if (conf) {
                             if (leng > 0) {
@@ -128,15 +130,17 @@
                                 $('#list .trSelected td[abbr=members_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
-                        
+                                
+                                $(this).loadingProgress('start');
                                 $.post($('#list').attr('link_apl'), {
                                     id : tempId.join(',')
                                 }, function(o){
+                                    $(this).loadingProgress('stop');
                                     if (o) {
-                                        alert(leng + ' Item has saved.');
+                                        alert(leng + ' Item Telah Disimpan.');
                                         $('#list').flexReload();
                                     } else {
-                                        alert('No Item Saved.');
+                                        alert('Proses Tambah Gagal.');
                                     }                            
                                 }, 'json');
                             }
