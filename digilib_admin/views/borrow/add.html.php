@@ -317,7 +317,7 @@
             showTableToggleBtn : false,
             resizable : false,
             width : '100%',
-            height : screen.height - 550,
+            height : screen.height * 0.41,
             onSubmit: function() {
                 var dt = $('#fSearchInfoMember').serializeArray();
                 $('#borowed-history-list').flexOptions({
@@ -416,7 +416,7 @@
             showTableToggleBtn : false,
             resizable : false,
             width : '100%',
-            height : screen.height - 550,
+            height : screen.height * 0.41,
             onSubmit: function() {
                 var dt = $('#fSearchBookInfo').serializeArray();
                 $('#borrowed-cart-temporer-list').flexOptions({

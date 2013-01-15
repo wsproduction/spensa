@@ -32,7 +32,7 @@ class MembersModel extends Model {
                         public_gender.gender_title,
                         digilib_isa.isa_title,
                         (SELECT COUNT(dbh.borrowed_history_id) FROM digilib_borrowed_history dbh WHERE dbh.borrowed_history_members = digilib_members.members_id) AS borrow_count,
-                          (SELECT dbh.borrowed_history_star FROM digilib_borrowed_history dbh WHERE dbh.borrowed_history_members = digilib_members.members_id LIMIT 1) AS last_borrow
+                        (SELECT dbh.borrowed_history_star FROM digilib_borrowed_history dbh WHERE dbh.borrowed_history_members = digilib_members.members_id ORDER BY dbh.borrowed_history_star DESC LIMIT 1) AS last_borrow
                     FROM 
                         digilib_members
                         INNER JOIN public_gender ON (digilib_members.members_gender = public_gender.gender_id)

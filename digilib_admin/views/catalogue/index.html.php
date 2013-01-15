@@ -140,7 +140,7 @@
             usepager : true,
             title : $('#list').attr('title'),
             useRp : true,
-            rp : 15,
+            rp : 20,
             showTableToggleBtn : false,
             resizable : false,
             width : '100%',

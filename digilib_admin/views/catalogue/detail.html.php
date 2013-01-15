@@ -18,7 +18,6 @@
                 <li><a href="#tabs-2">2. Koleksi Buku</a></li>
             </ul>
             <div id="tabs-1">
-
                 <?php
                 /*
                   Form::create('button', 'btnPrintLabel');
@@ -400,7 +399,7 @@
             showTableToggleBtn : false,
             resizable : false,
             width : '100%',
-            height : screen.height - 450
+            height : screen.height * 0.45
         });
     });
 </script>
