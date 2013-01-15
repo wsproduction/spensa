@@ -494,23 +494,33 @@ class Catalogue extends Controller {
             $xml .= "<page>$page</page>";
             $xml .= "<total>$total</total>";
 
+            
             foreach ($listData as $row) {
 
                 $link_edit = $this->content->setLink('catalogue/edit/' . $row['book_id']);
                 $link_detail = $this->content->setLink('catalogue/detail/' . $row['book_id']);
-
+                
+                $foreign_title = '';
+                if (!empty($row['book_foreign_title']))
+                    $foreign_title = ' / ' . $row['book_foreign_title'];
+                
+                $resource= '-';
+                if (!empty($row['resource'])) {
+                    $resource = $row['resource'];
+                }
+                
                 $fund = '-';
                 if (!empty($row['fund'])) {
                     $fund = $row['fund'];
                 }
 
                 $stock = $row['book_quantity'] - $row['count_borrowed'];
-
+                
+                
                 $xml .= "<row id='" . $row['book_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['book_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['ddc_classification_number'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['book_title'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['resource'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[" . $resource . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $fund . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_quantity'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $stock . "]]></cell>";

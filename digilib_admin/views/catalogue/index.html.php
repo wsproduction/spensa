@@ -14,12 +14,6 @@
                     sortable : true,
                     align : 'center'
                 }, {
-                    display : 'Call Number',
-                    name : 'classification_number',
-                    width : 100,
-                    sortable : true,
-                    align : 'center'
-                }, {
                     display : 'Keterangan Buku',
                     name : 'book_title',
                     width : 450,

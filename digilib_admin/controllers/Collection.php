@@ -8,15 +8,18 @@ class Collection extends Controller {
         $this->view->topMenu = $this->content->topMenu();
 
         Src::plugin()->jQueryValidation();
-        Src::plugin()->jQueryAlphaNumeric();
         Src::plugin()->poshytip();
-        Src::plugin()->elrte();
+        Src::plugin()->jQueryAlphaNumeric();
+        Src::plugin()->flexiGrid();
     }
 
     public function index() {
-        Web::setTitle('Daftar Koleksi Buku');
-        $this->view->link_add = $this->content->setLink('author/add');
-        $this->view->listData = $this->listData();
+        Web::setTitle('Buku Indux');
+        $this->view->link_c = $this->content->setLink('collection/add');
+        $this->view->link_r = $this->content->setLink('collection/read');
+        $this->view->link_d = $this->content->setLink('collection/delete');
+        $this->view->link_p = $this->content->setLink('collection/addprint');
+        $this->view->link_pl = $this->content->setLink('collection/printlist');
         $this->view->render('collection/index');
     }
 
@@ -40,72 +43,6 @@ class Collection extends Controller {
         }
     }
 
-    public function listData($page = 1) {
-        $maxRows = 10;
-        $countList = $this->model->countAll();
-        $countPage = ceil($countList / $maxRows);
-        $jumlah_kolom = 9;
-
-        $ddcList = $this->model->selectAll(($page * $maxRows) - $maxRows, $maxRows);
-        $html = '';
-
-        if ($countList > 0) {
-
-            $idx = 1;
-            $id = '0';
-            foreach ($ddcList as $value) {
-                $tmpID = $value['book_register_id'];
-                $id .= ',' . $tmpID;
-
-                $tr_class = 'ganjil';
-                if ($idx % 2 == 0) {
-                    $tr_class = 'genap';
-                }
-
-                $sts = 'Ada';
-                if ($value['borrow_status']) {
-                    $sts = 'Dipinjam';
-                }
-
-                $html .= '<tr class="' . $tr_class . '" id="row_' . $tmpID . '" temp="' . $tr_class . '">';
-                $html .= '  <td style="width: 10px;" class="first">';
-                Form::create('checkbox', 'list_' . $tmpID);
-                Form::style('cbList');
-                Form::value($tmpID);
-                $html .= Form::commit('attach');
-                $html .= '  </td>';
-                $html .= '  <td style="text-align: center;">' . $tmpID . '</td>';
-                $html .= '  <td></td>';
-                $html .= '  <td></td>';
-                $html .= '  <td style="text-align: center;">' . $value['book_con'] . '</td>';
-                $html .= '  <td style="text-align: center;">' . date('d/m/Y', strtotime($value['entry_date'])) . '</td>';
-                $html .= '  <td style="text-align: center;">' . $sts . '</td>';
-                $html .= '  <td style="text-align: center;">';
-                if ($value['last_borrow'] == NULL)
-                    $html .= date('d/m/Y', strtotime($value['last_borrow']));
-                $html .= '  </td>';
-                $html .= '  <td style="text-align: center;">';
-                $html .= URL::link($this->content->setLink('author/edit/' . $tmpID), 'Edit', 'attach') . ' | ';
-                $html .= URL::link($this->content->setLink('author/edit/' . $tmpID), 'Detail', 'attach');
-                $html .= '  </td>';
-                $html .= '</tr>';
-
-                $idx++;
-            }
-
-            $html .= $this->content->paging($jumlah_kolom, $countPage, $page);
-
-            Form::create('hidden', 'hiddenID');
-            Form::value($id);
-            $html .= Form::commit('attach');
-        } else {
-            $html .= '<tr>';
-            $html .= '   <th colspan="' . $jumlah_kolom . '">Data Not Found</th>';
-            $html .= '</tr>';
-        }
-        return $html;
-    }
-
     public function create() {
         if ($this->model->createSave()) {
             $ket = array(1, 1, $this->message->saveSucces()); // sucess, reset, message
@@ -116,11 +53,52 @@ class Collection extends Controller {
     }
 
     public function read() {
-        $page = 1;
-        if (isset($_GET['p'])) {
-            $page = $_GET['p'];
+        if ($this->method->isAjax()) {
+            $page = $this->method->post('page', 1);
+            $listData = $this->model->selectAllCollection($page);
+            $total = $this->model->countAllCollection();
+
+            header("Content-type: text/xml");
+            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            $xml .= "<rows>";
+            $xml .= "<page>$page</page>";
+            $xml .= "<total>$total</total>";
+
+            foreach ($listData as $row) {
+                $last_borrowed = '-';
+                if (!empty($row['last_borrowed']))
+                    $last_borrowed = date('d.m.Y', strtotime($row['last_borrowed']));
+                
+                $foreign_title = '';
+                if (!empty($row['book_foreign_title']))
+                    $foreign_title = ' / ' . $row['book_foreign_title'];
+                
+                $resource= '-';
+                if (!empty($row['resource'])) {
+                    $resource = $row['resource'];
+                }
+                
+                $fund = '-';
+                if (!empty($row['fund'])) {
+                    $fund = $row['fund'];
+                }
+
+                $xml .= "<row id='" . $row['book_register_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $row['book_register_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[" . $resource . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $fund . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['book_condition'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $row['total_borrowed'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $last_borrowed . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d.m.Y', strtotime($row['book_entry'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[<a href=''>Edit</a>]]></cell>";
+                $xml .= "</row>";
+            }
+
+            $xml .= "</rows>";
+            echo $xml;
         }
-        echo json_encode($this->listData($page));
     }
 
     public function update($id = 0) {
@@ -203,15 +181,15 @@ class Collection extends Controller {
         $posY = 20;
         $row = 1;
         $col = 1;
-        
+
         for ($idx = 1; $idx <= 53; $idx++) {
-            
-            
+
+
             $id = '120908001001';
-            $pdf->write1DBarcode($id , 'C128C', $posX, $posY, 44, 18, 0.4, $style, '');
-            
+            $pdf->write1DBarcode($id, 'C128C', $posX, $posY, 44, 18, 0.4, $style, '');
+
             $posX += 48;
-                        
+
             if ($col == 4) {
                 $col = 1;
                 $posX = 11;
@@ -220,7 +198,7 @@ class Collection extends Controller {
             } else {
                 $col++;
             }
-            
+
             if ($row > 12) {
                 $pdf->AddPage();
                 $posX = 11;
@@ -228,80 +206,79 @@ class Collection extends Controller {
                 $row = 1;
                 $col = 1;
             }
-            
         }
-        
+
         /*
-        $pdf->write1DBarcode('120908001002', 'C128C', 58, 20, 44, 18, 0.4, $style, '');
-        $pdf->write1DBarcode('120908001003', 'C128C', 106, 20, 44, 18, 0.4, $style, '');
-        $pdf->write1DBarcode('120908001004', 'C128C', 154, 20, 44, 18, 0.4, $style, '');
+          $pdf->write1DBarcode('120908001002', 'C128C', 58, 20, 44, 18, 0.4, $style, '');
+          $pdf->write1DBarcode('120908001003', 'C128C', 106, 20, 44, 18, 0.4, $style, '');
+          $pdf->write1DBarcode('120908001004', 'C128C', 154, 20, 44, 18, 0.4, $style, '');
 
-        // Baris 2
-        $pdf->write1DBarcode('0123456789', 'C128C', 10, 42, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 58, 42, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 106, 42, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 154, 42, '', 18, 0.4, $style, '');
+          // Baris 2
+          $pdf->write1DBarcode('0123456789', 'C128C', 10, 42, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 58, 42, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 106, 42, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 154, 42, '', 18, 0.4, $style, '');
 
-        // Baris 3
-        $pdf->write1DBarcode('0123456789', 'C128C', 10, 64, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 58, 64, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 106, 64, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 154, 64, '', 18, 0.4, $style, '');
+          // Baris 3
+          $pdf->write1DBarcode('0123456789', 'C128C', 10, 64, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 58, 64, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 106, 64, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 154, 64, '', 18, 0.4, $style, '');
 
-        // Baris 4
-        $pdf->write1DBarcode('0123456789', 'C128C', 10, 86, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 58, 86, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 106, 86, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 154, 86, '', 18, 0.4, $style, '');
+          // Baris 4
+          $pdf->write1DBarcode('0123456789', 'C128C', 10, 86, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 58, 86, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 106, 86, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 154, 86, '', 18, 0.4, $style, '');
 
-        // Baris 5
-        $pdf->write1DBarcode('0123456789', 'C128C', 10, 108, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 58, 108, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 106, 108, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 154, 108, '', 18, 0.4, $style, '');
+          // Baris 5
+          $pdf->write1DBarcode('0123456789', 'C128C', 10, 108, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 58, 108, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 106, 108, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 154, 108, '', 18, 0.4, $style, '');
 
-        // Baris 6
-        $pdf->write1DBarcode('0123456789', 'C128C', 10, 130, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 58, 130, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 106, 130, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 154, 130, '', 18, 0.4, $style, '');
+          // Baris 6
+          $pdf->write1DBarcode('0123456789', 'C128C', 10, 130, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 58, 130, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 106, 130, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 154, 130, '', 18, 0.4, $style, '');
 
-        // Baris 7
-        $pdf->write1DBarcode('0123456789', 'C128C', 10, 152, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 58, 152, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 106, 152, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 154, 152, '', 18, 0.4, $style, '');
+          // Baris 7
+          $pdf->write1DBarcode('0123456789', 'C128C', 10, 152, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 58, 152, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 106, 152, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 154, 152, '', 18, 0.4, $style, '');
 
-        // Baris 8
-        $pdf->write1DBarcode('0123456789', 'C128C', 10, 174, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 58, 174, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 106, 174, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 154, 174, '', 18, 0.4, $style, '');
+          // Baris 8
+          $pdf->write1DBarcode('0123456789', 'C128C', 10, 174, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 58, 174, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 106, 174, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 154, 174, '', 18, 0.4, $style, '');
 
-        // Baris 9
-        $pdf->write1DBarcode('0123456789', 'C128C', 10, 196, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 58, 196, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 106, 196, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 154, 196, '', 18, 0.4, $style, '');
+          // Baris 9
+          $pdf->write1DBarcode('0123456789', 'C128C', 10, 196, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 58, 196, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 106, 196, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 154, 196, '', 18, 0.4, $style, '');
 
-        // Baris 10
-        $pdf->write1DBarcode('0123456789', 'C128C', 10, 218, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 58, 218, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 106, 218, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 154, 218, '', 18, 0.4, $style, '');
+          // Baris 10
+          $pdf->write1DBarcode('0123456789', 'C128C', 10, 218, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 58, 218, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 106, 218, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 154, 218, '', 18, 0.4, $style, '');
 
-        // Baris 11
-        $pdf->write1DBarcode('0123456789', 'C128C', 10, 240, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 58, 240, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 106, 240, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 154, 240, '', 18, 0.4, $style, '');
+          // Baris 11
+          $pdf->write1DBarcode('0123456789', 'C128C', 10, 240, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 58, 240, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 106, 240, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 154, 240, '', 18, 0.4, $style, '');
 
-        // Baris 12
-        $pdf->write1DBarcode('0123456789', 'C128C', 10, 262, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 58, 262, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 106, 262, '', 18, 0.4, $style, '');
-        $pdf->write1DBarcode('0987654321', 'C128C', 154, 262, '', 18, 0.4, $style, '');
-        */
+          // Baris 12
+          $pdf->write1DBarcode('0123456789', 'C128C', 10, 262, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 58, 262, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 106, 262, '', 18, 0.4, $style, '');
+          $pdf->write1DBarcode('0987654321', 'C128C', 154, 262, '', 18, 0.4, $style, '');
+         */
 
 
         // ---------------------------------------------------------

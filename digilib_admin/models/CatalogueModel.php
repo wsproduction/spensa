@@ -42,13 +42,18 @@ class CatalogueModel extends Model {
                         digilib_book.book_entry,
                         digilib_book.book_entry_update,
                         digilib_ddc.ddc_classification_number,
-                        (SELECT COUNT(digilib_book_register.book_register_id) FROM digilib_book_register WHERE digilib_book_register.book_id = digilib_book.book_id) AS book_quantity,
+                        (SELECT COUNT(digilib_book_register.book_register_id) AS FIELD_1 FROM digilib_book_register WHERE digilib_book_register.book_id = digilib_book.book_id) AS book_quantity,
                         (SELECT digilib_book_fund.book_fund_title FROM digilib_book_fund WHERE digilib_book_fund.book_fund_id = digilib_book.book_fund) AS fund,
                         (SELECT digilib_book_resource.book_resource_title FROM digilib_book_resource WHERE digilib_book_resource.book_resource_id = digilib_book.book_resource) AS resource,
-                        (SELECT COUNT(digilib_book_register.book_id) AS FIELD_1 FROM digilib_borrowed_history INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id) WHERE digilib_book_register.book_id = digilib_book.book_id) AS count_borrowed
-                    FROM 
-                        digilib_book 
-                        INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id) ';
+                        (SELECT COUNT(digilib_book_register.book_id) AS FIELD_1 FROM digilib_borrowed_history INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id) WHERE digilib_book_register.book_id = digilib_book.book_id) AS count_borrowed,
+                        digilib_publisher.publisher_name,
+                        public_city.city_name
+                      FROM
+                        digilib_book
+                        INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id)
+                        INNER JOIN digilib_publisher_office ON (digilib_book.book_publisher = digilib_publisher_office.publisher_office_id)
+                        INNER JOIN digilib_publisher ON (digilib_publisher_office.publisher_office_name = digilib_publisher.publisher_id)
+                        INNER JOIN public_city ON (digilib_publisher_office.publisher_office_city = public_city.city_id)';
         if ($query)
             $prepare .= ' WHERE ' . $qtype . ' LIKE "%' . $query . '%" ';
         $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
@@ -80,6 +85,7 @@ class CatalogueModel extends Model {
                     FROM 
                         digilib_book_register
                         INNER JOIN digilib_book_condition ON (digilib_book_register.book_condition = digilib_book_condition.book_condition_id) 
+                        INNER JOIN public_city ON (digilib_publisher_office.publisher_office_city = public_city.city_id)
                     WHERE
                         digilib_book_register.book_id = :id ';
 
@@ -118,7 +124,13 @@ class CatalogueModel extends Model {
         $query = $this->method->post('query', false);
         $qtype = $this->method->post('qtype', false);
 
-        $prepare = 'SELECT COUNT(book_id) AS cnt FROM digilib_book';
+        $prepare = 'SELECT 
+                        COUNT(book_id) AS cnt 
+                    FROM 
+                        digilib_book
+                        INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id)
+                        INNER JOIN digilib_publisher_office ON (digilib_book.book_publisher = digilib_publisher_office.publisher_office_id)
+                        INNER JOIN digilib_publisher ON (digilib_publisher_office.publisher_office_name = digilib_publisher.publisher_id)';
         if ($query)
             $prepare .= ' WHERE ' . $qtype . ' LIKE "%' . $query . '%" ';
 

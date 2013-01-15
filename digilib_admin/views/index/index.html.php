@@ -9,7 +9,10 @@
         ?>
         <table>
             <tr>
-                <td style="width: 100px;">Username</td>
+                <td style="width: 100px;">
+                    <div class="label-ina">Nama User</div>
+                    <div class="label-eng">Username</div>
+                </td>
                 <td>:</td>
                 <td>
                     <?php
@@ -22,7 +25,10 @@
                 </td>
             </tr>
             <tr>
-                <td>Password</td>
+                <td>
+                    <div class="label-ina">Kata Password</div>
+                    <div class="label-eng">Password</div>
+                </td>
                 <td>:</td>
                 <td>
                     <?php

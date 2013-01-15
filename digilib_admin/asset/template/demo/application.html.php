@@ -44,7 +44,7 @@
             </div>
         </div>
         <div id="footer">
-            <b>Digilib &copy; 2012 | Develope by : </b> <u>Warman Suganda</u>
+            <b>Digital Library &copy; 2012 | Develope by : </b> <b><a href="www.facebook.com/warman.suganda">Warman Suganda</a> <br>Best View</b>&nbsp;with <b><a href="www.google.com/chrome">Google Chrome</a></b>, <b>Screen Resolution</b>&nbsp;: 1280 x 800 Pixcel
         </div>
 
         <script>
