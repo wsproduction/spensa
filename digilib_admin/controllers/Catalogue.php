@@ -74,68 +74,6 @@ class Catalogue extends Controller {
         $this->dataAuthorTemp = $varAuthor;
     }
 
-    public function parsingAuthor($bookID, $authorDescrptionID) {
-        $res = '';
-        $count = 0;
-
-        $data = $this->dataAuthor;
-        if (isset($data[$bookID][$authorDescrptionID])) {
-            $list = $data[$bookID][$authorDescrptionID];
-            $count = count($list);
-            $idx = 1;
-
-            if ($count > 0) {
-                if ($authorDescrptionID != 1)
-                    $res .= strtolower($this->dataAuthorDescription[$authorDescrptionID]) . ', ';
-
-                foreach ($list as $value) {
-                    $tempNama = $value['first_name'];
-                    if ($value['last_name'] != '')
-                        $tempNama .= ' ' . $value['last_name'];
-
-                    if ($idx == $count) {
-                        $res .= $tempNama;
-                    } else {
-                        $res .= $tempNama . ', ';
-                    }
-                    $idx++;
-                }
-            }
-        }
-        return array($count, $res);
-    }
-
-    public function parsingAuthorTemp($bookID, $authorDescrptionID) {
-        $res = '';
-        $count = 0;
-
-        $data = $this->dataAuthorTemp;
-        if (isset($data[$bookID][$authorDescrptionID])) {
-            $list = $data[$bookID][$authorDescrptionID];
-            $count = count($list);
-            $idx = 1;
-
-            if ($count > 0) {
-                if ($authorDescrptionID != 1)
-                    $res .= strtolower($this->dataAuthorTempDescription[$authorDescrptionID]) . ', ';
-
-                foreach ($list as $value) {
-                    $tempNama = $value['first_name'];
-                    if ($value['last_name'] != '')
-                        $tempNama .= ' ' . $value['last_name'];
-
-                    if ($idx == $count) {
-                        $res .= $tempNama;
-                    } else {
-                        $res .= $tempNama . ', ';
-                    }
-                    $idx++;
-                }
-            }
-        }
-        return array($count, $res);
-    }
-
     public function add() {
         Web::setTitle('Tambah Katalog');
         $this->view->link_back = $this->content->setLink('catalogue');
@@ -187,8 +125,16 @@ class Catalogue extends Controller {
         Web::setTitle('Detail Catalogue');
         $list = $this->model->selectBookById($id);
         if (count($list) > 0) {
+            $data = $list[0];
+            $author = $this->content->parsingAuthor($id);
+
             $this->view->id = $id;
-            $this->view->data = $list[0];
+            $this->view->data = $data;
+            $this->view->language_list = $this->model->selectBookLanguageByBookId($id);
+            $this->view->ddc_list = $this->model->selectDdcParent($data['ddc_parent']);
+            $this->view->author_list = $author;
+            $this->view->callnumber_extention = $this->content->callNumberExtention($author, $data['book_title']);
+
             $this->view->link_back = $this->content->setLink('catalogue');
             $this->view->link_print_barcode = $this->content->setLink('catalogue/printBarcode/' . $id);
             $this->view->link_print_label = $this->content->setLink('catalogue/printLabel/' . $id);
@@ -494,32 +440,35 @@ class Catalogue extends Controller {
             $xml .= "<page>$page</page>";
             $xml .= "<total>$total</total>";
 
-            
+
             foreach ($listData as $row) {
 
                 $link_edit = $this->content->setLink('catalogue/edit/' . $row['book_id']);
                 $link_detail = $this->content->setLink('catalogue/detail/' . $row['book_id']);
                 
+                $author = $this->content->parsingAuthor($row['book_id']);
+                $callnumber_extention = $this->content->callNumberExtention($author, $row['book_title']);
+
                 $foreign_title = '';
                 if (!empty($row['book_foreign_title']))
                     $foreign_title = ' / ' . $row['book_foreign_title'];
-                
-                $resource= '-';
+
+                $resource = '-';
                 if (!empty($row['resource'])) {
                     $resource = $row['resource'];
                 }
-                
+
                 $fund = '-';
                 if (!empty($row['fund'])) {
                     $fund = $row['fund'];
                 }
 
                 $stock = $row['book_quantity'] - $row['count_borrowed'];
-                
-                
+
+
                 $xml .= "<row id='" . $row['book_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['book_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . $callnumber_extention . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
                 $xml .= "<cell><![CDATA[" . $resource . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $fund . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_quantity'] . "]]></cell>";
@@ -985,7 +934,7 @@ class Catalogue extends Controller {
         $data = $this->model->selectPrintBarcodeList();
 
         if (count($data) > 0) {
-            
+
 
             $pdf = Src::plugin()->tcPdf();
 
@@ -1377,17 +1326,17 @@ class Catalogue extends Controller {
             echo json_encode(false);
         }
     }
-    
+
     public function deletePrintListBarcode() {
         $res = false;
-        if ($this->model->deletePrintListBarcode()) 
+        if ($this->model->deletePrintListBarcode())
             $res = true;
         echo json_encode($res);
     }
-    
+
     public function deletePrintListBarcodeAll() {
         $res = false;
-        if ($this->model->deletePrintListBarcodeAll()) 
+        if ($this->model->deletePrintListBarcodeAll())
             $res = true;
         echo json_encode($res);
     }

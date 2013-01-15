@@ -85,7 +85,6 @@ class CatalogueModel extends Model {
                     FROM 
                         digilib_book_register
                         INNER JOIN digilib_book_condition ON (digilib_book_register.book_condition = digilib_book_condition.book_condition_id) 
-                        INNER JOIN public_city ON (digilib_publisher_office.publisher_office_city = public_city.city_id)
                     WHERE
                         digilib_book_register.book_id = :id ';
 
@@ -490,21 +489,24 @@ class CatalogueModel extends Model {
         }
     }
 
-    public function selectAuthorByBookID($id) {
+    public function selectAuthorByBookID($bookid = 0) {
         $sth = $this->db->prepare('
                             SELECT 
-                                da.author_id,
-                                da.author_first_name,
-                                da.author_last_name,
-                                da.author_description,
-                                (SELECT dad.author_description FROM digilib_author_description AS dad WHERE dad.author_description_id = da.author_description) AS desc_name
-                            FROM
-                                digilib_author AS da
-                            WHERE
-                                da.book_id = :id
-                            ORDER BY da.author_description, da.author_id');
+                                digilib_author.author_firstname,
+                                digilib_author.author_lastname,
+                                digilib_author_description.author_description_title,
+                                digilib_author_description.author_description_id
+                              FROM
+                                digilib_book_aurthor
+                                INNER JOIN digilib_author ON (digilib_book_aurthor.book_aurthor_name = digilib_author.author_id)
+                                INNER JOIN digilib_author_description ON (digilib_author.author_description = digilib_author_description.author_description_id)
+                              WHERE
+                                digilib_book_aurthor.book_aurthor_book = :bookid
+                              ORDER BY
+                                digilib_author_description.author_description_level');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute(array(':id' => $id));
+        $sth->bindValue(':bookid', $bookid);
+        $sth->execute();
         return $sth->fetchAll();
     }
 
@@ -1409,6 +1411,8 @@ class CatalogueModel extends Model {
                                 digilib_book.book_entry,
                                 digilib_book.book_entry_update,
                                 digilib_ddc.ddc_classification_number,
+                                digilib_ddc.ddc_title,
+                                digilib_ddc.ddc_parent,
                                 (SELECT pas.accounting_symbol FROM public_accounting_symbol pas WHERE pas.accounting_symbol_id = digilib_book.book_accounting_symbol) AS accounting_symbol,
                                 (SELECT COUNT(digilib_book_register.book_register_id) AS FIELD_1 FROM digilib_book_register WHERE digilib_book_register.book_id = digilib_book.book_id) AS book_quantity,
                                 (SELECT digilib_book_fund.book_fund_title FROM digilib_book_fund WHERE digilib_book_fund.book_fund_id = digilib_book.book_fund) AS fund,
@@ -1534,4 +1538,40 @@ class CatalogueModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
+    
+    public function selectBookLanguageByBookId($bookid = 0) {
+        $prepare = 'SELECT 
+                        public_language.language_name
+                      FROM
+                        digilib_book_language
+                        INNER JOIN public_language ON (digilib_book_language.book_language = public_language.language_id)
+                      WHERE
+                        digilib_book_language.book_id = :bookid ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->bindValue(':bookid', $bookid);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectDdcParent($ddcid = 0) {
+        $prepare = ' SELECT 
+                        ddc2.ddc_classification_number AS cn2,
+                        ddc2.ddc_title AS sub_class,
+                        (SELECT ddc1.ddc_classification_number FROM digilib_ddc ddc1 WHERE ddc1.ddc_id = ddc2.ddc_parent) AS cn1,
+                        (SELECT ddc1.ddc_title FROM digilib_ddc ddc1 WHERE ddc1.ddc_id = ddc2.ddc_parent) AS main_class
+                      FROM
+                        digilib_ddc ddc2
+                      WHERE
+                      ddc2.ddc_id = :ddcid ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->bindValue(':ddcid', $ddcid);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    
 }

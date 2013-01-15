@@ -65,6 +65,10 @@ class Collection extends Controller {
             $xml .= "<total>$total</total>";
 
             foreach ($listData as $row) {
+                
+                $author = $this->content->parsingAuthor($row['book_id']);
+                $callnumber_extention = $this->content->callNumberExtention($author, $row['book_title']);
+                
                 $last_borrowed = '-';
                 if (!empty($row['last_borrowed']))
                     $last_borrowed = date('d.m.Y', strtotime($row['last_borrowed']));
@@ -85,7 +89,7 @@ class Collection extends Controller {
 
                 $xml .= "<row id='" . $row['book_register_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['book_register_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . $callnumber_extention . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
                 $xml .= "<cell><![CDATA[" . $resource . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $fund . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_condition'] . "]]></cell>";

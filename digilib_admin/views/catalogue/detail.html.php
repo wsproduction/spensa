@@ -81,7 +81,21 @@
                         </td>
                         <td>:</td>
                         <td>
-                            ??
+                            <?php
+                            $language = '-';
+                            $language_count = count($language_list);
+                            if ($language_count > 0) {
+                                $language = '';
+                                $idx = 1;
+                                foreach ($language_list as $row_language) {
+                                    $language .= $row_language['language_name'];
+                                    if ($idx < $language_count)
+                                        $language .= ', ';
+                                    $idx++;
+                                }
+                            }
+                            echo $language;
+                            ?>
                         </td>
                     </tr>
                     <tr>
@@ -130,7 +144,7 @@
                                 $page_romance = $data['book_roman_number'];
                             if (!empty($data['book_pages_number']))
                                 $page_number = $data['book_pages_number'];
-                            echo $page_number . ' / ' . $page_romance;
+                            echo $page_number . ' / ' . $page_romance . ' Halaman';
                             ?>
                         </td>
                     </tr>
@@ -199,7 +213,10 @@
                         <td>:</td>
                         <td>
                             <?php
-                            echo $data['accounting_symbol'] . ' ' . $data['book_price'];
+                            $price = '-';
+                            if ($data['book_price'] > 0)
+                                $price = $data['accounting_symbol'] . ' ' . $data['book_price'];
+                            echo $price;
                             ?>
                         </td>
                     </tr>
@@ -238,17 +255,36 @@
                         </td>
                         <td valign="top">:</td>
                         <td>
-                            ??
+                            <?php
+                            $author = '';
+                            foreach ($author_list as $value) {
+                                $author .= '<div style="font-weight:bold;text-decoration:underline;">' . $value['title'] . ' : </div>';
+                                $author .= '<ol style="padding-left:20px;">';
+                                foreach ($value['name'] as $row) {
+                                    $author .= '<li>' . $row['first_name'] . ' ' . $row['last_name'] . '</li>';
+                                }
+                                $author .= '</ol>';
+                            }
+                            echo $author;
+                            ?>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td valign="top">
                             <div class="label-ina">Klasifikasi Buku</div>
                             <div class="label-eng">Book Classification</div>
                         </td>
-                        <td>:</td>
+                        <td valign="top">:</td>
                         <td>
-                            ??
+                            <?php
+                            $book_classification = '<div style="font-weight:bold;text-decoration:underline;">' . $data['ddc_classification_number'] . $callnumber_extention . '</div>';
+
+                            $ddcparent = $ddc_list[0];
+                            $book_classification .= '<div>' . $ddcparent['cn1'] . ' &rAarr; ' . $ddcparent['main_class'] . ' </div>';
+                            $book_classification .= '<div style="padding-left:40px;">&rdsh;' . $ddcparent['cn2'] . ' &rAarr; ' . $ddcparent['sub_class'] . '</div>';
+                            $book_classification .= '<div style="padding-left:80px;">&rdsh;' . $data['ddc_classification_number'] . ' &rAarr; ' . $data['ddc_title'] . '</div>';
+                            echo $book_classification;
+                            ?>
                         </td>
                     </tr>
                     <tr>
@@ -258,7 +294,12 @@
                         </td>
                         <td valign="top">:</td>
                         <td>
-                            <?php echo $data['book_review']; ?>
+                            <?php
+                            $review = '-';
+                            if (!empty($data['book_review']))
+                                $review = $data['book_review'];
+                            echo $review;
+                            ?>
                         </td>
                     </tr>
                 </table>

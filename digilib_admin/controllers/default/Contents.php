@@ -206,5 +206,43 @@ class Contents extends Controller {
         $list = array('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
         return $list[$id - 1];
     }
+    
+    public function parsingAuthor($bookid) {
+        $authorlist = $this->model->selectAuthorByBookId($bookid);
+        $data = array();
+        foreach ($authorlist as $row) {
+            $data[$row['author_description_id']]['title'] = $row['author_description_title'];
+            $data[$row['author_description_id']]['name'][] = array('first_name' => $row['author_firstname'], 'last_name' => $row['author_lastname']);
+        }
+        return $data;
+    }
+
+    public function callNumberExtention($author, $title) {
+
+        if (count($author) > 0) {
+            if (isset($author[1]['name'])) {
+                if (count($author[1]['name']) > 3) {
+                    $isuse = 'title';
+                } else {
+                    $isuse = 'name';
+                }
+            } else {
+                $isuse = 'title';
+            }
+        } else {
+            $isuse = 'title';
+        }
+
+
+        $extendtion = ' / ';
+        if ($isuse == 'title') {
+            $extendtion .= strtoupper(substr($title, 0, 3));
+        } else {
+            $extendtion .= strtoupper(substr($author[1]['name'][0]['first_name'], 0, 3));
+            $extendtion .= ' / ' . strtolower(substr($title, 0, 1));
+        }
+
+        return $extendtion;
+    }
 
 }
