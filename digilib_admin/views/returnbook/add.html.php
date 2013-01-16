@@ -341,13 +341,13 @@
                 }, {
                     display : 'Nomor Induk Buku',
                     name : 'borrowed_temp_book',
-                    width : 85,
+                    width : 84,
                     sortable : true,
                     align : 'center'
                 }, {
                     display : 'Keterangan Buku',
                     name : 'book_title',
-                    width : 250,
+                    width : 270,
                     sortable : true,
                     align : 'left'
                 }, {

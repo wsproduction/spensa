@@ -110,6 +110,7 @@ class ReturnBookModel extends Model {
                         digilib_borrowed_history.borrowed_history_finish,
                         digilib_borrowed_history.borrowed_history_status,
                         digilib_borrowed_history.borrowed_history_return,
+                        digilib_book.book_id,
                         digilib_book.book_title,
                         digilib_borrowed_type.borrowed_type_title,
                         digilib_publisher.publisher_name,
@@ -177,6 +178,7 @@ class ReturnBookModel extends Model {
                         digilib_borrowed_history.borrowed_history_star,
                         digilib_borrowed_history.borrowed_history_finish,
                         digilib_book_register.book_register_id,
+                        digilib_book.book_id,
                         digilib_book.book_title,
                         digilib_book.book_foreign_title,
                         digilib_publisher.publisher_name,
@@ -381,13 +383,24 @@ class ReturnBookModel extends Model {
                                     digilib_borrowed_history.borrowed_history_star,
                                     digilib_borrowed_history.borrowed_history_finish,
                                     digilib_book.book_title,
+                                    DATEDIFF(NOW(), digilib_borrowed_history.borrowed_history_finish) AS borrow_time,
+                                    digilib_book.book_foreign_title,
+                                    digilib_book.book_publishing,
+                                    digilib_ddc.ddc_classification_number,
+                                    digilib_book.book_id,
+                                    digilib_publisher.publisher_name,
+                                    public_city.city_name,
                                     DATEDIFF(NOW(),digilib_borrowed_history.borrowed_history_finish) AS borrow_time
-                                FROM
+                                  FROM
                                     digilib_borrowed_return_temp
                                     INNER JOIN digilib_borrowed_history ON (digilib_borrowed_return_temp.borrowed_return_temp_history = digilib_borrowed_history.borrowed_history_id)
                                     INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id)
                                     INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
-                                WHERE
+                                    INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id)
+                                    INNER JOIN digilib_publisher_office ON (digilib_book.book_publisher = digilib_publisher_office.publisher_office_id)
+                                    INNER JOIN digilib_publisher ON (digilib_publisher_office.publisher_office_name = digilib_publisher.publisher_id)
+                                    INNER JOIN public_city ON (digilib_publisher_office.publisher_office_city = public_city.city_id)
+                                  WHERE
                                     digilib_borrowed_history.borrowed_history_members =  :memberid
                           ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);

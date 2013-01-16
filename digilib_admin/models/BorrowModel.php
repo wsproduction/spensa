@@ -127,6 +127,7 @@ class BorrowModel extends Model {
                         digilib_borrowed_history.borrowed_history_finish,
                         digilib_borrowed_history.borrowed_history_status,
                         digilib_borrowed_history.borrowed_history_return,
+                        digilib_book.book_id,
                         digilib_book.book_title,
                         digilib_borrowed_type.borrowed_type_title,
                         digilib_publisher.publisher_name,
@@ -194,6 +195,7 @@ class BorrowModel extends Model {
                         digilib_borrowed_temp.borrowed_temp_member,
                         digilib_borrowed_temp.borrowed_temp_start,
                         digilib_borrowed_temp.borrowed_temp_finish,
+                        digilib_book.book_id,
                         digilib_book.book_title,
                         digilib_book.book_foreign_title,
                         digilib_publisher.publisher_name,
@@ -382,11 +384,21 @@ class BorrowModel extends Model {
                                     digilib_borrowed_temp.borrowed_temp_member,
                                     digilib_borrowed_temp.borrowed_temp_start,
                                     digilib_borrowed_temp.borrowed_temp_finish,
-                                    digilib_book.book_title
+                                    digilib_book.book_id,
+                                    digilib_book.book_title,
+                                    digilib_book.book_foreign_title,
+                                    digilib_book.book_publishing,
+                                    digilib_publisher.publisher_name,
+                                    public_city.city_name,
+                                    digilib_ddc.ddc_classification_number
                                 FROM
                                     digilib_borrowed_temp
                                     INNER JOIN digilib_book_register ON (digilib_borrowed_temp.borrowed_temp_book = digilib_book_register.book_register_id)
                                     INNER JOIN digilib_book ON (digilib_book_register.book_id = digilib_book.book_id)
+                                    INNER JOIN digilib_publisher_office ON (digilib_book.book_publisher = digilib_publisher_office.publisher_office_id)
+                                    INNER JOIN digilib_publisher ON (digilib_publisher_office.publisher_office_name = digilib_publisher.publisher_id)
+                                    INNER JOIN public_city ON (digilib_publisher_office.publisher_office_city = public_city.city_id)
+                                    INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id)
                                 WHERE
                                     digilib_borrowed_temp.borrowed_temp_member = :memberid
                           ');

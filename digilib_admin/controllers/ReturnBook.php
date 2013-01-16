@@ -74,15 +74,15 @@ class ReturnBook extends Controller {
                 $foreign_title = '';
                 if (!empty($row['book_foreign_title']))
                     $foreign_title = ' / ' . $row['book_foreign_title'];
-                
+
                 $pinalty = '-';
                 if ($row['borrowed_history_penalty'] > 0)
                     $pinalty = 'Rp. ' . $row['borrowed_history_penalty'];
-                
+
                 $author = $this->content->parsingAuthor($row['book_id']);
                 $callnumber_extention = $this->content->callNumberExtention($author, $row['book_title']);
 
-                $description  = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
+                $description = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
                 $description .= '<br><b>' . $row['book_title'] . $foreign_title . '.</b> ';
                 $description .= '<br><font style="font-style:italic;color:#666;">' . $this->content->sortAuthor($author) . '</font>';
                 $description .= '<font style="font-style:italic;color:#666;"> ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . '</font>';
@@ -125,10 +125,18 @@ class ReturnBook extends Controller {
 
                 $row['borrowed_history_status'] ? $status = 'Dikembalikan' : $status = 'Meminjam';
 
+                $author = $this->content->parsingAuthor($row['book_id']);
+                $callnumber_extention = $this->content->callNumberExtention($author, $row['book_title']);
+
+                $description = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
+                $description .= '<br><b>' . $row['book_title'] . $foreign_title . '.</b> ';
+                $description .= '<br><font style="font-style:italic;color:#666;">' . $this->content->sortAuthor($author) . '</font>';
+                $description .= '<font style="font-style:italic;color:#666;"> ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . '</font>';
+
                 $xml .= "<row id='" . $row['borrowed_history_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_book'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[" . $description . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_type_title'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[<font color='blue'>" . date('d.m.Y', strtotime($row['borrowed_history_star'])) . '</font> s/d  <font color="blue">' . date('d.m.Y', strtotime($row['borrowed_history_finish'])) . "</font>]]></cell>";
                 $xml .= "<cell><![CDATA[" . $status . "]]></cell>";
@@ -165,10 +173,19 @@ class ReturnBook extends Controller {
                 if (!empty($row['book_foreign_title']))
                     $foreign_title = ' / ' . $row['book_foreign_title'];
 
+                $author = $this->content->parsingAuthor($row['book_id']);
+                $callnumber_extention = $this->content->callNumberExtention($author, $row['book_title']);
+
+                $description = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
+                $description .= '<br><b>' . $row['book_title'] . $foreign_title . '.</b> ';
+                $description .= '<br><font style="font-style:italic;color:#666;">' . $this->content->sortAuthor($author) . '</font>';
+                $description .= '<font style="font-style:italic;color:#666;"> ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . '</font>';
+
+
                 $xml .= "<row id='" . $row['borrowed_return_temp_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_return_temp_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_register_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[" . $description . "]]></cell>";
                 $xml .= "<cell><![CDATA[<font color='blue'>" . date('d.m.Y', strtotime($row['borrowed_history_star'])) . '</font> s/d <font color="blue">' . date('d.m.Y', strtotime($row['borrowed_history_finish'])) . "</font>]]></cell>";
                 $pinalty = '-';
                 if ($row['borrow_time'] > 0)
@@ -278,7 +295,7 @@ class ReturnBook extends Controller {
                     $pinalty = 0;
                     if ($value['borrow_time'] > 0)
                         $pinalty = $value['borrow_time'] * 2000;
-                    
+
                     $this->model->saveReturnCart($value['borrowed_history_id'], $pinalty);
                 }
                 $res = true;
@@ -388,19 +405,42 @@ class ReturnBook extends Controller {
                                 <tr>
                                     <td width="55" align="center"><b>No. Induk Buku</b></td>
                                     <td width="140"><b>Judul Buku</b></td>
-                                    <td width="45" align="center"><b>Tgl. Kembali</b></td>
+                                    <td width="45" align="center"><b>Denda</b></td>
                                 </tr>';
 
         foreach ($cart as $rowcart) {
+            $pinalty_total = 0;
+            $pinalty = '-';
+            if ($rowcart['borrow_time'] > 0) {
+                $pinalty = 'Rp. ' . $rowcart['borrow_time'] * 2000;
+                $pinalty_total += $rowcart['borrow_time'] * 2000;
+            }
+
+            $foreign_title = '';
+            if (!empty($rowcart['book_foreign_title']))
+                $foreign_title = ' / ' . $rowcart['book_foreign_title'];
+
+            $author = $this->content->parsingAuthor($rowcart['book_id']);
+            $callnumber_extention = $this->content->callNumberExtention($author, $rowcart['book_title']);
+
+            $description = '<b>' . $rowcart['ddc_classification_number'] . $callnumber_extention . '</b>';
+            $description .= '<br><b>' . $rowcart['book_title'] . $foreign_title . '.</b> ';
+            $description .= '<br><font style="font-style:italic;color:#666;">' . $this->content->sortAuthor($author) . '</font>';
+            $description .= '<font style="font-style:italic;color:#666;"> ' . ucwords(strtolower($rowcart['city_name'])) . ' : ' . $rowcart['publisher_name'] . ', ' . $rowcart['book_publishing'] . '</font>';
+
             $html .= '
                                 <tr>
                                     <td align="center">' . $rowcart['borrowed_history_book'] . '</td>
-                                    <td>' . $rowcart['book_title'] . '</td>
-                                    <td align="center">12/11/2012</td>
+                                    <td>' . $description . '</td>
+                                    <td align="center">' . $pinalty . '</td>
                                 </tr>';
         }
 
         $html .= '
+                                <tr>
+                                    <td colspan="2">Total Denda</td>
+                                    <td>Rp. ' . $pinalty_total . '</td>
+                                </tr>
                            </table>
                         </td>
                     </tr>
