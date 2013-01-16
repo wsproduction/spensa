@@ -86,10 +86,16 @@ class Collection extends Controller {
                 if (!empty($row['fund'])) {
                     $fund = $row['fund'];
                 }
+                
+                $description  = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
+                $description .= '<br><b>' . $row['book_title'] . $foreign_title . '.</b> ';
+                $description .= '<br><font style="font-style:italic;color:#666;">' . $this->content->sortAuthor($author) . '</font>';
+                $description .= '<font style="font-style:italic;color:#666;"> ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . '</font>';
+
 
                 $xml .= "<row id='" . $row['book_register_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['book_register_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . $callnumber_extention . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[" . $description . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $resource . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $fund . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_condition'] . "]]></cell>";

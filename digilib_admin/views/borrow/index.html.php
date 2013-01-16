@@ -22,11 +22,11 @@
                 }, {
                     display : 'Keterangan Buku',
                     name : 'book_title',
-                    width : 350,
+                    width : 400,
                     sortable : true,
                     align : 'left'
                 }, {
-                    display : 'Nama Peminjam',
+                    display : 'Nama Peminjam Buku',
                     name : 'members_name',
                     width : 180,
                     sortable : true,

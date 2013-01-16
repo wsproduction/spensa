@@ -74,11 +74,19 @@ class Borrow extends Controller {
                 $foreign_title = '';
                 if (!empty($row['book_foreign_title']))
                     $foreign_title = ' / ' . $row['book_foreign_title'];
+                
+                $author = $this->content->parsingAuthor($row['book_id']);
+                $callnumber_extention = $this->content->callNumberExtention($author, $row['book_title']);
+
+                $description  = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
+                $description .= '<br><b>' . $row['book_title'] . $foreign_title . '.</b> ';
+                $description .= '<br><font style="font-style:italic;color:#666;">' . $this->content->sortAuthor($author) . '</font>';
+                $description .= '<font style="font-style:italic;color:#666;"> ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . '</font>';
 
                 $xml .= "<row id='" . $row['borrowed_history_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_history_book'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[" . $description . "]]></cell>";
                 $xml .= "<cell><![CDATA[<b>" . $row['members_id'] . '</b><br> ' . $row['members_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['borrowed_type_title'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[<font color='blue'>" . date('d.m.Y', strtotime($row['borrowed_history_star'])) . '</font> s/d  <font color="blue">' . date('d.m.Y', strtotime($row['borrowed_history_finish'])) . "</font>]]></cell>";

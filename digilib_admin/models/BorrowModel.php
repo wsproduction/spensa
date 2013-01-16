@@ -39,6 +39,7 @@ class BorrowModel extends Model {
                         digilib_borrowed_history.borrowed_history_finish,
                         digilib_borrowed_history.borrowed_history_status,
                         digilib_borrowed_history.borrowed_history_return,
+                        digilib_book.book_id,
                         digilib_book.book_title,
                         digilib_book.book_foreign_title,
                         digilib_borrowed_type.borrowed_type_title,

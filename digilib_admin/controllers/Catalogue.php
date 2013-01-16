@@ -432,8 +432,6 @@ class Catalogue extends Controller {
             $listData = $this->model->selectAllCatalogue($page);
             $total = $this->model->countAllCatalogue();
 
-            //$this->setAuthor();
-
             header("Content-type: text/xml");
             $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
             $xml .= "<rows>";
@@ -445,7 +443,7 @@ class Catalogue extends Controller {
 
                 $link_edit = $this->content->setLink('catalogue/edit/' . $row['book_id']);
                 $link_detail = $this->content->setLink('catalogue/detail/' . $row['book_id']);
-                
+
                 $author = $this->content->parsingAuthor($row['book_id']);
                 $callnumber_extention = $this->content->callNumberExtention($author, $row['book_title']);
 
@@ -465,10 +463,14 @@ class Catalogue extends Controller {
 
                 $stock = $row['book_quantity'] - $row['count_borrowed'];
 
+                $description  = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
+                $description .= '<br><b>' . $row['book_title'] . $foreign_title . '.</b> ';
+                $description .= '<br><font style="font-style:italic;color:#666;">' . $this->content->sortAuthor($author) . '</font>';
+                $description .= '<font style="font-style:italic;color:#666;"> ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . '</font>';
 
                 $xml .= "<row id='" . $row['book_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['book_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[<b>" . $row['ddc_classification_number'] . $callnumber_extention . '</b><br>' . $row['book_title'] . $foreign_title . '. ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . ".]]></cell>";
+                $xml .= "<cell><![CDATA[" . $description . ".]]></cell>";
                 $xml .= "<cell><![CDATA[" . $resource . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $fund . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['book_quantity'] . "]]></cell>";
@@ -478,93 +480,6 @@ class Catalogue extends Controller {
                 $xml .= "<cell><![CDATA[<a href='" . $link_edit . "'>Edit</a> | <a href='" . $link_detail . "'>Detail</a>]]></cell>";
                 $xml .= "</row>";
             }
-
-            /*
-
-              foreach ($listData AS $row) {
-
-              // Author
-              $outAuthor = '';
-              $countAuthor = 0;
-              $tempCount = 0;
-              $jmlPengarang = 0;
-              $namaPengarang = '';
-              foreach ($this->dataAuthorDescription as $keyAD => $valueAD) {
-              $res = $this->parsingAuthor($row['book_id'], $keyAD);
-
-              if ($res[0] > 0 && $countAuthor)
-              $outAuthor .= '; ';
-
-              $countAuthor += $res[0];
-              $outAuthor .= $res[1];
-              $tempCount = $res[0];
-
-              //untuk menentukan classification number
-              if ($keyAD == 1) {
-              $namaPengarang = $res[1];
-              $jmlPengarang = $res[0];
-              }
-              }
-
-              // Judul Buku
-              $keterangan_buku = $row['book_title'];
-              if ($row['book_sub_title'] != '')
-              $keterangan_buku .= ' : ' . $row['book_sub_title'];$row['book_year_launching'] . '</i>';
-
-              // Author
-              if ($countAuthor > 0)
-              $keterangan_buku .= '      / ' . $outAuthor;
-
-              // Edisi, Cetakan
-              if ($row['book_edition'] != '' || $row['book_print'] != '')
-              $keterangan_buku .= '.&HorizontalLine;';
-
-              if ($row['book_edition'] != '')
-              $keterangan_buku .= ' Ed. ' . $row['book_edition'];
-
-              if ($row['book_edition'] != '' && $row['book_print'] != '')
-              $keterangan_buku .= ', ';
-
-              if ($row['book_print'] != '')
-              $keterangan_buku .= ' cet. ' . $row['book_print'];
-
-              // Keterangan Penerbit
-              $keterangan_buku .= '.&HorizontalLine; ' . $row['city_name'] . ' : ' . $row['publisher_name'] . ', ' . $row['book_year_launching'] . '.';
-
-              // CallNumber
-              $callNumberRow1 = $row['classification_number'];
-              $callNumberRow2 = '';
-              $callNumberRow3 = '';
-              if ($jmlPengarang > 0 && $jmlPengarang <= 3) {
-              $np = explode(',', $namaPengarang);
-              $callNumberRow2 = strtoupper(substr(str_replace(' ', '', $np[0]), 0, 3));
-              $callNumberRow3 = strtolower(substr(str_replace(' ', '', $row['book_title']), 0, 1));
-              } else {
-              $callNumberRow2 = strtoupper(substr(str_replace(' ', '', $row['book_title']), 0, 3));
-              }
-
-              $cn = '      <div>';
-              $cn .= '          <div>' . $callNumberRow1 . '</div>';
-              $cn .= '          <div>' . $callNumberRow2 . '</div>';
-              $cn .= '          <div>' . $callNumberRow3 . '</div>';
-              $cn .= '      </div>';
-
-              $link_detail = URL::link($this->content->setLink('catalogue/detail/' . $row['book_id']), 'Detail', 'attach');
-              $link_edit = URL::link($this->content->setLink('catalogue/edit/' . $row['book_id']), 'Edit', 'attach');
-
-              $xml .= "<row id='" . $row['book_id'] . "'>";
-              $xml .= "<cell><![CDATA[" . $row['book_id'] . "]]></cell>";
-              $xml .= "<cell><![CDATA[" . $cn . "]]></cell>";
-              $xml .= "<cell><![CDATA[" . $keterangan_buku . "]]></cell>";
-              $xml .= "<cell><![CDATA[" . $row['resource_name'] . "]]></cell>";
-              $xml .= "<cell><![CDATA[" . $row['fund_name'] . "]]></cell>";
-              $xml .= "<cell><![CDATA[" . $row['book_quantity'] . "]]></cell>";
-              $xml .= "<cell><![CDATA[" . $row['length_borrowed'] . "]]></cell>";
-              $xml .= "<cell><![CDATA[" . date('d / m / Y', strtotime($row['book_entry_date'])) . "]]></cell>";
-              $xml .= "<cell><![CDATA[" . $link_detail . " | " . $link_edit . "]]></cell>";
-              $xml .= "</row>";
-              }
-             */
 
             $xml .= "</rows>";
             echo $xml;

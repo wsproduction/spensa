@@ -201,12 +201,12 @@ class Contents extends Controller {
     public function numberFormat($number = 0) {
         return number_format($number, 0, ',', '.');
     }
-    
+
     public function monthName($id) {
         $list = array('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
         return $list[$id - 1];
     }
-    
+
     public function parsingAuthor($bookid) {
         $authorlist = $this->model->selectAuthorByBookId($bookid);
         $data = array();
@@ -243,6 +243,30 @@ class Contents extends Controller {
         }
 
         return $extendtion;
+    }
+
+    public function sortAuthor($author) {
+        $book_author = '';
+        if (isset($author[1]['name'])) {
+            $count_author = count($author[1]['name']);
+            if ($count_author > 0) {
+                $author_index = 1;
+                foreach ($author[1]['name'] as $author_value) {
+                    $book_author .= $author_value['first_name'];
+                    if (!empty($author_value['last_name']))
+                        $book_author .= ' ' . $author_value['last_name'];
+
+                    if ($author_index == $count_author)
+                        $book_author .= '. ';
+                    else {
+                        $book_author .= ', ';
+                    }
+                    $author_index++;
+                }
+                $book_author .= ' | ';
+            }
+        }
+        return $book_author;
     }
 
 }
