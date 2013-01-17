@@ -12,7 +12,7 @@ class Chart extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Grafik');
+        Web::setTitle('Grafik Peminjaman Buku');
         $this->view->option_period = $this->optionPeriod();
         $this->view->render('chart/index');
     }
