@@ -2,17 +2,43 @@
     <div id="box_title">
         <div class="left"><?php echo Web::getTitle(); ?></div>
     </div>
+
+    <div style="margin: 10px 0;">
+        <fieldset>
+            <legend>Filter Data</legend>
+            <?php Form::begin('fChartFilter', 'chart/chart', 'post'); ?>
+            <table>
+                <tr>
+                    <td width="150">
+                        <div class="label-ina">Tahun Ajaran</div>
+                        <div class="label-eng">Academic Period</div>
+                    </td>
+                    <td>:</td>
+                    <td>
+                        <?php
+                        Form::create('select', 'period');
+                        Form::properties(array('style' => 'width:120px;'));
+                        Form::option($option_period);
+                        Form::commit();
+                        echo ' ';
+                        Form::create('submit', 'bSubmit');
+                        Form::value('Cari');
+                        Form::style('action_search');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+            </table>
+            <?php Form::end(); ?>
+        </fieldset>
+    </div>
+
     <div id="container" style="min-width: 400px; margin: 10px 0 0 0"></div>
-    <?php
-    Form::create('hidden', 'period');
-    Form::value($period_id);
-    Form::commit();
-    ?>
 </div>
 
 <script>
     $(function(){
-        $('#container').css('height',screen.height * 0.65);
+        $('#container').css('height',screen.height * 0.55);
         
         var chart;
         $(document).ready(function() {
@@ -82,19 +108,28 @@
                     }]
             };
             
-            $(this).loadingProgress('start');
-            $.get('dashboard/chart', {
-                period : $('#period').val()
-            }, function (o){
-                var title = o['title'];
-                var data = o['data'];
-                option.series[0].data = data[0];
-                option.series[1].data = data[1];
-                option.series[2].data = data[2];
-                chart = new Highcharts.Chart(option);
-                chart.setTitle({text: title});
-                $(this).loadingProgress('stop');
-            }, 'json');
+            var getChart = function() {
+                $(this).loadingProgress('start');
+                $.get('chart/chart', {
+                    period : $('#period').val()
+                }, function (o){
+                    var title = o['title'];
+                    var data = o['data'];
+                    option.series[0].data = data[0];
+                    option.series[1].data = data[1];
+                    option.series[2].data = data[2];
+                    chart = new Highcharts.Chart(option);
+                    chart.setTitle({text: title});
+                    $(this).loadingProgress('stop');
+                }, 'json');
+            };
+            
+            getChart();
+            
+            $('#fChartFilter').live('submit',function(){
+                getChart();
+                return false;
+            });
             
             Highcharts.theme = {
                 colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],

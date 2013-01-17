@@ -66,14 +66,14 @@ class Contents extends Controller {
 
             // View Menu Level 2
             if ($this->countChildMenu($level2, $val_level1['menu_id']) > 0) {
-                $html .= '<ul style="width: 285px;">';
+                $html .= '<ul style="width: 200px;">';
                 foreach ($level2 as $val_level2) {
                     if ($val_level2['menu_parent'] == $val_level1['menu_id']) {
                         $html .= '<li>' . URL::link($this->setLink($val_level2['menu_link']), $val_level2['menu_title'], false);
 
                         // View Menu Leve 3
                         if ($this->countChildMenu($level3, $val_level2['menu_id']) > 0) {
-                            $html .= '<ul style="width: 150px;">';
+                            $html .= '<ul style="width: 200px;">';
                             foreach ($level3 as $val_level3) {
                                 if ($val_level3['menu_parent'] == $val_level2['menu_id']) {
                                     $html .= '<li>' . URL::link($this->setLink($val_level3['menu_link']), $val_level3['menu_title'], false);

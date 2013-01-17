@@ -1,6 +1,6 @@
 <?php
 
-class Dashboard extends Controller {
+class Chart extends Controller {
 
     public function __construct() {
         parent::__construct();
@@ -12,15 +12,21 @@ class Dashboard extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Dashboard');
-        $period_list = $this->model->selectPeiodByStatus(1);
-        $period_data = $period_list[0];
-        $this->view->period_id = $period_data['period_id'];
-        $this->view->render('dashboard/index');
+        Web::setTitle('Grafik');
+        $this->view->option_period = $this->optionPeriod();
+        $this->view->render('chart/index');
     }
-
+    
+    public function optionPeriod() {
+        $option = array();
+        $listperiod = $this->model->selectPeriod();
+        foreach ($listperiod as $value) {
+            $option[$value['period_id']] = $value['period_start'] . ' / ' . $value['period_finish'];
+        }
+        return $option;
+    }
+    
     public function chart() {
-        
         $periodid = $this->method->get('period');
         $period_list = $this->model->selectPeriodById($periodid);
         $period_data = $period_list[0];
@@ -39,6 +45,8 @@ class Dashboard extends Controller {
             }
             $idx++;
         }
+        
+
         $dataGrade7 = $this->model->selectChart(1, $mothYear);
         $listGrade7 = $dataGrade7[0];
         $dataGrade8 = $this->model->selectChart(2, $mothYear);
