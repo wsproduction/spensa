@@ -357,19 +357,33 @@ class Report extends Controller {
             $html .= '  </thead>';
             
             $idx = 1;
-            foreach ($data as $value) {
+            $borrow_total = 0;
+            foreach ($data as $row) {
+                $foreign_title = '';
+                if (!empty($row['book_foreign_title']))
+                    $foreign_title = ' / ' . $row['book_foreign_title'];
+                
+                $author = $this->content->parsingAuthor($row['book_id']);
+                $callnumber_extention = $this->content->callNumberExtention($author, $row['book_title']);
+                
+                $description  = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
+                $description .= '<br><b>' . $row['book_title'] . $foreign_title . '.</b> ';
+                $description .= '<br><font style="font-style:italic;color:#666;">' . $this->content->sortAuthor($author) . '</font>';
+                $description .= '<font style="font-style:italic;color:#666;"> ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . '</font>';
+                
                 $html .= '  <tr>';
                 $html .= '      <td width="40" align="center" class="first">' . $idx . '</td>';
-                $html .= '      <td width="90" align="center">&nbsp;' . $value['book_id'] . '</td>';
-                $html .= '      <td width="400" >&nbsp;' . $value['book_title'] . '</td>';
-                $html .= '      <td width="140" align="center">' . $value['book_publishing'] . '</td>';
+                $html .= '      <td width="90" align="center">&nbsp;' . $row['book_id'] . '</td>';
+                $html .= '      <td width="400" >&nbsp;' . $description . '</td>';
+                $html .= '      <td width="140" align="center">' . $row['borrow_count'] . '</td>';
                 $html .= '  </tr>';
                 $idx++;
+                $borrow_total += $row['borrow_count'];
             }
 
             $html .= '  <tr>';
             $html .= '      <td colspan="3" align="center" class="first"><b>TOTAL</b></td>';
-            $html .= '      <td align="center"></td>';
+            $html .= '      <td align="center">' . $borrow_total . '</td>';
             $html .= '  </tr>';
 
             $html .= '</table>';
