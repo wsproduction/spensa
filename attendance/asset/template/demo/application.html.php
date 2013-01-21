@@ -6,15 +6,10 @@
         <meta charset="utf-8" />
 
         <?php
-        /* jQuery Plugin*/
+        /* jQuery Plugin */
         Src::plugin()->jQuery();
-        Src::plugin()->jQueryCookie();
-        Src::plugin()->jQueryJson();
-        Src::plugin()->jQueryUI();
-        Src::plugin()->jDialogBox(); 
-        Src::plugin()->flexDropDown();
-        
-        
+        Src::plugin()->jQueryUI('ui-lightness');
+
         Src::css('layout');
         Src::css('custom');
 
@@ -22,18 +17,17 @@
         echo Src::getJavascript();
         echo Src::getCss();
         ?>
-
+        <script>
+            /* jQuery Custom */
+            eval(function(p,a,c,k,e,r){e=function(c){return c.toString(a)};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('c.9.e({b:2(0){6 7.8(2(){1(0==\'a\'){$(\'#3-4\').d(\'5\')}f 1(0==\'g\'){$(\'#3-4\').h(\'5\')}})}});',18,18,'action|if|function|loading|progress|fast|return|this|each|fn|start|loadingProgress|jQuery|slideDown|extend|else|stop|slideUp'.split('|'),0,{}));
+        </script>
     </head>
     <body>
+        <div id="loading-progress">&nbsp;</div>
         <div id="bound">
             <div id="header">
                 <div class="float-left title">
-                    <?php 
-                        echo Web::$webName; 
-                        if (Session::get('login_status')) {
-                            echo ' | Welcome, ' . Session::get('name') . '!';
-                        }
-                    ?>
+                    <?php echo Web::$webName; ?>
                 </div>
                 <div class="float-right btn-top-bar" style="display: none;">
                     &nbsp;
@@ -41,53 +35,6 @@
                 <div class="cl">&nbsp;</div>
             </div>
             <div id="page_menu">
-                <ul id="navigation" class="dropdown">
-                    <?php
-                    if (Session::get('login_status')) {
-                        $link_path = 'http://' . Web::getHost();
-                    ?>
-                        <li><?php URL::link($link_path . '/dashboard', 'Dashboard'); ?></li>
-                        <li>
-                            <?php URL::link('#', 'Daftar Hadir'); ?>
-                            <ul>
-                                <li><?php URL::link($link_path . '/teacher', 'Guru'); ?></li>
-                                <li><?php URL::link($link_path . '/staff', 'Tata Usaha'); ?></li>
-                                <li><?php URL::link($link_path . '/student', 'Siswa'); ?></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <?php URL::link('#', 'Laporan'); ?>
-                            <ul style="width: 150px;">
-                                <li>
-                                    <?php URL::link('#', 'Kehadiran Guru'); ?>
-                                    <ul style="width: 150px;">
-                                        <li><?php URL::link($link_path . '/teacher/treport', 'Waktu Kehadiran'); ?></li>
-                                        <li><?php URL::link($link_path . '/teacher/rreport', 'Rekap Kehadiran'); ?></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <?php URL::link('#', 'Kehadiran Tata Usaha'); ?>
-                                    <ul style="width: 150px;">
-                                        <li><?php URL::link($link_path . '/teacher/treport', 'Waktu Kehadiran'); ?></li>
-                                        <li><?php URL::link($link_path . '/teacher/rreport', 'Rekap Kehadiran'); ?></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <?php URL::link('#', 'Kehadiran Siswa'); ?>
-                                    <ul style="width: 150px;">
-                                        <li><?php URL::link($link_path . '/teacher/treport', 'Waktu Kehadiran'); ?></li>
-                                        <li><?php URL::link($link_path . '/teacher/rreport', 'Rekap Kehadiran'); ?></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li><?php URL::link($link_path . '/login/stop', 'Logout'); ?></li>
-                    <?php
-                    } else {
-                        echo '<li>' . URL::link('#', 'Login',false) . '</li>';
-                    }
-                    ?>
-                </ul>
                 <div class="cl">&nbsp;</div>
             </div>
             <div id="content">
@@ -96,7 +43,25 @@
             </div>
         </div>
         <div id="footer">
-            <b>Attendance &copy; 2012 | Develope by : </b> <u>Warman Suganda</u>
+            <b>Digital Library &copy; 2012 | Develope by : </b> <b><a href="www.facebook.com/warman.suganda">Warman Suganda</a> <br>Best View</b>&nbsp;with <b><a href="www.google.com/chrome">Google Chrome</a></b>, <b>Screen Resolution</b>&nbsp;: 1280 x 800 Pixcel
         </div>
+
+        <script>
+            $(function(){
+                
+                $("ul.dropdown li").hover(function(){
+    
+                    $(this).addClass("hover");
+                    $('ul:first',this).css('visibility', 'visible');
+    
+                }, function(){
+    
+                    $(this).removeClass("hover");
+                    $('ul:first',this).css('visibility', 'hidden');
+    
+                });
+               
+            });
+        </script>
     </body>
 </html>

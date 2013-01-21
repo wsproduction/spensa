@@ -19,31 +19,35 @@ ul#navigation {
 ul#navigation li {
     list-style:none;
     float:left;
-    border: 1px solid #d6d6d6;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
+    border: none;
+    margin-right: 5px;
 }
 
 ul#navigation li:hover {
-    border-color: #868686;
+    border-color: #ffeba4;
+    background:  #ffeba4;
 }
 
 ul#navigation li a {
     display: block;
-    padding: 2px 15px;
+    padding: 5px 15px;
     font-family: Arial,Helvetica,sans-serif;
     text-decoration: none;
     font-size: 12px;
-    color: #00102d;
+    color: #fff;
+    text-shadow: 1px 1px 1px #00acf2;
+}
+
+ul#navigation li a:hover {
+    color: #00acf2;
     text-shadow: 1px 1px 1px #fff;
 }
 
 ul#navigation li ul {
     margin: 0;
-    background-color: #f0f0f0;
-    padding: 2px;
-    border: 1px solid #a0a0a0;
+    background-color: #ffeba4;
+    padding: 2px 12px 2px 2px;
+    border: 1px solid #ffeba4;
     z-index: 999;
 }
 
@@ -53,6 +57,7 @@ ul#navigation li ul li {
 }
 
 ul#navigation li ul li:hover {
+    
 }
 
 ul#navigation li ul li a {
@@ -60,14 +65,15 @@ ul#navigation li ul li a {
     padding: 5px;
     font-family: Arial,Helvetica,sans-serif;
     font-size: 12px;
-    color: #00102d;
-    background-color: #f0f0f0;
+    color: #00acf2;
+    text-shadow: 1px 1px 1px #fff;
+    background-color: #ffeba4;
     border: none;
 }
 
 ul#navigation li ul li a:hover {
     color: #fff;
-    background-color: #3399ff;
+    background-color: #00acf2;
     border: none;
     text-shadow: 1px 1px 1px #00102d;
 }
@@ -150,7 +156,19 @@ label.error {
     font-family: Arial,Helvetica,sans-serif;
 }
 
-input[type=text], input[type=password], select, textarea {
+input[type=text], input[type=password], textarea {
+    border: 1px solid #ccc;
+    padding: 6px;
+    color: #00102d;
+    
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+}
+
+select {
     border: 1px solid #ccc;
     padding: 5px;
     color: #00102d;
@@ -398,8 +416,24 @@ legend {
     background: url(../images/print.png) no-repeat center left;
 }
 
+.flexigrid div.fbutton .issue {
+    background: url(../images/issue.png) no-repeat center left;
+}
+
+.flexigrid div.fbutton .card {
+    background: url(../images/credit-card.png) no-repeat center left;
+}
+
+.flexigrid div.fbutton .earse {
+    background: url(../images/earse.png) no-repeat center left;
+}
+
+.flexigrid div.fbutton .report {
+    background: url('../images/1357896914_report.png') no-repeat center left;
+}
+
 .label-ina {
-    
+    font-weight: bold;
 }
 
 .label-eng {
@@ -412,13 +446,67 @@ legend {
 }
 
 .tips-eng {
-    border: 1px solid #ccc;
     font-style: italic;
     font-size: 10px;
 }
 
-.v-repots {
-    width: 99.8%;
-    margin: 5px 0 0 0;
-    height: 500px;
+.borrowed-info {
+    min-height: 110px;
+}
+
+.borrowed-info .members-info {
+    padding: 0 0 0 10px;
+    text-align: left;
+    width: 600px;
+    margin:  0 0 0 20px;
+    min-height: 100px;
+    display: none;
+}
+
+.borrowed-info .members-info #member-photo {
+    border: 1px solid #ccc;
+    padding: 2px;
+    width: 70px;
+    height: 95px;
+    -moz-box-shadow:    0px 0px 10px 1px #ccc;
+    -webkit-box-shadow: 0px 0px 10px 1px #ccc;
+    box-shadow:         0px 0px 10px 1px #ccc;
+}
+
+.borrowed-info .members-info .members-profile {
+    margin: 0 10px 0 0;
+    text-align: left;
+    border: 1px solid #ccc;
+    padding: 10px;
+    height: 80px;
+    min-width: 300px;
+    -moz-box-shadow:    0px 0px 10px 1px #ccc;
+    -webkit-box-shadow: 0px 0px 10px 1px #ccc;
+    box-shadow:         0px 0px 10px 1px #ccc;
+}
+
+.borrowed-info .members-info .members-profile-not-found {
+    margin: 30px 10px 0 0;
+    text-align: left;
+    border: 1px solid #ccc;
+    padding: 10px;
+    color: red;
+    -moz-box-shadow:    0px 0px 10px 1px #ccc;
+    -webkit-box-shadow: 0px 0px 10px 1px #ccc;
+    box-shadow:         0px 0px 10px 1px #ccc;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.view-cart-list {
+    padding: 2px;
+}
+
+#borrowed-cart #view-invoice {
+    display: none;
+}
+
+#borrowed-cart #view-invoice iframe {
+    width: 100%;
 }

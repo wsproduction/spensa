@@ -24,6 +24,25 @@ body {
     font-size: 12px;
 }
 
+#loading-progress {
+    border: 1px solid #F8BB00;
+    background: url('../images/loading.gif');
+    background-color: #fff;
+    width: 160px;
+    height: 54px;
+    left: 44%;
+    top: 10%;
+    position: absolute;
+    z-index: 9999;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow:    0px 0px 10px 1px #ccc;
+    -webkit-box-shadow: 0px 0px 10px 1px #ccc;
+    box-shadow:         0px 0px 10px 1px #ccc;
+    display: none;
+}
+
 .float-left {
     float: left;
 }
@@ -42,17 +61,25 @@ body {
 
 #bound {
     min-width: 850px;
-    border: 1px solid #c0c0c0;
+    border: 1px solid #00acf2;
     padding: 3px;
-    
+
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
     -moz-box-shadow:    0px 0px 10px 1px #ccc;
     -webkit-box-shadow: 0px 0px 10px 1px #ccc;
     box-shadow:         0px 0px 10px 1px #ccc;
-    
-    background: #d6d6d6;
+
+    background: #49c0f0; /* Old browsers */
+    background: -moz-linear-gradient(top,  #49c0f0 0%, #2cafe3 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#49c0f0), color-stop(100%,#2cafe3)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #49c0f0 0%,#2cafe3 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #49c0f0 0%,#2cafe3 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #49c0f0 0%,#2cafe3 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #49c0f0 0%,#2cafe3 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#49c0f0', endColorstr='#2cafe3',GradientType=0 ); /* IE6-9 */
+
 }
 
 #info_user {
@@ -68,12 +95,12 @@ body {
 #header {
     padding: 5px;
     height: 18px;
-    border-bottom: 1px solid #868686;
+    border-bottom: 1px solid #00acf2;
 }
 
 #header .title {
-    text-shadow: 1px 1px 1px #fff;
-    color: #00102d;
+    text-shadow: 1px 1px 1px #00acf2;
+    color: #fff;
     font-family: Arial,Helvetica,sans-serif;
     font-size: 13px;
     font-weight: bold;
@@ -94,8 +121,8 @@ body {
 #content {
     clear: both;
     padding: 10px;
-    background: #bfbfbf;
-    border: 1px solid #868686;
+    background: #f7f7f7;
+    border: 1px solid #00acf2;
 }
 
 #filter_box {
@@ -144,40 +171,50 @@ body {
 .box {
     background-color: #f7f7f7;
     clear: both;
-    border: 1px solid #ccc;
+    border: 1px solid #e78f08;
     padding: 6px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
 }
 
-.box .box_title {
-    background-color: #dddddd;
+.box div.box_title {
     height: 32px;
     padding: 2px;
     font-family: Arial,Helvetica,sans-serif;
     font-weight: bold;
-    text-shadow: 1px 1px 1px #fff;
-    background: url('../images/bg_top.png') repeat-x;
+    color: #fff;
+    text-shadow: 1px 1px 1px #e78f08;
+
     background-position: 0 -80px;
     font-size: 14px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+
+    background: #ffc578; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ffc578 0%, #fb9d23 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffc578), color-stop(100%,#fb9d23)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffc578 0%,#fb9d23 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffc578 0%,#fb9d23 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffc578 0%,#fb9d23 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ffc578 0%,#fb9d23 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffc578', endColorstr='#fb9d23',GradientType=0 ); /* IE6-9 */
+
 }
 
-.box .box_content {
+.box div.box_content {
     clear: both;
     padding-top: 5px;
 }
 
-.box .box_title .left {
+.box div.box_title div.left {
     float: left;
     margin-top: 7px;
     margin-left: 6px;
 }
 
-.box .box_title .right {
+.box div.box_title div.right {
     float: right;
 }
 
@@ -206,4 +243,34 @@ body {
     -moz-box-shadow:    0px 0px 5px 1px #ccc;
     -webkit-box-shadow: 0px 0px 5px 1px #ccc;
     box-shadow:         0px 0px 5px 1px #ccc;
+}
+
+/* 
+        LEVEL ONE
+*/
+ul.dropdown { position: relative; }
+ul.dropdown li a { display: block;}
+ul.dropdown li.hover, ul.dropdown li:hover { position: relative; }
+ul.dropdown li.hover a { color: black; }
+
+
+/* 
+        LEVEL TWO
+*/
+ul.dropdown ul { visibility: hidden; position: absolute; top: 100%; left: 0; }
+ul.dropdown ul li { float: none; }
+
+/* IE 6 & 7 Needs Inline Block */
+ul.dropdown ul li a { width: 100%; display: inline-block; } 
+
+/* 
+        LEVEL THREE
+*/
+ul.dropdown ul ul { left: 100%; top: 0; }
+ul.dropdown li:hover > ul { visibility: visible; }
+
+
+table.detail_form td {
+    border-bottom: 1px dotted #ccc;
+    padding: 4px 0;
 }

@@ -13,7 +13,7 @@ class Login extends Controller {
             $data_user = $data_user[0];
             Session::init();
             Session::set('login_status', 1);
-            Session::set('name', $data_user['NAME']);
+            Session::set('name', $data_user['FULL_NAME']);
             $ket = array(1,$this->content->setLink('dashboard'));
         } else {
             $ket = array(0,$this->message->loginError());

@@ -100,14 +100,7 @@
                     align : 'center',
                     hide : true
                 }, {
-                    display : 'Tanggal Input',
-                    name : 'book_entry_date',
-                    width : 80,
-                    sortable : true,
-                    align : 'center',
-                    hide : true
-                }, {
-                    display : 'Tanggal Update',
+                    display : 'Jumlah Peminjam',
                     name : 'book_entry_date',
                     width : 80,
                     sortable : true,
