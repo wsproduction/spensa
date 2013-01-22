@@ -18,7 +18,7 @@ switch (Web::getSubDomain()) {
         Web::main('SMPN 1 SUBANG', 'absensi', 'demo');
         break;
     case 'digilib':
-        Web::main('DIGITAL LIBRARY', 'digilib', 'elegant');
+        Web::main('DIGITAL LIBRARY', 'digilib', 'demo');
         Web::child('OPERATOR DIGITAL LIBRARY', 'admin', 'digilib_admin', 'demo');
         break;
     case 'absen':

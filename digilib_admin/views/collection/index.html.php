@@ -43,7 +43,7 @@
                 }, {
                     display : 'Jumlah Peminjam',
                     name : 'length_borrowed',
-                    width : 50,
+                    width : 90,
                     sortable : true,
                     align : 'center',
                     hide : true

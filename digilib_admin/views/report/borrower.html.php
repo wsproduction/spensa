@@ -6,7 +6,7 @@
     <div style="margin: 10px 0;">
         <fieldset>
             <legend>Filter Data</legend>
-            <?php Form::begin('fReportFilter', 'report/readpinalty', 'post'); ?>
+            <?php Form::begin('fReportFilter', 'report/readborrower', 'post'); ?>
             <table>
                 <tr>
                     <td width="150">

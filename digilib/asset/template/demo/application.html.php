@@ -35,6 +35,7 @@
                 <div class="cl">&nbsp;</div>
             </div>
             <div id="page_menu">
+                <?php echo $topMenu; ?>
                 <div class="cl">&nbsp;</div>
             </div>
             <div id="content">
