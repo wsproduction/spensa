@@ -53,7 +53,7 @@ class Teaching extends Controller {
             $class_info = $class_list[0];
             $this->view->class_info = $class_info;
             $semesterid = 1;
-            
+
             Web::setTitle('Kelas ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
 
             // Daily Score
@@ -1434,7 +1434,7 @@ class Teaching extends Controller {
 
         echo json_encode(array('count' => 1, 'row' => $teaching_list));
     }
-    
+
     public function readMyClass() {
         Session::init();
         $teacher_id = Session::get('user_references');
@@ -1457,9 +1457,8 @@ class Teaching extends Controller {
                 $teaching_list .= '     <td>' . $row['employess_name'] . '</td>';
                 $teaching_list .= '     <td align="center">' . $row['teaching_total_time'] . ' Jam</td>';
                 $teaching_list .= '     <td>' . date('d-m-Y H:i:s', strtotime($row['teaching_entry_update'])) . '</td>';
-                $teaching_list .= '     <td align="center"><a href="../myclassroom/' . $row['teaching_id'] . '" rel="edit">Masuk Kelas</a> &bullet; <a href="' . $row['teaching_id'] . '" rel="delete">Rekapitulasi Nilai</a></td>';
+                $teaching_list .= '     <td align="center"><a href="../myclassroom/' . $row['teaching_id'] . '" rel="edit">Masuk Kelas</a> &bullet; <a href="../scorerecapitulation/' . $row['teaching_id'] . '" rel="delete">Rekapitulasi Nilai</a></td>';
                 $teaching_list .= '</tr>';
-
                 $idx++;
             }
         } else {
@@ -1476,4 +1475,62 @@ class Teaching extends Controller {
         echo json_encode(array('count' => 1, 'row' => $teaching_list));
     }
 
+    public function scoreRecapitulation($teachingid=0) {
+        Session::init();
+        $user_references = Session::get('user_references');
+
+        $class_list = $this->model->selectClassListByTeachingId($teachingid, $user_references);
+        if ($class_list) {
+            $class_info = $class_list[0];
+            $this->view->class_info = $class_info;
+
+            Web::setTitle('Rekapitulasi Nilai ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
+            
+            $this->view->link_r = $this->content->setLink('teaching/readscorerecapitulation');
+            $this->view->render('teaching/scorerecapitulation');
+        } else {
+            $this->view->render('teaching/404');
+        }
+    }
+    
+    public function readScoreRecapitulation() {
+        Session::init();
+        $teacher_id = Session::get('user_references');
+
+        $periodid = $this->method->post('p');
+        $semesterid = $this->method->post('s');
+
+        $myteaching = $this->model->selectTeachingEkskul($teacher_id, $periodid);
+        $list = '';
+        $idx = 1;
+
+        if ($myteaching) {
+            foreach ($myteaching as $row) {
+                $list .= '<tr>
+                            <td align="center"  class="first">1</td>
+                            <td align="center" >121307001</td>
+                            <td align="center" >0011531663</td>
+                            <td>ADILLO ALMAN AHMAD</td>
+                            <td align="center" >80</td>
+                            <td align="center" >Terlampaui</td>
+                            <td align="center" >80</td>
+                            <td align="center" >Terlampaui</td>
+                            <td align="center" >Detail</td>
+                        </tr>';
+
+                $idx++;
+            }
+        } else {
+            $list .= '
+                    <tr>
+                        <td class="first" colspan="9">
+                            <div class="information-box">
+                                Rekap nilai tidak ditemukan.
+                            </div>
+                        </td>
+                    </tr>';
+        }
+
+        echo json_encode(array('count' => 1, 'row' => $list));
+    }
 }

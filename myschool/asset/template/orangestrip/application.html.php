@@ -20,7 +20,7 @@ $protection = Session::get('login_status');
 
         /* jQuery Plugin */
         Src::plugin()->jQuery();
-        Src::plugin()->jQueryUI();
+        Src::plugin()->jQueryUI('ui-lightness');
 
         Src::css('layout');
 

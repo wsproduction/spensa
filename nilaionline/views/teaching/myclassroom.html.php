@@ -91,7 +91,7 @@
                 <li><?php URL::link('#fragment-4', 'Ulangan Tengah Semester') ?></li>
                 <li><?php URL::link('#fragment-5', 'Ulangan Umum') ?></li>
             </ul>
-            <div id="fragment-1">
+            <div id="fragment-1" style="background: #fff;">
                 <?php
                 Form::begin('fFilterDailyScore', 'teaching/readdailyscore/' . $class_info['classgroup_id'], 'post', true);
                 ?>
@@ -173,7 +173,7 @@
                     </tbody>
                 </table>
             </div>
-            <div id="fragment-2">
+            <div id="fragment-2" style="background: #fff;">
                 <?php
                 Form::begin('fFilterTaskScore', 'teaching/readtaskscore/' . $class_info['classgroup_id'], 'post', true);
                 ?>
@@ -246,7 +246,7 @@
                     </tbody>
                 </table>
             </div>
-            <div id="fragment-3">
+            <div id="fragment-3" style="background: #fff;">
                 <?php
                 Form::begin('fFilterAttitudeScore', 'teaching/readattitudescore/' . $class_info['classgroup_id'], 'post', true);
                 ?>
@@ -309,7 +309,7 @@
                     </tbody>
                 </table>
             </div>
-            <div id="fragment-4">
+            <div id="fragment-4" style="background: #fff;">
                 <?php
                 Form::begin('fFilterMidScore', 'teaching/readmidscore/' . $class_info['classgroup_id'], 'post', true);
                 ?>
@@ -372,7 +372,7 @@
                     </tbody>
                 </table>
             </div>
-            <div id="fragment-5">
+            <div id="fragment-5" style="background: #fff;">
                 <?php
                 Form::begin('fFilterFinalScore', 'teaching/readfinalscore/' . $class_info['classgroup_id'], 'post', true);
                 ?>

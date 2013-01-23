@@ -45,7 +45,6 @@
                     $(loading).slideDown('fast');
                 },
                 success : function(results) {
-                    $(loading).slideUp('fast');
                     $(results).find('data').each(function(){
                         var status = $(this).find('status').text();
                         if (status == '1') {
@@ -54,6 +53,7 @@
                             $(message).html($(this).find('message').text());
                         }
                     });
+                    $(loading).slideUp('fast');
                 }
             });
             return false;
