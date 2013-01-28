@@ -816,7 +816,7 @@ class TeachingModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectSubjectById($subject_id) {
         $sth = $this->db->prepare('
                               SELECT 
@@ -832,7 +832,7 @@ class TeachingModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectGradeById($grade_id) {
         $sth = $this->db->prepare('
                               SELECT 
@@ -849,7 +849,7 @@ class TeachingModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectPeriodById($period_id) {
         $sth = $this->db->prepare('
                               SELECT 
@@ -866,7 +866,7 @@ class TeachingModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectMyClass($teacher_id, $subject_id, $grade_id, $period_id, $semester_id) {
         $sth = $this->db->prepare('
                               SELECT 
@@ -907,6 +907,32 @@ class TeachingModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
-    
+
+    public function selectAcademicMlc($subject_id, $period_id, $semester_id, $grade_id) {
+        $sth = $this->db->prepare('
+                              SELECT 
+                                academic_mlc.mlc_id,
+                                academic_mlc.mlc_subject,
+                                academic_mlc.mlc_period,
+                                academic_mlc.mlc_grade,
+                                academic_mlc.mlc_value,
+                                academic_mlc.mlc_entry,
+                                academic_mlc.mlc_entry_update
+                              FROM
+                                academic_mlc
+                              WHERE
+                                academic_mlc.mlc_subject = :subject_id AND 
+                                academic_mlc.mlc_period = :period_id AND 
+                                academic_mlc.mlc_semester = :semester_id AND 
+                                academic_mlc.mlc_grade = :grade_id
+                        ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':subject_id', $subject_id);
+        $sth->bindValue(':period_id', $period_id);
+        $sth->bindValue(':semester_id', $semester_id);
+        $sth->bindValue(':grade_id', $grade_id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
 }

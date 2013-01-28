@@ -48,11 +48,23 @@
                     ?>
                 </td>
             </tr>
+            <tr>
+                <td><b>KKM</b></td>
+                <td><b>:</b></td>
+                <td>
+                    <?php
+                    Form::create('hidden', 'hidden_mlc_value');
+                    Form::value($mlc_info['mlc_value']);
+                    Form::commit();
+                    echo $mlc_info['mlc_value'];
+                    ?>
+                </td>
+            </tr>
         </table>
         <div class="cl"></div>
     </div>
 
-    <div class="description">Berikut adalah daftar kelas mengajar :</div>
+    <div class="description">Berikut adalah daftar nilai raport :</div>
     <div style="padding: 5px;">
         <table id="list-class" style="width: 100%" class="table-list" cellspacing="0" cellpadding="0" link_r="<?php echo $link_r; ?>">
             <thead>
@@ -85,6 +97,8 @@
     </div>
 </div>
 
+<div id="box-detail" link="<?php echo $link_detail; ?>"></div>
+
 <script type="text/javascript">
     $(function(){
         var read_base_competence = function() {
@@ -104,5 +118,21 @@
         };
         
         read_base_competence();
+        
+        $('#box-detail').dialog({
+            closeOnEscape: false,
+            autoOpen: false,
+            height: screen.height * 0.7,
+            width: 700,
+            modal: true,
+            resizable: false,
+            draggable: false,
+            title : "Detail Nilai"
+        });
+        
+        $('#list-class .detail').live('click',function(){
+            $('#box-detail').html("Loading...").dialog('open').load($(this).attr('href'),{id : 1});
+            return false;
+        });
     });
 </script>

@@ -1475,7 +1475,7 @@ class Teaching extends Controller {
         echo json_encode(array('count' => 1, 'row' => $teaching_list));
     }
 
-    public function scoreRecapitulation($teachingid=0) {
+    public function scoreRecapitulation($teachingid = 0) {
         Session::init();
         $user_references = Session::get('user_references');
 
@@ -1483,54 +1483,66 @@ class Teaching extends Controller {
         if ($class_list) {
             $class_info = $class_list[0];
             $this->view->class_info = $class_info;
-
-            Web::setTitle('Rekapitulasi Nilai ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
             
-            $this->view->link_r = $this->content->setLink('teaching/readscorerecapitulation');
+            $mlc_list = $this->model->selectAcademicMlc($class_info['teaching_subject'], $class_info['teaching_period'], $class_info['teaching_semester'], $class_info['grade_id']);
+            $mlc_info = $mlc_list[0];
+            $this->view->mlc_info = $mlc_info;
+            
+            Web::setTitle('Rekapitulasi Nilai ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
+
+            $this->view->link_r = $this->content->setLink('teaching/readscorerecapitulation/' . $class_info['classgroup_id']);
+            
             $this->view->render('teaching/scorerecapitulation');
         } else {
             $this->view->render('teaching/404');
         }
     }
-    
-    public function readScoreRecapitulation() {
-        Session::init();
-        $teacher_id = Session::get('user_references');
 
-        $periodid = $this->method->post('p');
-        $semesterid = $this->method->post('s');
+    public function readScoreRecapitulation($class_group_id = 0) {
+        $period = $this->method->post('period');
+        $semester = $this->method->post('semester');
+        $base_competence = $this->method->post('base_competence');
+        $score_type = $this->method->post('score_type');
+        $mlc = $this->method->post('mlc');
 
-        $myteaching = $this->model->selectTeachingEkskul($teacher_id, $periodid);
-        $list = '';
-        $idx = 1;
+        $student_list = $this->model->selectStudentByClassGroupId($class_group_id);
+        $html_list = '';
+        $no = 1;
+        foreach ($student_list as $row) {
 
-        if ($myteaching) {
-            foreach ($myteaching as $row) {
-                $list .= '<tr>
-                            <td align="center"  class="first">1</td>
-                            <td align="center" >121307001</td>
-                            <td align="center" >0011531663</td>
-                            <td>ADILLO ALMAN AHMAD</td>
-                            <td align="center" >80</td>
-                            <td align="center" >Terlampaui</td>
-                            <td align="center" >80</td>
-                            <td align="center" >Terlampaui</td>
-                            <td align="center" >Detail</td>
-                        </tr>';
-
-                $idx++;
+            $score_list = $this->model->selectDailySocoreByScoreFilter($row['student_nis'], $period, $semester, $base_competence, $score_type);
+            $score = '';
+            if ($score_list) {
+                $data = $score_list[0];
+                $score = $data['score_daily_value'];
             }
-        } else {
-            $list .= '
-                    <tr>
-                        <td class="first" colspan="9">
-                            <div class="information-box">
-                                Rekap nilai tidak ditemukan.
-                            </div>
-                        </td>
-                    </tr>';
-        }
 
-        echo json_encode(array('count' => 1, 'row' => $list));
+            $desc = '-';
+            if (!empty($score)) {
+                if ($score > $mlc)
+                    $desc = 'Terlampaui';
+                else if ($score == $mlc)
+                    $desc = 'Tercapai';
+                else
+                    $desc = 'Tidak Tercapai';
+            }
+            
+            $link_detail = $this->content->setLink('teaching/detailscore');
+
+            $html_list .= '<tr>';
+            $html_list .= '     <td align="center" class="first">' . $no . '</td>';
+            $html_list .= '     <td align="center">' . $row['student_nis'] . '</td>';
+            $html_list .= '     <td align="center">' . $row['student_nisn'] . '</td>';
+            $html_list .= '     <td>' . $row['student_name'] . '</td>';
+            $html_list .= '     <td align="center"></td>';
+            $html_list .= '     <td align="center" class="desc_' . $row['student_nis'] . '">' . $desc . '</td>';
+            $html_list .= '     <td align="center"></td>';
+            $html_list .= '     <td align="center" class="desc_' . $row['student_nis'] . '">' . $desc . '</td>';
+            $html_list .= '     <td align="center"><a class="detail" href="' . $link_detail . '">Detail</a></td>';
+            $html_list .= '</tr>';
+            $no++;
+        }
+        echo json_encode(array('count' => $no - 1, 'row' => $html_list));
     }
+
 }
