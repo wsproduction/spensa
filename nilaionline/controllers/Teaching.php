@@ -1483,15 +1483,15 @@ class Teaching extends Controller {
         if ($class_list) {
             $class_info = $class_list[0];
             $this->view->class_info = $class_info;
-            
+
             $mlc_list = $this->model->selectAcademicMlc($class_info['teaching_subject'], $class_info['teaching_period'], $class_info['teaching_semester'], $class_info['grade_id']);
             $mlc_info = $mlc_list[0];
             $this->view->mlc_info = $mlc_info;
-            
+
             Web::setTitle('Rekapitulasi Nilai ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
 
             $this->view->link_r = $this->content->setLink('teaching/readscorerecapitulation/' . $class_info['classgroup_id']);
-            
+
             $this->view->render('teaching/scorerecapitulation');
         } else {
             $this->view->render('teaching/404');
@@ -1526,7 +1526,7 @@ class Teaching extends Controller {
                 else
                     $desc = 'Tidak Tercapai';
             }
-            
+
             $link_detail = $this->content->setLink('teaching/detailscore');
 
             $html_list .= '<tr>';
@@ -1543,6 +1543,62 @@ class Teaching extends Controller {
             $no++;
         }
         echo json_encode(array('count' => $no - 1, 'row' => $html_list));
+    }
+
+    public function detailScore() {
+        $detail = "<div id='online-score' style='background:#fff;'>";
+        $detail .= "    <div class='box-green' style='margin-bottom:5px;'>";
+        $detail .= "        lsdkml";
+        $detail .= "    </div>";
+        $detail .= "    <div class='description'>Berikut adalah daftar nilai:</div>";
+        $detail .= "    <table class='table-list' cellspacing='0' cellpadding='0' style='width:100%'>";
+        $detail .= "        <thead>";
+        $detail .= "            <tr>";
+        $detail .= "                <td width='50' align='center' class='first'>No.</td>";
+        $detail .= "                <td>Keterangan Nilai</td>";
+        $detail .= "                <td width='50' align='center'>KKM</td>";
+        $detail .= "                <td width='50' align='center'>Nilai</td>";
+        $detail .= "                <td width='150' align='center'>Keterangan</td>";
+        $detail .= "            <tr>";
+        $detail .= "        </thead>";
+        $detail .= "        <tbody>";
+
+        $recap_list = $this->model->selectRecapList();
+        $idx = 1;
+        foreach ($recap_list as $row) {
+
+            $detail .= "            <tr style='font-weight:bold;'>";
+            $detail .= "                <td align='center' valign='top' class='first' rowspan='4'>" . $idx . "</td>";
+            $detail .= "                <td>" . $row['recapitulation_type_title'] . " :</td>";
+            $detail .= "                <td align='center'>80</td>";
+            $detail .= "                <td align='center'>80</td>";
+            $detail .= "                <td align='center'>Tuntas</td>";
+            $detail .= "            </tr>";
+            $detail .= "            <tr>";
+            $detail .= "                <td>a. Pengenalan Komputer</td>";
+            $detail .= "                <td align='center'>80</td>";
+            $detail .= "                <td align='center'>80</td>";
+            $detail .= "                <td align='center'>Tercapai</td>";
+            $detail .= "            </tr>";
+            $detail .= "            <tr>";
+            $detail .= "                <td>b. Perkembangan Komputer</td>";
+            $detail .= "                <td align='center'>80</td>";
+            $detail .= "                <td align='center'>80</td>";
+            $detail .= "                <td align='center'>Tercapai</td>";
+            $detail .= "            </tr>";
+            $detail .= "            <tr>";
+            $detail .= "                <td>c. Internet</td>";
+            $detail .= "                <td align='center'>80</td>";
+            $detail .= "                <td align='center'>80</td>";
+            $detail .= "                <td align='center'>Tercapai</td>";
+            $detail .= "            </tr>";
+            $idx++;
+        }
+
+        $detail .= "        </tbody>";
+        $detail .= "    </table>";
+        $detail .= "</div>";
+        echo $detail;
     }
 
 }

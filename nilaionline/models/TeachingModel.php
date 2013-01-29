@@ -935,4 +935,20 @@ class TeachingModel extends Model {
         return $sth->fetchAll();
     }
 
+    public function selectRecapList() {
+        $sth = $this->db->prepare('
+                              SELECT 
+                                academic_recapitulation_type.recapitulation_type_id,
+                                academic_recapitulation_type.recapitulation_type_title,
+                                academic_recapitulation_type.recapitulation_type_reference,
+                                academic_recapitulation_type.recapitulation_type_entry,
+                                academic_recapitulation_type.recapitulation_type_entry_update
+                              FROM
+                                academic_recapitulation_type
+                        ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
 }
