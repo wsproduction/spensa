@@ -30,7 +30,6 @@
 <script type="text/javascript">
     $(function () {
         $('#form_login').live('submit',function(){
-            var loading = $('#loading-progress');
             var message = $('.box-login .message');
             var parent = $(this);
             var action = $(parent).attr('action');
@@ -42,7 +41,7 @@
                 type : 'post',
                 dataType : 'xml',
                 beforeSend : function() {
-                    $(loading).slideDown('fast');
+                    $(this).loadingProgress('start');
                 },
                 success : function(results) {
                     $(results).find('data').each(function(){
@@ -50,10 +49,10 @@
                         if (status == '1') {
                             window.location = $(this).find('direct').text();
                         } else {
+                            $(this).loadingProgress('start');
                             $(message).html($(this).find('message').text());
                         }
                     });
-                    $(loading).slideUp('fast');
                 }
             });
             return false;

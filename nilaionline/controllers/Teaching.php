@@ -1566,32 +1566,33 @@ class Teaching extends Controller {
         $recap_list = $this->model->selectRecapList();
         $idx = 1;
         foreach ($recap_list as $row) {
+            $list = array();
+            if ($row['recapitulation_type_reference'] == "academic_score_daily") {
+                $list = $this->model->selectRecapDailyScore();
+            }
+
+            $list_count = count($list);
+            $rowspan = $list_count + 1;
 
             $detail .= "            <tr style='font-weight:bold;'>";
-            $detail .= "                <td align='center' valign='top' class='first' rowspan='4'>" . $idx . "</td>";
-            $detail .= "                <td>" . $row['recapitulation_type_title'] . " :</td>";
-            $detail .= "                <td align='center'>80</td>";
-            $detail .= "                <td align='center'>80</td>";
-            $detail .= "                <td align='center'>Tuntas</td>";
+            $detail .= "                <td align='center' valign='top' class='first' rowspan='" . $rowspan . "'>" . $idx . "</td>";
+            $detail .= "                <td>" . $row['recapitulation_type_title'] . "</td>";
+            $detail .= "                <td align='center'>?</td>";
+            $detail .= "                <td align='center'>?</td>";
+            $detail .= "                <td align='center'>?</td>";
             $detail .= "            </tr>";
-            $detail .= "            <tr>";
-            $detail .= "                <td>a. Pengenalan Komputer</td>";
-            $detail .= "                <td align='center'>80</td>";
-            $detail .= "                <td align='center'>80</td>";
-            $detail .= "                <td align='center'>Tercapai</td>";
-            $detail .= "            </tr>";
-            $detail .= "            <tr>";
-            $detail .= "                <td>b. Perkembangan Komputer</td>";
-            $detail .= "                <td align='center'>80</td>";
-            $detail .= "                <td align='center'>80</td>";
-            $detail .= "                <td align='center'>Tercapai</td>";
-            $detail .= "            </tr>";
-            $detail .= "            <tr>";
-            $detail .= "                <td>c. Internet</td>";
-            $detail .= "                <td align='center'>80</td>";
-            $detail .= "                <td align='center'>80</td>";
-            $detail .= "                <td align='center'>Tercapai</td>";
-            $detail .= "            </tr>";
+
+            $alpha_numbering = "a";
+            foreach ($list as $rowscore) {
+                $detail .= "            <tr>";
+                $detail .= "                <td>" . $alpha_numbering . ". " . $rowscore['base_competence_title'] . "</td>";
+                $detail .= "                <td align='center'>80</td>";
+                $detail .= "                <td align='center'>80</td>";
+                $detail .= "                <td align='center'>Tercapai</td>";
+                $detail .= "            </tr>";
+                $alpha_numbering++;
+            }
+
             $idx++;
         }
 

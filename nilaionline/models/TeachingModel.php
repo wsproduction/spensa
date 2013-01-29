@@ -950,5 +950,26 @@ class TeachingModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
+    
+    public function selectRecapDailyScore() {
+        $sth = $this->db->prepare('
+                              SELECT 
+                                academic_base_competence.base_competence_id,
+                                academic_base_competence.base_competence_title,
+                                academic_base_competence.base_competence_period,
+                                academic_base_competence.base_competence_semester,
+                                academic_base_competence.base_competence_teacher,
+                                academic_base_competence.base_competence_subject,
+                                academic_base_competence.base_competence_grade,
+                                academic_base_competence.base_competence_mlc,
+                                academic_base_competence.base_competence_entry,
+                                academic_base_competence.base_competence_entry_update
+                              FROM
+                                academic_base_competence
+                        ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
 
 }
