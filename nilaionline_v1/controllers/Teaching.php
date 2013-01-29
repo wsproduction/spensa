@@ -53,7 +53,11 @@ class Teaching extends Controller {
             $class_info = $class_list[0];
             $this->view->class_info = $class_info;
             $semesterid = 1;
-
+            
+            $mlc_list = $this->model->selectAcademicMlc($class_info['teaching_subject'], $class_info['teaching_period'], $class_info['teaching_semester'], $class_info['grade_id']);
+            $mlc_info = $mlc_list[0];
+            $this->view->mlc_info = $mlc_info;
+            
             Web::setTitle('Kelas ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
 
             // Daily Score
@@ -74,6 +78,7 @@ class Teaching extends Controller {
             // Mid Score
             $this->view->link_export_midscore = $this->content->setLink('teaching/exportmidscore/' . $teachingid);
             $this->view->link_save_mid_score = $this->content->setLink('teaching/savemidscore');
+            $this->view->link_red_mid_score = $this->content->setLink('teaching/readmidscore/' . $class_info['classgroup_id']);
 
             // Attitude Score
             $this->view->link_export_finalscore = $this->content->setLink('teaching/exportfinalscore/' . $teachingid);
@@ -1365,7 +1370,7 @@ class Teaching extends Controller {
                     <td valign="top">
                         <div class="class-title">' . $row['subject_name'] . '</div>
                         <div class="link">
-                            <a href="percentase/index/' . $tempid . '">Persentase Nilai</a> &bullet; <a href="basecompetence/index/' . $tempid . '">' . $row['count_basecompete'] . ' Kompetensi Dasar</a> &bullet; <a href="task/index/' . $tempid . '">' . $row['total_task'] . ' Tugas</a> &bullet; <a href="teaching/myclass/' . $tempid . '" class="go-to-class">' . $row['total_class'] . ' Daftar Kelas</a>
+                            &bullet; <a href="teaching/myclass/' . $tempid . '" class="go-to-class">' . $row['total_class'] . ' Daftar Kelas</a>
                         </div>
                     </td>';
 
@@ -1457,7 +1462,7 @@ class Teaching extends Controller {
                 $teaching_list .= '     <td>' . $row['employess_name'] . '</td>';
                 $teaching_list .= '     <td align="center">' . $row['teaching_total_time'] . ' Jam</td>';
                 $teaching_list .= '     <td>' . date('d-m-Y H:i:s', strtotime($row['teaching_entry_update'])) . '</td>';
-                $teaching_list .= '     <td align="center"><a href="../myclassroom/' . $row['teaching_id'] . '" rel="edit">Masuk Kelas</a> &bullet; <a href="../scorerecapitulation/' . $row['teaching_id'] . '" rel="delete">Rekapitulasi Nilai</a></td>';
+                $teaching_list .= '     <td align="center"><a href="../myclassroom/' . $row['teaching_id'] . '" rel="edit">Masuk Kelas</a></td>';
                 $teaching_list .= '</tr>';
                 $idx++;
             }

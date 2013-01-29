@@ -403,11 +403,6 @@
     color: #666666;
 }
 
-#online-score #list-teaching tbody tr td .btn-blue a:hover {
-    opacity:1.0;
-    filter:alpha(opacity=100); /* For IE8 and earlier */
-}
-
 #online-score #list-teaching tbody tr td .link a {
     text-decoration: none;
     color: #3b5998;
@@ -422,9 +417,9 @@
     padding:5px;
 }
 
-#online-score a[class=btn-blue] {
+#online-score a[class=btn-blue], input[class=btn-blue] {
     background: url('../images/bg-btn-blue.png') repeat-x;
-    padding: 5px;
+    padding: 5px 10px;
     font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;  
     font-size: 11px;
     color: #fff;
@@ -438,7 +433,51 @@
     filter:alpha(opacity=80); /* For IE8 and earlier */
 }
 
-#online-score a[class=btn-blue]:hover {
+#online-score a[class=btn-blue]:hover, input[class=btn-blue]:hover {
+    opacity:1;
+    filter:alpha(opacity=100); /* For IE8 and earlier */
+}
+
+#online-score a[class=btn-green], input[class=btn-green]  {
+    background: url('../images/bg-btn-green.png') repeat-x;
+    background-color: red;
+    padding: 5px 10px;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;  
+    font-size: 11px;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid #328503;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    display: inline-block;
+    opacity:0.8;
+    filter:alpha(opacity=80); /* For IE8 and earlier */
+}
+
+#online-score a[class=btn-green]:hover, input[class=btn-green]:hover {
+    opacity:1;
+    filter:alpha(opacity=100); /* For IE8 and earlier */
+}
+
+#online-score a[class=btn-red], input[class=btn-red]  {
+    background: url('../images/bg-btn-red.png') repeat-x;
+    background-color: red;
+    padding: 5px 10px;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;  
+    font-size: 11px;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid #9b0d0d;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    display: inline-block;
+    opacity:0.8;
+    filter:alpha(opacity=80); /* For IE8 and earlier */
+}
+
+#online-score a[class=btn-red]:hover, input[class=btn-red]:hover {
     opacity:1;
     filter:alpha(opacity=100); /* For IE8 and earlier */
 }
@@ -485,7 +524,7 @@
     padding: 5px;
     border-bottom: 1px solid #ccc;
     border-right: 1px solid #ccc;
-    
+
 }
 
 #online-score .table-list tbody a {

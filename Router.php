@@ -9,7 +9,8 @@ switch (Web::getSubDomain()) {
         break;
     case 'sekolahku':
         Web::main('SEKOLAHKU SMPN 1 SUBANG', 'myschool', 'orangestrip');
-        Web::child('ONLINE SCORE', 'nilaionline', 'nilaionline', 'orangestrip');
+        //Web::child('ONLINE SCORE', 'nilaionline', 'nilaionline', 'orangestrip');
+        Web::child('Nilai Online V.1', 'nilaionline', 'nilaionline_v1', 'orangestrip');
         break;
     case 'akademik':
         Web::main('AKADEMIK SMPN 1 SUBANG', 'akademik', 'demo');
