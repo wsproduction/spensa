@@ -156,7 +156,8 @@ class TeachingModel extends Model {
                                     academic_semester.semester_id,
                                     academic_semester.semester_name,
                                     academic_subject.subject_id,
-                                    academic_subject.subject_name
+                                    academic_subject.subject_name,
+                                    academic_mlc.mlc_value
                                   FROM
                                     academic_teaching
                                     INNER JOIN academic_classgroup ON (academic_teaching.teaching_classgroup = academic_classgroup.classgroup_id)
@@ -166,6 +167,10 @@ class TeachingModel extends Model {
                                     INNER JOIN academic_period ON (academic_teaching.teaching_period = academic_period.period_id)
                                     INNER JOIN academic_semester ON (academic_teaching.teaching_semester = academic_semester.semester_id)
                                     INNER JOIN academic_subject ON (academic_teaching.teaching_subject = academic_subject.subject_id)
+                                    INNER JOIN academic_mlc ON (academic_subject.subject_id = academic_mlc.mlc_subject)
+                                    AND (academic_mlc.mlc_period = academic_period.period_id)
+                                    AND (academic_mlc.mlc_grade = academic_grade.grade_id)
+                                    AND (academic_mlc.mlc_semester = academic_semester.semester_id)
                                   WHERE
                                     academic_teaching.teaching_id = :teachingid AND 
                                     academic_teaching.teaching_teacher = :user_references
@@ -439,7 +444,7 @@ class TeachingModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectFinalSocoreByScoreFilter($student_id, $subject, $period, $semester, $score_type) {
+    public function selectFinalSocoreByScoreFilter($student_id, $subject, $period, $semester) {
         $sth = $this->db->prepare('
                                     SELECT 
                                         academic_score_final.score_final_id,
@@ -448,7 +453,6 @@ class TeachingModel extends Model {
                                         academic_score_final.score_final_period,
                                         academic_score_final.score_final_semester,
                                         academic_score_final.score_final_value,
-                                        academic_score_final.score_final_type,
                                         academic_score_final.score_final_entry,
                                         academic_score_final.score_final_entry_update
                                       FROM
@@ -457,14 +461,12 @@ class TeachingModel extends Model {
                                         academic_score_final.score_final_student  IN (' . $student_id . ') AND 
                                         academic_score_final.score_final_subject = :subject AND 
                                         academic_score_final.score_final_period = :period AND 
-                                        academic_score_final.score_final_semester = :semester AND 
-                                        academic_score_final.score_final_type = :score_type
+                                        academic_score_final.score_final_semester = :semester
                           ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':period', $period);
         $sth->bindValue(':semester', $semester);
         $sth->bindValue(':subject', $subject);
-        $sth->bindValue(':score_type', $score_type);
         $sth->execute();
         return $sth->fetchAll();
     }
@@ -682,7 +684,7 @@ class TeachingModel extends Model {
         return $sth->execute();
     }
 
-    public function saveFinalScore($student_id, $score, $subject_id, $peiod_id, $semester_id, $score_type) {
+    public function saveFinalScore($student_id, $score, $subject_id, $peiod_id, $semester_id) {
         $sth = $this->db->prepare('
                             INSERT INTO
                                 academic_score_final(
@@ -692,7 +694,6 @@ class TeachingModel extends Model {
                                 score_final_period,
                                 score_final_semester,
                                 score_final_value,
-                                score_final_type,
                                 score_final_entry,
                                 score_final_entry_update)
                               VALUES(
@@ -711,7 +712,6 @@ class TeachingModel extends Model {
                                 :period_id,
                                 :semester_id,
                                 :score,
-                                :score_type,
                                 NOW(),
                                 NOW());
                           ');
@@ -720,7 +720,6 @@ class TeachingModel extends Model {
         $sth->bindValue(':period_id', $peiod_id);
         $sth->bindValue(':semester_id', $semester_id);
         $sth->bindValue(':subject_id', $subject_id);
-        $sth->bindValue(':score_type', $score_type);
         return $sth->execute();
     }
 
@@ -732,7 +731,7 @@ class TeachingModel extends Model {
                                     score_final_value = :score,
                                     score_final_entry_update = NOW()
                                 WHERE
-                                    academic_score_final.score_final_id = :scoreid ;
+                                    academic_score_final.score_final_id = :scoreid;
                           ');
         $sth->bindValue(':scoreid', $scoreid);
         $sth->bindValue(':score', $score);
@@ -950,7 +949,7 @@ class TeachingModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectRecapDailyScore() {
         $sth = $this->db->prepare('
                               SELECT 

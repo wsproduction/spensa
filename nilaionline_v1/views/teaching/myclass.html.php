@@ -2,7 +2,7 @@
     <div class="title">
         <div class="fl-left"><?php echo Web::getTitle(false); ?></div>
         <div class="fl-right">
-            <a href="../../teaching" class="btn-blue">Kembali</a>
+            <a href="../../teaching" class="btn-red">Kembali</a>
         </div>
         <div class="cl">&nbsp;</div>
     </div>

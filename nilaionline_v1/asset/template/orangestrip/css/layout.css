@@ -419,7 +419,7 @@
 
 #online-score a[class=btn-blue], input[class=btn-blue] {
     background: url('../images/bg-btn-blue.png') repeat-x;
-    padding: 5px 10px;
+    padding: 5px 15px;
     font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;  
     font-size: 11px;
     color: #fff;
@@ -441,7 +441,7 @@
 #online-score a[class=btn-green], input[class=btn-green]  {
     background: url('../images/bg-btn-green.png') repeat-x;
     background-color: red;
-    padding: 5px 10px;
+    padding: 5px 15px;
     font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;  
     font-size: 11px;
     color: #fff;
@@ -463,7 +463,7 @@
 #online-score a[class=btn-red], input[class=btn-red]  {
     background: url('../images/bg-btn-red.png') repeat-x;
     background-color: red;
-    padding: 5px 10px;
+    padding: 5px 15px;
     font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;  
     font-size: 11px;
     color: #fff;
@@ -559,6 +559,10 @@
     border : 1px solid #e2c822;
     background-color: #fff9d7;
     padding: 4px;
+}
+
+#online-score .score_list {
+    text-align: center;
 }
 
 /* ICON COLECTION */

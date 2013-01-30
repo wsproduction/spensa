@@ -53,12 +53,10 @@ class Teaching extends Controller {
             $class_info = $class_list[0];
             $this->view->class_info = $class_info;
             $semesterid = 1;
-            
-            $mlc_list = $this->model->selectAcademicMlc($class_info['teaching_subject'], $class_info['teaching_period'], $class_info['teaching_semester'], $class_info['grade_id']);
-            $mlc_info = $mlc_list[0];
-            $this->view->mlc_info = $mlc_info;
-            
+
             Web::setTitle('Kelas ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
+
+            $this->view->link_back = '../../teaching/myclass/' . $class_info['subject_id'] . '.' . $class_info['grade_id'] . '.' . $class_info['period_id'] . '.' . $class_info['semester_id'];
 
             // Daily Score
             $this->view->option_basecompetance = $this->optionBaseCompetence($class_info['period_id'], $semesterid, $user_references, $class_info['subject_id'], $class_info['grade_id']);
@@ -78,11 +76,12 @@ class Teaching extends Controller {
             // Mid Score
             $this->view->link_export_midscore = $this->content->setLink('teaching/exportmidscore/' . $teachingid);
             $this->view->link_save_mid_score = $this->content->setLink('teaching/savemidscore');
-            $this->view->link_red_mid_score = $this->content->setLink('teaching/readmidscore/' . $class_info['classgroup_id']);
+            $this->view->link_read_mid_score = $this->content->setLink('teaching/readmidscore/' . $class_info['classgroup_id']);
 
             // Attitude Score
             $this->view->link_export_finalscore = $this->content->setLink('teaching/exportfinalscore/' . $teachingid);
             $this->view->link_save_final_score = $this->content->setLink('teaching/savefinalscore');
+            $this->view->link_read_final_score = $this->content->setLink('teaching/readfinalscore/' . $class_info['classgroup_id']);
 
             $this->view->render('teaching/myclassroom');
         } else {
@@ -237,14 +236,20 @@ class Teaching extends Controller {
             $period_id = $this->method->post('period');
             $semester_id = $this->method->post('semester');
 
-            foreach ($data as $row) {
-                $score_list = $this->model->selectMidSocoreByScoreFilter($row[0], $subject_id, $period_id, $semester_id);
-                if ($score_list) {
-                    $data = $score_list[0];
-                    $this->model->updateMidScore($data['score_mid_id'], $row[1]);
-                } else {
-                    $this->model->saveMidScore($row[0], $row[1], $subject_id, $period_id, $semester_id);
+            try {
+                unset($data[0]);
+                foreach ($data as $row) {
+                    $score_list = $this->model->selectMidSocoreByScoreFilter($row[0], $subject_id, $period_id, $semester_id);
+                    if ($score_list) {
+                        $data = $score_list[0];
+                        $this->model->updateMidScore($data['score_mid_id'], $row[1]);
+                    } else {
+                        $this->model->saveMidScore($row[0], $row[1], $subject_id, $period_id, $semester_id);
+                    }
                 }
+                echo json_encode(true);
+            } catch (Exception $exc) {
+                echo json_encode(false);
             }
         }
     }
@@ -258,15 +263,22 @@ class Teaching extends Controller {
             $semester_id = $this->method->post('semester');
             $score_type = $this->method->post('score_type');
 
-            foreach ($data as $row) {
-                $score_list = $this->model->selectFinalSocoreByScoreFilter($row[0], $subject_id, $period_id, $semester_id, $score_type);
-                if ($score_list) {
-                    $data = $score_list[0];
-                    $this->model->updateFinalScore($data['score_final_id'], $row[1]);
-                } else {
-                    $this->model->saveFinalScore($row[0], $row[1], $subject_id, $period_id, $semester_id, $score_type);
+            try {
+                unset($data[0]);
+                foreach ($data as $row) {
+                    $score_list = $this->model->selectFinalSocoreByScoreFilter($row[0], $subject_id, $period_id, $semester_id, $score_type);
+                    if ($score_list) {
+                        $data = $score_list[0];
+                        $this->model->updateFinalScore($data['score_final_id'], $row[1]);
+                    } else {
+                        $this->model->saveFinalScore($row[0], $row[1], $subject_id, $period_id, $semester_id, $score_type);
+                    }
                 }
+                $res = true;
+            } catch (Exception $exc) {
+                $res = false;
             }
+            echo json_encode($res);
         }
     }
 
@@ -417,7 +429,7 @@ class Teaching extends Controller {
             }
 
             $desc = '-';
-            if (!empty($score)) {
+            if ($score != '') {
                 if ($score > $mlc)
                     $desc = 'Terlampaui';
                 else if ($score == $mlc)
@@ -426,12 +438,20 @@ class Teaching extends Controller {
                     $desc = 'Tidak Tercapai';
             }
 
+            Form::create('text', 'score_list_' . $no);
+            Form::maxlength(3);
+            Form::size(5);
+            Form::value($score);
+            Form::properties(array('order' => $row['student_nis']));
+            Form::style('score_list');
+            $score_input = Form::commit('attach');
+
             $html_list .= '<tr>';
             $html_list .= '     <td align="center" class="first">' . $no . '</td>';
             $html_list .= '     <td align="center">' . $row['student_nis'] . '</td>';
             $html_list .= '     <td align="center">' . $row['student_nisn'] . '</td>';
             $html_list .= '     <td>' . $row['student_name'] . '</td>';
-            $html_list .= '     <td align="center"><input type="text" class="score_list" id="score_list_' . $no . '" order="' . $row['student_nis'] . '" value="' . $score . '" size="5" maxlength="3" style="text-align:center"></td>';
+            $html_list .= '     <td align="center">' . $score_input . '</td>';
             $html_list .= '     <td align="center" class="desc_' . $row['student_nis'] . '">' . $desc . '</td>';
             $html_list .= '</tr>';
             $no++;
@@ -444,7 +464,6 @@ class Teaching extends Controller {
         $subject = $this->method->post('subject');
         $period = $this->method->post('period');
         $semester = $this->method->post('semester');
-        $score_type = $this->method->post('score_type');
         $mlc = $this->method->post('mlc');
 
         $student_list = $this->model->selectStudentByClassGroupId($class_group_id);
@@ -452,7 +471,7 @@ class Teaching extends Controller {
         $no = 1;
         foreach ($student_list as $row) {
 
-            $score_list = $this->model->selectFinalSocoreByScoreFilter($row['student_nis'], $subject, $period, $semester, $score_type);
+            $score_list = $this->model->selectFinalSocoreByScoreFilter($row['student_nis'], $subject, $period, $semester);
             $score = '';
             if ($score_list) {
                 $data = $score_list[0];
@@ -460,7 +479,7 @@ class Teaching extends Controller {
             }
 
             $desc = '-';
-            if (!empty($score)) {
+            if ($score != '') {
                 if ($score > $mlc)
                     $desc = 'Terlampaui';
                 else if ($score == $mlc)
@@ -856,9 +875,6 @@ class Teaching extends Controller {
         if ($class_list) {
             $class_info = $class_list[0];
 
-            $semester_list = $this->model->selectSemesterById($semester_id);
-            $semester_info = $semester_list[0];
-
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
             // Create new PHPExcel object
             $objPHPExcel = new PHPExcel();
@@ -882,7 +898,7 @@ class Teaching extends Controller {
             /* BEGIN : Layouting */
             // Header
             $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(0);
-            $objPHPExcel->getActiveSheet()->setCellValue('B1', 'DAFTAR NILAI UTS SISWA');
+            $objPHPExcel->getActiveSheet()->setCellValue('B1', 'DAFTAR NILAI RAPOR TENGAH SEMESTER SISWA');
             $objPHPExcel->getActiveSheet()->mergeCells('B1:G1');
             $objPHPExcel->getActiveSheet()->setCellValue('B2', 'SMP NEGERI 1 SUBANG');
             $objPHPExcel->getActiveSheet()->mergeCells('B2:G2');
@@ -891,11 +907,9 @@ class Teaching extends Controller {
 
             // Document Description
             $objPHPExcel->getActiveSheet()->setCellValue('A4', $class_info['classgroup_id'])->setCellValue('B4', 'Kelas')->setCellValue('D4', ': ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
-            $objPHPExcel->getActiveSheet()->setCellValue('A5', $class_info['period_id'] . '_' . $semester_info['semester_id'])->setCellValue('B5', 'Tahun Akademik')->setCellValue('D5', ': ' . $class_info['period_years_start'] . '/' . $class_info['period_years_end'] . ' - ' . $semester_info['semester_name']);
+            $objPHPExcel->getActiveSheet()->setCellValue('A5', $class_info['period_id'] . '_' . $class_info['semester_id'])->setCellValue('B5', 'Tahun Akademik')->setCellValue('D5', ': ' . $class_info['period_years_start'] . '/' . $class_info['period_years_end'] . ' - ' . $class_info['semester_name']);
             $objPHPExcel->getActiveSheet()->setCellValue('A6', $class_info['subject_id'])->setCellValue('B6', 'Mata Pelajaran')->setCellValue('D6', ': ' . $class_info['subject_name']);
             $objPHPExcel->getActiveSheet()->setCellValue('A7', $class_info['mlc_value'])->setCellValue('B7', 'KKM')->setCellValue('D7', ': ' . $class_info['mlc_value']);
-            //$objPHPExcel->getActiveSheet()->setCellValueExplicit('A8', $task_description_id, PHPExcel_Cell_DataType::TYPE_STRING)->setCellValue('B8', 'Keterangan Tugas')->setCellValue('D8', ': ' . $task_description_info['task_description_title']);
-            //$objPHPExcel->getActiveSheet()->setCellValue('A9', $score_type_id)->setCellValue('B9', 'Type')->setCellValue('D9', ': ' . $score_type_info['score_type_symbol'] . ' - ' . $score_type_info['score_type_description']);
 
             $objPHPExcel->getActiveSheet()->getStyle('B4:B9')->applyFromArray(array('font' => array('bold' => true)));
 
@@ -955,7 +969,7 @@ class Teaching extends Controller {
 
             // Redirect output to a client’s web browser (Excel5)
             header('Content-Type: application/vnd.ms-excel');
-            header('Content-Disposition: attachment;filename="NILAI_UTS-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $semester_info['semester_id'] . '-' . $class_info['grade_title'] . $class_info['classroom_name'] . '.xls"');
+            header('Content-Disposition: attachment;filename="NILAI_RAPOR_TENGAH_SEMESTER-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $class_info['semester_id'] . '-' . $class_info['grade_title'] . $class_info['classroom_name'] . '.xls"');
             header('Cache-Control: max-age=0');
 
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
@@ -968,18 +982,12 @@ class Teaching extends Controller {
 
         Session::init();
         $user_references = Session::get('user_references');
-        list($teachingid, $semester_id, $score_type_id) = explode('_', $id);
+        list($teachingid, $semester_id) = explode('_', $id);
 
         $class_list = $this->model->selectClassListByTeachingId($teachingid, $user_references);
 
         if ($class_list) {
             $class_info = $class_list[0];
-
-            $score_type_list = $this->model->selectScoreTypeById($score_type_id);
-            $score_type_info = $score_type_list[0];
-
-            $semester_list = $this->model->selectSemesterById($semester_id);
-            $semester_info = $semester_list[0];
 
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
             // Create new PHPExcel object
@@ -1013,10 +1021,9 @@ class Teaching extends Controller {
 
             // Document Description
             $objPHPExcel->getActiveSheet()->setCellValue('A4', $class_info['classgroup_id'])->setCellValue('B4', 'Kelas')->setCellValue('D4', ': ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
-            $objPHPExcel->getActiveSheet()->setCellValue('A5', $class_info['period_id'] . '_' . $semester_info['semester_id'])->setCellValue('B5', 'Tahun Akademik')->setCellValue('D5', ': ' . $class_info['period_years_start'] . '/' . $class_info['period_years_end'] . ' - ' . $semester_info['semester_name']);
+            $objPHPExcel->getActiveSheet()->setCellValue('A5', $class_info['period_id'] . '_' . $class_info['semester_id'])->setCellValue('B5', 'Tahun Akademik')->setCellValue('D5', ': ' . $class_info['period_years_start'] . '/' . $class_info['period_years_end'] . ' - ' . $class_info['semester_name']);
             $objPHPExcel->getActiveSheet()->setCellValue('A6', $class_info['subject_id'])->setCellValue('B6', 'Mata Pelajaran')->setCellValue('D6', ': ' . $class_info['subject_name']);
             $objPHPExcel->getActiveSheet()->setCellValue('A7', $class_info['mlc_value'])->setCellValue('B7', 'KKM')->setCellValue('D7', ': ' . $class_info['mlc_value']);
-            $objPHPExcel->getActiveSheet()->setCellValue('A8', $score_type_id)->setCellValue('B8', 'Type')->setCellValue('D8', ': ' . $score_type_info['score_type_symbol'] . ' - ' . $score_type_info['score_type_description']);
 
             $objPHPExcel->getActiveSheet()->getStyle('B4:B9')->applyFromArray(array('font' => array('bold' => true)));
 
@@ -1076,7 +1083,7 @@ class Teaching extends Controller {
 
             // Redirect output to a client’s web browser (Excel5)
             header('Content-Type: application/vnd.ms-excel');
-            header('Content-Disposition: attachment;filename="NILAI_ULUM-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $semester_info['semester_id'] . '-' . $class_info['grade_title'] . $class_info['classroom_name'] . '.xls"');
+            header('Content-Disposition: attachment;filename="NILAI_RAPOR_AKHIR_SEMESTER-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $class_info['semester_id'] . '-' . $class_info['grade_title'] . $class_info['classroom_name'] . '.xls"');
             header('Cache-Control: max-age=0');
 
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
@@ -1322,7 +1329,6 @@ class Teaching extends Controller {
 
                 $subject_id = $objPHPExcel->getActiveSheet()->getCell('A6')->getValue();
                 list($period_id, $semester_id) = explode('_', $objPHPExcel->getActiveSheet()->getCell('A5')->getValue());
-                $score_type = $objPHPExcel->getActiveSheet()->getCell('A8')->getValue();
 
                 $count_student = $objPHPExcel->getActiveSheet()->getCell('A12')->getValue();
                 $numrow = 13;
@@ -1331,13 +1337,13 @@ class Teaching extends Controller {
                     $score = $objPHPExcel->getActiveSheet()->getCell('F' . $numrow)->getValue();
                     //echo '<br>' . $i . '. ' . $nis . ' => ' . $score;
 
-                    $score_list = $this->model->selectFinalSocoreByScoreFilter($nis, $subject_id, $period_id, $semester_id, $score_type);
+                    $score_list = $this->model->selectFinalSocoreByScoreFilter($nis, $subject_id, $period_id, $semester_id);
 
                     if ($score_list) {
                         $data = $score_list[0];
                         $this->model->updateFinalScore($data['score_final_id'], $score);
                     } else {
-                        $this->model->saveFinalScore($nis, $score, $subject_id, $period_id, $semester_id, $score_type);
+                        $this->model->saveFinalScore($nis, $score, $subject_id, $period_id, $semester_id);
                     }
 
                     $numrow++;
@@ -1462,7 +1468,7 @@ class Teaching extends Controller {
                 $teaching_list .= '     <td>' . $row['employess_name'] . '</td>';
                 $teaching_list .= '     <td align="center">' . $row['teaching_total_time'] . ' Jam</td>';
                 $teaching_list .= '     <td>' . date('d-m-Y H:i:s', strtotime($row['teaching_entry_update'])) . '</td>';
-                $teaching_list .= '     <td align="center"><a href="../myclassroom/' . $row['teaching_id'] . '" rel="edit">Masuk Kelas</a></td>';
+                $teaching_list .= '     <td align="center"><a href="../myclassroom/' . $row['teaching_id'] . '" rel="edit">Masuk Kelas</a> &bullet; <a href="../scorerecapitulation/' . $row['teaching_id'] . '" rel="delete">Rekapitulasi Nilai</a></td>';
                 $teaching_list .= '</tr>';
                 $idx++;
             }
@@ -1489,11 +1495,9 @@ class Teaching extends Controller {
             $class_info = $class_list[0];
             $this->view->class_info = $class_info;
 
-            $mlc_list = $this->model->selectAcademicMlc($class_info['teaching_subject'], $class_info['teaching_period'], $class_info['teaching_semester'], $class_info['grade_id']);
-            $mlc_info = $mlc_list[0];
-            $this->view->mlc_info = $mlc_info;
-
             Web::setTitle('Rekapitulasi Nilai ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
+
+            $this->view->link_back = '../../teaching/myclass/' . $class_info['subject_id'] . '.' . $class_info['grade_id'] . '.' . $class_info['period_id'] . '.' . $class_info['semester_id'];
 
             $this->view->link_r = $this->content->setLink('teaching/readscorerecapitulation/' . $class_info['classgroup_id']);
 
@@ -1506,8 +1510,7 @@ class Teaching extends Controller {
     public function readScoreRecapitulation($class_group_id = 0) {
         $period = $this->method->post('period');
         $semester = $this->method->post('semester');
-        $base_competence = $this->method->post('base_competence');
-        $score_type = $this->method->post('score_type');
+        $subject = $this->method->post('subject');
         $mlc = $this->method->post('mlc');
 
         $student_list = $this->model->selectStudentByClassGroupId($class_group_id);
@@ -1515,35 +1518,55 @@ class Teaching extends Controller {
         $no = 1;
         foreach ($student_list as $row) {
 
-            $score_list = $this->model->selectDailySocoreByScoreFilter($row['student_nis'], $period, $semester, $base_competence, $score_type);
-            $score = '';
+            $score_list = $this->model->selectMidSocoreByScoreFilter($row['student_nis'], $subject, $period, $semester);
+            $score = '-';
             if ($score_list) {
                 $data = $score_list[0];
-                $score = $data['score_daily_value'];
+                $score = $data['score_mid_value'];
             }
 
             $desc = '-';
-            if (!empty($score)) {
-                if ($score > $mlc)
+            $font_color = '';
+            if ($score != '') {
+                if ($score > $mlc) {
                     $desc = 'Terlampaui';
-                else if ($score == $mlc)
+                } else if ($score == $mlc) {
                     $desc = 'Tercapai';
-                else
+                } else {
                     $desc = 'Tidak Tercapai';
+                    $font_color = ' style="color:red" ';
+                }
             }
 
-            $link_detail = $this->content->setLink('teaching/detailscore');
+            $score_list2 = $this->model->selectFinalSocoreByScoreFilter($row['student_nis'], $subject, $period, $semester);
+            $score2 = '-';
+            if ($score_list2) {
+                $data2 = $score_list2[0];
+                $score2 = $data2['score_final_value'];
+            }
+
+            $desc2 = '-';
+            $font_color2 = '';
+            if ($score2 != '') {
+                if ($score2 > $mlc) {
+                    $desc2 = 'Terlampaui';
+                } else if ($score2 == $mlc) {
+                    $desc2 = 'Tercapai';
+                } else {
+                    $desc2 = 'Tidak Tercapai';
+                    $font_color2 = ' style="color:red" ';
+                }
+            }
 
             $html_list .= '<tr>';
             $html_list .= '     <td align="center" class="first">' . $no . '</td>';
             $html_list .= '     <td align="center">' . $row['student_nis'] . '</td>';
             $html_list .= '     <td align="center">' . $row['student_nisn'] . '</td>';
             $html_list .= '     <td>' . $row['student_name'] . '</td>';
-            $html_list .= '     <td align="center"></td>';
-            $html_list .= '     <td align="center" class="desc_' . $row['student_nis'] . '">' . $desc . '</td>';
-            $html_list .= '     <td align="center"></td>';
-            $html_list .= '     <td align="center" class="desc_' . $row['student_nis'] . '">' . $desc . '</td>';
-            $html_list .= '     <td align="center"><a class="detail" href="' . $link_detail . '">Detail</a></td>';
+            $html_list .= '     <td align="center" ' . $font_color . '>' . $score . '</td>';
+            $html_list .= '     <td align="center" class="desc_' . $row['student_nis'] . '" ' . $font_color . '>' . $desc . '</td>';
+            $html_list .= '     <td align="center" ' . $font_color2 . '>' . $score2 . '</td>';
+            $html_list .= '     <td align="center" class="desc_' . $row['student_nis'] . '" ' . $font_color2 . '>' . $desc2 . '</td>';
             $html_list .= '</tr>';
             $no++;
         }

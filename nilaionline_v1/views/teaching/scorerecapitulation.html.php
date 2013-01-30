@@ -2,7 +2,7 @@
     <div class="title">
         <div class="fl-left"><?php echo Web::getTitle(false); ?></div>
         <div class="fl-right">
-            <a href="../../teaching" class="btn-blue">Kembali</a>
+            <a href="<?php echo $link_back; ?>" class="btn-red">Kembali</a>
         </div>
         <div class="cl">&nbsp;</div>
     </div>
@@ -53,10 +53,10 @@
                 <td><b>:</b></td>
                 <td>
                     <?php
-                    Form::create('hidden', 'hidden_mlc_value');
-                    Form::value($mlc_info['mlc_value']);
+                    Form::create('hidden', 'hidden_mlc');
+                    Form::value($class_info['mlc_value']);
                     Form::commit();
-                    echo $mlc_info['mlc_value'];
+                    echo $class_info['mlc_value'];
                     ?>
                 </td>
             </tr>
@@ -72,15 +72,14 @@
                     <td align="center" class="first" colspan="3" style="border-bottom: none;">NOMOR</td>
                     <td rowspan="2" align="center">NAMA SISWA</td>
                     <td style="border-bottom: none;" align="center" colspan="4">NILAI AKHIR</td>
-                    <td style="width: 50px;" align="center" rowspan="2">PILIHAN</td>
                 </tr>
                 <tr>
                     <td style="width: 30px;" align="center" class="first">URUT</td>
                     <td style="width: 60px;" align="center" >INDUK</td>
                     <td style="width: 65px;" align="center" >NISN</td>
-                    <td style="width: 65px;" align="center" >R. TENGAH SEMESTER</td>
+                    <td style="width: 65px;" align="center" >RTS</td>
                     <td style="width: 65px;" align="center" >KETERANGAN</td>
-                    <td style="width: 65px;" align="center" >R. AKHIR SEMESTER</td>
+                    <td style="width: 65px;" align="center" >RAS</td>
                     <td style="width: 65px;" align="center" >KETERANGAN</td>
                 </tr>
             </thead>
@@ -106,13 +105,14 @@
             var subject_id = $('#hidden_subject_id').val();
             var period_id = $('#hidden_period_id').val();
             var semester_id = $('#hidden_semester_id').val();
-            var grade_id = $('#hidden_grade_id').val();            
+            var mlc = $('#hidden_mlc').val();            
             
             $(this).loadingProgress('start');
             
-            $.post(link, { subject : subject_id,  period : period_id,  semester : semester_id, grade : grade_id}, function (o){
+            $.post(link, { subject : subject_id,  period : period_id,  semester : semester_id, mlc : mlc}, function (o){
                 $('#list-class').children('tbody').attr('count',o['count']);
                 $('#list-class').children('tbody').html(o['row']);
+                $("#list-class tbody tr td").css({"padding-top":"10px", "padding-bottom":"10px"});
                 $(this).loadingProgress('stop');
             }, 'json');
         };
@@ -134,5 +134,6 @@
             $('#box-detail').html("Loading...").dialog('open').load($(this).attr('href'),{id : 1});
             return false;
         });
+        
     });
 </script>
