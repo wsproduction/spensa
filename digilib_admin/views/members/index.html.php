@@ -138,7 +138,7 @@
                                     $(this).loadingProgress('stop');
                                     if (o) {
                                         alert(leng + ' Item Telah Disimpan.');
-                                        $('#list').flexReload();
+                                        /* $('#list').flexReload(); */
                                     } else {
                                         alert('Proses Tambah Gagal.');
                                     }                            

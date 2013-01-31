@@ -100,13 +100,13 @@ class Members extends Controller {
             foreach ($listData AS $row) {
 
                 $link_edit = URL::link($this->content->setLink('members/edit/' . $row['members_id']), 'Edit', false);
-                
+
                 $members_status = 'Disabled';
                 if ($row['members_status'])
                     $members_status = 'Enabled';
                 $last_borrow = '-';
                 if (!empty($row['last_borrow']))
-                    $last_borrow = date('d.m.Y',  strtotime($row['last_borrow']));
+                    $last_borrow = date('d.m.Y', strtotime($row['last_borrow']));
 
                 $xml .= "<row id='" . $row['members_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['members_id'] . "]]></cell>";
@@ -170,7 +170,7 @@ class Members extends Controller {
         $process = $this->model->updateSave($id);
         if ($process[0]) {
             $photo = '';
-            if ($process[1]!='')
+            if ($process[1] != '')
                 $photo = base64_encode(Src::image($process[1], 'http://' . Web::getHost() . '/web/src/digilib_admin/asset/upload/images/members/', array('style' => 'width:100px;border:1px solid #ccc;padding:4px;')));
             $ket = array(1, 0, base64_encode($this->message->saveSucces()), $photo);
         } else {
@@ -248,6 +248,10 @@ class Members extends Controller {
         $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
         $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
 
+        // remove default header/footer
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+
         // set default monospaced font
         $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
@@ -299,7 +303,7 @@ class Members extends Controller {
                     Subang, 1 Juli 2012<br />
                     Kepala Perpustakaan,<br /><br /><br />
                     Ii Heri Hermawan, S.Pd.<br />
-                    NIP. 19670902 199201 1 001
+                    NIP. 196709021992011001
                 ";
 
         $info = "
@@ -452,25 +456,29 @@ class Members extends Controller {
                 $pdf->MirrorH($node[$idx]['info']['webmail']['x']);
                 $pdf->writeHTMLCell(57, 20, 0, 0, $info, 0);
                 $pdf->StopTransform();
-                $pdf->SetFont('helvetica', '', 5.5);
+
+                $pdf->SetFont('helvetica', '', 6);
                 // Tanda tangan 
                 $pdf->StartTransform();
                 $pdf->MirrorV($node[$idx]['info']['signature']['y']);
                 $pdf->MirrorH($node[$idx]['info']['signature']['x']);
-                $pdf->writeHTMLCell(33.5, 16, 0, 0, $signature, 0);
+                $pdf->writeHTMLCell(33.5, 16, 0, -2, $signature, 0);
                 $pdf->StopTransform();
-                // Catatan
-                $pdf->StartTransform();
-                $pdf->MirrorV($node[$idx]['info']['note']['y']);
-                $pdf->MirrorH($node[$idx]['info']['note']['x']);
-                $pdf->writeHTMLCell(88, 20, 0, 0, $note, 0);
-                $pdf->StopTransform();
+
                 // TTD
                 $pdf->StartTransform();
                 $pdf->MirrorV($node[$idx]['info']['sign']['y']);
                 $pdf->MirrorH($node[$idx]['info']['sign']['x']);
                 $ttd = Web::path() . 'asset/upload/images/ttd-pa-ii.png';
-                $pdf->Image($ttd, 0, 0, 10, 0, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+                $pdf->Image($ttd, 0, -2, 10, 0, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+                $pdf->StopTransform();
+
+                // Catatan
+                $pdf->SetFont('helvetica', '', 6.5);
+                $pdf->StartTransform();
+                $pdf->MirrorV($node[$idx]['info']['note']['y']);
+                $pdf->MirrorH($node[$idx]['info']['note']['x']);
+                $pdf->writeHTMLCell(60, 20, 0, 0, $note, 0);
                 $pdf->StopTransform();
 
                 if ($idx == 4) {
@@ -484,7 +492,7 @@ class Members extends Controller {
             $pdf->Output(date('dmYHis') . '.pdf', 'I');
         }
     }
-    
+
     public function import() {
         $inputFileType = 'Excel5';
         $inputFileName = Web::path() . 'asset/upload/file/ptk.xls';

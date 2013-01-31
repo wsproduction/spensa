@@ -6,6 +6,77 @@ class TeachingModel extends Model {
         parent::__construct();
     }
 
+    public function selectTeacherInformationById($id = 0) {
+        $sth = $this->db->prepare("
+                                SELECT 
+                                    employees.employees_id,
+                                    employees.employees_nik,
+                                    employees.employees_nip,
+                                    employees.employees_nuptk,
+                                    employees.employess_name,
+                                    employees.employees_gender,
+                                    employees.employees_birthplace,
+                                    employees.employees_birthdate,
+                                    employees.employees_religion,
+                                    employees.employees_religionother,
+                                    employees.employees_address,
+                                    employees.employees_rt,
+                                    employees.employees_rw,
+                                    employees.employees_village,
+                                    employees.employees_subdisctrict,
+                                    employees.employees_city,
+                                    employees.employees_zipcode,
+                                    employees.employees_transportation,
+                                    employees.employees_distance,
+                                    employees.employees_distanceother,
+                                    employees.employees_phone1,
+                                    employees.employees_phone2,
+                                    employees.employees_email,
+                                    employees.employees_photo,
+                                    employees.employees_desc,
+                                    employees.employees_marriage_status,
+                                    employees.employees_total_children,
+                                    employees.employees_mother_name,
+                                    employees.employees_status,
+                                    employees.employees_entry,
+                                    employees.employees_entry_update
+                                  FROM
+                                    employees
+                                  WHERE
+                                    employees.employees_id = :id
+                                ");
+
+        $sth->bindValue(':id', $id);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectGuardianInformation($period = 0, $semester = 0, $teacherid = 0) {
+        $sth = $this->db->prepare("
+                                SELECT 
+                                    academic_classroom.classroom_name,
+                                    academic_grade.grade_title,
+                                    academic_grade.grade_name,
+                                    academic_classgroup.classgroup_id
+                                  FROM
+                                    academic_classgroup
+                                    INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
+                                    INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
+                                  WHERE
+                                    academic_classgroup.classgroup_period = :period_id AND 
+                                    academic_classgroup.classgroup_semester = :semester_id AND 
+                                    academic_classgroup.classgroup_guardian = :teacher_id
+                                ");
+
+        $sth->bindValue(':period_id', $period);
+        $sth->bindValue(':semester_id', $semester);
+        $sth->bindValue(':teacher_id', $teacherid);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
     public function selectTeaching($teacherid, $periodid, $semesterid) {
         $sth = $this->db->prepare('
                                   SELECT 

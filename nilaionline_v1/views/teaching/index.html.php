@@ -35,7 +35,54 @@
 
 <div class="box-static">
     <div class="title"><?php echo Web::getTitle(false); ?></div>
-    <div class="description">Berikut adalah daftar mengajar Warman Suaganda Pada Tahun Akademik 2012/2013.</div>
+    <div class="class-info box-green">
+        <table id="teacher-information" cellspacing="5" cellpadding="0" style="width: 100%;">
+            <tr>
+                <td><b>Tahun Akademik</b></td>
+                <td><b>:</b></td>
+                <td id="view-period"><?php echo $default_option_period_value; ?></td>
+            </tr>
+            <tr>
+                <td style="width: 120px;"><b>NIP</b></td>
+                <td><b>:</b></td>
+                <td>
+                    <?php
+                    $nip = '-';
+                    if (!empty($teacher_info['employees_nip'])) {
+                        $nip = $teacher_info['employees_nip'];
+                    }
+                    echo $nip;
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 120px;"><b>Nama Lengkap</b></td>
+                <td><b>:</b></td>
+                <td><?php echo $teacher_info['employess_name']; ?></td>
+            </tr>
+            <tbody id="guardian-information" link_r="<?php echo $link_guardian_information; ?>" style="display: none;">
+                <tr>
+                    <td style="width: 120px;"><b>Wali Kelas</b></td>
+                    <td><b>:</b></td>
+                    <td id="view-guardian-information"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: right;">
+                        <?php
+                        Form::create('button');
+                        Form::value('Halaman Wali Kelas [+]');
+                        Form::style('btn-blue');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="cl"></div>
+    </div>
+    <div class="description">Berikut adalah daftar tugas mengajar : </div>
     <div style="padding: 5px;"><b>&bullet; MATA PELAJARAN</b></div>
     <div>
         <table id="list-teaching" cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching; ?>">
@@ -105,6 +152,26 @@
 <script type="text/javascript">
     $(function(){
         
+        var read_guardian_information = function() {
+            var link = $('#guardian-information').attr('link_r');       
+            var period = $('#hidden_option_period').val();
+            
+            var period_split = period.split('_');
+            
+            $(this).loadingProgress('start');
+            
+            $.post(link, { p : period_split[0],  s : period_split[1]}, function (o){
+                if (o[0]) {
+                    var info = o[1];
+                    var class_info = info['grade_title'] + '(' + info['grade_name'] + ')' + info['classroom_name'];
+                    $('#view-guardian-information').text(class_info);
+                    $("#guardian-information").fadeIn("slow");
+                } else {
+                    $("#guardian-information").fadeOut("slow");
+                }
+            }, 'json');
+        };
+        
         var read_teaching = function() {
             var link = $('#list-teaching').attr('link_r');       
             var period = $('#hidden_option_period').val();
@@ -156,6 +223,7 @@
             }, 'json');
         };
         
+        read_guardian_information();
         read_teaching();
         /* read_pbkl(); */
         read_eksul();
@@ -172,6 +240,9 @@
         $('#cb-period #cb-period-child li a').live('click',function(){
             var oldid = $('#hidden_option_period').val();
             var newid = $(this).attr('href');
+            var text = $(this).children('span').text();
+            
+            $('#view-period').text(text);
             
             $('#hidden_option_period').val(newid);
             $('#cb-period-parent').children('.fl-right').html($(this).children('.fl-right').html());
@@ -180,6 +251,7 @@
             $('#cb-period').children('#cb-period-child').slideUp('fast');
             
             if (newid != oldid) {
+                read_guardian_information();
                 read_teaching();
                 read_eksul();
             }

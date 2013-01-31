@@ -34,12 +34,6 @@ $root = '/apps/load/' . $info['apps_alias'];
                         <li>
                             <a href="<?php echo $root . '/teaching' ?>" class="black16-ic-bag">Tugas Mengajar</a>
                         </li>
-                        <li>
-                            <a href="<?php echo $root . '/percentase' ?>" class="black16-ic-percent">Persentase Nilai</a>
-                        </li>
-                        <li>
-                            <a href="<?php echo $root . '/recapitulation' ?>"  class="black16-ic-cv">Rekapitulasi Nilai</a>
-                        </li>
                     </ul>
                 </div>
             </li>  

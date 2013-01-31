@@ -8,11 +8,23 @@ class Teaching extends Controller {
 
     public function index() {
         Web::setTitle('Tugas Mengajar');
-        $this->view->option_period = $this->optionPeriod();
-        $this->view->link_r_teaching = $this->content->setLink('teaching/readteaching');
-        $this->view->link_r_teaching_pbkl = $this->content->setLink('teaching/readteachingpbkl');
-        $this->view->link_r_teaching_ekskul = $this->content->setLink('teaching/readteachingekskul');
-        $this->view->render('teaching/index');
+
+        Session::init();
+        $user_references = Session::get('user_references');
+        $teacher_list = $this->model->selectTeacherInformationById($user_references);
+        if ($teacher_list) {
+            $teacher_info = $teacher_list[0];
+            $this->view->teacher_info = $teacher_info;
+
+            $this->view->option_period = $this->optionPeriod();
+            $this->view->link_guardian_information = $this->content->setLink('teaching/readguardianinformation/' . $user_references);
+            $this->view->link_r_teaching = $this->content->setLink('teaching/readteaching');
+            $this->view->link_r_teaching_pbkl = $this->content->setLink('teaching/readteachingpbkl');
+            $this->view->link_r_teaching_ekskul = $this->content->setLink('teaching/readteachingekskul');
+            $this->view->render('teaching/index');
+        } else {
+            $this->view->render('teaching/404');
+        }
     }
 
     public function myClass($id = 0) {
@@ -280,6 +292,18 @@ class Teaching extends Controller {
             }
             echo json_encode($res);
         }
+    }
+
+    public function readGuardianInformation($id = 0) {
+        $period = $this->method->post('p');
+        $semester = $this->method->post('s');
+        $guardian_list = $this->model->selectGuardianInformation($period, $semester, $id);
+        if ($guardian_list) {
+            $res = array(1, $guardian_list[0]);
+        } else {
+            $res = array(0);
+        }
+        echo json_encode($res);
     }
 
     public function readDailyScore($class_group_id) {
