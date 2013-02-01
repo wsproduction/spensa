@@ -36,7 +36,7 @@
 <div class="box-static">
     <div class="title"><?php echo Web::getTitle(false); ?></div>
     <div class="class-info box-green">
-        <table id="teacher-information" cellspacing="5" cellpadding="0" style="width: 100%;">
+        <table id="teacher-information" cellspacing="6" cellpadding="5" style="width: 100%;">
             <tr>
                 <td><b>Tahun Akademik</b></td>
                 <td><b>:</b></td>
@@ -62,20 +62,24 @@
             </tr>
             <tbody id="guardian-information" link_r="<?php echo $link_guardian_information; ?>" style="display: none;">
                 <tr>
-                    <td style="width: 120px;"><b>Wali Kelas</b></td>
-                    <td><b>:</b></td>
-                    <td id="view-guardian-information"></td>
+                    <td style="width: 120px;padding-bottom: 5px;"><b>Wali Kelas</b></td>
+                    <td style="padding-bottom: 5px;"><b>:</b></td>
+                    <td  style="padding-bottom: 5px;"id="view-guardian-information"></td>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td style="text-align: right;">
-                        <?php
-                        Form::create('button');
-                        Form::value('Halaman Wali Kelas [+]');
-                        Form::style('btn-blue');
-                        Form::commit();
-                        ?>
+                    <td colspan="3" style="text-align: right;border-top:1px dashed green;padding-top: 10px;">
+                        <div class="fl-left" style="padding-top: 5px;font-style: italic;font-weight: bold;color: green;">
+                            Untuk masuk ke halaman wali kelas silahkan klik tombol di samping kanan!
+                        </div>
+                        <div class="fl-right">
+                            <?php
+                            Form::create('button', 'btn-guardian-page');
+                            Form::value('Halaman Wali Kelas [+]');
+                            Form::style('btn-blue');
+                            Form::properties(array('link' => $link_guardian));
+                            Form::commit();
+                            ?>
+                        </div>
                     </td>
                 </tr>
             </tbody>
@@ -105,7 +109,7 @@
             </tbody>
         </table>
     </div>
-    <div style="padding: 5px;"><b>&bullet; PBKL</b></div>
+    <div style="padding: 5px;"><b>&bullet; PENDIDIKAN BERBASIK KEUNGGULAN LOKAL (PBKL)</b></div>
     <div style="padding: 5px;">
         <table id="list-teaching-pbkl" style="width: 100%" class="table-list"  cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching_pbkl; ?>">
             <thead>
@@ -126,13 +130,13 @@
             </tbody>
         </table>
     </div>
-    <div style="padding: 5px;"><b>&bullet; Ekstrakurikuler</b></div>
+    <div style="padding: 5px;"><b>&bullet; PENGEMBANGAN DIRI</b></div>
     <div style="padding: 5px;">
         <table id="list-teaching-ekskul" style="width: 100%" class="table-list"  cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching_ekskul; ?>">
             <thead>
                 <tr>
                     <td class="first" style="width: 50px;text-align: center;">No.</td>
-                    <td>Nama PBKL</td>
+                    <td>Nama Kegiatan</td>
                     <td style="width: 100px;text-align: center;">Total Mengajar</td>
                 </tr>
             </thead>
@@ -157,13 +161,13 @@
             var period = $('#hidden_option_period').val();
             
             var period_split = period.split('_');
-            
             $(this).loadingProgress('start');
             
             $.post(link, { p : period_split[0],  s : period_split[1]}, function (o){
                 if (o[0]) {
                     var info = o[1];
-                    var class_info = info['grade_title'] + '(' + info['grade_name'] + ')' + info['classroom_name'];
+                    var class_info = info['grade_title'] + ' (' + info['grade_name'] + ') ' + info['classroom_name'];
+                    $('#btn-guardian-page').attr('guardian_id', info['classgroup_id']);
                     $('#view-guardian-information').text(class_info);
                     $("#guardian-information").fadeIn("slow");
                 } else {
@@ -257,6 +261,10 @@
             }
             
             return false;
+        });
+        
+        $('#btn-guardian-page').live('click',function() {
+            window.location = $(this).attr('link') + '/' + $(this).attr('guardian_id');
         });
     });
 </script>

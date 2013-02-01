@@ -8,6 +8,7 @@ class Index extends Controller {
 
     public function index() {
         Web::setTitle('Welcome');
+        $this->view->link_score = $this->content->setParentLink('score');
         $this->view->render('index/index');
     }
 

@@ -149,6 +149,25 @@ class Contents extends Controller {
         }
         return $link;
     }
+    
+    public function setParentLink($val = '', $ssl = false) {
+
+        if (Web::$childStatus) {
+            $house = Web::$host . '/apps/load/' . Web::$webAlias;
+        } else {
+            $house = Web::$host;
+        }
+
+        $protocol = 'http://';
+        if ($ssl) {
+            $protocol = 'https://';
+        }
+        $link = $protocol . $house . '/' . $val;
+        if ($val == '#') {
+            $link = '#';
+        }
+        return $link;
+    }
 
     public function customPagingId($prevId = '', $pageId = '', $nextId = '', $maxId = '') {
         if ($prevId != '')

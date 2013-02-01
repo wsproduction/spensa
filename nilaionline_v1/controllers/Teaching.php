@@ -21,6 +21,7 @@ class Teaching extends Controller {
             $this->view->link_r_teaching = $this->content->setLink('teaching/readteaching');
             $this->view->link_r_teaching_pbkl = $this->content->setLink('teaching/readteachingpbkl');
             $this->view->link_r_teaching_ekskul = $this->content->setLink('teaching/readteachingekskul');
+            $this->view->link_guardian = $this->content->setParentLink('guardian/page');
             $this->view->render('teaching/index');
         } else {
             $this->view->render('teaching/404');
@@ -49,6 +50,7 @@ class Teaching extends Controller {
                 $semester_info = $semester_list[0];
                 $this->view->semester_info = $semester_info;
 
+                $this->view->link_back = $this->content->setParentLink('teaching');
                 $this->view->link_r_basecompetence = $this->content->setLink('teaching/readmyclass');
                 $this->view->render('teaching/myclass');
             }
@@ -68,7 +70,7 @@ class Teaching extends Controller {
 
             Web::setTitle('Kelas ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
 
-            $this->view->link_back = '../../teaching/myclass/' . $class_info['subject_id'] . '.' . $class_info['grade_id'] . '.' . $class_info['period_id'] . '.' . $class_info['semester_id'];
+            $this->view->link_back = $this->content->setParentLink('teaching/myclass/' . $class_info['subject_id'] . '.' . $class_info['grade_id'] . '.' . $class_info['period_id'] . '.' . $class_info['semester_id']);
 
             // Daily Score
             $this->view->option_basecompetance = $this->optionBaseCompetence($class_info['period_id'], $semesterid, $user_references, $class_info['subject_id'], $class_info['grade_id']);

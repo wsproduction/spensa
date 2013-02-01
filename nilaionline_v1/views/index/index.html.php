@@ -4,7 +4,7 @@
         <b>Welcome, Warman Suganda!</b>
     </div>
     <div class="fl-right">
-        <a id="btn-check" class="btn-check-score-green" href="<?php echo '/pages/load/' . Web::$webAlias . '/score'  ?>">Check Score [+]</a>
+        <a id="btn-check" class="btn-check-score-green" href="<?php echo $link_score;  ?>">Check Score [+]</a>
     </div>
     <div class="cl">&nbsp;</div>
 </div>
