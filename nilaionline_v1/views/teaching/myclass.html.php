@@ -8,11 +8,11 @@
     </div>
 
     <div class="class-info box-green">
-        <table class="fl-left" cellspacing="5" cellpadding="0">
+        <table>
             <tr>
-                <td style="width: 120px;"><b>Mata Pelajaran</b></td>
-                <td><b>:</b></td>
-                <td>
+                <td class="label" style="width: 120px;">MATA PELAJARAN</td>
+                <td class="sparator" >:</td>
+                <td class="content" >
                     <?php
                     Form::create('hidden', 'hidden_subject_id');
                     Form::value($subject_info['subject_id']);
@@ -22,9 +22,9 @@
                 </td>
             </tr>
             <tr>
-                <td><b>Tahun Akademik</b></td>
-                <td><b>:</b></td>
-                <td>
+                <td class="label">TAHUN AKADEMIK</td>
+                <td class="sparator">:</td>
+                <td class="content">
                     <?php
                     Form::create('hidden', 'hidden_period_id');
                     Form::value($period_info['period_id']);
@@ -37,9 +37,9 @@
                 </td>
             </tr>
             <tr>
-                <td><b>Kelas</b></td>
-                <td><b>:</b></td>
-                <td>
+                <td class="label">KELAS</td>
+                <td class="sparator">:</td>
+                <td class="content">
                     <?php
                     Form::create('hidden', 'hidden_grade_id');
                     Form::value($grade_info['grade_id']);
@@ -49,7 +49,6 @@
                 </td>
             </tr>
         </table> 
-        <div class="cl">&nbsp;</div>
     </div>
 
     <div class="description">Berikut adalah daftar kelas mengajar :</div>

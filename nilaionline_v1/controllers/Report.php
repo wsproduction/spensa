@@ -1,13 +1,13 @@
 <?php
 
-class Guardian extends Controller {
+class Report extends Controller {
 
     public function __construct() {
         parent::__construct();
     }
 
-    public function page($classgroup_id = 0) {
-        Web::setTitle('Halaman Wali Kelas');
+    public function printScore($classgroup_id = 0) {
+        Web::setTitle('Cetak Rapor');
         Session::init();
         $user_references = Session::get('user_references');
         $guardian_list = $this->model->selectGuardianInformation($classgroup_id, $user_references);
@@ -15,14 +15,11 @@ class Guardian extends Controller {
             $guardian_info = $guardian_list[0];
             $this->view->guardian_info = $guardian_info;
 
-            $this->view->link_back = $this->content->setParentLink('teaching');
-            $this->view->link_rapor = $this->content->setParentLink('report/printscore/' . $classgroup_id);
-            $this->view->link_read_subject = $this->content->setLink('guardian/readsubject/' . $classgroup_id);
-            $this->view->link_read_pbkl = $this->content->setLink('guardian/readpbkl/' . $classgroup_id);
-            $this->view->link_read_eskul = $this->content->setLink('guardian/readeskul/' . $classgroup_id);
-            $this->view->render('guardian/index');
+            $this->view->link_rapor = $this->content->setLink('report/printscore/' . $classgroup_id);
+            
+            $this->view->render('report/index');
         } else {
-            $this->view->render('guardian/404');
+            $this->view->render('report/404');
         }
     }
 

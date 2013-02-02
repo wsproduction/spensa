@@ -36,16 +36,16 @@
 <div class="box-static">
     <div class="title"><?php echo Web::getTitle(false); ?></div>
     <div class="class-info box-green">
-        <table id="teacher-information" cellspacing="6" cellpadding="5" style="width: 100%;">
+        <table id="teacher-information" style="width: 100%;">
             <tr>
-                <td><b>Tahun Akademik</b></td>
-                <td><b>:</b></td>
-                <td id="view-period"><?php echo $default_option_period_value; ?></td>
+                <td class="label" style="width: 150px;">TAHUN AKADEMIK</td>
+                <td class="sparator">:</td>
+                <td id="view-period" class="content"><?php echo $default_option_period_value; ?></td>
             </tr>
             <tr>
-                <td style="width: 120px;"><b>NIP</b></td>
-                <td><b>:</b></td>
-                <td>
+                <td class="label">NIP</td>
+                <td class="sparator">:</td>
+                <td class="content">
                     <?php
                     $nip = '-';
                     if (!empty($teacher_info['employees_nip'])) {
@@ -56,29 +56,20 @@
                 </td>
             </tr>
             <tr>
-                <td style="width: 120px;"><b>Nama Lengkap</b></td>
-                <td><b>:</b></td>
-                <td><?php echo $teacher_info['employess_name']; ?></td>
+                <td class="label">NAMA LENGKAP</td>
+                <td class="sparator">:</td>
+                <td class="content"><?php echo $teacher_info['employess_name']; ?></td>
             </tr>
             <tbody id="guardian-information" link_r="<?php echo $link_guardian_information; ?>" style="display: none;">
                 <tr>
-                    <td style="width: 120px;padding-bottom: 5px;"><b>Wali Kelas</b></td>
-                    <td style="padding-bottom: 5px;"><b>:</b></td>
-                    <td  style="padding-bottom: 5px;"id="view-guardian-information"></td>
+                    <td class="label">WALI KELAS</td>
+                    <td class="sparator">:</td>
+                    <td class="content" id="view-guardian-information"></td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="text-align: right;border-top:1px dashed green;padding-top: 10px;">
-                        <div class="fl-left" style="padding-top: 5px;font-style: italic;font-weight: bold;color: green;">
-                            Untuk masuk ke halaman wali kelas silahkan klik tombol di samping kanan!
-                        </div>
-                        <div class="fl-right">
-                            <?php
-                            Form::create('button', 'btn-guardian-page');
-                            Form::value('Halaman Wali Kelas [+]');
-                            Form::style('btn-blue');
-                            Form::properties(array('link' => $link_guardian));
-                            Form::commit();
-                            ?>
+                    <td colspan="3">
+                        <div class="link-box">
+                            [+] <?php URL::link($link_guardian, 'Halaman Wali Kelas', true, array('id' => 'btn-guardian-page')); ?> 
                         </div>
                     </td>
                 </tr>
@@ -264,7 +255,8 @@
         });
         
         $('#btn-guardian-page').live('click',function() {
-            window.location = $(this).attr('link') + '/' + $(this).attr('guardian_id');
+            window.location = $(this).attr('href') + '/' + $(this).attr('guardian_id');
+            return false;
         });
     });
 </script>

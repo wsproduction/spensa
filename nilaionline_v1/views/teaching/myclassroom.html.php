@@ -9,21 +9,21 @@
     <div class="class-info box-green">
         <table class="fl-left" cellspacing="5" cellpadding="0">
             <tr>
-                <td><b>Wali Kelas</b></td>
-                <td><b>:</b></td>
-                <td><?php echo $class_info['employess_name']; ?></td>
+                <td class="label">WALI KELAS</td>
+                <td class="sparator">:</td>
+                <td class="content"><?php echo $class_info['employess_name']; ?></td>
             </tr>
             <tr>
-                <td><b>Total Mengajar</b></td>
-                <td><b>:</b></td>
-                <td><?php echo $class_info['teaching_total_time'] . ' Jam'; ?></td>
+                <td class="label">TOTAL MANAGER</td>
+                <td class="sparator">:</td>
+                <td class="content"><?php echo $class_info['teaching_total_time'] . ' Jam'; ?></td>
             </tr>
         </table>
         <table class="fl-right" cellspacing="5" cellpadding="0">
             <tr>
-                <td><b>Tahun Akademik</b></td>
-                <td><b>:</b></td>
-                <td>
+                <td class="label">TAHUN AKADEMIK</td>
+                <td class="sparator">:</td>
+                <td class="content">
                     <?php
                     Form::create('hidden', 'hidden_period_id');
                     Form::value($class_info['period_id']);
@@ -36,9 +36,9 @@
                 </td>
             </tr>
             <tr>
-                <td><b>Mata Pelajaran</b></td>
-                <td><b>:</b></td>
-                <td>
+                <td class="label">MATA PELAJARAN</td>
+                <td class="sparator">:</td>
+                <td class="content">
                     <?php
                     Form::create('hidden', 'hidden_subject_id');
                     Form::value($class_info['subject_id']);
@@ -48,9 +48,9 @@
                 </td>
             </tr>
             <tr>
-                <td><b>KKM</b></td>
-                <td><b>:</b></td>
-                <td>
+                <td class="label">KKM</td>
+                <td class="sparator">:</td>
+                <td class="content">
                     <?php
                     Form::create('hidden', 'hidden_mlc');
                     Form::value($class_info['mlc_value']);

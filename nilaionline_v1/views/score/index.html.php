@@ -96,7 +96,7 @@
         </table>
         <div class="cl">&nbsp;</div>
         <div class="link-box">
-            [+] <?php URL::link('#', 'Cetak Raport') ?> &nbsp; [-] <?php URL::link('#', 'Tutup') ?> 
+            [+] <?php URL::link($link_guardian, 'Cetak Raport') ?> &nbsp; [-] <?php URL::link('#', 'Tutup') ?> 
         </div>
     </div>
     <div class="box-score-check">

@@ -545,10 +545,65 @@
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
-    padding: 5px;
+    padding: 2px;
     margin: 0 1px;
     background-color:  #efffdf;
     text-shadow: 1px 1px 1px #fff;
+}
+
+#online-score .box-green .label {
+    color: #276600;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px;
+    text-align: left;
+}
+
+#online-score .box-green .sparator {
+    color: #276600;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px;
+    width: 10px;
+    text-align: center;
+}
+
+#online-score .box-green .content {
+    color: #000;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px;
+    text-align: left;
+}
+
+#online-score .box-green .link-box {
+    color: #276600;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 4px 2px 0 0;
+    margin: 2px 0;
+    text-align: right;
+    border-top: 1px dashed #9aca86;
+}
+
+#online-score .box-green .link-box a {
+    color: #276600;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 4px 2px 0 0;
+    margin: 2px 0;
+    text-align: right;
+    border-top: 1px dashed #9aca86;
+    text-decoration: none;
+}
+
+#online-score .box-green .link-box a:hover {
+    text-decoration: underline;
 }
 
 #online-score .class-info {

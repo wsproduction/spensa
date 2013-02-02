@@ -248,6 +248,11 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
 .black16-ic-cv {
     background: url(../images/black16/cv.png) no-repeat;
 }
+
+.black16-ic-help {
+    background: url(../images/black16/help.png) no-repeat;
+}
+
 .orange16-ic-lock {
     background: url(../images/orange16/lock.png) no-repeat;
 }
