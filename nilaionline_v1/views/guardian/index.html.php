@@ -29,6 +29,21 @@
                     ?>
                 </td>
             </tr>
+            <tr>
+                <td colspan="3" style="text-align: right;border-top:1px dashed green;padding-top: 10px;">
+                    <div class="fl-left" style="padding-top: 5px;font-style: italic;font-weight: bold;color: green;">
+                        Untuk mencetak Rapor silahkan klik tombol disamping kanan!
+                    </div>
+                    <div class="fl-right">
+                        <?php
+                        Form::create('button', 'btn-guardian-page');
+                        Form::value('Cetak Rapor [+]');
+                        Form::style('btn-blue');
+                        Form::commit();
+                        ?>
+                    </div>
+                </td>
+            </tr>
         </table>
         <div class="cl"></div>
     </div>

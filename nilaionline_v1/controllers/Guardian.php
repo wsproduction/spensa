@@ -33,6 +33,7 @@ class Guardian extends Controller {
                 $html_list .= '<tr>';
                 $html_list .= '     <td class="first" align="center">' . $idx . '</td>';
                 $html_list .= '     <td>' . $row['subject_name'] . '</td>';
+                $html_list .= '     <td>' . $row['employess_name'] . '</td>';
                 $html_list .= '     <td>-</td>';
                 $html_list .= '     <td>-</td>';
                 $html_list .= '</tr>';
@@ -49,7 +50,7 @@ class Guardian extends Controller {
         }
         echo json_encode($html_list);
     }
-    
+
     public function readEskul($classgroup_id = 0) {
         $subject_list = $this->model->selectSubjectByClassGroup($classgroup_id);
         $html_list = '';
