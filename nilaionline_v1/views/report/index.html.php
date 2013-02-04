@@ -57,7 +57,7 @@
                     <td>
                         <?php
                         Form::create('submit', 'btn_preview');
-                        Form::value('Pratampil');
+                        Form::value('Pratinjau');
                         Form::commit();
                         ?>
                     </td>

@@ -7,7 +7,7 @@ class Report extends Controller {
     }
 
     public function printScore($classgroup_id = 0) {
-        Web::setTitle('Cetak Rapor');
+        Web::setTitle('Cetak Laporan Hasil Belajar Siswa');
         Session::init();
         $user_references = Session::get('user_references');
         $guardian_list = $this->model->selectGuardianInformation($classgroup_id, $user_references);
@@ -90,7 +90,7 @@ class Report extends Controller {
     }
 
     public function preview($info_id = 0) {
-        
+
         list($classgroup_id, $nis) = explode('.', $info_id);
 
         $student_list = $this->model->selectStudentById($classgroup_id, $nis);
@@ -98,6 +98,9 @@ class Report extends Controller {
         if ($student_list) {
 
             $student_info = $student_list[0];
+            $subject_score_list = $this->model->selectSubjectScoreList();
+
+            $terbilang = Src::plugin()->PHPTerbilang();
 
             $pdf = Src::plugin()->tcPdf();
             $pdf->SetProtection($permissions = array('copy'), $user_pass = '', $owner_pass = null, $mode = 0, $pubkeys = null);
@@ -138,6 +141,7 @@ class Report extends Controller {
                 .letter-head {
                     border : 1px solid #000;
                     color : #000;
+                    font-weight:bold;
                 }
                 .title-head {
                     border : 1px solid #000;
@@ -201,7 +205,8 @@ class Report extends Controller {
                 }
                 .box-score-list-head {
                     text-align : center;
-                    font-size : 10pt;
+                    font-size : 9pt;
+                    font-weight: bold;
                     color : #fff;
                     background-color : #000;
                     border-left : 1px solid #fff;
@@ -211,7 +216,8 @@ class Report extends Controller {
                 }
                 .box-score-list-head-child {
                     text-align : center;
-                    font-size : 10pt;
+                    font-size : 9pt;
+                    font-weight: bold;
                     color : #fff;
                     background-color : #000;
                     border-left : 1px solid #fff;
@@ -221,8 +227,9 @@ class Report extends Controller {
                 }
                 .box-score-list-head-first {
                     text-align : center;
-                    font-size : 10pt;
+                    font-size : 9pt;
                     color : #fff;
+                    font-weight: bold;
                     background-color : #000;
                     border-left : 1px solid #000;
                     border-right : 1px solid #fff;
@@ -231,8 +238,9 @@ class Report extends Controller {
                 }
                 .box-score-list-head-last {
                     text-align : center;
-                    font-size : 10pt;
+                    font-size : 9pt;
                     color : #fff;
+                    font-weight: bold;
                     background-color : #000;
                     border-left : 1px solid #fff;
                     border-right : 1px solid #000;
@@ -241,14 +249,14 @@ class Report extends Controller {
                 }
                 .box-score-list-content {
                     color : #000;
-                    font-size : 10pt;
+                    font-size : 9pt;
                     background : #fff;
                     border-right : 1px solid #000;
                     border-bottom : 1px solid #000;
                 }
                 .box-score-list-content-first {
                     color : #000;
-                    font-size : 10pt;
+                    font-size : 9pt;
                     background : #fff;
                     border-left : 1px solid #000;
                     border-right : 1px solid #000;
@@ -256,7 +264,7 @@ class Report extends Controller {
                 }
                 .box-score-list-sumary {
                     color : #000;
-                    font-size : 10pt;
+                    font-size : 9pt;
                     background : #fff;
                     border-top : 1px solid #000;
                     border-right : 1px solid #000;
@@ -264,7 +272,7 @@ class Report extends Controller {
                 }
                 .box-score-list-sumary-first {
                     color : #000;
-                    font-size : 10pt;
+                    font-size : 9pt;
                     background : #fff;
                     border-top : 1px solid #000;
                     border-left : 1px solid #000;
@@ -273,18 +281,21 @@ class Report extends Controller {
                 }
                 .box-score-list-average {
                     color : #000;
-                    font-size : 10pt;
+                    font-size : 9pt;
                     background : #fff;
                     border-right : 1px solid #000;
                     border-bottom : 1px solid #000;
                 }
                 .box-score-list-average-first {
                     color : #000;
-                    font-size : 10pt;
+                    font-size : 9pt;
                     background : #fff;
                     border-left : 1px solid #000;
                     border-right : 1px solid #000;
                     border-bottom : 1px solid #000;
+                }
+                .signature {
+                     font-size:10pt;
                 }
             </style>
             <table width="100%" cellpadding="2" cellspacing="0">
@@ -404,32 +415,23 @@ class Report extends Controller {
                     <td width="180" class="box-score-list-head-child">HURUF</td>
                 </tr>
             </table>
-            <table cellpadding="4" cellspacing="0">
-                <tr>
-                    <td align="center" width="40" class="box-score-list-content-first">01.</td>
-                    <td align="left" width="225" class="box-score-list-content">Teknologi Informasi dan Komunikasi</td>
+            <table cellpadding="4" cellspacing="0">';
+
+            $idx = 1;
+            foreach ($subject_score_list as $rowscore) {
+                $html .='<tr>
+                    <td align="center" width="40" class="box-score-list-content-first">' . $idx . '.</td>
+                    <td align="left" width="225" class="box-score-list-content"> ' . $rowscore['subject_name'] . ' </td>
                     <td align="center" width="50" class="box-score-list-content">80</td>
                     <td align="center" width="60" class="box-score-list-content">78</td>
-                    <td align="left" width="180" class="box-score-list-content">tujuh puluh delapan</td>
-                    <td align="center" width="150" class="box-score-list-content">Tidak Tercapai</td>
-                </tr>
-                <tr>
-                    <td align="center" width="40" class="box-score-list-content-first">01.</td>
-                    <td align="left" width="225" class="box-score-list-content">Teknologi Informasi dan Komunikasi</td>
-                    <td align="center" width="50" class="box-score-list-content">80</td>
-                    <td align="center" width="60" class="box-score-list-content">78</td>
-                    <td align="left" width="180" class="box-score-list-content">tujuh puluh delapan</td>
-                    <td align="center" width="150" class="box-score-list-content">Tidak Tercapai</td>
-                </tr>
-                <tr>
-                    <td align="center" width="40" class="box-score-list-content-first">01.</td>
-                    <td align="left" width="225" class="box-score-list-content">Teknologi Informasi dan Komunikasi</td>
-                    <td align="center" width="50" class="box-score-list-content">80</td>
-                    <td align="center" width="60" class="box-score-list-content">78</td>
-                    <td align="left" width="180" class="box-score-list-content">tujuh puluh delapan</td>
-                    <td align="center" width="150" class="box-score-list-content">Tidak Tercapai</td>
-                </tr>
-            </table>
+                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja(78)) . '</td>
+                    <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
+                </tr>';
+                $idx++;
+            }
+
+
+            $html .='</table>
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td class="blank-column-1">&nbsp;</td>
@@ -439,12 +441,12 @@ class Report extends Controller {
                 <tr>
                     <td align="center" width="315" class="box-score-list-sumary-first"><b>JUMLAH</b></td>
                     <td align="center" width="60" class="box-score-list-sumary">980</td>
-                    <td align="left" width="330" class="box-score-list-sumary">tujuh puluh delapan</td>
+                    <td align="center" width="330" class="box-score-list-sumary">' . strtolower($terbilang->eja(980)) . '</td>
                 </tr>
                 <tr>
                     <td align="center" width="315" class="box-score-list-average-first"><b>RATA-RATA</b></td>
-                    <td align="center" width="60" class="box-score-list-average">980</td>
-                    <td align="left" width="330" class="box-score-list-average">tujuh puluh delapan</td>
+                    <td align="center" width="60" class="box-score-list-average">78</td>
+                    <td align="center" width="330" class="box-score-list-average">' . strtolower($terbilang->eja(78)) . '</td>
                 </tr>
             </table>
             <table cellpadding="0" cellspacing="0">
@@ -461,12 +463,12 @@ class Report extends Controller {
                 <tr>
                     <td align="left" width="315" class="box-score-list-content-first">1. Ketangkasan Office</td>
                     <td align="center" width="60" class="box-score-list-content">A</td>
-                    <td align="center" width="330" class="box-score-list-content">Sangat Baik</td>
+                    <td align="center" width="330" class="box-score-list-content">sangat baik</td>
                 </tr>
                 <tr>
                     <td align="left" width="315" class="box-score-list-content-first">2. Paskibra</td>
                     <td align="center" width="60" class="box-score-list-content">B</td>
-                    <td align="center" width="330" class="box-score-list-content">Baik</td>
+                    <td align="center" width="330" class="box-score-list-content">baik</td>
                 </tr>
             </table>
             <table cellpadding="0" cellspacing="0">
@@ -476,19 +478,112 @@ class Report extends Controller {
             </table>
             <table cellpadding="4" cellspacing="0">
                 <tr>
-                    <td align="center" width="315" class="box-score-list-head-first">AHLAK DAN KEPRIBADIAN</td>
-                    <td align="center" width="60" class="box-score-list-head">NILAI</td>
-                    <td align="center" width="330" class="box-score-list-head-last">KETERANGAN</td>
+                    <td align="center" width="375" style="border-right:1px solid #000;" class="box-score-list-head-first">AHLAK DAN KEPRIBADIAN</td>
+                    <td align="center" width="20" rowspan="2"></td>
+                    <td align="center" width="310" style="border-left:1px solid #000;" class="box-score-list-head-last">KETIDAKHADIRAN</td>
                 </tr>
                 <tr>
-                    <td align="left" width="315" class="box-score-list-content-first">AHLAK</td>
-                    <td align="center" width="60" class="box-score-list-content">A</td>
-                    <td align="center" width="330" class="box-score-list-content">Sangat Baik</td>
+                    <td align="left" class="box-score-list-content-first">
+                        <table>
+                            <tr>
+                                <td width="100" align="left">AKHLAK</td>
+                                <td width="10">:</td>
+                                <td align="left"> A (sangat baik) </td>
+                            </tr>
+                            <tr>
+                                <td align="left">KEPRIBADIAN</td>
+                                <td>:</td>
+                                <td align="left"> A (sangat baik) </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td align="center" class="box-score-list-content" style="border-left:1px solid #000;">
+                        <table>
+                            <tr>
+                                <td width="15" align="left">1.</td>
+                                <td width="150" align="left">SAKIT</td>
+                                <td width="15">:</td>
+                                <td width="30" align="right"> 1 </td>
+                                <td align="left"> hari </td>
+                            </tr>
+                            <tr>
+                                <td align="left">2.</td>
+                                <td align="left">IJIN</td>
+                                <td>:</td>
+                                <td align="right"> 1 </td>
+                                <td align="left"> hari </td>
+                            </tr>
+                            <tr>
+                                <td align="left">3.</td>
+                                <td align="left">TANPA KETERANGAN</td>
+                                <td>:</td>
+                                <td align="right"> - </td>
+                                <td align="left"> hari </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="blank-column-2">&nbsp;</td>
+                </tr>
+            </table>
+            <table class="signature">
+                <tr>
+                    <td width="425">&nbsp;</td>
+                    <td width="100" align="left">Diberikan di</td>
+                    <td width="20">:</td>
+                    <td width="160" align="left">Subang</td>
                 </tr>
                 <tr>
-                    <td align="left" width="315" class="box-score-list-content-first">KEPRIBADIAN</td>
-                    <td align="center" width="60" class="box-score-list-content">B</td>
-                    <td align="center" width="330" class="box-score-list-content">Baik</td>
+                    <td>&nbsp;</td>
+                    <td align="left">Tanggal</td>
+                    <td>:</td>
+                    <td align="left">2 Februari 2013</td>
+                </tr>
+                <tr>
+                    <td align="left" colspan="4">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td align="left">
+                        <table>
+                            <tr>
+                                <td>Mengetahui</td>
+                            </tr>
+                            <tr>
+                                <td>Orang Tua/Wali, </td>
+                            </tr>
+                            <tr>
+                                <td height="60">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td width="250" style="border-bottom:1px solid #000;">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td align="left" colspan="3">
+                        <table>
+                            <tr>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>Wali Kelas, </td>
+                            </tr>
+                            <tr>
+                                <td height="60">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td width="250" style="border-bottom:1px solid #000;">Karwati</td>
+                            </tr>
+                            <tr>
+                                <td>NIP. 0298340923</td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
             </table>
         ';

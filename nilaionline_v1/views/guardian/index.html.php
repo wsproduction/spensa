@@ -38,7 +38,9 @@
             <tr>
                 <td colspan="3">
                     <div class="link-box">
-                        [+] <?php URL::link($link_rapor, 'Cetak Rapor', true, array('id' => 'btn-guardian-page')); ?> 
+                        [+] <?php URL::link($link_rapor, 'Manajemen Nilai Ahlak dan Kepribadian', true, array('id' => 'btn-guardian-page')); ?> &nbsp;
+                        [+] <?php URL::link($link_rapor, 'Manajemen Data Ketidak Hadiran', true, array('id' => 'btn-guardian-page')); ?> &nbsp;
+                        [+] <?php URL::link($link_rapor, 'Cetak Laporan Hasil Belajar Siswa', true, array('id' => 'btn-guardian-page')); ?> 
                     </div>
                 </td>
             </tr>

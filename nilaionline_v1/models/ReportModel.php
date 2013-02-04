@@ -70,7 +70,7 @@ class ReportModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectStudentByClassGroupId($classgroup_id = 0) {
         $sth = $this->db->prepare("
                                   SELECT 
@@ -88,7 +88,7 @@ class ReportModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectStudentById($classgroup_id = 0, $nis = 0) {
         $sth = $this->db->prepare("
                                   SELECT 
@@ -119,4 +119,24 @@ class ReportModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
+
+    public function selectSubjectScoreList() {
+        $sth = $this->db->prepare("
+                                  SELECT 
+                                    academic_subject.subject_id,
+                                    academic_subject.subject_name,
+                                    academic_subject.subject_parent,
+                                    academic_subject.subject_order,
+                                    academic_subject.subject_entry,
+                                    academic_subject.subject_entry_update
+                                  FROM
+                                    academic_subject
+                                  ORDER BY
+                                    academic_subject.subject_order
+                                 ");
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
 }
