@@ -100,7 +100,7 @@
         </div>
     </div>
     <div class="box-score-check">
-        <div class="fl-left box-frame-check">
+        <div class="box-frame-check">
             <?php
             Form::begin('fScoreCheck', 'score/check', 'post', true);
             ?>

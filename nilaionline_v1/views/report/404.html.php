@@ -1,1 +1,0 @@
-Maaf Ini Bukan Kelas Anda

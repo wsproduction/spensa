@@ -31,10 +31,51 @@
             </tr>
         </table>
     </div>
-    <div class="description">Berikut adalah daftar tugas mengajar : </div>
-    
-    
-    
+
+    <div class="box-score-check" style="margin: 0 5px;">
+        <div class="box-frame-check">
+            <?php
+            Form::begin('fScoreCheck', 'report/preview', 'post', true);
+            Form::create('hidden', 'hidden_classgroup');
+            Form::value($guardian_info['classgroup_id']);
+            Form::commit();
+            ?>
+            <table class="frame-form">
+                <tr>
+                    <td><b>Nama Siswa :</b></td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>
+                        <?php
+                        Form::create('select', 'student');
+                        Form::option($optionStudent);
+                        Form::properties(array('style'=>'width:250px;'));
+                        Form::commit();
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        Form::create('submit', 'btn_preview');
+                        Form::value('Pratampil');
+                        Form::commit();
+                        ?>
+                    </td>
+                </tr>
+            </table>
+            <?php
+            Form::end();
+            ?>
+        </div>
+        <div class="cl">&nbsp;</div>
+    </div>
+    <div class="view-score"  style="border: 1px solid #ccc;margin: 0 5px 5px 5px;">
+        <div class="information-box" style="margin: 5px;">
+            Untuk melihat rapor siswa silahkan pilih nama siswa kemudian klik tombol pratampil.
+        </div>
+        <iframe id="frame-report" frameborder="0" style="margin: 5px;width: 755px;height: 500px;"></iframe>
+    </div>
+
 </div>
 
 <script type="text/javascript">
@@ -66,6 +107,14 @@
         
         $("#btn-rapor").live('click', function() {
             window.location = $(this).attr('link');
+        });
+        
+        $('#fScoreCheck').live('submit', function() {
+            var action = $(this).attr('action');
+            var classgroup = $('#hidden_classgroup').val();
+            var student = $('#student').val();
+            $('#frame-report').attr('src', action + '/' + classgroup + '.' + student);
+            return false;
         });
     });
 </script>

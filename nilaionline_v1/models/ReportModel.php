@@ -70,5 +70,53 @@ class ReportModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-
+    
+    public function selectStudentByClassGroupId($classgroup_id = 0) {
+        $sth = $this->db->prepare("
+                                  SELECT 
+                                    academic_student.student_nis,
+                                    academic_student.student_name,
+                                    academic_student.student_nisn
+                                  FROM
+                                    academic_classhistory
+                                    INNER JOIN academic_student ON (academic_classhistory.classhistory_student = academic_student.student_nis)
+                                  WHERE
+                                    academic_classhistory.classhistory_classgroup = :classgroup_id
+                                 ");
+        $sth->bindValue(':classgroup_id', $classgroup_id);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectStudentById($classgroup_id = 0, $nis = 0) {
+        $sth = $this->db->prepare("
+                                  SELECT 
+                                    academic_student.student_nis,
+                                    academic_student.student_name,
+                                    academic_student.student_nisn,
+                                    academic_classroom.classroom_name,
+                                    academic_grade.grade_title,
+                                    academic_grade.grade_name,
+                                    academic_semester.semester_name,
+                                    academic_period.period_years_start,
+                                    academic_period.period_years_end
+                                  FROM
+                                    academic_classhistory
+                                    INNER JOIN academic_student ON (academic_classhistory.classhistory_student = academic_student.student_nis)
+                                    INNER JOIN academic_classgroup ON (academic_classhistory.classhistory_classgroup = academic_classgroup.classgroup_id)
+                                    INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
+                                    INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
+                                    INNER JOIN academic_semester ON (academic_classgroup.classgroup_semester = academic_semester.semester_id)
+                                    INNER JOIN academic_period ON (academic_classgroup.classgroup_period = academic_period.period_id)
+                                  WHERE
+                                    academic_classhistory.classhistory_classgroup = :classgroup_id AND 
+                                    academic_student.student_nis = :nis
+                                 ");
+        $sth->bindValue(':classgroup_id', $classgroup_id);
+        $sth->bindValue(':nis', $nis);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
 }
