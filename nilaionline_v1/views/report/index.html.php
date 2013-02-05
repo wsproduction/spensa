@@ -1,5 +1,11 @@
 <div class="box-static">
-    <div class="title"><?php echo Web::getTitle(false); ?></div>
+    <div class="title">
+        <div class="fl-left"><?php echo Web::getTitle(false); ?></div>
+        <div class="fl-right">
+            <a href="<?php echo $link_back; ?>" class="btn-red">Kembali</a>
+        </div>
+        <div class="cl">&nbsp;</div>
+    </div>
     <div class="class-info box-green">
         <table id="teacher-information" cellspacing="6" cellpadding="5" style="width: 100%;">
             <tr>
@@ -50,7 +56,7 @@
                         <?php
                         Form::create('select', 'student');
                         Form::option($optionStudent);
-                        Form::properties(array('style'=>'width:250px;'));
+                        Form::properties(array('style' => 'width:250px;'));
                         Form::commit();
                         ?>
                     </td>

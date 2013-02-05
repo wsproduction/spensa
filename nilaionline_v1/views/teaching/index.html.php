@@ -78,7 +78,7 @@
         <div class="cl"></div>
     </div>
     <div class="description">Berikut adalah daftar tugas mengajar : </div>
-    <div style="padding: 5px;"><b>&bullet; MATA PELAJARAN</b></div>
+    <div style="padding: 5px;"><b>&bullet; MATA PELAJARAN WAJIB</b></div>
     <div>
         <table id="list-teaching" cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching; ?>">
             <thead>
@@ -100,13 +100,13 @@
             </tbody>
         </table>
     </div>
-    <div style="padding: 5px;"><b>&bullet; PENDIDIKAN BERBASIK KEUNGGULAN LOKAL (PBKL)</b></div>
+    <div style="padding: 5px;"><b>&bullet; MUATAN LOKAL</b></div>
     <div style="padding: 5px;">
         <table id="list-teaching-pbkl" style="width: 100%" class="table-list"  cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching_pbkl; ?>">
             <thead>
                 <tr>
                     <td class="first" style="width: 50px;text-align: center;">No.</td>
-                    <td>Nama PBKL</td>
+                    <td>Nama Muatan Lokal</td>
                     <td style="width: 100px;text-align: center;">Total Mengajar</td>
                 </tr>
             </thead>

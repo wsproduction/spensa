@@ -125,7 +125,6 @@ class ReportModel extends Model {
                                   SELECT 
                                     academic_subject.subject_id,
                                     academic_subject.subject_name,
-                                    academic_subject.subject_parent,
                                     academic_subject.subject_order,
                                     academic_subject.subject_entry,
                                     academic_subject.subject_entry_update

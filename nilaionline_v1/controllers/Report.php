@@ -15,6 +15,7 @@ class Report extends Controller {
             $guardian_info = $guardian_list[0];
             $this->view->guardian_info = $guardian_info;
 
+            $this->view->link_back = $this->content->setParentLink('guardian/page/' . $classgroup_id);
             $this->view->link_rapor = $this->content->setLink('report/printscore/' . $classgroup_id);
             $this->view->optionStudent = $this->studentOption($classgroup_id);
 
