@@ -120,7 +120,7 @@ class ReportModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectSubjectScoreList() {
+    public function selectMustSubject() {
         $sth = $this->db->prepare("
                                   SELECT 
                                     academic_subject.subject_id,
@@ -130,6 +130,48 @@ class ReportModel extends Model {
                                     academic_subject.subject_entry_update
                                   FROM
                                     academic_subject
+                                  WHERE
+                                    academic_subject.subject_category = 1
+                                  ORDER BY
+                                    academic_subject.subject_order
+                                 ");
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectChoiceSubject() {
+        $sth = $this->db->prepare("
+                                  SELECT 
+                                    academic_subject.subject_id,
+                                    academic_subject.subject_name,
+                                    academic_subject.subject_order,
+                                    academic_subject.subject_entry,
+                                    academic_subject.subject_entry_update
+                                  FROM
+                                    academic_subject
+                                  WHERE
+                                    academic_subject.subject_category = 2
+                                  ORDER BY
+                                    academic_subject.subject_order
+                                 ");
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectMulokSubject() {
+        $sth = $this->db->prepare("
+                                  SELECT 
+                                    academic_subject.subject_id,
+                                    academic_subject.subject_name,
+                                    academic_subject.subject_order,
+                                    academic_subject.subject_entry,
+                                    academic_subject.subject_entry_update
+                                  FROM
+                                    academic_subject
+                                  WHERE
+                                    academic_subject.subject_category = 3
                                   ORDER BY
                                     academic_subject.subject_order
                                  ");

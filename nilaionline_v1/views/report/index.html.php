@@ -49,6 +49,7 @@
             <table class="frame-form">
                 <tr>
                     <td><b>Nama Siswa :</b></td>
+                    <td><b>Keterangan Rapor :</b></td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
@@ -62,7 +63,16 @@
                     </td>
                     <td>
                         <?php
+                        Form::create('select', 'report_description');
+                        Form::option(array('ts'=>'Tengah Semester', 'as' => 'Akhir Semester'));
+                        Form::properties(array('style' => 'width:120px;'));
+                        Form::commit();
+                        ?>
+                    </td>
+                    <td>
+                        <?php
                         Form::create('submit', 'btn_preview');
+                        Form::style('btn-green');
                         Form::value('Pratinjau');
                         Form::commit();
                         ?>
@@ -77,7 +87,7 @@
     </div>
     <div class="view-score"  style="border: 1px solid #ccc;margin: 0 5px 5px 5px;">
         <div class="information-box" style="margin: 5px;">
-            Untuk melihat rapor siswa silahkan pilih nama siswa kemudian klik tombol pratampil.
+            Untuk melihat laporan hasil belajar siswa silahkan pilih nama siswa dan keterangan rapor kemudian klik tombol pratampil.
         </div>
         <iframe id="frame-report" frameborder="0" style="margin: 5px;width: 755px;height: 500px;"></iframe>
     </div>

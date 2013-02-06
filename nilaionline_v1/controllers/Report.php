@@ -99,7 +99,9 @@ class Report extends Controller {
         if ($student_list) {
 
             $student_info = $student_list[0];
-            $subject_score_list = $this->model->selectSubjectScoreList();
+            $must_subject_list = $this->model->selectMustSubject();
+            $choice_subject_list = $this->model->selectChoiceSubject();
+            $mulok_subject_list = $this->model->selectMulokSubject();
 
             $terbilang = Src::plugin()->PHPTerbilang();
 
@@ -171,21 +173,21 @@ class Report extends Controller {
                 }
                 .info-student-label-name {
                     width : 100px;
-                    font-size : 10pt;
+                    font-size : 9pt;
                     font-weight : bold;
                 }
                 .info-student-label-sparator {
                     width : 10px;
-                    font-size : 10pt;
+                    font-size : 9pt;
                     font-weight : bold;
                 }
                 .info-student-label-content {
                     width : 400px;
-                    font-size : 10pt;
+                    font-size : 9pt;
                 }
                 .title-period {
                     text-align : center;
-                    font-size : 10pt;
+                    font-size : 9pt;
                     font-weight : bold;
                     width : 187px;
                     border-bottom : 1px solid #000;
@@ -202,7 +204,7 @@ class Report extends Controller {
                 }
                 .blank-column-2 {
                     height : 10px;
-                    font-size : 10px;
+                    font-size : 5px;
                 }
                 .box-score-list-head {
                     text-align : center;
@@ -296,7 +298,13 @@ class Report extends Controller {
                     border-bottom : 1px solid #000;
                 }
                 .signature {
-                     font-size:10pt;
+                     font-size:9pt;
+                }
+                .box-score-list-choice {
+                    color : #000;
+                    font-size : 9pt;
+                    background : #fff;
+                    border-right : 1px solid #000;
                 }
             </style>
             <table width="100%" cellpadding="2" cellspacing="0">
@@ -417,9 +425,10 @@ class Report extends Controller {
                 </tr>
             </table>
             <table cellpadding="4" cellspacing="0">';
-
+            
+            /* Daftar Mata Pelajaran Wajib */
             $idx = 1;
-            foreach ($subject_score_list as $rowscore) {
+            foreach ($must_subject_list as $rowscore) {
                 $html .='<tr>
                     <td align="center" width="40" class="box-score-list-content-first">' . $idx . '.</td>
                     <td align="left" width="225" class="box-score-list-content"> ' . $rowscore['subject_name'] . ' </td>
@@ -429,6 +438,55 @@ class Report extends Controller {
                     <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
                 </tr>';
                 $idx++;
+            }
+            
+            /* Daftar Mata Pelajaran Pilihan */
+            $rowspan_choice_subject_list = count($choice_subject_list) + 1;
+            $html .='<tr>
+                    <td align="center" width="40" class="box-score-list-content-first" rowspan="' . $rowspan_choice_subject_list . '">' . $idx . '.</td>
+                    <td align="left" class="box-score-list-choice"> Pilihan : </td>
+                    <td align="left" class="box-score-list-choice">&nbsp;</td>
+                    <td align="left" class="box-score-list-choice">&nbsp;</td>
+                    <td align="left" class="box-score-list-choice">&nbsp;</td>
+                    <td align="left" class="box-score-list-choice">&nbsp;</td>
+                </tr>';
+            
+            $numbering_choice_subject = 'a';
+            foreach ($choice_subject_list as $rowscore) {
+                $html .='<tr>
+                    <td align="left" width="225" class="box-score-list-content"> ' . $numbering_choice_subject . '. ' . $rowscore['subject_name'] . ' </td>
+                    <td align="center" width="50" class="box-score-list-content">80</td>
+                    <td align="center" width="60" class="box-score-list-content">78</td>
+                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja(78)) . '</td>
+                    <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
+                </tr>';
+                $numbering_choice_subject++;
+            }
+            
+            
+            $idx++;
+            
+            /* Daftar Mata Pelajaran Muatan Lokal */
+            $rowspan_mulok_subject_list = count($mulok_subject_list) + 1;
+            $html .='<tr>
+                    <td align="center" width="40" class="box-score-list-content-first" rowspan="' . $rowspan_mulok_subject_list . '">' . $idx . '.</td>
+                    <td align="left" class="box-score-list-choice"> Pilihan : </td>
+                    <td align="left" class="box-score-list-choice">&nbsp;</td>
+                    <td align="left" class="box-score-list-choice">&nbsp;</td>
+                    <td align="left" class="box-score-list-choice">&nbsp;</td>
+                    <td align="left" class="box-score-list-choice">&nbsp;</td>
+                </tr>';
+            
+            $numbering_mulok_subject = 'a';
+            foreach ($mulok_subject_list as $rowscore) {
+                $html .='<tr>
+                    <td align="left" width="225" class="box-score-list-content"> ' . $numbering_mulok_subject . '. ' . $rowscore['subject_name'] . ' </td>
+                    <td align="center" width="50" class="box-score-list-content">80</td>
+                    <td align="center" width="60" class="box-score-list-content">78</td>
+                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja(78)) . '</td>
+                    <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
+                </tr>';
+                $numbering_mulok_subject++;
             }
 
 
@@ -452,7 +510,7 @@ class Report extends Controller {
             </table>
             <table cellpadding="0" cellspacing="0">
                 <tr>
-                    <td class="blank-column">&nbsp;</td>
+                    <td class="blank-column-2">&nbsp;</td>
                 </tr>
             </table>
             <table cellpadding="4" cellspacing="0">
@@ -465,6 +523,11 @@ class Report extends Controller {
                     <td align="left" width="315" class="box-score-list-content-first">1. Ketangkasan Office</td>
                     <td align="center" width="60" class="box-score-list-content">A</td>
                     <td align="center" width="330" class="box-score-list-content">sangat baik</td>
+                </tr>
+                <tr>
+                    <td align="left" width="315" class="box-score-list-content-first">2. Paskibra</td>
+                    <td align="center" width="60" class="box-score-list-content">B</td>
+                    <td align="center" width="330" class="box-score-list-content">baik</td>
                 </tr>
                 <tr>
                     <td align="left" width="315" class="box-score-list-content-first">2. Paskibra</td>

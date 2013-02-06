@@ -76,25 +76,6 @@
     font-size: 11px;
 }
 
-#online-score .box-score-check input[type=submit] {
-    padding: 5px 6px 5px 25px;
-    border: 1px solid #328503;
-    color: #fff;
-    background: url('../images/document_preview_archive.png') no-repeat;
-    background-position: 5px center;
-    background-color: #429c0f;
-    font-family: Arial,Helvetica,sans-serif;
-    font-size: 11px;
-    cursor: pointer;
-    opacity:0.8;
-    filter:alpha(opacity=80); /* For IE8 and earlier */
-}
-
-#online-score .box-score-check input[type=submit]:hover {
-    opacity:1.0;
-    filter:alpha(opacity=100); /* For IE8 and earlier */
-}
-
 #online-score .box-info {
     margin: 10px 2px;
     padding-top: 10px;
