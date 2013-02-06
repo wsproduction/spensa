@@ -23,6 +23,7 @@ class ClassgroupModel extends Model {
                                     academic_grade.grade_id,
                                     academic_grade.grade_title,
                                     academic_grade.grade_name,
+                                    employees.employees_id,
                                     employees.employees_nip,
                                     employees.employess_name,
                                     academic_period.period_id,
@@ -78,29 +79,26 @@ class ClassgroupModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectMidSocoreByScoreFilter($student_id, $subject, $period, $semester) {
+    public function selectSocoreByScoreFilter($student, $subject, $period, $semester, $type) {
         $sth = $this->db->prepare('
-                                    SELECT 
-                                        academic_score_mid.score_mid_id,
-                                        academic_score_mid.score_mid_value,
-                                        academic_score_mid.score_mid_student,
-                                        academic_score_mid.score_mid_period,
-                                        academic_score_mid.score_mid_semester,
-                                        academic_score_mid.score_mid_subject,
-                                        academic_score_mid.score_mid_entry,
-                                        academic_score_mid.score_mid_entry_update
+                                      SELECT 
+                                        academic_score.score_id,
+                                        academic_score.score_student,
+                                        academic_score.score_value
                                       FROM
-                                        academic_score_mid
+                                        academic_score
                                       WHERE
-                                        academic_score_mid.score_mid_student IN (' . $student_id . ') AND 
-                                        academic_score_mid.score_mid_period = :period AND 
-                                        academic_score_mid.score_mid_semester = :semester  AND 
-                                        academic_score_mid.score_mid_subject = :subject
+                                        academic_score.score_student IN (' . $student . ') AND 
+                                        academic_score.score_subject = :subject AND 
+                                        academic_score.score_period = :period AND 
+                                        academic_score.score_semester = :semester AND 
+                                        academic_score.score_type = :type
                           ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':subject', $subject);
         $sth->bindValue(':period', $period);
         $sth->bindValue(':semester', $semester);
-        $sth->bindValue(':subject', $subject);
+        $sth->bindValue(':type', $type);
         $sth->execute();
         return $sth->fetchAll();
     }
@@ -132,111 +130,62 @@ class ClassgroupModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function updateMidScore($scoreid, $score) {
+    public function updateScore($scoreid, $score) {
         $sth = $this->db->prepare('
                                 UPDATE
-                                    academic_score_mid
-                                SET
-                                    score_mid_value = :score,
-                                    score_mid_entry_update = NOW()
-                                WHERE
-                                    academic_score_mid.score_mid_id = :scoreid ;
+                                    academic_score
+                                  SET
+                                    score_value = :score,
+                                    score_entry_update = NOW()
+                                  WHERE
+                                    academic_score.score_id = :scoreid
                           ');
         $sth->bindValue(':scoreid', $scoreid);
         $sth->bindValue(':score', $score);
         return $sth->execute();
     }
 
-    public function saveMidScore($student_id, $score, $subject_id, $peiod_id, $semester_id) {
+    public function saveScore($student_id, $score, $subject_id, $period_id, $semester_id, $type_id) {
         $sth = $this->db->prepare('
                                 INSERT INTO
-                                    academic_score_mid(
-                                    score_mid_id,
-                                    score_mid_value,
-                                    score_mid_student,
-                                    score_mid_period,
-                                    score_mid_semester,
-                                    score_mid_subject,
-                                    score_mid_entry,
-                                    score_mid_entry_update)
+                                    academic_score(
+                                    score_id,
+                                    score_student,
+                                    score_subject,
+                                    score_period,
+                                    score_semester,
+                                    score_type,
+                                    score_value,
+                                    score_entry,
+                                    score_entry_update,
+                                    score_status)
                                   VALUES(
-                                    ( SELECT IF (
-                                        (SELECT COUNT(e.score_mid_id) FROM academic_score_mid AS e 
-                                                WHERE e.score_mid_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
-                                                ORDER BY e.score_mid_id DESC LIMIT 1
+                                    (SELECT IF (
+                                        (SELECT COUNT(e.score_id) FROM academic_score AS e 
+                                                WHERE e.score_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                ORDER BY e.score_id DESC LIMIT 1
                                         ) > 0,
-                                        (SELECT ( e.score_mid_id + 1 ) FROM academic_score_mid AS e 
-                                                WHERE e.score_mid_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
-                                                ORDER BY e.score_mid_id DESC LIMIT 1),
-                                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"0001")))
+                                        (SELECT ( e.score_id + 1 ) FROM academic_score AS e 
+                                                WHERE e.score_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                ORDER BY e.score_id DESC LIMIT 1),
+                                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"0001")))
                                     ),
+                                    :student,
+                                    :subject,
+                                    :period,
+                                    :semester,
+                                    :type,
                                     :score,
-                                    :student_id,
-                                    :period_id,
-                                    :semester_id,
-                                    :subject_id,
                                     NOW(),
-                                    NOW());
+                                    NOW(),
+                                    1)
                           ');
-        $sth->bindValue(':student_id', $student_id);
+        $sth->bindValue(':student', $student_id);
+        $sth->bindValue(':subject', $subject_id);
+        $sth->bindValue(':period', $period_id);
+        $sth->bindValue(':semester', $semester_id);
+        $sth->bindValue(':type', $type_id);
         $sth->bindValue(':score', $score);
-        $sth->bindValue(':period_id', $peiod_id);
-        $sth->bindValue(':semester_id', $semester_id);
-        $sth->bindValue(':subject_id', $subject_id);
-        return $sth->execute();
-    }
-
-    public function updateFinalScore($scoreid, $score) {
-        $sth = $this->db->prepare('
-                                UPDATE
-                                    academic_score_final
-                                SET
-                                    score_final_value = :score,
-                                    score_final_entry_update = NOW()
-                                WHERE
-                                    academic_score_final.score_final_id = :scoreid;
-                          ');
-        $sth->bindValue(':scoreid', $scoreid);
-        $sth->bindValue(':score', $score);
-        return $sth->execute();
-    }
-
-    public function saveFinalScore($student_id, $score, $subject_id, $peiod_id, $semester_id) {
-        $sth = $this->db->prepare('
-                            INSERT INTO
-                                academic_score_final(
-                                score_final_id,
-                                score_final_student,
-                                score_final_subject,
-                                score_final_period,
-                                score_final_semester,
-                                score_final_value,
-                                score_final_entry,
-                                score_final_entry_update)
-                              VALUES(
-                                ( SELECT IF (
-                                    (SELECT COUNT(e.score_final_id) FROM academic_score_final AS e 
-                                            WHERE e.score_final_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
-                                            ORDER BY e.score_final_id DESC LIMIT 1
-                                    ) > 0,
-                                    (SELECT ( e.score_final_id + 1 ) FROM academic_score_final AS e 
-                                            WHERE e.score_final_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"%")) 
-                                            ORDER BY e.score_final_id DESC LIMIT 1),
-                                    (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y"),DATE_FORMAT(CURDATE(),"%m%d"),"0001")))
-                                ),
-                                :student_id,
-                                :subject_id,
-                                :period_id,
-                                :semester_id,
-                                :score,
-                                NOW(),
-                                NOW());
-                          ');
-        $sth->bindValue(':student_id', $student_id);
-        $sth->bindValue(':score', $score);
-        $sth->bindValue(':period_id', $peiod_id);
-        $sth->bindValue(':semester_id', $semester_id);
-        $sth->bindValue(':subject_id', $subject_id);
         return $sth->execute();
     }
 

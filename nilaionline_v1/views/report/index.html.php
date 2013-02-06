@@ -41,7 +41,7 @@
     <div class="box-score-check" style="margin: 0 5px;">
         <div class="box-frame-check">
             <?php
-            Form::begin('fScoreCheck', 'report/preview', 'post', true);
+            Form::begin('fScoreCheck', 'report/generate', 'post', true);
             Form::create('hidden', 'hidden_classgroup');
             Form::value($guardian_info['classgroup_id']);
             Form::commit();

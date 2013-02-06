@@ -6,7 +6,7 @@ class Report extends Controller {
         parent::__construct();
     }
 
-    public function printScore($classgroup_id = 0) {
+    public function preview($classgroup_id = 0) {
         Web::setTitle('Cetak Laporan Hasil Belajar Siswa');
         Session::init();
         $user_references = Session::get('user_references');
@@ -16,7 +16,6 @@ class Report extends Controller {
             $this->view->guardian_info = $guardian_info;
 
             $this->view->link_back = $this->content->setParentLink('guardian/page/' . $classgroup_id);
-            $this->view->link_rapor = $this->content->setLink('report/printscore/' . $classgroup_id);
             $this->view->optionStudent = $this->studentOption($classgroup_id);
             $this->view->optionReportType = $this->optionReportType();
 
@@ -95,12 +94,12 @@ class Report extends Controller {
         $list = $this->model->selectRepotType();
         $option = array();
         foreach ($list as $row) {
-            $option[$row['report_type_id']] = $row['report_type_description'];
+            $option[$row['score_type_id']] = $row['score_type_description'];
         }
         return $option;
     }
 
-    public function preview($info_id = 0) {
+    public function generate($info_id = 0) {
 
         list($classgroup_id, $nis, $report_type) = explode('.', $info_id);
         $title_head = "";
@@ -514,12 +513,12 @@ class Report extends Controller {
                 <tr>
                     <td align="center" width="315" class="box-score-list-sumary-first"><b>JUMLAH</b></td>
                     <td align="center" width="60" class="box-score-list-sumary">980</td>
-                    <td align="center" width="330" class="box-score-list-sumary">' . strtolower($terbilang->eja(980)) . '</td>
+                    <td align="left" width="330" class="box-score-list-sumary">' . strtolower($terbilang->eja(980)) . '</td>
                 </tr>
                 <tr>
                     <td align="center" width="315" class="box-score-list-average-first"><b>RATA-RATA</b></td>
                     <td align="center" width="60" class="box-score-list-average">78</td>
-                    <td align="center" width="330" class="box-score-list-average">' . strtolower($terbilang->eja(78)) . '</td>
+                    <td align="left" width="330" class="box-score-list-average">' . strtolower($terbilang->eja(78)) . '</td>
                 </tr>
             </table>
             <table cellpadding="0" cellspacing="0">

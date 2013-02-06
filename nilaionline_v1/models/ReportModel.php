@@ -194,10 +194,10 @@ class ReportModel extends Model {
     public function selectRepotType() {
         $sth = $this->db->prepare("
                                   SELECT 
-                                    academic_report_type.report_type_id,
-                                    academic_report_type.report_type_description
+                                    academic_score_type.score_type_id,
+                                    academic_score_type.score_type_description
                                   FROM
-                                    academic_report_type
+                                    academic_score_type
                                  ");
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();

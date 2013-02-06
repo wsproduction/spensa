@@ -16,7 +16,7 @@ class Guardian extends Controller {
             $this->view->guardian_info = $guardian_info;
 
             $this->view->link_back = $this->content->setParentLink('teaching');
-            $this->view->link_rapor = $this->content->setParentLink('report/printscore/' . $classgroup_id);
+            $this->view->link_rapor = $this->content->setParentLink('report/preview/' . $classgroup_id);
             $this->view->link_read_subject = $this->content->setLink('guardian/readsubject/' . $classgroup_id);
             $this->view->link_read_pbkl = $this->content->setLink('guardian/readpbkl/' . $classgroup_id);
             $this->view->link_read_eskul = $this->content->setLink('guardian/readeskul/' . $classgroup_id);

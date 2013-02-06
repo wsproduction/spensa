@@ -11,10 +11,18 @@
             <tr>
                 <td class="label">WALI KELAS</td>
                 <td class="sparator">:</td>
-                <td class="content"><?php echo $class_info['employess_name']; ?></td>
+                <td class="content">
+                    <?php 
+                        $guardian_name = '-';
+                        if ($class_info['employees_id']!='000000000000') {
+                            $guardian_name = $class_info['employess_name'];
+                        }
+                        echo $guardian_name; 
+                    ?>
+                </td>
             </tr>
             <tr>
-                <td class="label">TOTAL MANAGER</td>
+                <td class="label">TOTAL MENGAJAR</td>
                 <td class="sparator">:</td>
                 <td class="content"><?php echo $class_info['teaching_total_time'] . ' Jam'; ?></td>
             </tr>
@@ -75,9 +83,9 @@
                     </div>
                     <div class="fl-right">
                         <?php
-                        URL::link($link_save_mid_score, "Simpan", true, array('id' => 'button_save_mid_score', 'class' => 'btn-blue'));
+                        URL::link($link_score_save, "Simpan", true, array('id' => 'button_save_mid_score', 'class' => 'btn-blue'));
                         echo " ";
-                        URL::link($link_export_midscore, "Export", true, array('id' => 'button_export_mid_score', 'class' => 'btn-blue'));
+                        URL::link($link_score_export, "Export", true, array('id' => 'button_export_mid_score', 'class' => 'btn-blue'));
                         echo " ";
                         URL::link("#", "Import", true, array('id' => 'button_import_mid_score', 'class' => 'btn-blue'));
                         echo " ";
@@ -87,7 +95,7 @@
                     <div class="cl"></div>
                 </div>
 
-                <table id="list-mid-score" class="table-list" style="width: 100%;margin: 5px 0;" cellspacing="0" cellpading="0" action="<?php echo $link_read_mid_score; ?>">
+                <table id="list-mid-score" class="table-list" style="width: 100%;margin: 5px 0;" cellspacing="0" cellpading="0" action="<?php echo $link_score_read; ?>">
                     <thead>
                         <tr>
                             <td align="center" class="first" colspan="3" style="border-bottom: none;">NOMOR</td>
@@ -120,9 +128,9 @@
                     </div>
                     <div class="fl-right">
                         <?php
-                        URL::link($link_save_final_score, "Simpan", true, array('id' => 'button_save_final_score', 'class' => 'btn-blue'));
+                        URL::link($link_score_save, "Simpan", true, array('id' => 'button_save_final_score', 'class' => 'btn-blue'));
                         echo " ";
-                        URL::link($link_export_finalscore, "Export", true, array('id' => 'button_export_final_score', 'class' => 'btn-blue'));
+                        URL::link($link_score_export, "Export", true, array('id' => 'button_export_final_score', 'class' => 'btn-blue'));
                         echo " ";
                         URL::link("#", "Import", true, array('id' => 'button_import_final_score', 'class' => 'btn-blue'));
                         echo " ";
@@ -132,7 +140,7 @@
                     <div class="cl"></div>
                 </div>
 
-                <table id="list-final-score" class="table-list" style="width: 100%;margin: 5px 0;" cellspacing="0" cellpading="0"  action="<?php echo $link_read_final_score; ?>">
+                <table id="list-final-score" class="table-list" style="width: 100%;margin: 5px 0;" cellspacing="0" cellpading="0"  action="<?php echo $link_score_read; ?>">
                     <thead>
                         <tr>
                             <td align="center" class="first" colspan="3" style="border-bottom: none;">NOMOR</td>
@@ -288,10 +296,11 @@
             var period = $('#hidden_period_id').val();
             var semester = $('#hidden_semester_id').val();
             var mlc = $('#hidden_mlc').val();
+            var type = 1; /* 1 : Tengah Semester */
             
             $(this).loadingProgress('start');
             
-            $.post(link, {subject:subject, period:period, semester:semester, mlc:mlc}, function (o){
+            $.post(link, {subject:subject, period:period, semester:semester, mlc:mlc, type:type}, function (o){
                 $('#list-mid-score').children('tbody').attr('count',o.count);
                 $('#list-mid-score').children('tbody').html(o.row); 
                 
@@ -317,6 +326,7 @@
             var subject = $('#hidden_subject_id').val();
             var period = $('#hidden_period_id').val();
             var semester = $('#hidden_semester_id').val();
+            var type = 1; /* 1 : Tengah Semester */
             var error_count = 0;
             var $list;
             
@@ -341,7 +351,7 @@
                 
             if (error_count == 0) {
                 $(this).loadingProgress('start');
-                $.post(url, {subject:subject, period:period, semester:semester, data:id}, function(o){
+                $.post(url, {subject:subject, period:period, semester:semester, type:type, data:id}, function(o){
                     if (o) {
                         alert('Data Nilai Telah Disimpan.');
                     } else {
@@ -357,10 +367,10 @@
         });
                 
         $('#button_export_mid_score').live('click', function(){
-            var semester = $('#hidden_semester_id').val();
+            var type = 1; /* 1 : Tengah Semester */
             var conf = confirm("Anda yakin akan melakukan export data nilai?");
             if (conf) {
-                window.location =  $(this).attr('href') + '_' + semester;
+                window.location =  $(this).attr('href') + '.' + type;
             }  
             return false;
         });
@@ -433,10 +443,11 @@
             var period = $('#hidden_period_id').val();
             var semester = $('#hidden_semester_id').val();
             var mlc = $('#hidden_mlc').val();
+            var type = 2; /* 1 : Tengah Semester */
             
             $(this).loadingProgress('start');
             
-            $.post(link, {score_type:score_type, subject:subject, period:period, semester:semester, mlc:mlc}, function (o){
+            $.post(link, {score_type:score_type, subject:subject, period:period, semester:semester, mlc:mlc, type:type}, function (o){
                 $('#list-final-score').children('tbody').attr('count',o.count);
                 $('#list-final-score').children('tbody').html(o.row);
                 
@@ -465,6 +476,7 @@
             var subject = $('#hidden_subject_id').val();
             var period = $('#hidden_period_id').val();
             var semester = $('#hidden_semester_id').val();
+            var type = 2; /* 1 : Tengah Semester */
             var error_count = 0;
             var $list;
                         
@@ -487,7 +499,7 @@
             }
                 
             if (error_count == 0) {
-                $.post(url, {score_type:score_type, subject:subject, period:period, semester:semester, data:id}, function(o){
+                $.post(url, {score_type:score_type, subject:subject, period:period, semester:semester, type:type, data:id}, function(o){
                     if (o) {
                         alert('Data Nilai Telah Disimpan.');
                     } else {
@@ -502,11 +514,11 @@
         });
         
         $('#button_export_final_score').live('click', function(){
-            var semester = $('#score_type_final').val();
-            var conf = confirm("Anda yakin akan melakukan export data?");
+            var type = 2; /* 1 : Tengah Semester */
+            var conf = confirm("Anda yakin akan melakukan export data nilai?");
             if (conf) {
-                window.location =  $(this).attr('href') + '_' + semester;
-            }
+                window.location =  $(this).attr('href') + '.' + type;
+            }  
             return false;
         });
         
