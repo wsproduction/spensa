@@ -64,7 +64,7 @@
                     <td>
                         <?php
                         Form::create('select', 'report_description');
-                        Form::option(array('ts'=>'Tengah Semester', 'as' => 'Akhir Semester'));
+                        Form::option($optionReportType);
                         Form::properties(array('style' => 'width:120px;'));
                         Form::commit();
                         ?>
@@ -129,7 +129,8 @@
             var action = $(this).attr('action');
             var classgroup = $('#hidden_classgroup').val();
             var student = $('#student').val();
-            $('#frame-report').attr('src', action + '/' + classgroup + '.' + student);
+            var report_description = $('#report_description').val();
+            $('#frame-report').attr('src', action + '/' + classgroup + '.' + student + '.' + report_description);
             return false;
         });
     });

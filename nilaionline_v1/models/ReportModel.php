@@ -100,7 +100,10 @@ class ReportModel extends Model {
                                     academic_grade.grade_name,
                                     academic_semester.semester_name,
                                     academic_period.period_years_start,
-                                    academic_period.period_years_end
+                                    academic_period.period_years_end,
+                                    academic_semester.semester_id,
+                                    academic_grade.grade_id,
+                                    academic_period.period_id
                                   FROM
                                     academic_classhistory
                                     INNER JOIN academic_student ON (academic_classhistory.classhistory_student = academic_student.student_nis)
@@ -120,26 +123,34 @@ class ReportModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectMustSubject() {
+    public function selectMustSubject($period, $semester, $grade) {
         $sth = $this->db->prepare("
                                   SELECT 
                                     academic_subject.subject_id,
                                     academic_subject.subject_name,
                                     academic_subject.subject_order,
                                     academic_subject.subject_entry,
-                                    academic_subject.subject_entry_update
+                                    academic_subject.subject_entry_update,
+                                    academic_mlc.mlc_value
                                   FROM
-                                    academic_subject
+                                    academic_mlc
+                                    INNER JOIN academic_subject ON (academic_mlc.mlc_subject = academic_subject.subject_id)
                                   WHERE
-                                    academic_subject.subject_category = 1
+                                    academic_subject.subject_category = 1 AND 
+                                    academic_mlc.mlc_period = :period AND 
+                                    academic_mlc.mlc_semester = :semester AND 
+                                    academic_mlc.mlc_grade = :grade
                                   ORDER BY
                                     academic_subject.subject_order
                                  ");
+        $sth->bindValue(':period', $period);
+        $sth->bindValue(':semester', $semester);
+        $sth->bindValue(':grade', $grade);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectChoiceSubject() {
         $sth = $this->db->prepare("
                                   SELECT 
@@ -159,7 +170,7 @@ class ReportModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectMulokSubject() {
         $sth = $this->db->prepare("
                                   SELECT 
@@ -174,6 +185,19 @@ class ReportModel extends Model {
                                     academic_subject.subject_category = 3
                                   ORDER BY
                                     academic_subject.subject_order
+                                 ");
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectRepotType() {
+        $sth = $this->db->prepare("
+                                  SELECT 
+                                    academic_report_type.report_type_id,
+                                    academic_report_type.report_type_description
+                                  FROM
+                                    academic_report_type
                                  ");
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();

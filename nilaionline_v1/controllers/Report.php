@@ -18,6 +18,7 @@ class Report extends Controller {
             $this->view->link_back = $this->content->setParentLink('guardian/page/' . $classgroup_id);
             $this->view->link_rapor = $this->content->setLink('report/printscore/' . $classgroup_id);
             $this->view->optionStudent = $this->studentOption($classgroup_id);
+            $this->view->optionReportType = $this->optionReportType();
 
             $this->view->render('report/index');
         } else {
@@ -90,16 +91,29 @@ class Report extends Controller {
         return $option;
     }
 
+    private function optionReportType() {
+        $list = $this->model->selectRepotType();
+        $option = array();
+        foreach ($list as $row) {
+            $option[$row['report_type_id']] = $row['report_type_description'];
+        }
+        return $option;
+    }
+
     public function preview($info_id = 0) {
 
-        list($classgroup_id, $nis) = explode('.', $info_id);
+        list($classgroup_id, $nis, $report_type) = explode('.', $info_id);
+        $title_head = "";
+        if ($report_type == 1) {
+            $title_head = "LAPORAN HASIL BELAJAR SISWA TENGAH ";
+        }
 
         $student_list = $this->model->selectStudentById($classgroup_id, $nis);
 
         if ($student_list) {
 
             $student_info = $student_list[0];
-            $must_subject_list = $this->model->selectMustSubject();
+            $must_subject_list = $this->model->selectMustSubject($student_info['period_id'], $student_info['semester_id'], $student_info['grade_id']);
             $choice_subject_list = $this->model->selectChoiceSubject();
             $mulok_subject_list = $this->model->selectMulokSubject();
 
@@ -334,7 +348,7 @@ class Report extends Controller {
                     <td class="title-head">
                         <table cellpadding="2" cellspacing="0">
                             <tr>
-                                <td>LAPORAN HASIL BELAJAR SISWA TENGAH ' . strtoupper($student_info['semester_name']) . '</td>
+                                <td>' . $title_head . ' ' . strtoupper($student_info['semester_name']) . '</td>
                             </tr>
                         </table>
                     </td>
@@ -425,21 +439,21 @@ class Report extends Controller {
                 </tr>
             </table>
             <table cellpadding="4" cellspacing="0">';
-            
+
             /* Daftar Mata Pelajaran Wajib */
             $idx = 1;
             foreach ($must_subject_list as $rowscore) {
                 $html .='<tr>
                     <td align="center" width="40" class="box-score-list-content-first">' . $idx . '.</td>
                     <td align="left" width="225" class="box-score-list-content"> ' . $rowscore['subject_name'] . ' </td>
-                    <td align="center" width="50" class="box-score-list-content">80</td>
+                    <td align="center" width="50" class="box-score-list-content">' . $rowscore['mlc_value'] . '</td>
                     <td align="center" width="60" class="box-score-list-content">78</td>
                     <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja(78)) . '</td>
                     <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
                 </tr>';
                 $idx++;
             }
-            
+
             /* Daftar Mata Pelajaran Pilihan */
             $rowspan_choice_subject_list = count($choice_subject_list) + 1;
             $html .='<tr>
@@ -450,7 +464,7 @@ class Report extends Controller {
                     <td align="left" class="box-score-list-choice">&nbsp;</td>
                     <td align="left" class="box-score-list-choice">&nbsp;</td>
                 </tr>';
-            
+
             $numbering_choice_subject = 'a';
             foreach ($choice_subject_list as $rowscore) {
                 $html .='<tr>
@@ -462,10 +476,10 @@ class Report extends Controller {
                 </tr>';
                 $numbering_choice_subject++;
             }
-            
-            
+
+
             $idx++;
-            
+
             /* Daftar Mata Pelajaran Muatan Lokal */
             $rowspan_mulok_subject_list = count($mulok_subject_list) + 1;
             $html .='<tr>
@@ -476,7 +490,7 @@ class Report extends Controller {
                     <td align="left" class="box-score-list-choice">&nbsp;</td>
                     <td align="left" class="box-score-list-choice">&nbsp;</td>
                 </tr>';
-            
+
             $numbering_mulok_subject = 'a';
             foreach ($mulok_subject_list as $rowscore) {
                 $html .='<tr>
