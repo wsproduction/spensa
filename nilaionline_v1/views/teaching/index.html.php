@@ -78,14 +78,14 @@
         <div class="cl"></div>
     </div>
     <div class="description">Berikut adalah daftar tugas mengajar : </div>
-    <div style="padding: 5px;"><b>&bullet; MATA PELAJARAN WAJIB</b></div>
+    <div style="padding: 5px;"><b>&bullet; MATA PELAJARAN</b></div>
     <div>
         <table id="list-teaching" cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching; ?>">
             <thead>
                 <tr>
                     <td class="first" style="width: 40px;text-align: center;">No.</td>
                     <td>Mata Pelajaran</td>
-                    <td style="width: 240px;text-align: center;">Kelas</td>
+                    <td style="width: 150px;text-align: center;">Kelas</td>
                     <td style="width: 100px;text-align: center;">Total Mengajar</td>
                 </tr>
             </thead>
@@ -100,27 +100,7 @@
             </tbody>
         </table>
     </div>
-    <div style="padding: 5px;"><b>&bullet; MUATAN LOKAL</b></div>
-    <div style="padding: 5px;">
-        <table id="list-teaching-pbkl" style="width: 100%" class="table-list"  cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching_pbkl; ?>">
-            <thead>
-                <tr>
-                    <td class="first" style="width: 50px;text-align: center;">No.</td>
-                    <td>Nama Muatan Lokal</td>
-                    <td style="width: 100px;text-align: center;">Total Mengajar</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="first" colspan="3">
-                        <div class="information-box">
-                            Data mengajar tidak ditemukan.
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    
     <div style="padding: 5px;"><b>&bullet; PENGEMBANGAN DIRI</b></div>
     <div style="padding: 5px;">
         <table id="list-teaching-ekskul" style="width: 100%" class="table-list"  cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching_ekskul; ?>">
@@ -184,23 +164,6 @@
             }, 'json');
         };
         
-        var read_pbkl = function() {
-            var link = $('#list-teaching-pbkl').attr('link_r');       
-            var period = $('#hidden_option_period').val();
-            
-            var period_split = period.split('_');
-            
-            $(this).loadingProgress('start');
-            
-            $.post(link, { p : period_split[0],  s : period_split[1]}, function (o){
-                $('#list-teaching-pbkl').children('tbody').attr('count',o['count']);
-                $('#list-teaching-pbkl').children('tbody').html(o['row']);
-                
-                $(this).loadingProgress('stop');
-                
-            }, 'json');
-        };
-        
         var read_eksul = function() {
             var link = $('#list-teaching-ekskul').attr('link_r');       
             var period = $('#hidden_option_period').val();
@@ -220,7 +183,6 @@
         
         read_guardian_information();
         read_teaching();
-        /* read_pbkl(); */
         read_eksul();
         
         /* Checkbox Period */

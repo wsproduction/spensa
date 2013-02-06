@@ -88,6 +88,7 @@ class TeachingModel extends Model {
                                     academic_grade.grade_name,
                                     academic_classroom.classroom_id,
                                     academic_classroom.classroom_name,
+                                    academic_subject_category.subject_category_title,
                                     SUM(academic_teaching.teaching_total_time) AS total_time,
                                     ( SELECT 
                                         COUNT(at.teaching_id) AS FIELD_1 
@@ -96,6 +97,7 @@ class TeachingModel extends Model {
                                         INNER JOIN academic_classgroup ac ON (at.teaching_classgroup = ac.classgroup_id) 
                                       WHERE 
                                         at.teaching_teacher = academic_teaching.teaching_teacher AND 
+                                        at.teaching_subject = academic_subject.subject_id AND 
                                         at.teaching_period = academic_teaching.teaching_period AND 
                                         at.teaching_semester = academic_teaching.teaching_semester AND 
                                         ac.classgroup_grade = academic_grade.grade_id
@@ -129,6 +131,7 @@ class TeachingModel extends Model {
                                     INNER JOIN academic_classgroup ON (academic_teaching.teaching_classgroup = academic_classgroup.classgroup_id)
                                     INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
                                     INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
+                                    INNER JOIN academic_subject_category ON (academic_subject.subject_category = academic_subject_category.subject_category_id)
                                   WHERE
                                     academic_teaching.teaching_teacher = :teacherid AND 
                                     academic_teaching.teaching_period = :periodid AND 
@@ -953,6 +956,7 @@ class TeachingModel extends Model {
                                 academic_grade.grade_title,
                                 academic_grade.grade_name,
                                 (SELECT COUNT(ch.classhistory_id) AS FIELD_1 FROM academic_classhistory ch WHERE ch.classhistory_classgroup = academic_teaching.teaching_classgroup) AS student_count,
+                                employees.employees_id,
                                 employees.employees_nip,
                                 employees.employess_name
                               FROM

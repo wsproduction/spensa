@@ -1400,7 +1400,7 @@ class Teaching extends Controller {
                 $teaching_list .= '
                     <td valign="top" class="first" align="center">' . $idx . '</td>
                     <td valign="top">
-                        <div class="class-title">' . $row['subject_name'] . '</div>
+                        <div><span  class="class-title">' . $row['subject_name'] . ' </span> <span style="color:#999">/ ' . $row['subject_category_title'] . '</span></div>
                         <div class="link">
                             &bullet; <a href="teaching/myclass/' . $tempid . '" class="go-to-class">' . $row['total_class'] . ' Daftar Kelas</a>
                         </div>
@@ -1487,11 +1487,16 @@ class Teaching extends Controller {
 
         if ($myteaching) {
             foreach ($myteaching as $row) {
+                $guardian_name = '-';
+                if ($row['employees_id']!='000000000000') {
+                    $guardian_name = $row['employess_name'];
+                }
+                
                 $teaching_list .= '<tr id="row_' . $row['teaching_id'] . '">';
                 $teaching_list .= '     <td class="first" align="center">' . $idx . '</td>';
                 $teaching_list .= '     <td align="center">' . $row['grade_title'] . ' (' . $row['grade_name'] . ') ' . $row['classroom_name'] . '</td>';
                 $teaching_list .= '     <td align="center">' . $row['student_count'] . '</td>';
-                $teaching_list .= '     <td>' . $row['employess_name'] . '</td>';
+                $teaching_list .= '     <td>' . $guardian_name . '</td>';
                 $teaching_list .= '     <td align="center">' . $row['teaching_total_time'] . ' Jam</td>';
                 $teaching_list .= '     <td>' . date('d-m-Y H:i:s', strtotime($row['teaching_entry_update'])) . '</td>';
                 $teaching_list .= '     <td align="center"><a href="../myclassroom/' . $row['teaching_id'] . '" rel="edit">Masuk Kelas</a> &bullet; <a href="../scorerecapitulation/' . $row['teaching_id'] . '" rel="delete">Rekapitulasi Nilai</a></td>';
