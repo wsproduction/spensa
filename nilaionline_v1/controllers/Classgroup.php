@@ -20,8 +20,8 @@ class Classgroup extends Controller {
 
             $this->view->link_back = $this->content->setParentLink('myclass/view/' . $class_info['subject_id'] . '.' . $class_info['grade_id'] . '.' . $class_info['period_id'] . '.' . $class_info['semester_id']);
             $this->view->link_score_export = $this->content->setLink('classgroup/exportscore/' . $teachingid);
-            $this->view->link_score_save = $this->content->setLink('classgroup/savescore/' . $class_info['classgroup_id']);
-            $this->view->link_score_read = $this->content->setLink('classgroup/readscore/' . $class_info['classgroup_id']);
+            $this->view->link_score_save = $this->content->setLink('classgroup/savescore/' . $teachingid . '.' . $class_info['classgroup_id']);
+            $this->view->link_score_read = $this->content->setLink('classgroup/readscore/' . $teachingid . '.' . $class_info['classgroup_id']);
 
             $this->view->render('classgroup/room');
         } else {
@@ -29,17 +29,15 @@ class Classgroup extends Controller {
         }
     }
 
-    public function readScore($class_group_id = 0) {
+    public function readScore($tempid = 0) {
 
-        $subject = $this->method->post('subject');
-        $period = $this->method->post('period');
-        $semester = $this->method->post('semester');
+        list ($teachingid, $class_group_id) = explode('.', $tempid);
         $mlc = $this->method->post('mlc');
         $type = $this->method->post('type');
 
         $student_list = $this->model->selectStudentByClassGroupId($class_group_id);
         $student_id_list = $this->parsingStudentId($student_list);
-        $score_list = $this->model->selectSocoreByScoreFilter($student_id_list, $subject, $period, $semester, $type);
+        $score_list = $this->model->selectSocoreByScoreFilter($student_id_list, $teachingid, $type);
         $score_data = $this->parsingScore($score_list);
 
         $html_list = '';
@@ -83,13 +81,13 @@ class Classgroup extends Controller {
         echo json_encode(array('count' => $no - 1, 'row' => $html_list));
     }
 
-    public function saveScore($class_group_id = 0) {
+    public function saveScore($tempid = 0) {
+
+        list ($teachingid, $class_group_id) = explode('.', $tempid);
+
         if (isset($_POST['data'])) {
             $data = $_POST['data'];
 
-            $subject = $this->method->post('subject');
-            $period = $this->method->post('period');
-            $semester = $this->method->post('semester');
             $type = $this->method->post('type');
 
             try {
@@ -97,7 +95,7 @@ class Classgroup extends Controller {
 
                 $student_list = $this->model->selectStudentByClassGroupId($class_group_id);
                 $student_id_list = $this->parsingStudentId($student_list);
-                $score_list = $this->model->selectSocoreByScoreFilter($student_id_list, $subject, $period, $semester, $type);
+                $score_list = $this->model->selectSocoreByScoreFilter($student_id_list, $teachingid, $type);
                 $score_data = $this->parsingScore($score_list);
 
                 foreach ($data as $row) {
@@ -105,7 +103,7 @@ class Classgroup extends Controller {
                         $data = $score_data[$row[0]];
                         $this->model->updateScore($data['score_id'], $row[1]);
                     } else {
-                        $this->model->saveScore($row[0], $row[1], $subject, $period, $semester, $type);
+                        $this->model->saveScore($row[0], $row[1], $teachingid, $type);
                     }
                 }
                 echo json_encode(true);
@@ -127,10 +125,13 @@ class Classgroup extends Controller {
             $class_info = $class_list[0];
 
             $title = '???';
+            $filename = 'ERROR';
             if ($type_id == 1) {
                 $title = 'DAFTAR NILAI RAPOR TENGAH SEMESTER SISWA';
+                $filename = 'NILAI_RAPOR_TENGAH_SEMESTER';
             } else if ($type_id == 2) {
                 $title = 'DAFTAR NILAI RAPOR AKHIR SEMESTER SISWA';
+                $filename = 'NILAI_RAPOR_AKHIR_SEMESTER';
             }
 
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
@@ -164,7 +165,7 @@ class Classgroup extends Controller {
             // Document Description
             $objPHPExcel->getActiveSheet()->setCellValue('A4', $class_info['classgroup_id'])->setCellValue('B4', 'Kelas')->setCellValue('D4', ': ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
             $objPHPExcel->getActiveSheet()->setCellValue('A5', $class_info['period_id'] . '_' . $class_info['semester_id'])->setCellValue('B5', 'Tahun Akademik')->setCellValue('D5', ': ' . $class_info['period_years_start'] . '/' . $class_info['period_years_end'] . ' - ' . $class_info['semester_name']);
-            $objPHPExcel->getActiveSheet()->setCellValue('A6', $class_info['subject_id'])->setCellValue('B6', 'Mata Pelajaran')->setCellValue('D6', ': ' . $class_info['subject_name']);
+            $objPHPExcel->getActiveSheet()->setCellValueExplicit('A6', $teachingid, PHPExcel_Cell_DataType::TYPE_STRING)->setCellValue('B6', 'Mata Pelajaran')->setCellValue('D6', ': ' . $class_info['subject_name']);
             $objPHPExcel->getActiveSheet()->setCellValue('A7', $class_info['mlc_value'])->setCellValue('B7', 'KKM')->setCellValue('D7', ': ' . $class_info['mlc_value']);
 
             $objPHPExcel->getActiveSheet()->getStyle('B4:B9')->applyFromArray(array('font' => array('bold' => true)));
@@ -195,7 +196,7 @@ class Classgroup extends Controller {
             // List Data
             $student_list = $this->model->selectStudentByClassGroupId($class_info['classgroup_id']);
             $student_id_list = $this->parsingStudentId($student_list);
-            $score_list = $this->model->selectSocoreByScoreFilter($student_id_list, $class_info['subject_id'], $class_info['period_id'], $class_info['semester_id'], $type_id);
+            $score_list = $this->model->selectSocoreByScoreFilter($student_id_list, $teachingid, $type_id);
             $score_data = $this->parsingScore($score_list);
 
             $nourut = 0;
@@ -229,7 +230,7 @@ class Classgroup extends Controller {
 
             // Redirect output to a client’s web browser (Excel5)
             header('Content-Type: application/vnd.ms-excel');
-            header('Content-Disposition: attachment;filename="NILAI_RAPOR_TENGAH_SEMESTER-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $class_info['semester_id'] . '-' . $class_info['grade_title'] . $class_info['classroom_name'] . '.xls"');
+            header('Content-Disposition: attachment;filename="' . $filename . '-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $class_info['semester_id'] . '-' . $class_info['grade_title'] . $class_info['classroom_name'] . '.xls"');
             header('Cache-Control: max-age=0');
 
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
@@ -238,7 +239,7 @@ class Classgroup extends Controller {
         }
     }
 
-    public function importMidScore() {
+    public function importScore($type_reseource = 0) {
 
         if ($this->method->files('file', 'tmp_name')) {
             $upload = Src::plugin()->PHPUploader();
@@ -253,41 +254,47 @@ class Classgroup extends Controller {
                 $objReader = PHPExcel_IOFactory::createReader('Excel5');
                 $objPHPExcel = $objReader->load($inputFileName);
 
-                //echo '<pre>';
-                //echo ' Kelas : ' . $objPHPExcel->getActiveSheet()->getCell('A4')->getValue();
-                //echo ' Tahun Akademik : ' . $objPHPExcel->getActiveSheet()->getCell('A5')->getValue();
-                //echo ' Mata Pelajaran : ' . $objPHPExcel->getActiveSheet()->getCell('A6')->getValue();
-                //echo ' Kompetensi Dasar : ' . $objPHPExcel->getActiveSheet()->getCell('A8')->getValue();
-                //echo ' Type : ' . $objPHPExcel->getActiveSheet()->getCell('A9')->getValue();
-                //echo ' Jumlah Siswa : ' . $objPHPExcel->getActiveSheet()->getCell('A12')->getValue();
-                //echo '</pre>';
+                $type_id = $objPHPExcel->getActiveSheet()->getCell('A1')->getValue();
 
-                $subject_id = $objPHPExcel->getActiveSheet()->getCell('A6')->getValue();
-                list($period_id, $class_info['semester_id']) = explode('_', $objPHPExcel->getActiveSheet()->getCell('A5')->getValue());
-                //$task_description = $objPHPExcel->getActiveSheet()->getCell('A8')->getValue();
+                if ($type_reseource == $type_id) {
+                    try {
+                        $classgroup_id = $objPHPExcel->getActiveSheet()->getCell('A4')->getValue();
+                        $teaching_id = $objPHPExcel->getActiveSheet()->getCell('A6')->getValue();
 
-                $count_student = $objPHPExcel->getActiveSheet()->getCell('A12')->getValue();
-                $numrow = 13;
-                for ($i = 1; $i <= $count_student; $i++) {
-                    $nis = $objPHPExcel->getActiveSheet()->getCell('C' . $numrow)->getValue();
-                    $score = $objPHPExcel->getActiveSheet()->getCell('F' . $numrow)->getValue();
-                    //echo '<br>' . $i . '. ' . $nis . ' => ' . $score;
+                        $student_list = $this->model->selectStudentByClassGroupId($classgroup_id);
+                        $student_id_list = $this->parsingStudentId($student_list);
+                        $score_list = $this->model->selectSocoreByScoreFilter($student_id_list, $teaching_id, $type_id);
+                        $score_data = $this->parsingScore($score_list);
 
-                    $score_list = $this->model->selectMidSocoreByScoreFilter($nis, $subject_id, $period_id, $class_info['semester_id']);
-                    if ($score_list) {
-                        $data = $score_list[0];
-                        $this->model->updateMidScore($data['score_mid_id'], $score);
-                    } else {
-                        $this->model->saveMidScore($nis, $score, $subject_id, $period_id, $class_info['semester_id']);
+                        $count_student = $objPHPExcel->getActiveSheet()->getCell('A12')->getValue();
+                        $numrow = 13;
+                        for ($i = 1; $i <= $count_student; $i++) {
+                            $nis = $objPHPExcel->getActiveSheet()->getCell('C' . $numrow)->getValue();
+                            $score = $objPHPExcel->getActiveSheet()->getCell('F' . $numrow)->getValue();
+
+                            if (isset($score_data[$nis])) {
+                                $data = $score_data[$nis];
+                                $this->model->updateScore($data['score_id'], $score);
+                            } else {
+                                $this->model->saveScore($nis, $score, $teaching_id, $type_id);
+                            }
+
+                            $numrow++;
+                        }
+
+                        echo 'true';
+                    } catch (Exception $exc) {
+                        echo 'false';
                     }
-
-                    $numrow++;
+                } else {
+                    echo 'error';
                 }
-
-                $upload->RemoveFile($inputFileName);
+            } else {
+                echo 'false';
             }
+            $upload->RemoveFile($inputFileName);
         } else {
-            echo 'error';
+            echo 'false';
         }
     }
 

@@ -12,12 +12,12 @@
                 <td class="label">WALI KELAS</td>
                 <td class="sparator">:</td>
                 <td class="content">
-                    <?php 
-                        $guardian_name = '-';
-                        if ($class_info['employees_id']!='000000000000') {
-                            $guardian_name = $class_info['employess_name'];
-                        }
-                        echo $guardian_name; 
+                    <?php
+                    $guardian_name = '-';
+                    if ($class_info['employees_id'] != '000000000000') {
+                        $guardian_name = $class_info['employess_name'];
+                    }
+                    echo $guardian_name;
                     ?>
                 </td>
             </tr>
@@ -171,7 +171,7 @@
 
 <div id="box-import-mid-score">
     <?php
-    Form::begin('form-import-mid-score', 'classgroup/importmidscore', 'post', true);
+    Form::begin('form-import-mid-score', 'classgroup/importscore/1', 'post', true);
     ?>
     <div>File Nilai :</div>
     <div>
@@ -202,7 +202,7 @@
 
 <div id="box-import-final-score">
     <?php
-    Form::begin('form-import-final-score', 'classgroup/importfinalscore', 'post', true);
+    Form::begin('form-import-final-score', 'classgroup/importscore/2', 'post', true);
     ?>
     <div>File Nilai :</div>
     <div>
@@ -266,72 +266,75 @@
             }
         };
         
-        /* MID SCORE */
-        disabled_button(true,['#button_save_mid_score','#button_export_mid_score','#button_import_mid_score']);
-           
-        $('#list-mid-score .score_list').live('change', function() {
-            var mlc = $('#hidden_mlc').val();
-            var val = $(this).val();
-            var order = $(this).attr('order');
-            var desc = '-';
-            if (!is_empty(val)) {
-                if (parseInt(val) > parseInt(mlc)) {
-                    desc = 'Terlampaui';
-                } else if (parseInt(val) == parseInt(mlc)){
-                    desc = 'Tercapai';
-                } else {
-                    desc = 'Tidak Tercapai';
-                }
-                $(this).css('border','1px solid #ccc');
-            } else {
-                $(this).css('border','1px solid red');
-            }
-            
-            $('#list-mid-score .desc_' + order).html(desc);
-        });
+        var mlc = $('#hidden_mlc').val();
         
-        var readMidScore = function() {
-            var link = $('#list-mid-score').attr('action');
-            var subject = $('#hidden_subject_id').val();
-            var period = $('#hidden_period_id').val();
-            var semester = $('#hidden_semester_id').val();
-            var mlc = $('#hidden_mlc').val();
-            var type = 1; /* 1 : Tengah Semester */
+        /* Read Score */
+        var readScore = function(table, mlc, type, button_list) {
+            var link = $(table).attr('action');
             
             $(this).loadingProgress('start');
             
-            $.post(link, {subject:subject, period:period, semester:semester, mlc:mlc, type:type}, function (o){
-                $('#list-mid-score').children('tbody').attr('count',o.count);
-                $('#list-mid-score').children('tbody').html(o.row); 
+            $.post(link, {mlc:mlc, type:type}, function (o){
+                $(table).children('tbody').attr('count',o.count);
+                $(table).children('tbody').html(o.row); 
                 
                 $(this).loadingProgress('stop');
-                disabled_button(false,['#button_save_mid_score','#button_export_mid_score','#button_import_mid_score']);
+                disabled_button(false, button_list);
                 if (o.count > 0) {
-                    $('#list-mid-score .score_list').numeric();
+                    $(table + ' .score_list').numeric();
                 }
             }, 'json');
         };
         
-        readMidScore();
+        /* Change Score */
+        var changeScore = function(table, list_class, mlc) {
+            $(table + ' ' + list_class).live('change', function() {
+                var val = $(this).val();
+                var order = $(this).attr('order');
+                var desc = '-';
+                if (!is_empty(val)) {
+                    if (parseInt(val) > parseInt(mlc)) {
+                        desc = 'Terlampaui';
+                    } else if (parseInt(val) == parseInt(mlc)){
+                        desc = 'Tercapai';
+                    } else {
+                        desc = 'Tidak Tercapai';
+                    }
+                    $(this).css('border','1px solid #ccc');
+                } else {
+                    $(this).css('border','1px solid red');
+                }
+            
+                $(table + ' .desc_' + order).html(desc);
+            });
+        };
         
-        $('#button_filter_mid_score').live('click',function(){
-            readMidScore();
-            return false;
-        });
+        /* Import Dialog */
+        var importDialog = function(id, title) {
+            $(id).dialog({
+                title : title,
+                closeOnEscape: false,
+                autoOpen: false,
+                height: 180,
+                width: 300,
+                modal: true,
+                resizable: false,
+                draggable: true,
+                open : function() {
+                    $(this).parent().children().children('.ui-dialog-titlebar-close').hide();
+                }
+            });
+        };
         
-        $('#button_save_mid_score').live('click', function(){
-            var url = $(this).attr('href');
+        /* Save Score */
+        var saveScore = function(url, type, table) {
             var id = new Array();
             var val, nis;
-            var subject = $('#hidden_subject_id').val();
-            var period = $('#hidden_period_id').val();
-            var semester = $('#hidden_semester_id').val();
-            var type = 1; /* 1 : Tengah Semester */
             var error_count = 0;
             var $list;
             
-            for (var i = 1 ; i <= $('#list-mid-score').children('tbody').attr('count');i++) {
-                $list = $('#list-mid-score #score_list_' + i);
+            for (var i = 1 ; i <= $(table).children('tbody').attr('count');i++) {
+                $list = $(table + ' #score_list_' + i);
                 nis = $list.attr('order');
                 val = $list.val();
                 if (is_number(val)) {
@@ -351,7 +354,7 @@
                 
             if (error_count == 0) {
                 $(this).loadingProgress('start');
-                $.post(url, {subject:subject, period:period, semester:semester, type:type, data:id}, function(o){
+                $.post(url, {type:type, data:id}, function(o){
                     if (o) {
                         alert('Data Nilai Telah Disimpan.');
                     } else {
@@ -362,50 +365,61 @@
             } else {
                 $(this).loadingProgress('stop');
             }
-            
+        };
+        
+        /* MID SCORE */
+        var table_midscore = '#list-mid-score';
+        var listclass_midscore = '.score_list';
+        var type_midscore = 1;
+        var button_list_midscore = ['#button_save_mid_score','#button_export_mid_score','#button_import_mid_score'];
+        var import_dialog_midscore = '#box-import-mid-score';
+        
+        disabled_button(true ,button_list_midscore);
+        readScore(table_midscore, mlc, type_midscore, button_list_midscore);
+        changeScore(table_midscore, listclass_midscore, mlc);
+        importDialog(import_dialog_midscore, 'Import Nilai Rapor Tengah Semester');
+        
+        $('#button_filter_mid_score').live('click',function(){
+            readScore(table_midscore, mlc, type_midscore, button_list_midscore);
+            return false;
+        });
+        
+        $('#button_save_mid_score').live('click', function(){
+            saveScore($(this).attr('href'), type_midscore, table_midscore);
             return false;
         });
                 
         $('#button_export_mid_score').live('click', function(){
-            var type = 1; /* 1 : Tengah Semester */
             var conf = confirm("Anda yakin akan melakukan export data nilai?");
             if (conf) {
-                window.location =  $(this).attr('href') + '.' + type;
+                window.location =  $(this).attr('href') + '.' + type_midscore;
             }  
             return false;
         });
         
-        $('#box-import-mid-score').dialog({
-            title : 'Import Nilai Rapor Tengah Semester',
-            closeOnEscape: false,
-            autoOpen: false,
-            height: 180,
-            width: 300,
-            modal: true,
-            resizable: false,
-            draggable: true,
-            open : function() {
-                $(this).parent().children().children('.ui-dialog-titlebar-close').hide();
-            }
-        });
         
         $('#button_import_mid_score').live('click', function(){
-            $("#box-import-mid-score").dialog( "open" );
+            $(import_dialog_midscore).dialog("open");
             return false;
         });
         
         $('#form-import-mid-score input[type=button]').live('click', function(){
-            $("#box-import-mid-score").dialog( "close" );
+            $(import_dialog_midscore).dialog("close");
         });
         
         $('#form-import-mid-score').live('submit',function(){
-            
-            disabled_button(true,['#form-import-mid-score input[type=button]','#form-import-mid-score input[type=submit]']);
+            disabled_button(true, button_list_midscore);
             $(this).ajaxSubmit({
                 success : function(o) {
-                    disabled_button(false,['#form-import-mid-score input[type=button]','#form-import-mid-score input[type=submit]']);
+                    disabled_button(false, button_list_midscore);
                     $("#box-import-mid-score").dialog( "close" );
-                    readMidScore();
+                    if (o == 'true') {
+                        readScore(table_midscore, mlc, type_midscore, button_list_midscore);
+                    } else if (o == 'error') {
+                        alert('Format data tidak sesuai');
+                    } else {
+                        alert('Prposes Import Gagal');
+                    }
                 }
             });
         
@@ -413,146 +427,57 @@
         });
         
         /* FINAL SCORE */
-        disabled_button(true,['#button_save_final_score','#button_export_final_score','#button_import_final_score']);
-            
-        $('#list-final-score .score_list').live('change', function() {
-            var mlc = $('#hidden_mlc').val();
-            var val = $(this).val();
-            var order = $(this).attr('order');
-            var desc = '-';
-            if (!is_empty(val)) {
-                if (parseInt(val) > parseInt(mlc)) {
-                    desc = 'Terlampaui';
-                } else if (parseInt(val) == parseInt(mlc)){
-                    desc = 'Tercapai';
-                } else {
-                    desc = 'Tidak Tercapai';
-                }
-                $(this).css('border','1px solid #ccc');
-            } else {
-                $(this).css('border','1px solid red');
-            }
-            
-            $('#list-final-score .desc_' + order).html(desc);
-        });
+        var table_finalscore = '#list-final-score';
+        var listclass_finalscore = '.score_list';
+        var type_finalscore = 2;
+        var button_list_finalscore = ['#button_save_final_score','#button_export_final_score','#button_import_final_score'];
+        var import_dialog_finalscore = '#box-import-final-score';
         
-        var readFinalScore = function() {
-            var link = $('#list-final-score').attr('action');
-            var score_type = $('#score_type_final').val();
-            var subject = $('#hidden_subject_id').val();
-            var period = $('#hidden_period_id').val();
-            var semester = $('#hidden_semester_id').val();
-            var mlc = $('#hidden_mlc').val();
-            var type = 2; /* 1 : Tengah Semester */
-            
-            $(this).loadingProgress('start');
-            
-            $.post(link, {score_type:score_type, subject:subject, period:period, semester:semester, mlc:mlc, type:type}, function (o){
-                $('#list-final-score').children('tbody').attr('count',o.count);
-                $('#list-final-score').children('tbody').html(o.row);
-                
-                $(this).loadingProgress('stop');
-                disabled_button(false,['#button_save_final_score','#button_export_final_score','#button_import_final_score']);
-                if (o.count > 0) {
-                    $('#list-final-score .score_list').numeric();
-                }
-                
-            }, 'json');
-        };
-        
-        readFinalScore();
+        disabled_button(true ,button_list_finalscore);
+        readScore(table_finalscore, mlc, type_finalscore, button_list_finalscore);
+        changeScore(table_finalscore, listclass_finalscore, mlc);
+        importDialog(import_dialog_finalscore, 'Import Nilai Rapor Akhir Semester');
         
         $('#button_filter_final_score').live('click',function(){
-            readFinalScore();
+            readScore(table_finalscore, mlc, type_finalscore, button_list_finalscore);
             return false;
         });
         
-        
         $('#button_save_final_score').live('click', function(){
-            var url = $(this).attr('href');
-            var id = new Array();
-            var val, nis;
-            var score_type = $('#score_type_final').val();
-            var subject = $('#hidden_subject_id').val();
-            var period = $('#hidden_period_id').val();
-            var semester = $('#hidden_semester_id').val();
-            var type = 2; /* 1 : Tengah Semester */
-            var error_count = 0;
-            var $list;
-                        
-            for (var i = 1 ; i <= $('#list-final-score').children('tbody').attr('count');i++) {
-                $list = $('#list-final-score #score_list_' + i);
-                nis = $list.attr('order');
-                val = $list.val();
-                if (is_number(val)) {
-                    if ( parseInt(val) >= 0 && parseInt(val) <= 100) {
-                        id[i] = [nis,val];
-                        $list.css('border','1px solid #ccc');
-                    } else {
-                        $list.css('border','1px solid red');
-                        error_count++;
-                    }
-                } else {
-                    $list.css('border','1px solid red');
-                    error_count++;
-                }
-            }
-                
-            if (error_count == 0) {
-                $.post(url, {score_type:score_type, subject:subject, period:period, semester:semester, type:type, data:id}, function(o){
-                    if (o) {
-                        alert('Data Nilai Telah Disimpan.');
-                    } else {
-                        alert('Data Nilai Gagal Disimpan.');
-                    }
-                    $(this).loadingProgress('stop');
-                }, 'json');
-            } else {
-                $(this).loadingProgress('stop');
-            }
+            saveScore($(this).attr('href'), type_finalscore, table_finalscore);
             return false;
         });
         
         $('#button_export_final_score').live('click', function(){
-            var type = 2; /* 1 : Tengah Semester */
             var conf = confirm("Anda yakin akan melakukan export data nilai?");
             if (conf) {
-                window.location =  $(this).attr('href') + '.' + type;
+                window.location =  $(this).attr('href') + '.' + type_finalscore;
             }  
             return false;
         });
-        
-        $('#box-import-final-score').dialog({
-            title : 'Import Nilai Rapor Akhir Semester',
-            closeOnEscape: false,
-            autoOpen: false,
-            height: 180,
-            width: 300,
-            modal: true,
-            resizable: false,
-            draggable: true,
-            open : function() {
-                $(this).parent().children().children('.ui-dialog-titlebar-close').hide();
-            }
-        });
-        
+                
         $('#button_import_final_score').live('click', function(){
-            $("#box-import-final-score").dialog("open");
+            $(import_dialog_finalscore).dialog("open");
             return false;
         });
         
         $('#form-import-final-score input[type=button]').live('click', function(){
-            $("#box-import-final-score").dialog( "close" );
+            $(import_dialog_finalscore).dialog( "close" );
         });
         
         $('#form-import-final-score').live('submit',function(){
-            
-            disabled_button(true,['#form-import-final-score input[type=button]','#form-import-final-score input[type=submit]']);
+            disabled_button(true, button_list_finalscore);
             $(this).ajaxSubmit({
                 success : function(o) {
-                    disabled_button(false,['#form-import-final-score input[type=button]','#form-import-final-score input[type=submit]']);
-                    $("#box-import-final-score").dialog( "close" );
-                    readFinalScore();
+                    disabled_button(false, button_list_finalscore);
+                    $(import_dialog_finalscore).dialog( "close" );
+                    if (o == 'true') {
+                        readScore(table_finalscore, mlc, type_finalscore, button_list_finalscore);
+                    } else if (o == 'error') {
+                        alert('Format data tidak sesuai');
+                    } else {
+                        alert('Proses Import Gagal.');
+                    }
                 }
             });
             return false;

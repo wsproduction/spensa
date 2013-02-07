@@ -149,7 +149,7 @@ class Contents extends Controller {
         }
         return $link;
     }
-    
+
     public function setParentLink($val = '', $ssl = false) {
 
         if (Web::$childStatus) {
@@ -169,65 +169,32 @@ class Contents extends Controller {
         return $link;
     }
 
-    public function customPagingId($prevId = '', $pageId = '', $nextId = '', $maxId = '') {
-        if ($prevId != '')
-            $this->prevId = $prevId;
-        if ($pageId != '')
-            $this->pageId = $pageId;
-        if ($nextId != '')
-            $this->nextId = $nextId;
-        if ($maxId != '')
-            $this->maxId = $maxId;
-    }
-
-    public function paging($colspan = 1, $count = 1, $current = 1) {
-        $html = '<tr class="paging">';
-        $html .= '  <td colspan="' . $colspan . '" class="first">';
-        $html .= '      <div class="left">';
-
-        Form::create('button', $this->prevId);
-        Form::value('Prev');
-        Form::style('action_prev');
-        $html .= Form::commit('attach');
-
-        $num = array();
-        for ($i = 1; $i <= $count; $i++) {
-            $num[$i] = $i;
-        }
-
-        Form::create('select', $this->pageId);
-        Form::option($num, '', $current);
-        $html .= Form::commit('attach');
-
-        Form::create('hidden', $this->maxId);
-        Form::value($i);
-        $html .= Form::commit('attach');
-
-        Form::create('button', $this->nextId);
-        Form::value('Next');
-        Form::style('action_next');
-        $html .= Form::commit('attach');
-
-        $html .= '      </div>';
-        $html .= '      <div class="right">';
-        $html .= '          Page ' . $current . ' of ' . $count;
-        $html .= '      </div>';
-        $html .= '  </td>';
-        $html .= '</tr>';
-        return $html;
-    }
-
     public function numberFormat($number = 0) {
         return number_format($number, 0, ',', '.');
     }
 
-    public function hotsSubject() {
-        $data = $this->model->selectAllSubject();
-        $html = '';
-        foreach ($data as $value) {
-            $html .= '<li>' . URL::link('http://' . Web::$host . '/subject/view/' . $value['subject_id'], $value['subject_title'],'attach') . ' <span style="font-size:9px;">(' . $value['count_question'] . ')</span>' . '</li>';
+    public function monthList() {
+        $list = array(1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember');
+        return $list;
+    }
+
+    public function monthName($id) {
+        $list = array('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
+        return $list[$id - 1];
+    }
+
+    public function descProgressLearning($score, $mlc) {
+        $desc = '';
+        if (!is_null($score)) {
+            if ($score > $mlc) {
+                $desc = 'terlamapaui';
+            } else if ($score == $mlc) {
+                $desc = 'tercapai';
+            } else if ($score < $mlc) {
+                $desc = 'belum tercapai';
+            }
         }
-        return $html;
+        return $desc;
     }
 
 }

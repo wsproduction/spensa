@@ -112,9 +112,23 @@ class Report extends Controller {
         if ($student_list) {
 
             $student_info = $student_list[0];
-            $must_subject_list = $this->model->selectMustSubject($student_info['period_id'], $student_info['semester_id'], $student_info['grade_id']);
-            $choice_subject_list = $this->model->selectChoiceSubject();
+            $must_subject_list = $this->model->selectMustSubject($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $student_info['grade_id'], $report_type);
+            $choice_subject_list = $this->model->selectChoiceSubject($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $student_info['grade_id'], $report_type);
             $mulok_subject_list = $this->model->selectMulokSubject();
+            $report_publishing_list = $this->model->selectReportPublishing($student_info['period_id'], $student_info['semester_id'], $report_type);
+
+            $publishing_date = 'dd-mm-YY';
+            if (count($report_publishing_list) > 0) {
+                $report_publishing_info = $report_publishing_list[0];
+                $pd = $report_publishing_info['report_publishing_date'];
+                $publishing_date = date('d', strtotime($pd)) . ' ' . $this->content->monthName(date('m', strtotime($pd))) . ' ' . date('Y', strtotime($pd));
+            }
+
+            $guardian_id = '';
+            if (!empty($student_info['employess_nip'])) {
+                $guardian_id = $student_info['employess_nip'];
+            }
+            $guardian_name = $student_info['employess_name'];
 
             $terbilang = Src::plugin()->PHPTerbilang();
 
@@ -441,16 +455,23 @@ class Report extends Controller {
 
             /* Daftar Mata Pelajaran Wajib */
             $idx = 1;
+            $total_score = 0;
+            $total_subject = 0;
             foreach ($must_subject_list as $rowscore) {
+                $score = $rowscore['score_value'];
+                $mlc = $rowscore['mlc_value'];
+                $total_score += $score;
                 $html .='<tr>
                     <td align="center" width="40" class="box-score-list-content-first">' . $idx . '.</td>
                     <td align="left" width="225" class="box-score-list-content"> ' . $rowscore['subject_name'] . ' </td>
-                    <td align="center" width="50" class="box-score-list-content">' . $rowscore['mlc_value'] . '</td>
-                    <td align="center" width="60" class="box-score-list-content">78</td>
-                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja(78)) . '</td>
-                    <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
+                    <td align="center" width="50" class="box-score-list-content">' . $mlc . '</td>
+                    <td align="center" width="60" class="box-score-list-content">' . $score . '</td>
+                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja($score)) . '</td>
+                    <td align="center" width="150" class="box-score-list-content">' . $this->content->descProgressLearning($score, $mlc) . '</td>
                 </tr>';
                 $idx++;
+                if (!is_null($score))
+                    $total_subject++;
             }
 
             /* Daftar Mata Pelajaran Pilihan */
@@ -474,6 +495,8 @@ class Report extends Controller {
                     <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
                 </tr>';
                 $numbering_choice_subject++;
+                if (!is_null($score))
+                    $total_subject++;
             }
 
 
@@ -500,8 +523,15 @@ class Report extends Controller {
                     <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
                 </tr>';
                 $numbering_mulok_subject++;
+                if (!is_null($score))
+                    $total_subject++;
             }
 
+            $average_score = number_format($total_score / $total_subject, 2, '.', ' ');
+            if (stristr($average_score, '.') == '.00') {
+                list($value, $point) = explode('.', $average_score);
+                $average_score = $value;
+            }
 
             $html .='</table>
             <table cellpadding="0" cellspacing="0">
@@ -512,13 +542,13 @@ class Report extends Controller {
             <table cellpadding="4" cellspacing="0">
                 <tr>
                     <td align="center" width="315" class="box-score-list-sumary-first"><b>JUMLAH</b></td>
-                    <td align="center" width="60" class="box-score-list-sumary">980</td>
-                    <td align="left" width="330" class="box-score-list-sumary">' . strtolower($terbilang->eja(980)) . '</td>
+                    <td align="center" width="60" class="box-score-list-sumary">' . $total_score . '</td>
+                    <td align="left" width="330" class="box-score-list-sumary">' . strtolower($terbilang->eja($total_score)) . '</td>
                 </tr>
                 <tr>
                     <td align="center" width="315" class="box-score-list-average-first"><b>RATA-RATA</b></td>
-                    <td align="center" width="60" class="box-score-list-average">78</td>
-                    <td align="left" width="330" class="box-score-list-average">' . strtolower($terbilang->eja(78)) . '</td>
+                    <td align="center" width="60" class="box-score-list-average">' . $average_score . '</td>
+                    <td align="left" width="330" class="box-score-list-average">' . strtolower($terbilang->eja($average_score)) . ' </td>
                 </tr>
             </table>
             <table cellpadding="0" cellspacing="0">
@@ -617,7 +647,7 @@ class Report extends Controller {
                     <td>&nbsp;</td>
                     <td align="left">Tanggal</td>
                     <td>:</td>
-                    <td align="left">2 Februari 2013</td>
+                    <td align="left" >' . $publishing_date . '</td>
                 </tr>
                 <tr>
                     <td align="left" colspan="4">&nbsp;</td>
@@ -654,10 +684,10 @@ class Report extends Controller {
                                 <td height="60">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td width="250" style="border-bottom:1px solid #000;">Karwati</td>
+                                <td width="250" style="border-bottom:1px solid #000;">' . $guardian_name . '</td>
                             </tr>
                             <tr>
-                                <td>NIP. 0298340923</td>
+                                <td>NIP. ' . $guardian_id . '</td>
                             </tr>
                         </table>
                     </td>

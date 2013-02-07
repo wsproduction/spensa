@@ -79,7 +79,7 @@ class ClassgroupModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectSocoreByScoreFilter($student, $subject, $period, $semester, $type) {
+    public function selectSocoreByScoreFilter($student, $teaching, $type) {
         $sth = $this->db->prepare('
                                       SELECT 
                                         academic_score.score_id,
@@ -89,43 +89,12 @@ class ClassgroupModel extends Model {
                                         academic_score
                                       WHERE
                                         academic_score.score_student IN (' . $student . ') AND 
-                                        academic_score.score_subject = :subject AND 
-                                        academic_score.score_period = :period AND 
-                                        academic_score.score_semester = :semester AND 
+                                        academic_score.score_teaching = :teaching AND 
                                         academic_score.score_type = :type
                           ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->bindValue(':subject', $subject);
-        $sth->bindValue(':period', $period);
-        $sth->bindValue(':semester', $semester);
+        $sth->bindValue(':teaching', $teaching);
         $sth->bindValue(':type', $type);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-
-    public function selectFinalSocoreByScoreFilter($student_id, $subject, $period, $semester) {
-        $sth = $this->db->prepare('
-                                    SELECT 
-                                        academic_score_final.score_final_id,
-                                        academic_score_final.score_final_student,
-                                        academic_score_final.score_final_subject,
-                                        academic_score_final.score_final_period,
-                                        academic_score_final.score_final_semester,
-                                        academic_score_final.score_final_value,
-                                        academic_score_final.score_final_entry,
-                                        academic_score_final.score_final_entry_update
-                                      FROM
-                                        academic_score_final
-                                      WHERE
-                                        academic_score_final.score_final_student  IN (' . $student_id . ') AND 
-                                        academic_score_final.score_final_subject = :subject AND 
-                                        academic_score_final.score_final_period = :period AND 
-                                        academic_score_final.score_final_semester = :semester
-                          ');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->bindValue(':period', $period);
-        $sth->bindValue(':semester', $semester);
-        $sth->bindValue(':subject', $subject);
         $sth->execute();
         return $sth->fetchAll();
     }
@@ -145,20 +114,18 @@ class ClassgroupModel extends Model {
         return $sth->execute();
     }
 
-    public function saveScore($student_id, $score, $subject_id, $period_id, $semester_id, $type_id) {
+    public function saveScore($student_id, $score, $teaching_id, $type_id) {
         $sth = $this->db->prepare('
                                 INSERT INTO
                                     academic_score(
                                     score_id,
                                     score_student,
-                                    score_subject,
-                                    score_period,
-                                    score_semester,
+                                    score_teaching,
                                     score_type,
                                     score_value,
+                                    score_status,
                                     score_entry,
-                                    score_entry_update,
-                                    score_status)
+                                    score_entry_update)
                                   VALUES(
                                     (SELECT IF (
                                         (SELECT COUNT(e.score_id) FROM academic_score AS e 
@@ -171,19 +138,15 @@ class ClassgroupModel extends Model {
                                         (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"0001")))
                                     ),
                                     :student,
-                                    :subject,
-                                    :period,
-                                    :semester,
+                                    :teaching,
                                     :type,
                                     :score,
+                                    1,
                                     NOW(),
-                                    NOW(),
-                                    1)
+                                    NOW())
                           ');
         $sth->bindValue(':student', $student_id);
-        $sth->bindValue(':subject', $subject_id);
-        $sth->bindValue(':period', $period_id);
-        $sth->bindValue(':semester', $semester_id);
+        $sth->bindValue(':teaching', $teaching_id);
         $sth->bindValue(':type', $type_id);
         $sth->bindValue(':score', $score);
         return $sth->execute();

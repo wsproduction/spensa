@@ -103,7 +103,9 @@ class ReportModel extends Model {
                                     academic_period.period_years_end,
                                     academic_semester.semester_id,
                                     academic_grade.grade_id,
-                                    academic_period.period_id
+                                    academic_period.period_id,
+                                    employees.employees_nip,
+                                    employees.employess_name
                                   FROM
                                     academic_classhistory
                                     INNER JOIN academic_student ON (academic_classhistory.classhistory_student = academic_student.student_nis)
@@ -112,6 +114,7 @@ class ReportModel extends Model {
                                     INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
                                     INNER JOIN academic_semester ON (academic_classgroup.classgroup_semester = academic_semester.semester_id)
                                     INNER JOIN academic_period ON (academic_classgroup.classgroup_period = academic_period.period_id)
+                                    INNER JOIN employees ON (academic_classgroup.classgroup_guardian = employees.employees_id)
                                   WHERE
                                     academic_classhistory.classhistory_classgroup = :classgroup_id AND 
                                     academic_student.student_nis = :nis
@@ -123,49 +126,73 @@ class ReportModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectMustSubject($period, $semester, $grade) {
+    public function selectMustSubject($student, $period, $semester, $grade, $type) {
         $sth = $this->db->prepare("
                                   SELECT 
-                                    academic_subject.subject_id,
-                                    academic_subject.subject_name,
-                                    academic_subject.subject_order,
-                                    academic_subject.subject_entry,
-                                    academic_subject.subject_entry_update,
-                                    academic_mlc.mlc_value
+                                    a.subject_id,
+                                    a.subject_name,
+                                    a.subject_order,
+                                    (SELECT 
+                                        b.mlc_value 
+                                     FROM 
+                                        academic_mlc b 
+                                     WHERE 
+                                        b.mlc_subject = a.subject_id AND 
+                                        b.mlc_period = :period AND 
+                                        b.mlc_semester = :semester 
+                                        AND b.mlc_grade = :grade 
+                                    LIMIT 1) AS mlc_value,
+                                    (SELECT 
+                                        AVG(c.score_value) 
+                                     FROM 
+                                        academic_score c 
+                                     WHERE 
+                                        c.score_student = :student AND 
+                                        c.score_subject = a.subject_id AND 
+                                        c.score_period = :period AND 
+                                        c.score_semester = :semester AND 
+                                        c.score_type = :type
+                                    ) AS score_value
                                   FROM
-                                    academic_mlc
-                                    INNER JOIN academic_subject ON (academic_mlc.mlc_subject = academic_subject.subject_id)
+                                    academic_teaching d
+                                    INNER JOIN academic_subject a ON (d.teaching_subject = a.subject_id)
                                   WHERE
-                                    academic_subject.subject_category = 1 AND 
-                                    academic_mlc.mlc_period = :period AND 
-                                    academic_mlc.mlc_semester = :semester AND 
-                                    academic_mlc.mlc_grade = :grade
+                                    a.subject_category = 1
+                                  GROUP BY
+                                    a.subject_id
                                   ORDER BY
-                                    academic_subject.subject_order
+                                    a.subject_order
                                  ");
+        $sth->bindValue(':student', $student);
         $sth->bindValue(':period', $period);
         $sth->bindValue(':semester', $semester);
         $sth->bindValue(':grade', $grade);
+        $sth->bindValue(':type', $type);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
     }
 
-    public function selectChoiceSubject() {
+    public function selectChoiceSubject($student, $period, $semester, $grade, $type) {
         $sth = $this->db->prepare("
                                   SELECT 
-                                    academic_subject.subject_id,
-                                    academic_subject.subject_name,
-                                    academic_subject.subject_order,
-                                    academic_subject.subject_entry,
-                                    academic_subject.subject_entry_update
-                                  FROM
-                                    academic_subject
-                                  WHERE
-                                    academic_subject.subject_category = 2
-                                  ORDER BY
-                                    academic_subject.subject_order
+                                        a.subject_id,
+                                        a.subject_name,
+                                        a.subject_order
+                                      FROM
+                                        academic_teaching d
+                                        INNER JOIN academic_subject a ON (d.teaching_subject = a.subject_id)
+                                      WHERE
+                                        a.subject_category = 2
+                                      GROUP BY
+                                        a.subject_id
                                  ");
+
+        $sth->bindValue(':student', $student);
+        $sth->bindValue(':period', $period);
+        $sth->bindValue(':semester', $semester);
+        $sth->bindValue(':grade', $grade);
+        $sth->bindValue(':type', $type);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -199,6 +226,28 @@ class ReportModel extends Model {
                                   FROM
                                     academic_score_type
                                  ");
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectReportPublishing($period, $semester, $type) {
+        $sth = $this->db->prepare("
+                                  SELECT 
+                                    academic_report_publishing.report_publishing_id,
+                                    academic_report_publishing.report_publishing_date
+                                  FROM
+                                    academic_report_publishing
+                                  WHERE
+                                    academic_report_publishing.report_publishing_period = :period AND 
+                                    academic_report_publishing.report_publishing_semester = :semester AND 
+                                    academic_report_publishing.report_publishing_type = :type 
+                                 ");
+
+        $sth->bindValue(':period', $period);
+        $sth->bindValue(':semester', $semester);
+        $sth->bindValue(':type', $type);
+
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
