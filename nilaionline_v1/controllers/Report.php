@@ -487,11 +487,14 @@ class Report extends Controller {
 
             $numbering_choice_subject = 'a';
             foreach ($choice_subject_list as $rowscore) {
+                $score = 80; //$rowscore['score_value'];
+                $mlc = 78; //$rowscore['mlc_value'];
+                $total_score += $score;
                 $html .='<tr>
                     <td align="left" width="225" class="box-score-list-content"> ' . $numbering_choice_subject . '. ' . $rowscore['subject_name'] . ' </td>
                     <td align="center" width="50" class="box-score-list-content">80</td>
                     <td align="center" width="60" class="box-score-list-content">78</td>
-                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja(78)) . '</td>
+                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja($score)) . '</td>
                     <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
                 </tr>';
                 $numbering_choice_subject++;
@@ -515,11 +518,14 @@ class Report extends Controller {
 
             $numbering_mulok_subject = 'a';
             foreach ($mulok_subject_list as $rowscore) {
+                $score = 80; //$rowscore['score_value'];
+                $mlc = 78; //$rowscore['mlc_value'];
+                $total_score += $score;
                 $html .='<tr>
                     <td align="left" width="225" class="box-score-list-content"> ' . $numbering_mulok_subject . '. ' . $rowscore['subject_name'] . ' </td>
                     <td align="center" width="50" class="box-score-list-content">80</td>
                     <td align="center" width="60" class="box-score-list-content">78</td>
-                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja(78)) . '</td>
+                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja($score)) . '</td>
                     <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
                 </tr>';
                 $numbering_mulok_subject++;

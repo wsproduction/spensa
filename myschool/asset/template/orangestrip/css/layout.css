@@ -237,6 +237,10 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
     background: url(../images/black16/bag.png) no-repeat;
 }
 
+.black16-ic-counseling {
+    background: url(../images/black16/counseling.png) no-repeat;
+}
+
 .black16-ic-percent {
     background: url(../images/black16/percent.png) no-repeat;
 }
@@ -446,7 +450,7 @@ ul.m-left ul li a {
     display: block;
     text-decoration: none;
     background-position: 4px center;
-    padding-left: 25px;
+    padding-left: 32px;
 }
 
 /* 

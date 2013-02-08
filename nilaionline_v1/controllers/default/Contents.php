@@ -196,5 +196,23 @@ class Contents extends Controller {
         }
         return $desc;
     }
+    
+    public function descIndex($index) {
+        switch ($index) {
+            case 'A' :
+                    $desc = 'sangat baik';
+                break;
+            case 'B' :
+                    $desc = 'baik';
+                break;
+            case 'C' :
+                    $desc = 'cukup';
+                break;
+            default:
+                $desc = 'h';
+                break;
+        }
+        return $desc;
+    }
 
 }

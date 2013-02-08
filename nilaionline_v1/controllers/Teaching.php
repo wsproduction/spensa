@@ -19,7 +19,7 @@ class Teaching extends Controller {
             $this->view->option_period = $this->optionPeriod();
             $this->view->link_guardian_information = $this->content->setLink('teaching/readguardianinformation/' . $user_references);
             $this->view->link_r_teaching = $this->content->setLink('teaching/readteaching');
-            $this->view->link_r_teaching_ekskul = $this->content->setLink('teaching/readteachingekskul');
+            $this->view->link_r_teaching_ekskul = $this->content->setLink('teaching/readextracurricular');
             $this->view->link_guardian = $this->content->setParentLink('guardian/page');
             $this->view->render('teaching/index');
         } else {
@@ -99,26 +99,29 @@ class Teaching extends Controller {
         echo json_encode(array('count' => 1, 'row' => $teaching_list));
     }
 
-    public function readTeachingEkskul() {
+    public function readExtracurricular() {
         Session::init();
         $teacher_id = Session::get('user_references');
 
         $periodid = $this->method->post('p');
         $semesterid = $this->method->post('s');
 
-        $myteaching = $this->model->selectTeachingEkskul($teacher_id, $periodid);
+        $myteaching = $this->model->selectExtracurricular($teacher_id, $periodid, $semesterid);
         $teaching_list = '';
         $idx = 1;
 
         if ($myteaching) {
             foreach ($myteaching as $row) {
+
+                $link = $this->content->setParentLink('extracurricular/room/' . $row['extracurricular_coach_history_id']);
+
                 $teaching_list .= '<tr>';
                 $teaching_list .= '
                     <td valign="top" class="first" align="center">' . $idx . '</td>
                     <td valign="top">
                         <div class="class-title">' . $row['extracurricular_name'] . '</div>
                         <div class="link">
-                            &bullet; <a href="teaching/myclassekskul/' . $semesterid . $row['extracurricular_coach_history_id'] . '" class="go-to-class">Masuk Kelas</a>
+                            &bullet; <a href="' . $link . '" class="go-to-class">Masuk Kelas</a>
                         </div>
                     </td>';
 

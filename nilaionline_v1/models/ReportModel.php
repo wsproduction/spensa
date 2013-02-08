@@ -148,9 +148,7 @@ class ReportModel extends Model {
                                         academic_score c 
                                      WHERE 
                                         c.score_student = :student AND 
-                                        c.score_subject = a.subject_id AND 
-                                        c.score_period = :period AND 
-                                        c.score_semester = :semester AND 
+                                        c.score_teaching = d.teaching_id AND
                                         c.score_type = :type
                                     ) AS score_value
                                   FROM

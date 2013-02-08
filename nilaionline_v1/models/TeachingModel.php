@@ -178,7 +178,7 @@ class TeachingModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectTeachingEkskul($teacher_id, $periodid) {
+    public function selectExtracurricular($teacher_id, $periodid, $semesterid) {
         $sth = $this->db->prepare('
                                 SELECT 
                                     academic_extracurricular_coach_history.extracurricular_coach_history_id,
@@ -194,10 +194,12 @@ class TeachingModel extends Model {
                                     INNER JOIN academic_extracurricular ON (academic_extracurricular_coach_history.extracurricular_coach_history_field = academic_extracurricular.extracurricular_id)
                                   WHERE
                                     academic_extracurricular_coach_history.extracurricular_coach_history_period = :periodid AND 
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_semester = :semesterid AND 
                                     academic_extracurricular_coach_history.extracurricular_coach_history_name = :teacherid
                           ');
 
         $sth->bindValue(':teacherid', $teacher_id);
+        $sth->bindValue(':semesterid', $semesterid);
         $sth->bindValue(':periodid', $periodid);
 
         $sth->setFetchMode(PDO::FETCH_ASSOC);
