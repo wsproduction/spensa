@@ -126,65 +126,54 @@ class ReportModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectMustSubject($student, $period, $semester, $grade, $type) {
+    public function selectSubjectScore($student, $period, $semester, $grade, $type) {
         $sth = $this->db->prepare("
                                   SELECT 
                                     a.subject_id,
                                     a.subject_name,
                                     a.subject_order,
+                                    a.subject_category,
                                     (SELECT 
                                         b.mlc_value 
                                      FROM 
                                         academic_mlc b 
                                      WHERE 
                                         b.mlc_subject = a.subject_id AND 
-                                        b.mlc_period = :period AND 
-                                        b.mlc_semester = :semester 
-                                        AND b.mlc_grade = :grade 
+                                        b.mlc_period = academic_classgroup.classgroup_period AND 
+                                        b.mlc_semester = academic_classgroup.classgroup_semester AND 
+                                        b.mlc_grade = academic_classgroup.classgroup_grade 
                                     LIMIT 1) AS mlc_value,
                                     (SELECT 
-                                        AVG(c.score_value) 
-                                     FROM 
-                                        academic_score c 
-                                     WHERE 
-                                        c.score_student = :student AND 
-                                        c.score_teaching = d.teaching_id AND
+                                        AVG(c.score_value) A
+                                     FROM
+                                        academic_score c
+                                        INNER JOIN academic_teaching ON (c.score_teaching = academic_teaching.teaching_id)
+                                        INNER JOIN employees ON (academic_teaching.teaching_teacher = employees.employees_id)
+                                        INNER JOIN academic_subject ON (academic_teaching.teaching_subject = academic_subject.subject_id)
+                                        INNER JOIN academic_classgroup ON (academic_teaching.teaching_classgroup = academic_classgroup.classgroup_id)
+                                      WHERE
+                                        c.score_student = academic_classhistory.classhistory_student AND 
+                                        academic_teaching.teaching_subject = a.subject_id AND
+                                        academic_teaching.teaching_period = academic_classgroup.classgroup_period AND 
+                                        academic_teaching.teaching_semester = academic_classgroup.classgroup_semester AND 
+                                        academic_classgroup.classgroup_grade = academic_classgroup.classgroup_grade AND
                                         c.score_type = :type
                                     ) AS score_value
                                   FROM
                                     academic_teaching d
                                     INNER JOIN academic_subject a ON (d.teaching_subject = a.subject_id)
+                                    INNER JOIN academic_classgroup ON (d.teaching_classgroup = academic_classgroup.classgroup_id)
+                                    INNER JOIN academic_classhistory ON (academic_classgroup.classgroup_id = academic_classhistory.classhistory_classgroup)
                                   WHERE
-                                    a.subject_category = 1
+                                    academic_classhistory.classhistory_student = :student AND
+                                    academic_classgroup.classgroup_period = :period AND 
+                                    academic_classgroup.classgroup_semester = :semester  AND 
+                                    academic_classgroup.classgroup_grade = :grade
                                   GROUP BY
                                     a.subject_id
                                   ORDER BY
                                     a.subject_order
                                  ");
-        $sth->bindValue(':student', $student);
-        $sth->bindValue(':period', $period);
-        $sth->bindValue(':semester', $semester);
-        $sth->bindValue(':grade', $grade);
-        $sth->bindValue(':type', $type);
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-
-    public function selectChoiceSubject($student, $period, $semester, $grade, $type) {
-        $sth = $this->db->prepare("
-                                  SELECT 
-                                        a.subject_id,
-                                        a.subject_name,
-                                        a.subject_order
-                                      FROM
-                                        academic_teaching d
-                                        INNER JOIN academic_subject a ON (d.teaching_subject = a.subject_id)
-                                      WHERE
-                                        a.subject_category = 2
-                                      GROUP BY
-                                        a.subject_id
-                                 ");
 
         $sth->bindValue(':student', $student);
         $sth->bindValue(':period', $period);
@@ -196,21 +185,36 @@ class ReportModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectMulokSubject() {
+    public function selectExtracurricular($student, $period, $semester, $type) {
         $sth = $this->db->prepare("
                                   SELECT 
-                                    academic_subject.subject_id,
-                                    academic_subject.subject_name,
-                                    academic_subject.subject_order,
-                                    academic_subject.subject_entry,
-                                    academic_subject.subject_entry_update
+                                        academic_extracurricular.extracurricular_name,
+                                        academic_extracurricular_participant.extracurricular_participant_name,
+                                        (   SELECT 
+                                                academic_score_extracurricular.score_extracurricular_value
+                                            FROM 
+                                                 academic_score_extracurricular
+                                            WHERE
+                                                academic_score_extracurricular.score_extracurricular_student = academic_extracurricular_participant.extracurricular_participant_name AND
+                                                academic_score_extracurricular.score_extracurricular = academic_extracurricular_coach_history.extracurricular_coach_history_id AND
+                                                academic_score_extracurricular.score_extracurricular_type = :type
+                                            LIMIT 1
+                                        ) AS score_value
                                   FROM
-                                    academic_subject
+                                    academic_extracurricular_coach_history
+                                    INNER JOIN academic_extracurricular ON (academic_extracurricular_coach_history.extracurricular_coach_history_field = academic_extracurricular.extracurricular_id)
+                                    INNER JOIN academic_extracurricular_participant ON (academic_extracurricular_coach_history.extracurricular_coach_history_id = academic_extracurricular_participant.extracurricular_participant_activity)
                                   WHERE
-                                    academic_subject.subject_category = 3
-                                  ORDER BY
-                                    academic_subject.subject_order
+                                    academic_extracurricular_participant.extracurricular_participant_name = :student AND 
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_period = :period AND 
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_semester = :semester
+                                  LIMIT 3
                                  ");
+
+        $sth->bindValue(':student', $student);
+        $sth->bindValue(':period', $period);
+        $sth->bindValue(':semester', $semester);
+        $sth->bindValue(':type', $type);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();

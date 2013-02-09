@@ -112,10 +112,18 @@ class Report extends Controller {
         if ($student_list) {
 
             $student_info = $student_list[0];
-            $must_subject_list = $this->model->selectMustSubject($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $student_info['grade_id'], $report_type);
-            $choice_subject_list = $this->model->selectChoiceSubject($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $student_info['grade_id'], $report_type);
-            $mulok_subject_list = $this->model->selectMulokSubject();
+            $score_list = $this->model->selectSubjectScore($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $student_info['grade_id'], $report_type);
+            $extracurricular_score_list = $this->model->selectExtracurricular($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $report_type);
             $report_publishing_list = $this->model->selectReportPublishing($student_info['period_id'], $student_info['semester_id'], $report_type);
+
+            $score_info = array();
+            foreach ($score_list as $rowscore) {
+                $score_info[$rowscore['subject_category']][] = array(
+                    'subject' => $rowscore['subject_name'],
+                    'mlc' => $rowscore['mlc_value'],
+                    'score' => $rowscore['score_value']
+                );
+            }
 
             $publishing_date = 'dd-mm-YY';
             if (count($report_publishing_list) > 0) {
@@ -453,93 +461,106 @@ class Report extends Controller {
             </table>
             <table cellpadding="4" cellspacing="0">';
 
-            /* Daftar Mata Pelajaran Wajib */
-            $idx = 1;
-            $total_score = 0;
-            $total_subject = 0;
-            foreach ($must_subject_list as $rowscore) {
-                $score = $rowscore['score_value'];
-                $mlc = $rowscore['mlc_value'];
-                $total_score += $score;
-                $html .='<tr>
-                    <td align="center" width="40" class="box-score-list-content-first">' . $idx . '.</td>
-                    <td align="left" width="225" class="box-score-list-content"> ' . $rowscore['subject_name'] . ' </td>
-                    <td align="center" width="50" class="box-score-list-content">' . $mlc . '</td>
-                    <td align="center" width="60" class="box-score-list-content">' . $score . '</td>
-                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja($score)) . '</td>
-                    <td align="center" width="150" class="box-score-list-content">' . $this->content->descProgressLearning($score, $mlc) . '</td>
-                </tr>';
-                $idx++;
-                if (!is_null($score))
-                    $total_subject++;
+            if (count($score_list) > 0) {
+                /* Daftar Mata Pelajaran Wajib */
+                $idx = 1;
+                $total_score = 0;
+                $total_subject = 0;
+                if (isset($score_info[1])) {
+                    foreach ($score_info[1] as $rowscore) {
+                        $score = $rowscore['score'];
+                        $mlc = $rowscore['mlc'];
+                        $total_score += $score;
+                        $html .='<tr>
+                                    <td align="center" width="40" class="box-score-list-content-first">' . $idx . '.</td>
+                                    <td align="left" width="225" class="box-score-list-content"> ' . $rowscore['subject'] . ' </td>
+                                    <td align="center" width="50" class="box-score-list-content">' . $mlc . '</td>
+                                    <td align="center" width="60" class="box-score-list-content">' . $score . '</td>
+                                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja($score)) . '</td>
+                                    <td align="center" width="150" class="box-score-list-content">' . $this->content->descProgressLearning($score, $mlc) . '</td>
+                                </tr>';
+                        $idx++;
+                        if (!is_null($score))
+                            $total_subject++;
+                    }
+                }
+
+                if (isset($score_info[2])) {
+                    /* Daftar Mata Pelajaran Pilihan */
+                    $rowspan_choice_subject_list = count($score_info[2]) + 1;
+                    $html .='<tr>
+                                <td align="center" width="40" class="box-score-list-content-first" rowspan="' . $rowspan_choice_subject_list . '">' . $idx . '.</td>
+                                <td align="left" class="box-score-list-choice"> Pilihan : </td>
+                                <td align="left" class="box-score-list-choice">&nbsp;</td>
+                                <td align="left" class="box-score-list-choice">&nbsp;</td>
+                                <td align="left" class="box-score-list-choice">&nbsp;</td>
+                                <td align="left" class="box-score-list-choice">&nbsp;</td>
+                            </tr>';
+
+                    $numbering_choice_subject = 'a';
+                    foreach ($score_info[2] as $rowscore) {
+                        $score = $rowscore['score'];
+                        $mlc = $rowscore['mlc'];
+                        $total_score += $score;
+                        $html .='<tr>
+                                    <td align="left" width="225" class="box-score-list-content"> ' . $numbering_choice_subject . '. ' . $rowscore['subject'] . ' </td>
+                                    <td align="center" width="50" class="box-score-list-content">' . $mlc . '</td>
+                                    <td align="center" width="60" class="box-score-list-content"> ' . $score . '</td>
+                                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja($score)) . '</td>
+                                    <td align="center" width="150" class="box-score-list-content">' . $this->content->descProgressLearning($score, $mlc) . '</td>
+                                </tr>';
+                        $numbering_choice_subject++;
+                        if (!is_null($score))
+                            $total_subject++;
+                    }
+
+
+                    $idx++;
+                }
+
+                if (isset($score_info[3])) {
+                    /* Daftar Mata Pelajaran Muatan Lokal */
+                    $rowspan_mulok_subject_list = count($score_info[3]) + 1;
+                    $html .='<tr>
+                                <td align="center" width="40" class="box-score-list-content-first" rowspan="' . $rowspan_mulok_subject_list . '">' . $idx . '.</td>
+                                <td align="left" class="box-score-list-choice"> Pilihan : </td>
+                                <td align="left" class="box-score-list-choice">&nbsp;</td>
+                                <td align="left" class="box-score-list-choice">&nbsp;</td>
+                                <td align="left" class="box-score-list-choice">&nbsp;</td>
+                                <td align="left" class="box-score-list-choice">&nbsp;</td>
+                            </tr>';
+
+                    $numbering_mulok_subject = 'a';
+                    foreach ($score_info[3] as $rowscore) {
+                        $score = $rowscore['score'];
+                        $mlc = $rowscore['mlc'];
+                        $total_score += $score;
+                        $html .='<tr>
+                                    <td align="left" width="225" class="box-score-list-content"> ' . $numbering_mulok_subject . '. ' . $rowscore['subject'] . ' </td>
+                                    <td align="center" width="50" class="box-score-list-content">' . $mlc . '</td>
+                                    <td align="center" width="60" class="box-score-list-content"> ' . $score . '</td>
+                                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja($score)) . '</td>
+                                    <td align="center" width="150" class="box-score-list-content">' . $this->content->descProgressLearning($score, $mlc) . '</td>
+                                </tr>';
+                        $numbering_mulok_subject++;
+                        if (!is_null($score))
+                            $total_subject++;
+                    }
+                }
+
+                $average_score = number_format($total_score / $total_subject, 2, '.', ' ');
+                if (stristr($average_score, '.') == '.00') {
+                    list($value, $point) = explode('.', $average_score);
+                    $average_score = $value;
+                }
+
+                $html .='</table>';
+            } else {
+                $total_score = 0;
+                $average_score = 0;
             }
 
-            /* Daftar Mata Pelajaran Pilihan */
-            $rowspan_choice_subject_list = count($choice_subject_list) + 1;
-            $html .='<tr>
-                    <td align="center" width="40" class="box-score-list-content-first" rowspan="' . $rowspan_choice_subject_list . '">' . $idx . '.</td>
-                    <td align="left" class="box-score-list-choice"> Pilihan : </td>
-                    <td align="left" class="box-score-list-choice">&nbsp;</td>
-                    <td align="left" class="box-score-list-choice">&nbsp;</td>
-                    <td align="left" class="box-score-list-choice">&nbsp;</td>
-                    <td align="left" class="box-score-list-choice">&nbsp;</td>
-                </tr>';
-
-            $numbering_choice_subject = 'a';
-            foreach ($choice_subject_list as $rowscore) {
-                $score = 80; //$rowscore['score_value'];
-                $mlc = 78; //$rowscore['mlc_value'];
-                $total_score += $score;
-                $html .='<tr>
-                    <td align="left" width="225" class="box-score-list-content"> ' . $numbering_choice_subject . '. ' . $rowscore['subject_name'] . ' </td>
-                    <td align="center" width="50" class="box-score-list-content">80</td>
-                    <td align="center" width="60" class="box-score-list-content">78</td>
-                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja($score)) . '</td>
-                    <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
-                </tr>';
-                $numbering_choice_subject++;
-                if (!is_null($score))
-                    $total_subject++;
-            }
-
-
-            $idx++;
-
-            /* Daftar Mata Pelajaran Muatan Lokal */
-            $rowspan_mulok_subject_list = count($mulok_subject_list) + 1;
-            $html .='<tr>
-                    <td align="center" width="40" class="box-score-list-content-first" rowspan="' . $rowspan_mulok_subject_list . '">' . $idx . '.</td>
-                    <td align="left" class="box-score-list-choice"> Pilihan : </td>
-                    <td align="left" class="box-score-list-choice">&nbsp;</td>
-                    <td align="left" class="box-score-list-choice">&nbsp;</td>
-                    <td align="left" class="box-score-list-choice">&nbsp;</td>
-                    <td align="left" class="box-score-list-choice">&nbsp;</td>
-                </tr>';
-
-            $numbering_mulok_subject = 'a';
-            foreach ($mulok_subject_list as $rowscore) {
-                $score = 80; //$rowscore['score_value'];
-                $mlc = 78; //$rowscore['mlc_value'];
-                $total_score += $score;
-                $html .='<tr>
-                    <td align="left" width="225" class="box-score-list-content"> ' . $numbering_mulok_subject . '. ' . $rowscore['subject_name'] . ' </td>
-                    <td align="center" width="50" class="box-score-list-content">80</td>
-                    <td align="center" width="60" class="box-score-list-content">78</td>
-                    <td align="left" width="180" class="box-score-list-content">' . strtolower($terbilang->eja($score)) . '</td>
-                    <td align="center" width="150" class="box-score-list-content">tidak tercapai</td>
-                </tr>';
-                $numbering_mulok_subject++;
-                if (!is_null($score))
-                    $total_subject++;
-            }
-
-            $average_score = number_format($total_score / $total_subject, 2, '.', ' ');
-            if (stristr($average_score, '.') == '.00') {
-                list($value, $point) = explode('.', $average_score);
-                $average_score = $value;
-            }
-
-            $html .='</table>
+            $html .='
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td class="blank-column-1">&nbsp;</td>
@@ -558,32 +579,35 @@ class Report extends Controller {
                 </tr>
             </table>
             <table cellpadding="0" cellspacing="0">
-                <tr>
-                    <td class="blank-column-2">&nbsp;</td>
-                </tr>
-            </table>
+            <tr>
+                <td class="blank-column-2">&nbsp;</td>
+            </tr>
+            </table>';
+
+            /* Extracurriculer */
+            $html .= '
             <table cellpadding="4" cellspacing="0">
                 <tr>
                     <td align="center" width="315" class="box-score-list-head-first">KEGIATAN PENGEMBANGAN DIRI</td>
                     <td align="center" width="60" class="box-score-list-head">NILAI</td>
                     <td align="center" width="330" class="box-score-list-head-last">KETERANGAN</td>
-                </tr>
-                <tr>
-                    <td align="left" width="315" class="box-score-list-content-first">1. Ketangkasan Office</td>
-                    <td align="center" width="60" class="box-score-list-content">A</td>
-                    <td align="center" width="330" class="box-score-list-content">sangat baik</td>
-                </tr>
-                <tr>
-                    <td align="left" width="315" class="box-score-list-content-first">2. Paskibra</td>
-                    <td align="center" width="60" class="box-score-list-content">B</td>
-                    <td align="center" width="330" class="box-score-list-content">baik</td>
-                </tr>
-                <tr>
-                    <td align="left" width="315" class="box-score-list-content-first">2. Paskibra</td>
-                    <td align="center" width="60" class="box-score-list-content">B</td>
-                    <td align="center" width="330" class="box-score-list-content">baik</td>
-                </tr>
-            </table>
+                </tr>';
+            
+            $idx_extracurricular = 1;
+            foreach ($extracurricular_score_list as $row_extracurricular) {
+                $score = $row_extracurricular['score_value'];
+                $html .= '
+                    <tr>
+                        <td align="left" width="315" class="box-score-list-content-first">' . $idx_extracurricular . '. ' . $row_extracurricular['extracurricular_name'] . '</td>
+                        <td align="center" width="60" class="box-score-list-content">' . $score . ' </td>
+                        <td align="center" width="330" class="box-score-list-content">' . $this->content->descIndex($score) . '</td>
+                    </tr>';
+            }
+
+            $html .= '
+            </table>';
+
+            $html .= '
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td class="blank-column-2">&nbsp;</td>
