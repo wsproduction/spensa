@@ -11,8 +11,10 @@ class ExtracurricularModel extends Model {
                                 SELECT 
                                     academic_extracurricular.extracurricular_name,
                                     extracurricular_coach_history_totaltime,
+                                    academic_period.period_id,
                                     academic_period.period_years_start,
                                     academic_period.period_years_end,
+                                    academic_semester.semester_id,
                                     academic_semester.semester_name
                                   FROM
                                     academic_extracurricular_coach_history

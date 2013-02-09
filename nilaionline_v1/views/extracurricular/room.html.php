@@ -372,6 +372,7 @@
         });
         
         $('#form-import-mid-score').live('submit',function(){
+            
             disabled_button(true, button_list_midscore);
             $(this).ajaxSubmit({
                 success : function(o) {
