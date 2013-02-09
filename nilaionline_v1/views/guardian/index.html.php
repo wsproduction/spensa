@@ -38,8 +38,6 @@
             <tr>
                 <td colspan="3">
                     <div class="link-box">
-                        [+] <?php URL::link($link_rapor, 'Manajemen Nilai Ahlak dan Kepribadian', true, array('id' => 'btn-guardian-page')); ?> &nbsp;
-                        [+] <?php URL::link($link_rapor, 'Manajemen Data Ketidak Hadiran', true, array('id' => 'btn-guardian-page')); ?> &nbsp;
                         [+] <?php URL::link($link_rapor, 'Cetak Laporan Hasil Belajar Siswa', true, array('id' => 'btn-guardian-page')); ?> 
                     </div>
                 </td>
@@ -51,33 +49,6 @@
     <div style="padding: 5px;"><b>&bullet; MATA PELAJARAN</b></div>
     <div>
         <table id="list-teaching" cellspacing="0" cellpadding="0" link_r="<?php echo $link_read_subject; ?>">
-            <thead>
-                <tr>
-                    <td rowspan="2" class="first" style="width: 40px;text-align: center;">No.</td>
-                    <td rowspan="2" >Mata Pelajaran</td>
-                    <td rowspan="2"  style="width: 150px;text-align: center;">Nama Guru</td>
-                    <td style="text-align: center;" colspan="2">Keterangan Nilai</td>
-                    <td rowspan="2" style="width: 100px;text-align: center;">Pilihan</td>
-                </tr>
-                <tr>
-                    <td style="width: 100px;text-align: center;border-top: none;border-left: none;">Rapor Tengah Semester</td>
-                    <td style="width: 100px;text-align: center;border-top: none;">Rapor Akhir Semester</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="first" colspan="6">
-                        <div class="information-box">
-                            Loading...
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div style="padding: 5px;"><b>&bullet; PENDIDIKAN BERBASIK KEUNGGULAN LOKAL (PBKL)</b></div>
-    <div style="padding: 5px;">
-        <table id="list-teaching-pbkl" style="width: 100%" class="table-list"  cellspacing="0" cellpadding="0" link_r="<?php echo $link_read_pbkl; ?>">
             <thead>
                 <tr>
                     <td rowspan="2" class="first" style="width: 40px;text-align: center;">No.</td>

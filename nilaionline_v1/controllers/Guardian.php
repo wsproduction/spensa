@@ -27,20 +27,61 @@ class Guardian extends Controller {
     }
 
     public function readSubject($classgroup_id = 0) {
-        $subject_list = $this->model->selectSubjectByClassGroup($classgroup_id);
+
+        $student_list = $this->model->selectSubjectByClassGroup($classgroup_id);
+        $student_id = '0';
+        foreach ($student_list as $row) {
+            $student_id .= ',' . $row['student_nis'];
+        }
+
+        $subject_list = $this->model->selectSubjectByStudentId($student_id);
+        $subject_info = array();
+
+        foreach ($subject_list as $row) {
+            $subject_info[$row['subject_category']][] = array(
+                'teaching_id' => $row['teaching_id'],
+                'employees_nip' => $row['employees_nip'],
+                'employess_name' => $row['employess_name'],
+                'subject_name' => $row['subject_name']
+            );
+        }
+
         $html_list = '';
-        if ($subject_list) {
+        if (count($subject_info) > 0) {
             $idx = 1;
-            foreach ($subject_list as $row) {
-                $html_list .= '<tr>';
-                $html_list .= '     <td class="first" align="center">' . $idx . '</td>';
-                $html_list .= '     <td>' . $row['subject_name'] . '</td>';
-                $html_list .= '     <td>' . $row['employess_name'] . '</td>';
-                $html_list .= '     <td align="center">-</td>';
-                $html_list .= '     <td align="center">-</td>';
-                $html_list .= '     <td align="center">Lihat</td>';
-                $html_list .= '</tr>';
-                $idx++;
+
+            /* Matapelajaran Wajib */
+            if (isset($subject_info[1])) {
+                $rowspan = count($subject_info[1]) + 1;
+                $html_list .= '<tr>
+                                    <td  class="first" colspan="6">' . $idx . ' . Mata Pelajaran Wajib</td>
+                               </tr>';
+                $i = 'a';
+                foreach ($subject_info[1] as $row) {
+                    $html_list .= '<tr>';
+                    $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
+                    $html_list .= '     <td>' . $row['employess_name'] . '</td>';
+                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">Lihat</td>';
+                    $html_list .= '</tr>';
+                    $i++;
+                }
+            }
+
+
+            if (isset($subject_info[2])) {
+                foreach ($subject_info[2] as $row) {
+                    $html_list .= '<tr>';
+                    $html_list .= '     <td class="first" align="center">' . $idx . '</td>';
+                    $html_list .= '     <td>' . $row['subject_name'] . '</td>';
+                    $html_list .= '     <td>' . $row['employess_name'] . '</td>';
+                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">Lihat</td>';
+                    $html_list .= '</tr>';
+                    $idx++;
+                }
             }
         } else {
             $html_list .= '<tr>
