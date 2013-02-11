@@ -44,14 +44,14 @@ $protection = Session::get('login_status');
             <!-- BEGIN : Header box fixed -->
             <div id="header">
                 <div id="logo" class="fl-left">
-                    SekolahKu<sup><span style="font-size: 11px;">&nbsp;(beta)</span></sup>
+                    Sekolah+<sup><span style="font-size: 11px;">&nbsp;(beta)</span></sup>
                 </div>
                 <?php if ($protection) { ?>
                     <div id="m-account" class="fl-right">
                         <a id="m-account-parent" class="slide-of" href="#m-account-child">My Account</a>
                         <div class="cl">&nbsp;</div>
                         <ul id="m-account-child">
-                            <li><a href="#" class="orange16-ic-hireme">Account Settings</a></li>
+                            <li><a href="#" class="orange16-ic-config">Account Settings</a></li>
                             <li><a href="#" class="orange16-ic-lock">Privacy Settings</a></li>
                             <li><a href="http://sekolahku.spensa.ws/login/stop" class="orange16-ic-signout">Logout</a></li>
                             <li><div class="hr-solid-grey"></div></li>
@@ -71,9 +71,20 @@ $protection = Session::get('login_status');
                     <div id="fix-left">
                         <div class="left-user-info">
                             <div class="left-thumbnail fl-left"> <?php echo Src::image('default-thumbnail-small.png', null, array('id' => 'profile-thumbnail-small')); ?> </div>
-                            <div class="left-title fl-left"> 
+                            <div class="left-title fl-left">
+                                <div class="left-welcome">Selamat datang,</div>
                                 <div class="left-name"><a id="profile-name-left" href="#"></a></div>
-                                <div><a href="http://myschool.spensa.ws/profile/edit" class="btn-blue">Edit Profile</a></div>
+                                <div class="left-box-main-icon">
+                                    <?php
+                                    URL::link('#', Src::image('orange16/home.png'));
+                                    URL::link('#', Src::image('orange16/email.png'));
+                                    URL::link('#', Src::image('orange16/my-account.png'));
+                                    URL::link('#', Src::image('orange16/photography.png'));
+                                    URL::link('#', Src::image('orange16/customers.png'));
+                                    URL::link('#', Src::image('orange16/communication.png'));
+                                    ?>
+                                </div>
+
                             </div>
                             <div class="cl">&nbsp;</div>
                         </div>

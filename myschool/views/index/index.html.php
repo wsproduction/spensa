@@ -29,6 +29,11 @@
                 Form::commit();
                 ?>
             </div>
+            <div style="margin: 10px 0;">
+                <?php
+                URL::link('#', 'Tidak dapat mengakses akun?');
+                ?>
+            </div>
         </div>
         <?php Form::end(); ?>
     </div>

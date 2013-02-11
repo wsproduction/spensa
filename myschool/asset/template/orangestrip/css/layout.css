@@ -179,8 +179,22 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
     margin: 0 0 0 4px;
 }
 
+.left-user-info .left-box-main-icon img {
+    border: 1px solid #d4dae8;
+    padding: 2px;
+    margin-right: 4px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
 .left-user-info .left-name {
-    height: 30px;
+    padding-bottom: 5px;
+}
+
+.left-user-info .left-welcome {
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;  
+    font-size: 11px;
 }
 
 .left-user-info .left-name a {
@@ -267,6 +281,10 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
 
 .orange16-ic-hireme {
     background: url(../images/orange16/hire-me.png) no-repeat;
+}
+
+.orange16-ic-config {
+    background: url(../images/orange16/config.png) no-repeat;
 }
 
 .orange16-ic-lightbulb {
@@ -491,12 +509,10 @@ ul.m-left ul li a {
     padding: 10px;
     margin: 10px;
     font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 14px;
-    font-weight: bold;
     width: 275px;
 }
 
 #form_login .box-login .title {
-    border-bottom: 1px dashed #ccc;
     margin-bottom: 10px;
     padding-bottom: 10px;
     font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 14px;
@@ -504,8 +520,19 @@ ul.m-left ul li a {
 }
 
 #form_login .box-login label[class=error] {
-    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 10px;
-    color: red;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;
+    font-size: 11px;
+    color: #dd3c10;
+}
+
+#form_login .box-login a {
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 12px;
+    text-decoration: none;
+    color: #3b5998;
+}
+
+#form_login .box-login a:hover {
+    text-decoration: underline;
 }
 
 #form_login .box-login input[type=text], input[type=password] {
@@ -536,9 +563,9 @@ ul.m-left ul li a {
 }
 
 #form_login .box-login .message .error {
-    border: 1px solid red;
-    color: red;
-    background-color: #ffcdbb;
+    border: 1px solid #dd3c10;
+    color: #333333;
+    background-color: #ffebe8;
     text-shadow: 2px 1px 1px #fff;
 }
 

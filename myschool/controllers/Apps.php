@@ -25,7 +25,7 @@ class Apps extends Controller {
         $this->view->apps_alias = $apps_alias;
         $apps_info = $this->model->selectAppsByAlias($apps_alias);
         if (count($apps_info) > 0) {
-            
+            Web::setTitle($apps_info[0]['apps_name']);
             $this->view->apps_info = $apps_info;
             $this->view->apps_menu = $this->splitMenu($apps_info[0]['apps_id']);
             $this->view->render('apps/index');

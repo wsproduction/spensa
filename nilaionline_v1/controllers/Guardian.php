@@ -113,7 +113,7 @@ class Guardian extends Controller {
             }
         } else {
             $html_list .= '<tr>
-                                <td class="first" colspan="3">
+                                <td class="first" colspan="6">
                                     <div class="information-box">
                                         Data tidak ditemukan
                                     </div>
@@ -141,7 +141,7 @@ class Guardian extends Controller {
             }
         } else {
             $html_list .= '<tr>
-                                <td class="first" colspan="3">
+                                <td class="first" colspan="6">
                                     <div class="information-box">
                                         Data tidak ditemukan
                                     </div>

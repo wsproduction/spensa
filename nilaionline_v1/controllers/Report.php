@@ -118,10 +118,15 @@ class Report extends Controller {
 
             $score_info = array();
             foreach ($score_list as $rowscore) {
+                $score_value = $rowscore['score_value'];
+                if ($score_value != '') {
+                    $score_value = round($score_value);
+                }
+                
                 $score_info[$rowscore['subject_category']][] = array(
                     'subject' => $rowscore['subject_name'],
                     'mlc' => $rowscore['mlc_value'],
-                    'score' => $rowscore['score_value']
+                    'score' => $score_value
                 );
             }
 

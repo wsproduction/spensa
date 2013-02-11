@@ -22,6 +22,7 @@ class AppsModel extends Model {
                                     WHERE
                                         myschool_apps.apps_alias = :alias AND 
                                         myschool_apps.apps_status = 1
+                                    LIMIT 1
                                 ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':alias', $alias);
