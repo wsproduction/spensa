@@ -122,7 +122,7 @@ class Report extends Controller {
                 if ($score_value != '') {
                     $score_value = round($score_value);
                 }
-                
+
                 $score_info[$rowscore['subject_category']][] = array(
                     'subject' => $rowscore['subject_name'],
                     'mlc' => $rowscore['mlc_value'],
@@ -597,16 +597,25 @@ class Report extends Controller {
                     <td align="center" width="60" class="box-score-list-head">NILAI</td>
                     <td align="center" width="330" class="box-score-list-head-last">KETERANGAN</td>
                 </tr>';
-            
-            $idx_extracurricular = 1;
-            foreach ($extracurricular_score_list as $row_extracurricular) {
-                $score = $row_extracurricular['score_value'];
+
+            if (count($extracurricular_score_list) > 0) {
+                $idx_extracurricular = 1;
+                foreach ($extracurricular_score_list as $row_extracurricular) {
+                    $score = $row_extracurricular['score_value'];
+                    $html .= '
+                            <tr>
+                                <td align="left" width="315" class="box-score-list-content-first">' . $idx_extracurricular . '. ' . $row_extracurricular['extracurricular_name'] . '</td>
+                                <td align="center" width="60" class="box-score-list-content">' . $score . ' </td>
+                                <td align="center" width="330" class="box-score-list-content">' . $this->content->descIndex($score) . '</td>
+                            </tr>';
+                }
+            } else {
                 $html .= '
-                    <tr>
-                        <td align="left" width="315" class="box-score-list-content-first">' . $idx_extracurricular . '. ' . $row_extracurricular['extracurricular_name'] . '</td>
-                        <td align="center" width="60" class="box-score-list-content">' . $score . ' </td>
-                        <td align="center" width="330" class="box-score-list-content">' . $this->content->descIndex($score) . '</td>
-                    </tr>';
+                            <tr>
+                                <td align="center" width="315" class="box-score-list-content-first">- </td>
+                                <td align="center" width="60" class="box-score-list-content">-</td>
+                                <td align="center" width="330" class="box-score-list-content">-</td>
+                            </tr>';
             }
 
             $html .= '
