@@ -87,7 +87,7 @@
     </div>
     <div class="view-score"  style="border: 1px solid #ccc;margin: 0 5px 5px 5px;">
         <div class="information-box" style="margin: 5px;">
-            Untuk melihat laporan hasil belajar siswa silahkan pilih nama siswa dan keterangan rapor kemudian klik tombol pratampil.
+            Untuk melihat laporan hasil belajar siswa silahkan pilih nama siswa dan keterangan rapor kemudian klik tombol pratinjau.
         </div>
         <iframe id="frame-report" frameborder="0" style="margin: 5px;width: 755px;height: 500px;"></iframe>
     </div>

@@ -286,7 +286,7 @@ body { background: #fff;font-family: "lucida grande" ,tahoma,verdana,arial,sans-
 */
 
 ul.m-left {
-    
+
 }
 
 ul.m-left li.toggle-on {
@@ -429,7 +429,7 @@ ul.m-left ul li a {
     border-bottom: 1px solid #c7c7c7;
     border-left: 1px solid #c7c7c7;
     border-right: 1px solid #c7c7c7;
-    min-width: 150px;
+    min-width: 160px;
     background-color: #f9f9f9;
     z-index: 999;
     display: none;
@@ -490,8 +490,62 @@ ul.m-left ul li a {
     border: 1px solid #ccc;
     padding: 10px;
     margin: 10px;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 14px;
+    font-weight: bold;
+    width: 275px;
+}
+
+#form_login .box-login .title {
+    border-bottom: 1px dashed #ccc;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 14px;
+    font-weight: bold;
+}
+
+#form_login .box-login label[class=error] {
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 10px;
+    color: red;
+}
+
+#form_login .box-login input[type=text], input[type=password] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    width: 250px;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+#form_login .box-login input[id=button_login] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    width: 90px;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    font-weight: bold;
+    background-color: #4888ef;
+}
+
+#form_login .box-login .message .box_message {
+    padding: 5px;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 11px;
+}
+
+#form_login .box-login .message .error {
+    border: 1px solid red;
+    color: red;
+    background-color: #ffcdbb;
+    text-shadow: 2px 1px 1px #fff;
 }
 
 #form_login .box-login div {
     margin: 2px 0;
+}
+
+.box-index {
+    width: 800px;
 }

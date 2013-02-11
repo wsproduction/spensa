@@ -35,7 +35,7 @@ $root = '/apps/load/' . $info['apps_alias'];
                             <a href="<?php echo $root . '/teaching' ?>" class="black16-ic-bag">Tugas Mengajar</a>
                         </li>
                         <li>
-                            <a href="<?php echo $root . '/teaching' ?>" class="black16-ic-counseling">Bimbingan Konseling</a>
+                            <a href="<?php echo $root . '/guidance' ?>" class="black16-ic-counseling">Bimbingan & Konseling</a>
                         </li>
                         <li>
                             <a href="<?php echo $root . '/teaching' ?>" class="black16-ic-help">Bantuan</a>

@@ -1,31 +1,44 @@
-<?php Form::begin('form_login', 'login/run', 'post', false); ?>
-<div class="box-login">
-    <div class="message"></div>
-    <?php Form::label('Username :', 'username'); ?>
-    <div>
-        <?php
-        Form::create('text', 'username');
-        Form::validation()->requaired();
-        Form::commit();
-        ?>
+<div class="box-index">
+    
+    <div class="fl-left">
+        <?php Form::begin('form_login', 'login/run', 'post', false); ?>
+        <div class="box-login">
+            <div class="title">LOGIN</div>
+            
+            <div class="message"></div>
+            <?php Form::label('Username :', 'username'); ?>
+            <div>
+                <?php
+                Form::create('text', 'username');
+                Form::validation()->requaired('Username wajib diisi.');
+                Form::commit();
+                ?>
+            </div>
+            <?php Form::label('Password :', 'password'); ?>
+            <div>
+                <?php
+                Form::create('password', 'password');
+                Form::validation()->requaired('Password wajib diisi.');
+                Form::commit();
+                ?>
+            </div>
+            <div>
+                <?php
+                Form::create('submit', 'button_login');
+                Form::value('Login');
+                Form::commit();
+                ?>
+            </div>
+        </div>
+        <?php Form::end(); ?>
     </div>
-    <?php Form::label('Password :', 'password'); ?>
-    <div>
-        <?php
-        Form::create('password', 'password');
-        Form::validation()->requaired();
-        Form::commit();
-        ?>
+    
+    <div class="fl-left">
+        
     </div>
-    <div>
-        <?php
-        Form::create('submit', 'button_login');
-        Form::value('Login');
-        Form::commit();
-        ?>
-    </div>
+    <div class="cl">&nbsp;</div>
 </div>
-<?php Form::end(); ?>
+
 
 <script type="text/javascript">
     $(function () {
@@ -49,7 +62,7 @@
                         if (status == '1') {
                             window.location = $(this).find('direct').text();
                         } else {
-                            $(this).loadingProgress('start');
+                            $(this).loadingProgress('stop');
                             $(message).html($(this).find('message').text());
                         }
                     });

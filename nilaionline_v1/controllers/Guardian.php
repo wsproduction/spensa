@@ -54,7 +54,8 @@ class Guardian extends Controller {
             if (isset($subject_info[1])) {
                 $rowspan = count($subject_info[1]) + 1;
                 $html_list .= '<tr>
-                                    <td  class="first" colspan="6">' . $idx . ' . Mata Pelajaran Wajib</td>
+                                    <td class="first" align="center" valign="top" rowspan="' . $rowspan . '" style="font-weight:bold;">' . $idx . ' .</td>
+                                    <td colspan="5" style="font-weight:bold;">Mata Pelajaran Wajib :</td>
                                </tr>';
                 $i = 'a';
                 foreach ($subject_info[1] as $row) {
@@ -68,19 +69,46 @@ class Guardian extends Controller {
                     $i++;
                 }
             }
-
-
+            
+            /* Matapelajaran Pilihan */
             if (isset($subject_info[2])) {
+                $idx++;
+                $rowspan = count($subject_info[2]) + 1;
+                $html_list .= '<tr>
+                                    <td class="first" align="center" valign="top" rowspan="' . $rowspan . '" style="font-weight:bold;">' . $idx . ' .</td>
+                                    <td colspan="5" style="font-weight:bold;">Mata Pelajaran Pilihan :</td>
+                               </tr>';
+                $i = 'a';
                 foreach ($subject_info[2] as $row) {
                     $html_list .= '<tr>';
-                    $html_list .= '     <td class="first" align="center">' . $idx . '</td>';
-                    $html_list .= '     <td>' . $row['subject_name'] . '</td>';
+                    $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
                     $html_list .= '     <td>' . $row['employess_name'] . '</td>';
                     $html_list .= '     <td align="center">-</td>';
                     $html_list .= '     <td align="center">-</td>';
                     $html_list .= '     <td align="center">Lihat</td>';
                     $html_list .= '</tr>';
-                    $idx++;
+                    $i++;
+                }
+            }
+            
+            /* Matapelajaran Mulok */
+            if (isset($subject_info[3])) {
+                $idx++;
+                $rowspan = count($subject_info[3]) + 1;
+                $html_list .= '<tr>
+                                    <td class="first" align="center" valign="top" rowspan="' . $rowspan . '" style="font-weight:bold;">' . $idx . ' .</td>
+                                    <td colspan="5" style="font-weight:bold;">Muatan Lokal :</td>
+                               </tr>';
+                $i = 'a';
+                foreach ($subject_info[3] as $row) {
+                    $html_list .= '<tr>';
+                    $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
+                    $html_list .= '     <td>' . $row['employess_name'] . '</td>';
+                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">Lihat</td>';
+                    $html_list .= '</tr>';
+                    $i++;
                 }
             }
         } else {
