@@ -80,127 +80,32 @@ class GuidanceModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectGuardianInformation($period = 0, $semester = 0, $teacherid = 0) {
-        $sth = $this->db->prepare("
-                                SELECT 
-                                    academic_classroom.classroom_name,
-                                    academic_grade.grade_title,
-                                    academic_grade.grade_name,
-                                    academic_classgroup.classgroup_id
-                                  FROM
-                                    academic_classgroup
-                                    INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
-                                    INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
-                                  WHERE
-                                    academic_classgroup.classgroup_period = :period_id AND 
-                                    academic_classgroup.classgroup_semester = :semester_id AND 
-                                    academic_classgroup.classgroup_guardian = :teacher_id
-                                ");
-
-        $sth->bindValue(':period_id', $period);
-        $sth->bindValue(':semester_id', $semester);
-        $sth->bindValue(':teacher_id', $teacherid);
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-
     public function selectTeaching($teacherid, $periodid, $semesterid) {
         $sth = $this->db->prepare('
                                   SELECT 
-                                    academic_classgroup.classgroup_id,
-                                    academic_subject.subject_id,
-                                    academic_subject.subject_name,
-                                    academic_grade.grade_id,
+                                    academic_guidance.guidance_id,
+                                    academic_classroom.classroom_name,
                                     academic_grade.grade_title,
                                     academic_grade.grade_name,
-                                    academic_classroom.classroom_id,
-                                    academic_classroom.classroom_name,
-                                    academic_subject_category.subject_category_title,
-                                    SUM(academic_teaching.teaching_total_time) AS total_time,
-                                    ( SELECT 
-                                        COUNT(at.teaching_id) AS FIELD_1 
-                                      FROM 
-                                        academic_teaching AS at 
-                                        INNER JOIN academic_classgroup ac ON (at.teaching_classgroup = ac.classgroup_id) 
-                                      WHERE 
-                                        at.teaching_teacher = academic_teaching.teaching_teacher AND 
-                                        at.teaching_subject = academic_subject.subject_id AND 
-                                        at.teaching_period = academic_teaching.teaching_period AND 
-                                        at.teaching_semester = academic_teaching.teaching_semester AND 
-                                        ac.classgroup_grade = academic_grade.grade_id
-                                     ) AS total_class,
-                                    ( SELECT 
-                                        COUNT(academic_task_description.task_description_id) AS FIELD_1 
-                                      FROM 
-                                        academic_task_description 
-                                      WHERE 
-                                        academic_task_description.task_description_subject = academic_teaching.teaching_subject AND 
-                                        academic_task_description.task_description_teacher = academic_teaching.teaching_teacher AND 
-                                        academic_task_description.task_description_period = academic_teaching.teaching_period AND 
-                                        academic_task_description.task_description_semester = academic_teaching.teaching_semester AND 
-                                        academic_task_description.task_description_garde = academic_grade.grade_id
-                                     ) AS total_task,
-                                    ( SELECT 
-                                        COUNT(academic_base_competence.base_competence_id) AS FIELD_1 
-                                      FROM 
-                                        academic_base_competence 
-                                      WHERE 
-                                        academic_base_competence.base_competence_subject = academic_teaching.teaching_subject AND 
-                                        academic_base_competence.base_competence_period = academic_teaching.teaching_period AND 
-                                        academic_base_competence.base_competence_semester = academic_teaching.teaching_semester AND 
-                                        academic_base_competence.base_competence_teacher = academic_teaching.teaching_teacher AND 
-                                        academic_base_competence.base_competence_grade = academic_grade.grade_id
-                                    ) AS count_basecompete
+                                    employees.employees_nip,
+                                    employees.employess_name,
+                                    academic_guidance.guidance_entry_update,
+                                    (SELECT COUNT(academic_classhistory.classhistory_id) FROM academic_classhistory WHERE academic_classhistory.classhistory_classgroup = academic_classgroup.classgroup_id ) AS student_count
                                   FROM
-                                    academic_subject
-                                    INNER JOIN academic_teaching ON (academic_subject.subject_id = academic_teaching.teaching_subject)
-                                    INNER JOIN employees ON (academic_teaching.teaching_teacher = employees.employees_id)
-                                    INNER JOIN academic_classgroup ON (academic_teaching.teaching_classgroup = academic_classgroup.classgroup_id)
-                                    INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
+                                    academic_guidance
+                                    INNER JOIN academic_classgroup ON (academic_guidance.guidance_classgroup = academic_classgroup.classgroup_id)
                                     INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
-                                    INNER JOIN academic_subject_category ON (academic_subject.subject_category = academic_subject_category.subject_category_id)
+                                    INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
+                                    INNER JOIN employees ON (academic_classgroup.classgroup_guardian = employees.employees_id)
                                   WHERE
-                                    academic_teaching.teaching_teacher = :teacherid AND 
-                                    academic_teaching.teaching_period = :periodid AND 
-                                    academic_teaching.teaching_semester = :semesterid
-                                  GROUP BY
-                                    academic_subject.subject_name,
-                                    academic_grade.grade_id
+                                    academic_guidance.guidance_teacher = :teacherid AND 
+                                    academic_guidance.guidance_period = :periodid AND 
+                                    academic_guidance.guidance_semester = :semesterid
                           ');
 
         $sth->bindValue(':teacherid', $teacherid);
         $sth->bindValue(':periodid', $periodid);
         $sth->bindValue(':semesterid', $semesterid);
-
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-
-    public function selectExtracurricular($teacher_id, $periodid, $semesterid) {
-        $sth = $this->db->prepare('
-                                SELECT 
-                                    academic_extracurricular_coach_history.extracurricular_coach_history_id,
-                                    academic_extracurricular_coach_history.extracurricular_coach_history_name,
-                                    academic_extracurricular_coach_history.extracurricular_coach_history_period,
-                                    academic_extracurricular_coach_history.extracurricular_coach_history_totaltime,
-                                    academic_extracurricular_coach_history.extracurricular_coach_history_entry,
-                                    academic_extracurricular_coach_history.extracurricular_coach_history_entry_update,
-                                    academic_extracurricular.extracurricular_name,
-                                    academic_extracurricular.extracurricular_id
-                                  FROM
-                                    academic_extracurricular_coach_history
-                                    INNER JOIN academic_extracurricular ON (academic_extracurricular_coach_history.extracurricular_coach_history_field = academic_extracurricular.extracurricular_id)
-                                  WHERE
-                                    academic_extracurricular_coach_history.extracurricular_coach_history_period = :periodid AND 
-                                    academic_extracurricular_coach_history.extracurricular_coach_history_semester = :semesterid AND 
-                                    academic_extracurricular_coach_history.extracurricular_coach_history_name = :teacherid
-                          ');
-
-        $sth->bindValue(':teacherid', $teacher_id);
-        $sth->bindValue(':semesterid', $semesterid);
-        $sth->bindValue(':periodid', $periodid);
 
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();

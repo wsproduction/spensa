@@ -76,12 +76,12 @@ $protection = Session::get('login_status');
                                 <div class="left-name"><a id="profile-name-left" href="#"></a></div>
                                 <div class="left-box-main-icon">
                                     <?php
-                                    URL::link('#', Src::image('orange16/home.png'));
-                                    URL::link('#', Src::image('orange16/email.png'));
-                                    URL::link('#', Src::image('orange16/my-account.png'));
-                                    URL::link('#', Src::image('orange16/photography.png'));
-                                    URL::link('#', Src::image('orange16/customers.png'));
-                                    URL::link('#', Src::image('orange16/communication.png'));
+                                    URL::link('#', Src::image('orange16/home.png', null, array('title' => 'Beranda')));
+                                    URL::link('#', Src::image('orange16/email.png', null, array('title' => 'Kronologi')));
+                                    URL::link('#', Src::image('orange16/my-account.png', null, array('title' => 'Biodata')));
+                                    URL::link('#', Src::image('orange16/photography.png', null, array('title' => 'Foto')));
+                                    URL::link('#', Src::image('orange16/customers.png', null, array('title' => 'Teman')));
+                                    URL::link('#', Src::image('orange16/communication.png', null, array('title' => 'Pesan')));
                                     ?>
                                 </div>
 

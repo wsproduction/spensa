@@ -39,18 +39,6 @@ class Guidance extends Controller {
         return $option;
     }
 
-    public function readGuardianInformation($id = 0) {
-        $period = $this->method->post('p');
-        $semester = $this->method->post('s');
-        $guardian_list = $this->model->selectGuardianInformation($period, $semester, $id);
-        if ($guardian_list) {
-            $res = array(1, $guardian_list[0]);
-        } else {
-            $res = array(0);
-        }
-        echo json_encode($res);
-    }
-
     public function readTeaching() {
         Session::init();
         $teacher_id = Session::get('user_references');
@@ -64,69 +52,20 @@ class Guidance extends Controller {
 
         if ($myteaching) {
             foreach ($myteaching as $row) {
-                $tempid = $row['subject_id'] . '.' . $row['grade_id'] . '.' . $periodid . '.' . $semesterid;
-                $link_myclass = $this->content->setParentLink('myclass/view/' . $tempid);
+                //$tempid = $row['subject_id'] . '.' . $row['grade_id'] . '.' . $periodid . '.' . $semesterid;
+                //$link_myclass = $this->content->setParentLink('myclass/view/' . $tempid);
                 $teaching_list .= '<tr>';
                 $teaching_list .= '
-                    <td valign="top" class="first" align="center">' . $idx . '</td>
-                    <td valign="top">
-                        <div><span  class="class-title">' . $row['subject_name'] . ' </span> <span style="color:#999">/ ' . $row['subject_category_title'] . '</span></div>
-                        <div class="link">
-                            &bullet; <a href="' . $link_myclass . '" class="go-to-class">' . $row['total_class'] . ' Daftar Kelas</a>
-                        </div>
-                    </td>';
+                    <td valign="top" class="first" align="center">' . $idx . '</td>';
 
                 $teaching_list .= '
                     <td valign="top">
-                        <div class="class-title" align="center">' . $row['grade_title'] . ' (' . $row['grade_name'] . ') </div>
+                        <div align="center">' . $row['grade_title'] . ' (' . $row['grade_name'] . ') ' . $row['classroom_name'] . ' </div>
                     </td>
-                    <td valign="top" align="center">' . $row['total_time'] . ' Jam</td>
-                </tr>';
-
-                $idx++;
-            }
-        } else {
-            $teaching_list .= '
-                            <tr>
-                                <td class="first" colspan="4">
-                                    <div class="information-box">
-                                        Data mengajar tidak ditemukan.
-                                    </div>
-                                </td>
-                            </tr>';
-        }
-
-        echo json_encode(array('count' => 1, 'row' => $teaching_list));
-    }
-
-    public function readExtracurricular() {
-        Session::init();
-        $teacher_id = Session::get('user_references');
-
-        $periodid = $this->method->post('p');
-        $semesterid = $this->method->post('s');
-
-        $myteaching = $this->model->selectExtracurricular($teacher_id, $periodid, $semesterid);
-        $teaching_list = '';
-        $idx = 1;
-
-        if ($myteaching) {
-            foreach ($myteaching as $row) {
-
-                $link = $this->content->setParentLink('extracurricular/room/' . $row['extracurricular_coach_history_id']);
-
-                $teaching_list .= '<tr>';
-                $teaching_list .= '
-                    <td valign="top" class="first" align="center">' . $idx . '</td>
-                    <td valign="top">
-                        <div class="class-title">' . $row['extracurricular_name'] . '</div>
-                        <div class="link">
-                            &bullet; <a href="' . $link . '" class="go-to-class">Masuk Kelas</a>
-                        </div>
-                    </td>';
-
-                $teaching_list .= '
-                    <td valign="top" align="center">' . $row['extracurricular_coach_history_totaltime'] . ' Jam</td>
+                    <td valign="top" align="center">' . $row['student_count'] . '</td>
+                    <td valign="top" align="left">' . $row['employess_name'] .  '</td>
+                    <td valign="top" align="center">' . $row['guidance_entry_update'] .  '</td>
+                    <td valign="top" align="center"><div class="link"><a href="">Ahlak & Kepribadian</a> &bullet; <a href="">Ketidakhadiran</a></div></td>
                 </tr>';
 
                 $idx++;

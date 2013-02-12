@@ -70,9 +70,11 @@
             <thead>
                 <tr>
                     <td class="first" style="width: 40px;text-align: center;">No.</td>
-                    <td>Mata Pelajaran</td>
-                    <td style="width: 150px;text-align: center;">Kelas</td>
-                    <td style="width: 100px;text-align: center;">Total Mengajar</td>
+                    <td style="width: 100px;text-align: center;">Nama Kelas</td>
+                    <td style="width: 80px;text-align: center;">Jumlah Siswa</td>
+                    <td>Wali Kelas</td>
+                    <td style="width: 80px;text-align: center;">Last Update</td>
+                    <td style="width: 200px;text-align: center;">Pilihan</td>
                 </tr>
             </thead>
             <tbody>

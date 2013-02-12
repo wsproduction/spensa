@@ -65,7 +65,7 @@ class Myclass extends Controller {
                 $teaching_list .= '     <td>' . $guardian_name . '</td>';
                 $teaching_list .= '     <td align="center">' . $row['teaching_total_time'] . ' Jam</td>';
                 $teaching_list .= '     <td>' . date('d-m-Y H:i:s', strtotime($row['teaching_entry_update'])) . '</td>';
-                $teaching_list .= '     <td align="center"><a href="' . $link_classgroup . '" rel="edit">Masuk Kelas</a> &bullet; <a href="../scorerecapitulation/' . $row['teaching_id'] . '" rel="delete">Rekapitulasi Nilai</a></td>';
+                $teaching_list .= '     <td align="center"><a href="' . $link_classgroup . '" rel="edit">Masuk Kelas</a></td>';
                 $teaching_list .= '</tr>';
                 $idx++;
             }
