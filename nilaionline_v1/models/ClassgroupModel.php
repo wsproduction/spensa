@@ -5,7 +5,7 @@ class ClassgroupModel extends Model {
     public function __construct() {
         parent::__construct();
     }
-
+    
     public function selectClassListByTeachingId($teachingid, $user_references) {
         $sth = $this->db->prepare('
                                 SELECT 

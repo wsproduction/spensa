@@ -112,4 +112,82 @@ class GuidanceModel extends Model {
         return $sth->fetchAll();
     }
 
+    public function selectClassListByTeachingId($teachingid, $user_references) {
+        $sth = $this->db->prepare('
+                                SELECT 
+                                    academic_guidance.guidance_id,
+                                    academic_classroom.classroom_name,
+                                    academic_grade.grade_id,
+                                    academic_grade.grade_title,
+                                    academic_grade.grade_name,
+                                    employees.employees_id,
+                                    employees.employees_nip,
+                                    employees.employess_name,
+                                    academic_guidance.guidance_entry_update,
+                                    (SELECT COUNT(academic_classhistory.classhistory_id) AS FIELD_1 FROM academic_classhistory WHERE academic_classhistory.classhistory_classgroup = academic_classgroup.classgroup_id) AS student_count,
+                                    academic_period.period_id,
+                                    academic_period.period_years_start,
+                                    academic_period.period_years_end,
+                                    academic_semester.semester_name,
+                                    academic_semester.semester_id,
+                                    academic_classgroup.classgroup_id
+                                  FROM
+                                    academic_guidance
+                                    INNER JOIN academic_classgroup ON (academic_guidance.guidance_classgroup = academic_classgroup.classgroup_id)
+                                    INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
+                                    INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
+                                    INNER JOIN employees ON (academic_classgroup.classgroup_guardian = employees.employees_id)
+                                    INNER JOIN academic_period ON (academic_guidance.guidance_period = academic_period.period_id)
+                                    INNER JOIN academic_semester ON (academic_guidance.guidance_semester = academic_semester.semester_id)
+                                  WHERE
+                                    academic_guidance.guidance_id = :teachingid AND 
+                                    academic_guidance.guidance_teacher = :user_references
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':teachingid', $teachingid);
+        $sth->bindValue(':user_references', $user_references);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectStudentByClassGroupId($classgroupid) {
+        $sth = $this->db->prepare('
+                                SELECT 
+                                    academic_student.student_nis,
+                                    academic_student.student_nisn,
+                                    academic_student.student_name,
+                                    public_gender.gender_title
+                                FROM
+                                    academic_classhistory
+                                    INNER JOIN academic_student ON (academic_classhistory.classhistory_student = academic_student.student_nis)
+                                    INNER JOIN public_gender ON (academic_student.student_gender = public_gender.gender_id)
+                                WHERE
+                                    academic_classhistory.classhistory_classgroup = :classgroupid
+                                ORDER BY academic_student.student_name
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':classgroupid', $classgroupid);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectSocoreByScoreFilter($student, $teaching, $type) {
+        $sth = $this->db->prepare('
+                                      SELECT 
+                                        academic_score.score_id,
+                                        academic_score.score_student,
+                                        academic_score.score_value
+                                      FROM
+                                        academic_score
+                                      WHERE
+                                        academic_score.score_student IN (' . $student . ') AND 
+                                        academic_score.score_teaching = :teaching AND 
+                                        academic_score.score_type = :type
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':teaching', $teaching);
+        $sth->bindValue(':type', $type);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
 }
