@@ -4,7 +4,7 @@ class Import extends Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->content->protection(true);
+        //$this->content->protection(true);
     }
 
     public function index() {
@@ -13,135 +13,92 @@ class Import extends Controller {
     }
 
     public function student() {
-        $inputFileType = 'Excel5';
-        $inputFileName = Web::path() . 'asset/upload/file/peserta_didik_import.xls';
-
+        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/KELAS9.xls';
         if (file_exists($inputFileName)) {
-
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
-            $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-
-            $chunkSize = 649;
-            $startRow = 2;
-
-            /**  Create a new Instance of our Read Filter, passing in the limits on which rows we want to read  * */
-            $chunkFilter = new chunkReadFilter($startRow, $chunkSize);
-            /**  Tell the Reader that we want to use the new Read Filter that we've just Instantiated  * */
-            $objReader->setReadFilter($chunkFilter);
-            /**  Load only the rows that match our filter from $inputFileName to a PHPExcel Object  * */
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
             $objPHPExcel = $objReader->load($inputFileName);
 
-            $sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
+            try {
+                $data = array();
+                $html = '
+                    <table border="1">
+                        <tr>
+                            <td>NIS</td>
+                            <td>NISN</td>
+                            <td>NAMA</td>
+                            <td>JK</td>
+                            <td>KELAS</td>
+                        </tr>
+                    ';
+                $count_student = 202;
+                $numrow = 7;
+                $sheet = $objPHPExcel->getActiveSheet();
+                for ($i = 1; $i <= $count_student; $i++) {
 
-            unset($sheetData[1]);
+                    $nis = $sheet->getCell('B' . $numrow)->getValue();
+                    $nisn = $sheet->getCell('C' . $numrow)->getValue();
+                    $nama = $sheet->getCell('D' . $numrow)->getValue();
+                    $jk = $sheet->getCell('E' . $numrow)->getValue();
+                    $kelas = $sheet->getCell('F' . $numrow)->getValue();
 
-            $data = array();
 
-            $html = '<table border=1>';
-            $html .= '<tr>';
-            $html .= '<td>NIS</td>';
-            $html .= '<td>Nama</td>';
-            $html .= '<td>L/P</td>';
-            $html .= '<td>NISN</td>';
-            $html .= '<td>NIK</td>';
-            $html .= '<td>TEMPAT LAHIR</td>';
-            $html .= '<td>TANGGAL LAHIR</td>';
-            $html .= '<td>AGAMA</td>';
-            $html .= '<td>JENIS TINGGAL</td>';
-            $html .= '<td>ALAMAT</td>';
-            $html .= '<td>RT</td>';
-            $html .= '<td>RW</td>';
-            $html .= '<td>KELURAHAN</td>';
-            $html .= '<td>KECAMATAN</td>';
-            $html .= '<td>KAB/KOTA</td>';
-            $html .= '<td>KODE POS</td>';
-            $html .= '<td>JARAK</td>';
-            $html .= '<td>JARAK OTHER</td>';
-            $html .= '<td>TRANSPORTASI</td>';
-            $html .= '<td>PHONE 1</td>';
-            $html .= '<td>PHONE 2</td>';
-            $html .= '<td>EMAIL</td>';
-            $html .= '<td>TINGGI</td>';
-            $html .= '<td>BERAT</td>';
-            $html .= '<td>KEBUTUHAN KHUSUS</td>';
-            $html .= '</tr>';
-            foreach ($sheetData as $key => $row) {
-                $html .= '<tr>';
+                    if (strtolower($jk) == 'l') {
+                        $jk_id = 1;
+                    } else {
+                        $jk_id = 2;
+                    }
 
-                $html .= '<td>' . $row['D'] . '</td>';
-                $html .= '<td>' . $row['B'] . '</td>';
-                $html .= '<td>' . $row['C'] . '</td>';
-                $html .= '<td>' . $row['E'] . '</td>';
-                $html .= '<td>' . $row['F'] . '</td>';
-                $html .= '<td>' . strtoupper($row['G']) . '</td>';
-                $html .= '<td>' . $row['H'] . '</td>';
-                $html .= '<td>' . $row['I'] . '</td>';
-                $html .= '<td>' . $row['Z'] . '</td>';
-                $html .= '<td>' . $row['AA'] . '</td>';
-                $html .= '<td>' . $row['AB'] . '</td>';
-                $html .= '<td>' . $row['AC'] . '</td>';
-                $html .= '<td>' . $row['AD'] . '</td>';
-                $html .= '<td>' . $row['AE'] . '</td>';
-                $html .= '<td>' . $row['AF'] . '</td>';
-                $html .= '<td>' . $row['AG'] . '</td>';
-                $html .= '<td>' . $row['AM'] . '</td>';
-                $html .= '<td>' . $row['AN'] . '</td>';
-                $html .= '<td>' . $row['AO'] . '</td>';
-                $html .= '<td>' . $row['AK'] . '</td>';
-                $html .= '<td>' . $row['AL'] . '</td>';
-                $html .= '<td>' . $row['AP'] . '</td>';
-                $html .= '<td>' . $row['AH'] . '</td>';
-                $html .= '<td>' . $row['AI'] . '</td>';
-                $html .= '<td>' . $row['AJ'] . '</td>';
+                    $html .= '
+                        <tr>
+                            <td>' . $nis . '</td>
+                            <td>' . $nisn . '</td>
+                            <td>' . $nama . '</td>
+                            <td>' . $jk_id . ' - ' . $jk . '</td>
+                            <td>' . $kelas . '</td>
+                        </tr>
+                    ';
 
-                $html .= '</tr>';
+                    $data['nis'] = $nis;
+                    $data['name'] = $nama;
+                    $data['gender'] = $jk_id;
+                    $data['nisn'] = $nisn;
+                    $data['nik'] = ' ';
+                    $data['birthplace'] = ' ';
+                    $data['birthdate'] = '2013-2-13';
+                    $data['religion'] = '-1';
+                    $data['religionother'] = '';
+                    $data['residance'] = '-1';
+                    $data['residanceother'] = '';
+                    $data['address'] = ' ';
+                    $data['rt'] = '';
+                    $data['rw'] = '';
+                    $data['village'] = '';
+                    $data['subdisctrict'] = '';
+                    $data['city'] = 19;
+                    $data['zipcode'] = '';
+                    $data['distance'] = 1;
+                    $data['distanceother'] = '';
+                    $data['transportation'] = '-1';
+                    $data['phonenumber1'] = '';
+                    $data['phonenumber2'] = '';
+                    $data['email'] = '';
+                    $data['height'] = '';
+                    $data['weight'] = '';
+                    $data['specialneeds'] = '-1';
 
-                $data['nis'] = $row['D'];
-                $data['name'] = $row['B'];
-                $data['gender'] = $row['C'];
-                $data['nisn'] = $row['E'];
-                $data['nik'] = $row['F'];
-                $data['birthplace'] = strtoupper($row['G']);
-                $data['birthdate'] = date('Y-m-d', strtotime($row['H']));
-                $data['religion'] = $row['I'];
-                $data['religionother'] = '';
+                    //$this->model->saveStudent($data);
 
-                if ($row['Z'] == 0 || $row['Z'] == 99)
-                    $data['residance'] = -1;
-                else
-                    $data['residance'] = $row['Z'];
+                    $numrow++;
+                }
+                $html .= '</table>';
 
-                $data['residanceother'] = '';
-                $data['address'] = $row['AA'];
-                $data['rt'] = $row['AB'];
-                $data['rw'] = $row['AC'];
-                $data['village'] = $row['AD'];
-                $data['subdisctrict'] = ''; //$row['AE'];
-                $data['city'] = $row['AF'];
-                $data['zipcode'] = $row['AG'];
-                $data['distance'] = $row['AM'];
-                $data['distanceother'] = $row['AN'];
-
-                if ($row['AO'] == 0 || $row['AO'] == 99)
-                    $data['transportation'] = -1;
-                else
-                    $data['transportation'] = $row['AO'];
-
-                $data['phonenumber1'] = $row['AK'];
-                $data['phonenumber2'] = $row['AL'];
-                $data['email'] = $row['AP'];
-                $data['height'] = $row['AH'];
-                $data['weight'] = $row['AI'];
-
-                if ($row['AJ'] == 0 || $row['AJ'] == 99)
-                    $data['specialneeds'] = -1;
-                else
-                    $data['specialneeds'] = $row['AJ'];
-
-                //$this->model->saveStudent($data);
+                echo $html;
+            } catch (Exception $exc) {
+                
             }
-            $html .= '</table>';
-            echo $html;
+        } else {
+            echo 'File Tidak ditemukan : ' . $inputFileName;
         }
     }
 
@@ -268,53 +225,68 @@ class Import extends Controller {
     }
 
     public function classHistrory() {
-        $inputFileType = 'Excel5';
-        $inputFileName = Web::path() . 'asset/upload/file/KELAS8/SISWA8H.xls';
-
+        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/KELAS9.xls';
         if (file_exists($inputFileName)) {
-
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
-            $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-
-            $chunkSize = 649;
-            $startRow = 2;
-
-            /**  Create a new Instance of our Read Filter, passing in the limits on which rows we want to read  * */
-            $chunkFilter = new chunkReadFilter($startRow, $chunkSize);
-            /**  Tell the Reader that we want to use the new Read Filter that we've just Instantiated  * */
-            $objReader->setReadFilter($chunkFilter);
-            /**  Load only the rows that match our filter from $inputFileName to a PHPExcel Object  * */
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
             $objPHPExcel = $objReader->load($inputFileName);
 
-            $sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
+            try {
+                $data = array();
+                $html = '
+                    <table border="1">
+                        <tr>
+                            <td>NIS</td>
+                            <td>NISN</td>
+                            <td>NAMA</td>
+                            <td>JK</td>
+                            <td>KELAS</td>
+                        </tr>
+                    ';
+                $count_student = 202;
+                $numrow = 7;
+                $sheet = $objPHPExcel->getActiveSheet();
+                for ($i = 1; $i <= $count_student; $i++) {
 
-            unset($sheetData[1]);
+                    $nis = $sheet->getCell('B' . $numrow)->getValue();
+                    $nisn = $sheet->getCell('C' . $numrow)->getValue();
+                    $nama = $sheet->getCell('D' . $numrow)->getValue();
+                    $jk = $sheet->getCell('E' . $numrow)->getValue();
+                    $kelas = $sheet->getCell('F' . $numrow)->getValue();
 
-            $data = array();
 
-            $html = '<table border=1>';
-            $html .= '<tr>';
-            $html .= '<td>NIS</td>';
-            $html .= '<td>KELAS GROUP</td>';
-            $html .= '<td>STATUS</td>';
-            $html .= '</tr>';
-            foreach ($sheetData as $key => $row) {
-                $html .= '<tr>';
+                    if (strtolower($jk) == 'l') {
+                        $jk_id = 1;
+                    } else {
+                        $jk_id = 2;
+                    }
 
-                $html .= '<td>' . $row['A'] . '</td>';
-                $html .= '<td>' . $row['B'] . '</td>';
-                $html .= '<td>3</td>';
+                    $html .= '
+                        <tr>
+                            <td>' . $nis . '</td>
+                            <td>' . $nisn . '</td>
+                            <td>' . $nama . '</td>
+                            <td>' . $jk_id . ' - ' . $jk . '</td>
+                            <td>' . $kelas . '</td>
+                        </tr>
+                    ';
 
-                $html .= '</tr>';
+                    $data['nis'] = $nis;
+                    $data['class_group'] = $kelas;
+                    $data['status'] = 3;
 
-                $data['nis'] = $row['A'];
-                $data['class_group'] = $row['B'];
-                $data['status'] = 3;
+                    $this->model->saveClassGroup($data);
 
-                //$this->model->saveClassGroup($data);
+                    $numrow++;
+                }
+                $html .= '</table>';
+
+                echo $html;
+            } catch (Exception $exc) {
+                
             }
-            $html .= '</table>';
-            echo $html;
+        } else {
+            echo 'File Tidak ditemukan : ' . $inputFileName;
         }
     }
 
@@ -373,7 +345,7 @@ class Import extends Controller {
         $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(40);
         $objPHPExcel->getActiveSheet()->getRowDimension('4')->setRowHeight(120);
         $objPHPExcel->getActiveSheet()->getStyle('A4:C4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
-        
+
         $defaultBorder = array(
             'style' => PHPExcel_Style_Border::BORDER_THIN,
             'color' => array('rgb' => '1006A3')
@@ -396,7 +368,7 @@ class Import extends Controller {
         );
 
         $objPHPExcel->getActiveSheet()->getStyle('A1:C1')->applyFromArray($style_header);
-        
+
         $objPHPExcel->getActiveSheet()->setCellValue('E1', 10);
         $objPHPExcel->getActiveSheet()->setCellValue('F1', 20);
         $objPHPExcel->getActiveSheet()->setCellValue('G1', '=SUM(E1:F1)');
@@ -410,7 +382,7 @@ class Import extends Controller {
         $objWriter->save('php://output');
         exit;
     }
-    
+
     public function importTest() {
         $inputFileType = 'Excel5';
         $inputFileName = Web::path() . 'asset/upload/file/mlc.xls';
@@ -433,7 +405,7 @@ class Import extends Controller {
             $sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
 
             unset($sheetData[1]);
-            
+
             $html = '<table border=1>';
             $html .= '<tr>';
             $html .= '<td>ID</td>';
@@ -450,7 +422,7 @@ class Import extends Controller {
                 $html .= '<td>' . $row['D'] . '</td>';
 
                 $html .= '</tr>';
-                
+
                 $data['subject'] = $row['A'];
                 $data['period'] = $row['D'];
                 $data['grade'] = $row['E'];

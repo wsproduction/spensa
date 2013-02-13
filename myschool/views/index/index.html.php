@@ -1,4 +1,4 @@
-<div class="box-index">
+<div>
     
     <div class="fl-left">
         <?php Form::begin('form_login', 'login/run', 'post', false); ?>
@@ -39,8 +39,13 @@
     </div>
     
     <div class="fl-left">
-        
+        <div>
+            <?php
+                            echo Src::image('cover.png');
+            ?>
+        </div>
     </div>
+    
     <div class="cl">&nbsp;</div>
 </div>
 

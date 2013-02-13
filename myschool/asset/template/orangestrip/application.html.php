@@ -53,10 +53,10 @@ $protection = Session::get('login_status');
                         <ul id="m-account-child">
                             <li><a href="#" class="orange16-ic-config">Account Settings</a></li>
                             <li><a href="#" class="orange16-ic-lock">Privacy Settings</a></li>
-                            <li><a href="http://sekolahku.spensa.ws/login/stop" class="orange16-ic-signout">Logout</a></li>
+                            <li><a href="http://plus.spensa.ws/login/stop" class="orange16-ic-signout">Logout</a></li>
                             <li><div class="hr-solid-grey"></div></li>
-                            <li><a href="http://sekolahku.spensa.ws/login/stop" class="orange16-ic-lightbulb">Bantuan</a></li>
-                            <li><a href="http://sekolahku.spensa.ws/login/stop" class="orange16-ic-collaboration">Tentang SekolahKu</a></li>
+                            <li><a href="http://plus.spensa.ws/login/stop" class="orange16-ic-lightbulb">Bantuan</a></li>
+                            <li><a href="http://plus.spensa.ws/login/stop" class="orange16-ic-collaboration">Tentang SekolahKu</a></li>
                         </ul>
                     </div>
                 <?php } ?>

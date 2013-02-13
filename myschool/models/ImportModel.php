@@ -84,7 +84,6 @@ class ImportModel extends Model {
         $sth->bindValue(':religion', $data['religion']);
         $sth->bindValue(':religionother', $data['religionother']);
         $sth->bindValue(':residance', $data['residance']);
-        $sth->bindValue(':residance', $data['residance']);
         $sth->bindValue(':residanceother', $data['residanceother']);
         $sth->bindValue(':address', $data['address']);
         $sth->bindValue(':rt', $data['rt']);
@@ -302,20 +301,22 @@ class ImportModel extends Model {
                                         classhistory_status,
                                         classhistory_entry,
                                         classhistory_entry_update)
-                                VALUES(
-                                    (SELECT IF(
-                                        (SELECT COUNT(ac.classhistory_id) 
-                                        FROM academic_classhistory AS ac) > 0, 
-                                            (SELECT ac.classhistory_id 
-                                            FROM academic_classhistory AS ac 
-                                            ORDER BY ac.classhistory_id DESC LIMIT 1) + 1,
-                                        1)
+                                  VALUES(
+                                    (SELECT IF (
+                                        (SELECT COUNT(e.classhistory_id) FROM academic_classhistory AS e 
+                                                WHERE e.classhistory_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                ORDER BY e.classhistory_id DESC LIMIT 1
+                                        ) > 0,
+                                        (SELECT ( e.classhistory_id + 1 ) FROM academic_classhistory AS e 
+                                                WHERE e.classhistory_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                ORDER BY e.classhistory_id DESC LIMIT 1),
+                                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"0001")))
                                     ),
                                     :nis,
                                     :class_group,
                                     :status,
                                     NOW(),
-                                    NOW());
+                                    NOW())
                             ');
         $sth->bindValue(':nis', $data['nis']);
         $sth->bindValue(':class_group', $data['class_group']);
