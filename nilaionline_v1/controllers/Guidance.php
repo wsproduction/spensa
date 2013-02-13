@@ -36,14 +36,36 @@ class Guidance extends Controller {
             $class_info = $class_list[0];
             $this->view->class_info = $class_info;
 
-            Web::setTitle('Kelas ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
+            Web::setTitle('Bimbingan Konseling | Kelas ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
 
             $this->view->link_back = $this->content->setParentLink('guidance');
             $this->view->link_score_export = $this->content->setLink('guidance/exportscore/' . $teachingid);
             $this->view->link_score_save = $this->content->setLink('guidance/savescore/' . $teachingid . '.' . $class_info['classgroup_id']);
-            $this->view->link_score_read = $this->content->setLink('guidance/readattendance/' . $teachingid . '.' . $class_info['classgroup_id']);
+            $this->view->link_score_read = $this->content->setLink('guidance/readscore/' . $teachingid . '.' . $class_info['classgroup_id']);
 
             $this->view->render('guidance/attitude');
+        } else {
+            $this->view->render('guidance/404');
+        }
+    }
+
+    public function personality($teachingid = 0) {
+        Session::init();
+        $user_references = Session::get('user_references');
+
+        $class_list = $this->model->selectClassListByTeachingId($teachingid, $user_references);
+        if ($class_list) {
+            $class_info = $class_list[0];
+            $this->view->class_info = $class_info;
+
+            Web::setTitle('Bimbingan Konseling | Kelas ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
+
+            $this->view->link_back = $this->content->setParentLink('guidance');
+            $this->view->link_score_export = $this->content->setLink('guidance/exportscore/' . $teachingid);
+            $this->view->link_score_save = $this->content->setLink('guidance/savescore/' . $teachingid . '.' . $class_info['classgroup_id']);
+            $this->view->link_score_read = $this->content->setLink('guidance/readscore/' . $teachingid . '.' . $class_info['classgroup_id']);
+
+            $this->view->render('guidance/personality');
         } else {
             $this->view->render('guidance/404');
         }
@@ -98,6 +120,7 @@ class Guidance extends Controller {
             foreach ($myteaching as $row) {
                 $tempid = $row['guidance_id'];
                 $link_attitude = $this->content->setParentLink('guidance/attitude/' . $tempid);
+                $link_personality = $this->content->setParentLink('guidance/personality/' . $tempid);
                 $link_attendance = $this->content->setParentLink('guidance/attendance/' . $tempid);
                 $teaching_list .= '<tr>';
                 $teaching_list .= '
@@ -110,7 +133,7 @@ class Guidance extends Controller {
                     <td valign="top" align="center">' . $row['student_count'] . '</td>
                     <td valign="top" align="left">' . $row['employess_name'] . '</td>
                     <td valign="top" align="center">' . $row['guidance_entry_update'] . '</td>
-                    <td valign="top" align="center"><div class="link"><a href="' . $link_attitude . '">Ahlak</a> &bullet;  <a href="' . $link_attitude . '">Kepribadian</a> &bullet; <a href="' . $link_attendance . '">Ketidakhadiran</a></div></td>
+                    <td valign="top" align="center"><div class="link"><a href="' . $link_attitude . '">Ahlak</a> &bullet;  <a href="' . $link_personality . '">Kepribadian</a> &bullet; <a href="' . $link_attendance . '">Ketidakhadiran</a></div></td>
                 </tr>';
 
                 $idx++;
@@ -128,7 +151,7 @@ class Guidance extends Controller {
 
         echo json_encode(array('count' => 1, 'row' => $teaching_list));
     }
-    
+
     private function parsingStudentId($student_list = array()) {
         $student_id = '0';
         foreach ($student_list as $row) {
@@ -147,7 +170,7 @@ class Guidance extends Controller {
         }
         return $score;
     }
-    
+
     public function readScore($tempid = 0) {
 
         list ($teachingid, $class_group_id) = explode('.', $tempid);
@@ -197,7 +220,7 @@ class Guidance extends Controller {
         }
         echo json_encode(array('count' => $no - 1, 'row' => $html_list));
     }
-    
+
     public function readAttendance($tempid = 0) {
 
         list ($teachingid, $class_group_id) = explode('.', $tempid);
@@ -236,14 +259,28 @@ class Guidance extends Controller {
             Form::style('score_list');
             $score_input = Form::commit('attach');
 
+            Form::create('text', 'score_list2_' . $no);
+            Form::value($score);
+            Form::size(5);
+            Form::properties(array('order' => $row['student_nis']));
+            Form::style('score_list');
+            $score_input2 = Form::commit('attach');
+
+            Form::create('text', 'score_list3_' . $no);
+            Form::value($score);
+            Form::size(5);
+            Form::properties(array('order' => $row['student_nis']));
+            Form::style('score_list');
+            $score_input3 = Form::commit('attach');
+
             $html_list .= '<tr>';
             $html_list .= '     <td align="center" class="first">' . $no . '</td>';
             $html_list .= '     <td align="center">' . $row['student_nis'] . '</td>';
             $html_list .= '     <td align="center">' . $row['student_nisn'] . '</td>';
             $html_list .= '     <td>' . $row['student_name'] . '</td>';
             $html_list .= '     <td align="center">' . $score_input . '</td>';
-            $html_list .= '     <td align="center">' . $score_input . '</td>';
-            $html_list .= '     <td align="center">' . $score_input . '</td>';
+            $html_list .= '     <td align="center">' . $score_input2 . '</td>';
+            $html_list .= '     <td align="center">' . $score_input3 . '</td>';
             $html_list .= '</tr>';
             $no++;
         }

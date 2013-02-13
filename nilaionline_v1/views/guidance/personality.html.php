@@ -39,7 +39,7 @@
             <tr>
                 <td class="label">HAL</td>
                 <td class="sparator">:</td>
-                <td class="content">Akhlak</td>
+                <td class="content">Keperibadian</td>
             </tr>
         </table>
         <div class="cl"></div>

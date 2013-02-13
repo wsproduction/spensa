@@ -74,9 +74,9 @@
                         <tr>
                             <td align="center" class="first" colspan="3" style="border-bottom: none;">NOMOR</td>
                             <td rowspan="2" align="center">NAMA SISWA</td>
-                            <td style="width: 50px;" align="center" rowspan="2">SAKIT</td>
-                            <td style="width: 50px;" align="center" rowspan="2">IJIN</td>
-                            <td style="width: 50px;" align="center" rowspan="2">TANPA KETERANGAN</td>
+                            <td style="width: 65px;" align="center" rowspan="2">SAKIT</td>
+                            <td style="width: 65px;" align="center" rowspan="2">IJIN</td>
+                            <td style="width: 65px;" align="center" rowspan="2">TANPA KETERANGAN</td>
                         </tr>
                         <tr>
                             <td style="width: 40px;" align="center" class="first">URUT</td>
@@ -120,8 +120,9 @@
                         <tr>
                             <td align="center" class="first" colspan="3" style="border-bottom: none;">NOMOR</td>
                             <td rowspan="2" align="center">NAMA SISWA</td>
-                            <td style="width: 100px;" align="center" rowspan="2">NILAI</td>
-                            <td style="width: 100px;" align="center" rowspan="2">KETERANGAN</td>
+                            <td style="width: 65px;" align="center" rowspan="2">SAKIT</td>
+                            <td style="width: 65px;" align="center" rowspan="2">IJIN</td>
+                            <td style="width: 65px;" align="center" rowspan="2">TANPA KETERANGAN</td>
                         </tr>
                         <tr>
                             <td style="width: 40px;" align="center" class="first">URUT</td>
@@ -268,13 +269,6 @@
                 var order = $(this).attr('order');
                 var desc = '-';
                 if (!is_empty(val)) {
-                    if (parseInt(val) > parseInt(mlc)) {
-                        desc = 'Terlampaui';
-                    } else if (parseInt(val) == parseInt(mlc)){
-                        desc = 'Tercapai';
-                    } else {
-                        desc = 'Tidak Tercapai';
-                    }
                     $(this).css('border','1px solid #ccc');
                 } else {
                     $(this).css('border','1px solid red');
@@ -308,13 +302,53 @@
             var error_count = 0;
             var $list;
             
-            for (var i = 1 ; i <= $(table).children('tbody').attr('count');i++) {
+            var $list_count = $(table).children('tbody').attr('count');
+            
+            for (var i = 1 ; i <= $list_count;i++) {
                 $list = $(table + ' #score_list_' + i);
                 nis = $list.attr('order');
                 val = $list.val();
                 if (is_number(val)) {
                     if ( parseInt(val) >= 0 && parseInt(val) <= 100) {
-                        id[i] = [nis,val];
+                        id['s'][i] = [nis,val];
+                        $list.css('border','1px solid #ccc');
+                    } else {
+                        $list.css('border','1px solid red');
+                        error_count++;
+                    }
+                } else {
+                    $list.css('border','1px solid red');
+                    error_count++;
+                }
+                
+            }
+            
+            for (var i = 1 ; i <= $list_count;i++) {
+                $list = $(table + ' #score_list2_' + i);
+                nis = $list.attr('order');
+                val = $list.val();
+                if (is_number(val)) {
+                    if ( parseInt(val) >= 0 && parseInt(val) <= 100) {
+                        id['i'][i] = [nis,val];
+                        $list.css('border','1px solid #ccc');
+                    } else {
+                        $list.css('border','1px solid red');
+                        error_count++;
+                    }
+                } else {
+                    $list.css('border','1px solid red');
+                    error_count++;
+                }
+                
+            }
+            
+            for (var i = 1 ; i <= $list_count;i++) {
+                $list = $(table + ' #score_list3_' + i);
+                nis = $list.attr('order');
+                val = $list.val();
+                if (is_number(val)) {
+                    if ( parseInt(val) >= 0 && parseInt(val) <= 100) {
+                        id['a'][i] = [nis,val];
                         $list.css('border','1px solid #ccc');
                     } else {
                         $list.css('border','1px solid red');
