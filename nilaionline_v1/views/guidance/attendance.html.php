@@ -86,7 +86,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="first" colspan="6">
+                            <td class="first" colspan="7">
                                 <div class="information-box">
                                     Loading...
                                 </div>
@@ -132,7 +132,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="first" colspan="6">
+                            <td class="first" colspan="7">
                                 <div class="information-box">
                                     Loading...
                                 </div>
@@ -295,12 +295,18 @@
             });
         };
         
+        
         /* Save Score */
         var saveScore = function(url, type, table) {
-            var id = new Array();
+        
             var val, nis;
             var error_count = 0;
             var $list;
+            
+            var id = new Array();
+            var sick = new Array();
+            var leave = new Array();
+            var alpha = new Array();
             
             var $list_count = $(table).children('tbody').attr('count');
             
@@ -309,13 +315,8 @@
                 nis = $list.attr('order');
                 val = $list.val();
                 if (is_number(val)) {
-                    if ( parseInt(val) >= 0 && parseInt(val) <= 100) {
-                        id['s'][i] = [nis,val];
-                        $list.css('border','1px solid #ccc');
-                    } else {
-                        $list.css('border','1px solid red');
-                        error_count++;
-                    }
+                    sick[i] = [nis,val];
+                    $list.css('border','1px solid #ccc');
                 } else {
                     $list.css('border','1px solid red');
                     error_count++;
@@ -328,13 +329,8 @@
                 nis = $list.attr('order');
                 val = $list.val();
                 if (is_number(val)) {
-                    if ( parseInt(val) >= 0 && parseInt(val) <= 100) {
-                        id['i'][i] = [nis,val];
-                        $list.css('border','1px solid #ccc');
-                    } else {
-                        $list.css('border','1px solid red');
-                        error_count++;
-                    }
+                    leave[i] = [nis,val];
+                    $list.css('border','1px solid #ccc');
                 } else {
                     $list.css('border','1px solid red');
                     error_count++;
@@ -347,20 +343,17 @@
                 nis = $list.attr('order');
                 val = $list.val();
                 if (is_number(val)) {
-                    if ( parseInt(val) >= 0 && parseInt(val) <= 100) {
-                        id['a'][i] = [nis,val];
-                        $list.css('border','1px solid #ccc');
-                    } else {
-                        $list.css('border','1px solid red');
-                        error_count++;
-                    }
+                    alpha[i] = [nis,val];
+                    $list.css('border','1px solid #ccc');
                 } else {
                     $list.css('border','1px solid red');
                     error_count++;
                 }
                 
             }
-                
+            
+            id = [sick, leave, alpha];
+            
             if (error_count == 0) {
                 $(this).loadingProgress('start');
                 $.post(url, {type:type, data:id}, function(o){

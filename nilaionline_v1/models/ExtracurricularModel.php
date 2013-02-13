@@ -73,7 +73,7 @@ class ExtracurricularModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-
+    
     public function updateScore($scoreid, $score) {
         $sth = $this->db->prepare('
                                  UPDATE

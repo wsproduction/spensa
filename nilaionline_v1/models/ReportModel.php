@@ -255,4 +255,74 @@ class ReportModel extends Model {
         return $sth->fetchAll();
     }
 
+    public function selectGuidanceScore($student, $period, $semester, $type) {
+        $sth = $this->db->prepare("
+                                  SELECT 
+                                    academic_student.student_nis,
+                                    (SELECT 
+                                    academic_score_guidance.score_guidance_value
+                                  FROM
+                                    academic_score_guidance
+                                    INNER JOIN academic_guidance ON (academic_score_guidance.score_guidance_guidance = academic_guidance.guidance_id)
+                                  WHERE
+                                    academic_score_guidance.score_guidance_student = academic_student.student_nis AND 
+                                    academic_guidance.guidance_period = :period AND 
+                                    academic_guidance.guidance_semester = :semester AND 
+                                    academic_score_guidance.score_guidance_desc = 1 AND 
+                                    academic_score_guidance.score_guidance_type = :type
+                                  LIMIT 1) AS attitude_score,
+                                  (SELECT 
+                                    academic_score_guidance.score_guidance_value
+                                  FROM
+                                    academic_score_guidance
+                                    INNER JOIN academic_guidance ON (academic_score_guidance.score_guidance_guidance = academic_guidance.guidance_id)
+                                  WHERE
+                                    academic_score_guidance.score_guidance_student = academic_student.student_nis AND 
+                                    academic_guidance.guidance_period = :period AND 
+                                    academic_guidance.guidance_semester = 1 AND 
+                                    academic_score_guidance.score_guidance_desc = 2 AND 
+                                    academic_score_guidance.score_guidance_type = :type
+                                  LIMIT 1) AS personality_score
+                                  FROM
+                                    academic_student
+                                  WHERE
+                                    academic_student.student_nis = :student
+                                 ");
+
+        $sth->bindValue(':student', $student);
+        $sth->bindValue(':period', $period);
+        $sth->bindValue(':semester', $semester);
+        $sth->bindValue(':type', $type);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectAttendance($student, $period, $semester, $type) {
+        $sth = $this->db->prepare("
+                                  SELECT 
+                                    academic_attendance.attendance_student,
+                                    academic_attendance.attendance_sick,
+                                    academic_attendance.attendance_leave,
+                                    academic_attendance.attendance_alpha
+                                  FROM
+                                    academic_attendance
+                                    INNER JOIN academic_guidance ON (academic_attendance.attendance_guidance = academic_guidance.guidance_id)
+                                  WHERE
+                                    academic_attendance.attendance_student = :student AND 
+                                    academic_guidance.guidance_period = :period AND
+                                    academic_guidance.guidance_semester = :semester AND 
+                                    academic_attendance.attendance_score_type = :type
+                                  LIMIT 1
+                                 ");
+
+        $sth->bindValue(':student', $student);
+        $sth->bindValue(':period', $period);
+        $sth->bindValue(':semester', $semester);
+        $sth->bindValue(':type', $type);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
 }

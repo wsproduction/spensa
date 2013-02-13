@@ -149,7 +149,7 @@ class GuidanceModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectStudentByClassGroupId($classgroupid) {
         $sth = $this->db->prepare('
                                 SELECT 
@@ -171,18 +171,96 @@ class GuidanceModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectSocoreByScoreFilter($student, $teaching, $type) {
+    public function selectSocoreByScoreFilter($student, $teaching, $desc, $type) {
         $sth = $this->db->prepare('
-                                      SELECT 
-                                        academic_score.score_id,
-                                        academic_score.score_student,
-                                        academic_score.score_value
+                                    SELECT 
+                                        academic_score_guidance.score_guidance_id,
+                                        academic_score_guidance.score_guidance_student,
+                                        academic_score_guidance.score_guidance_value
                                       FROM
-                                        academic_score
+                                        academic_score_guidance
                                       WHERE
-                                        academic_score.score_student IN (' . $student . ') AND 
-                                        academic_score.score_teaching = :teaching AND 
-                                        academic_score.score_type = :type
+                                        academic_score_guidance.score_guidance_student IN (' . $student . ') AND 
+                                        academic_score_guidance.score_guidance_guidance = :teaching AND 
+                                        academic_score_guidance.score_guidance_desc = :desc AND 
+                                        academic_score_guidance.score_guidance_type = :type
+                          ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':teaching', $teaching);
+        $sth->bindValue(':desc', $desc);
+        $sth->bindValue(':type', $type);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function updateScore($scoreid, $score) {
+        $sth = $this->db->prepare('
+                                 UPDATE
+                                    academic_score_guidance
+                                  SET
+                                    score_guidance_value = :score,
+                                    score_guidance_entry_update = NOW()
+                                  WHERE
+                                    score_guidance_id = :scoreid
+                          ');
+        $sth->bindValue(':scoreid', $scoreid);
+        $sth->bindValue(':score', $score);
+        return $sth->execute();
+    }
+
+    public function saveScore($student_id, $score, $teaching_id, $desc, $type_id) {
+        $sth = $this->db->prepare('
+                                INSERT INTO
+                                    academic_score_guidance(
+                                        score_guidance_id,
+                                        score_guidance_student,
+                                        score_guidance_guidance,
+                                        score_guidance_value,
+                                        score_guidance_desc,
+                                        score_guidance_type,
+                                        score_guidance_entry,
+                                        score_guidance_entry_update)
+                                  VALUES(
+                                        (SELECT IF (
+                                            (SELECT COUNT(e.score_guidance_id) FROM academic_score_guidance AS e 
+                                                    WHERE e.score_guidance_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                    ORDER BY e.score_guidance_id DESC LIMIT 1
+                                            ) > 0,
+                                            (SELECT ( e.score_guidance_id + 1 ) FROM academic_score_guidance AS e 
+                                                    WHERE e.score_guidance_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                    ORDER BY e.score_guidance_id DESC LIMIT 1),
+                                            (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"0001")))
+                                        ),
+                                        :student,
+                                        :teaching,
+                                        :score,
+                                        :desc,
+                                        :type,
+                                        NOW(),
+                                        NOW())
+                          ');
+        $sth->bindValue(':student', $student_id);
+        $sth->bindValue(':teaching', $teaching_id);
+        $sth->bindValue(':desc', $desc);
+        $sth->bindValue(':type', $type_id);
+        $sth->bindValue(':score', $score);
+        return $sth->execute();
+    }
+
+    public function selectAttendanceByScoreFilter($student, $teaching, $type) {
+        $sth = $this->db->prepare('
+                                    SELECT 
+                                        academic_attendance.attendance_id,
+                                        academic_attendance.attendance_student,
+                                        academic_attendance.attendance_sick,
+                                        academic_attendance.attendance_leave,
+                                        academic_attendance.attendance_alpha
+                                      FROM
+                                        academic_attendance
+                                      WHERE
+                                        academic_attendance.attendance_student IN (' . $student . ') AND 
+                                        academic_attendance.attendance_guidance = :teaching  AND 
+                                        academic_attendance.attendance_score_type = :type
                           ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':teaching', $teaching);
@@ -190,4 +268,66 @@ class GuidanceModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
+
+    public function updateAttendance($scoreid, $s, $l, $a) {
+        $sth = $this->db->prepare('
+                                 UPDATE
+                                    academic_attendance
+                                  SET
+                                    academic_attendance.attendance_sick  = :sick,
+                                    academic_attendance.attendance_leave = :leave,
+                                    academic_attendance.attendance_alpha = :alpha,
+                                    attendance_entry_update = NOW()
+                                  WHERE
+                                    attendance_id = :scoreid
+                          ');
+        $sth->bindValue(':scoreid', $scoreid);
+        $sth->bindValue(':sick', $s);
+        $sth->bindValue(':leave', $l);
+        $sth->bindValue(':alpha', $a);
+        return $sth->execute();
+    }
+
+    public function saveAttendance($student_id, $s, $l, $a, $teaching_id, $type_id) {
+        $sth = $this->db->prepare('
+                                INSERT INTO
+                                    academic_attendance(
+                                        attendance_id,
+                                        attendance_student,
+                                        attendance_guidance,
+                                        attendance_sick,
+                                        attendance_leave,
+                                        attendance_alpha,
+                                        attendance_score_type,
+                                        attendance_entry,
+                                        attendance_entry_update)
+                                  VALUES(
+                                        (SELECT IF (
+                                            (SELECT COUNT(e.attendance_id) FROM academic_attendance AS e 
+                                                    WHERE e.attendance_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                    ORDER BY e.attendance_id DESC LIMIT 1
+                                            ) > 0,
+                                            (SELECT ( e.attendance_id + 1 ) FROM academic_attendance AS e 
+                                                    WHERE e.attendance_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                    ORDER BY e.attendance_id DESC LIMIT 1),
+                                            (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"0001")))
+                                        ),
+                                        :student,
+                                        :teaching,
+                                        :sick,
+                                        :leave,
+                                        :alpha,
+                                        :type,
+                                        NOW(),
+                                        NOW())
+                          ');
+        $sth->bindValue(':student', $student_id);
+        $sth->bindValue(':teaching', $teaching_id);
+        $sth->bindValue(':type', $type_id);
+        $sth->bindValue(':sick', $s);
+        $sth->bindValue(':leave', $l);
+        $sth->bindValue(':alpha', $a);
+        return $sth->execute();
+    }
+
 }

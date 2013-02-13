@@ -39,7 +39,7 @@
             <tr>
                 <td class="label">HAL</td>
                 <td class="sparator">:</td>
-                <td class="content">Keperibadian</td>
+                <td class="content">Kepribadian</td>
             </tr>
         </table>
         <div class="cl"></div>
@@ -240,7 +240,7 @@
             }
         };
         
-        var mlc = $('#hidden_mlc').val();
+        var mlc = 80;
         
         /* Read Score */
         var readScore = function(table, mlc, type, button_list) {
@@ -249,7 +249,8 @@
             $(this).loadingProgress('start');
             
             $.post(link, {mlc:mlc, type:type}, function (o){
-                $(table).children('tbody').attr('count',o.count);
+                
+                $(table).children('tbody').attr('count', o.count);
                 $(table).children('tbody').html(o.row); 
                 
                 $(this).loadingProgress('stop');
@@ -267,12 +268,12 @@
                 var order = $(this).attr('order');
                 var desc = '-';
                 if (!is_empty(val)) {
-                    if (parseInt(val) > parseInt(mlc)) {
-                        desc = 'Terlampaui';
-                    } else if (parseInt(val) == parseInt(mlc)){
-                        desc = 'Tercapai';
+                    if (val == 'A') {
+                        desc = 'Sangat Baik';
+                    } else if (val == 'B'){
+                        desc = 'Baik';
                     } else {
-                        desc = 'Tidak Tercapai';
+                        desc = 'Cukup';
                     }
                     $(this).css('border','1px solid #ccc');
                 } else {
@@ -311,14 +312,9 @@
                 $list = $(table + ' #score_list_' + i);
                 nis = $list.attr('order');
                 val = $list.val();
-                if (is_number(val)) {
-                    if ( parseInt(val) >= 0 && parseInt(val) <= 100) {
-                        id[i] = [nis,val];
-                        $list.css('border','1px solid #ccc');
-                    } else {
-                        $list.css('border','1px solid red');
-                        error_count++;
-                    }
+                if (!is_empty(val)) {
+                    id[i] = [nis,val];
+                    $list.css('border','1px solid #ccc');
                 } else {
                     $list.css('border','1px solid red');
                     error_count++;
@@ -382,6 +378,7 @@
         });
         
         $('#form-import-mid-score').live('submit',function(){
+            
             disabled_button(true, button_list_midscore);
             $(this).ajaxSubmit({
                 success : function(o) {

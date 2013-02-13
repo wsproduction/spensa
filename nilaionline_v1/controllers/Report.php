@@ -105,6 +105,8 @@ class Report extends Controller {
         $title_head = "";
         if ($report_type == 1) {
             $title_head = "LAPORAN HASIL BELAJAR SISWA TENGAH ";
+        } else {
+            $title_head = "LAPORAN HASIL BELAJAR SISWA AKHIR ";
         }
 
         $student_list = $this->model->selectStudentById($classgroup_id, $nis);
@@ -114,6 +116,8 @@ class Report extends Controller {
             $student_info = $student_list[0];
             $score_list = $this->model->selectSubjectScore($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $student_info['grade_id'], $report_type);
             $extracurricular_score_list = $this->model->selectExtracurricular($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $report_type);
+            $guidance_score_list = $this->model->selectGuidanceScore($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $report_type);
+            $attendance_list = $this->model->selectAttendance($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $report_type);
             $report_publishing_list = $this->model->selectReportPublishing($student_info['period_id'], $student_info['semester_id'], $report_type);
 
             $score_info = array();
@@ -621,6 +625,30 @@ class Report extends Controller {
             $html .= '
             </table>';
 
+            $attitude_score = '';
+            $personality_score = '';
+            if (count($guidance_score_list) > 0) {
+                $guidance_score = $guidance_score_list[0];
+                $attitude_score = $guidance_score['attitude_score'];
+                $personality_score = $guidance_score['personality_score'];
+            }
+
+            $sick = '-';
+            $leave = '-';
+            $alpha = '-';
+            if (count($attendance_list) > 0) {
+                $attendance_data = $attendance_list[0];
+                $sick = $attendance_data['attendance_sick'];
+                $leave = $attendance_data['attendance_leave'];
+                $alpha = $attendance_data['attendance_alpha'];
+                if ($sick == 0)
+                    $sick = '-';
+                if ($leave == 0)
+                    $leave = '-';
+                if ($alpha == 0)
+                    $alpha = '-';
+            }
+
             $html .= '
             <table cellpadding="0" cellspacing="0">
                 <tr>
@@ -629,7 +657,7 @@ class Report extends Controller {
             </table>
             <table cellpadding="4" cellspacing="0">
                 <tr>
-                    <td align="center" width="375" style="border-right:1px solid #000;" class="box-score-list-head-first">AHLAK DAN KEPRIBADIAN</td>
+                    <td align="center" width="375" style="border-right:1px solid #000;" class="box-score-list-head-first">AKHLAK DAN KEPRIBADIAN</td>
                     <td align="center" width="20" rowspan="2"></td>
                     <td align="center" width="310" style="border-left:1px solid #000;" class="box-score-list-head-last">KETIDAKHADIRAN</td>
                 </tr>
@@ -639,12 +667,12 @@ class Report extends Controller {
                             <tr>
                                 <td width="100" align="left">AKHLAK</td>
                                 <td width="10">:</td>
-                                <td align="left"> A (sangat baik) </td>
+                                <td align="left"> ' . $attitude_score . ' (' . $this->content->descIndex($attitude_score) . ') </td>
                             </tr>
                             <tr>
                                 <td align="left">KEPRIBADIAN</td>
                                 <td>:</td>
-                                <td align="left"> A (sangat baik) </td>
+                                <td align="left"> ' . $personality_score . ' (' . $this->content->descIndex($personality_score) . ') </td>
                             </tr>
                         </table>
                     </td>
@@ -654,21 +682,21 @@ class Report extends Controller {
                                 <td width="15" align="left">1.</td>
                                 <td width="150" align="left">SAKIT</td>
                                 <td width="15">:</td>
-                                <td width="30" align="right"> 1 </td>
+                                <td width="30" align="right"> ' . $sick . ' </td>
                                 <td align="left"> hari </td>
                             </tr>
                             <tr>
                                 <td align="left">2.</td>
                                 <td align="left">IJIN</td>
                                 <td>:</td>
-                                <td align="right"> 1 </td>
+                                <td align="right"> ' . $leave . ' </td>
                                 <td align="left"> hari </td>
                             </tr>
                             <tr>
                                 <td align="left">3.</td>
                                 <td align="left">TANPA KETERANGAN</td>
                                 <td>:</td>
-                                <td align="right"> - </td>
+                                <td align="right"> ' . $alpha . ' </td>
                                 <td align="left"> hari </td>
                             </tr>
                         </table>
