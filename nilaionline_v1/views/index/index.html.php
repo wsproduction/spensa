@@ -4,7 +4,7 @@
         <b>Welcome, Warman Suganda!</b>
     </div>
     <div class="fl-right">
-        <a id="btn-check" class="btn-check-score-green" href="<?php echo $link_score;  ?>">Check Score [+]</a>
+        <a id="btn-check" class="btn-check-score-green" href="<?php echo $link_score; ?>">Check Score [+]</a>
     </div>
     <div class="cl">&nbsp;</div>
 </div>
@@ -15,16 +15,16 @@
         <div class="content">
             <table class="tbl-info-arsip">
                 <tr>
-                    <th class="ic-student">Student</th>
-                    <td>1244 Student</td>
+                    <th class="ic-student">Siswa</th>
+                    <td><? echo $student . ' Orang'; ?></td>
                 </tr>
                 <tr>
                     <th class="ic-teacher">Teacher</th>
-                    <td>1244 Student</td>
+                    <td>0 Orang</td>
                 </tr>
                 <tr>
-                    <th class="ic-data">Score Data</th>
-                    <td>1244 Data</td>
+                    <th class="ic-data">Data Nilai</th>
+                    <td><? echo $score . ' Data'; ?></td>
                 </tr>
             </table>
         </div>
@@ -34,16 +34,16 @@
         <div class="content">
             <table class="tbl-info-arsip">
                 <tr>
-                    <th class="ic-online">Online</th>
-                    <td>1244</td>
+                    <th class="ic-online">Pengunjung Online</th>
+                    <td>0</td>
                 </tr>
                 <tr>
-                    <th class="ic-sigin">Today Visitor</th>
-                    <td>1244</td>
+                    <th class="ic-sigin">Pengunjung Hari Ini</th>
+                    <td>0</td>
                 </tr>
                 <tr>
-                    <th class="ic-sigin">Total Visitor</th>
-                    <td>1244</td>
+                    <th class="ic-sigin">Total Pengujung</th>
+                    <td>0</td>
                 </tr>
             </table>
         </div>
