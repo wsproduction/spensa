@@ -50,7 +50,16 @@ class GuardianModel extends Model {
                             employees.employees_nip,
                             employees.employess_name,
                             academic_subject.subject_name,
-                            academic_subject.subject_category
+                            academic_subject.subject_category,
+                            (SELECT 
+                                COUNT(academic_score.score_id) AS cnt
+                              FROM
+                                academic_score
+                              WHERE
+                                academic_score.score_teaching = academic_teaching.teaching_id AND 
+                                academic_score.score_type = 1 AND 
+                                academic_score.score_student IN (" . $student_id . ")
+                            ) AS midscore_count
                           FROM
                             academic_classhistory
                             INNER JOIN academic_student ON (academic_classhistory.classhistory_student = academic_student.student_nis)

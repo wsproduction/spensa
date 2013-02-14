@@ -33,6 +33,8 @@ class Guardian extends Controller {
         foreach ($student_list as $row) {
             $student_id .= ',' . $row['student_nis'];
         }
+        
+        $student_count = count($student_list);
 
         $subject_list = $this->model->selectSubjectByStudentId($student_id);
         $subject_info = array();
@@ -42,7 +44,8 @@ class Guardian extends Controller {
                 'teaching_id' => $row['teaching_id'],
                 'employees_nip' => $row['employees_nip'],
                 'employess_name' => $row['employess_name'],
-                'subject_name' => $row['subject_name']
+                'subject_name' => $row['subject_name'],
+                'midscore_count' => $row['midscore_count']
             );
         }
 
@@ -62,17 +65,18 @@ class Guardian extends Controller {
                     $html_list .= '<tr>';
                     $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
                     $html_list .= '     <td>' . $row['employess_name'] . '</td>';
-                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $student_count . ' Siswa</td>';
                     $html_list .= '     <td align="center">-</td>';
                     $html_list .= '     <td align="center">Lihat</td>';
                     $html_list .= '</tr>';
                     $i++;
                 }
+                $idx++;
             }
             
             /* Matapelajaran Pilihan */
             if (isset($subject_info[2])) {
-                $idx++;
+                
                 $rowspan = count($subject_info[2]) + 1;
                 $html_list .= '<tr>
                                     <td class="first" align="center" valign="top" rowspan="' . $rowspan . '" style="font-weight:bold;">' . $idx . ' .</td>
@@ -83,17 +87,18 @@ class Guardian extends Controller {
                     $html_list .= '<tr>';
                     $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
                     $html_list .= '     <td>' . $row['employess_name'] . '</td>';
-                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $student_count . ' Siswa</td>';
                     $html_list .= '     <td align="center">-</td>';
                     $html_list .= '     <td align="center">Lihat</td>';
                     $html_list .= '</tr>';
                     $i++;
                 }
+                $idx++;
             }
             
             /* Matapelajaran Mulok */
             if (isset($subject_info[3])) {
-                $idx++;
+                
                 $rowspan = count($subject_info[3]) + 1;
                 $html_list .= '<tr>
                                     <td class="first" align="center" valign="top" rowspan="' . $rowspan . '" style="font-weight:bold;">' . $idx . ' .</td>
@@ -104,7 +109,7 @@ class Guardian extends Controller {
                     $html_list .= '<tr>';
                     $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
                     $html_list .= '     <td>' . $row['employess_name'] . '</td>';
-                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $student_count . ' Siswa</td>';
                     $html_list .= '     <td align="center">-</td>';
                     $html_list .= '     <td align="center">Lihat</td>';
                     $html_list .= '</tr>';

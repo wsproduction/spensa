@@ -31,7 +31,6 @@ class Extracurricular extends Controller {
 
     public function readScore($coachid = 0) {
 
-        $mlc = $this->method->post('mlc');
         $type = $this->method->post('type');
 
         $student_list = $this->model->selectStudentByClassGroupId($coachid);
@@ -41,35 +40,47 @@ class Extracurricular extends Controller {
 
         $html_list = '';
         $no = 1;
-        foreach ($student_list as $row) {
 
-            $score = '';
-            if (isset($score_data[$row['student_nis']])) {
-                $data = $score_data[$row['student_nis']];
-                $score = $data['value'];
+        if (count($student_list) > 0) {
+            foreach ($student_list as $row) {
+
+                $score = '';
+                if (isset($score_data[$row['student_nis']])) {
+                    $data = $score_data[$row['student_nis']];
+                    $score = $data['value'];
+                }
+
+                $desc = '-';
+                if ($score != '') {
+                    $desc = ucwords($this->content->descIndex($score));
+                }
+
+                Form::create('select', 'score_list_' . $no);
+                Form::maxlength(3);
+                Form::option(array('A' => 'A', 'B' => 'B', 'C' => 'C'), " ", $score);
+                Form::properties(array('order' => $row['student_nis']));
+                Form::style('score_list');
+                $score_input = Form::commit('attach');
+
+                $html_list .= '<tr>';
+                $html_list .= '     <td align="center" class="first">' . $no . '</td>';
+                $html_list .= '     <td align="center">' . $row['student_nis'] . '</td>';
+                $html_list .= '     <td align="center">' . $row['student_nisn'] . '</td>';
+                $html_list .= '     <td>' . $row['student_name'] . '</td>';
+                $html_list .= '     <td align="center">' . $score_input . '</td>';
+                $html_list .= '     <td align="center" class="desc_' . $row['student_nis'] . '">' . $desc . '</td>';
+                $html_list .= '</tr>';
+                $no++;
             }
-
-            $desc = '-';
-            if ($score != '') {
-                $desc = ucwords($this->content->descIndex($score));
-            }
-
-            Form::create('select', 'score_list_' . $no);
-            Form::maxlength(3);
-            Form::option(array('A' => 'A', 'B' => 'B', 'C' => 'C'), " ", $score);
-            Form::properties(array('order' => $row['student_nis']));
-            Form::style('score_list');
-            $score_input = Form::commit('attach');
-
-            $html_list .= '<tr>';
-            $html_list .= '     <td align="center" class="first">' . $no . '</td>';
-            $html_list .= '     <td align="center">' . $row['student_nis'] . '</td>';
-            $html_list .= '     <td align="center">' . $row['student_nisn'] . '</td>';
-            $html_list .= '     <td>' . $row['student_name'] . '</td>';
-            $html_list .= '     <td align="center">' . $score_input . '</td>';
-            $html_list .= '     <td align="center" class="desc_' . $row['student_nis'] . '">' . $desc . '</td>';
-            $html_list .= '</tr>';
-            $no++;
+        } else {
+            $html_list .= '
+                        <tr>
+                            <td class="first" colspan="6">
+                                <div class="information-box">
+                                    Data tidak ditemukan
+                                </div>
+                            </td>
+                        </tr>';
         }
         echo json_encode(array('count' => $no - 1, 'row' => $html_list));
     }
@@ -111,7 +122,7 @@ class Extracurricular extends Controller {
         list($coachid, $type_id) = explode('.', $id);
 
         $class_list = $this->model->selectExtracurricularCoachById($coachid, $user_references);
-        
+
         if ($class_list) {
             $class_info = $class_list[0];
 
@@ -152,8 +163,8 @@ class Extracurricular extends Controller {
             $objPHPExcel->getActiveSheet()->mergeCells('B2:G2');
             $objPHPExcel->getActiveSheet()->getStyle('B1:B2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             $objPHPExcel->getActiveSheet()->getStyle('B1:B2')->applyFromArray(array('font' => array('bold' => true)));
-            
-            
+
+
             // Document Description
             //$objPHPExcel->getActiveSheet()->setCellValue('A4', $class_info['classgroup_id'])->setCellValue('B4', 'Kelas')->setCellValue('D4', ': ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
             $objPHPExcel->getActiveSheet()->setCellValue('A5', $class_info['period_id'] . '_' . $class_info['semester_id'])->setCellValue('B5', 'Tahun Akademik')->setCellValue('D5', ': ' . $class_info['period_years_start'] . '/' . $class_info['period_years_end'] . ' - ' . $class_info['semester_name']);
@@ -219,12 +230,12 @@ class Extracurricular extends Controller {
             $objPHPExcel->getActiveSheet()->getStyle('B12:D' . $rowno)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             $objPHPExcel->getActiveSheet()->getStyle('F12:G' . $rowno)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             $objPHPExcel->getActiveSheet()->getStyle('F12:F' . $rowno)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
-            
+
             // Redirect output to a client’s web browser (Excel5)
             header('Content-Type: application/vnd.ms-excel');
             header('Content-Disposition: attachment;filename="' . $filename . '-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $class_info['semester_id'] . '-' . $class_info['extracurricular_name'] . '.xls"');
             header('Cache-Control: max-age=0');
-             
+
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
             $objWriter->save('php://output');
             exit;

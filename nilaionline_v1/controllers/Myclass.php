@@ -57,6 +57,7 @@ class Myclass extends Controller {
                 }
                 
                 $link_classgroup = $this->content->setParentLink('classgroup/room/' . $row['teaching_id'] . '');
+                $link_recapitulation = $this->content->setParentLink('recapitulation/index/' . $row['teaching_id'] . '');
 
                 $teaching_list .= '<tr id="row_' . $row['teaching_id'] . '">';
                 $teaching_list .= '     <td class="first" align="center">' . $idx . '</td>';
@@ -65,7 +66,7 @@ class Myclass extends Controller {
                 $teaching_list .= '     <td>' . $guardian_name . '</td>';
                 $teaching_list .= '     <td align="center">' . $row['teaching_total_time'] . ' Jam</td>';
                 $teaching_list .= '     <td>' . date('d-m-Y H:i:s', strtotime($row['teaching_entry_update'])) . '</td>';
-                $teaching_list .= '     <td align="center"><a href="' . $link_classgroup . '" rel="edit">Masuk Kelas</a></td>';
+                $teaching_list .= '     <td align="center"><a href="' . $link_classgroup . '">Masuk Kelas</a>  &bullet; <a href="' . $link_recapitulation . '">Rekapitulasi Nilai</a></td>';
                 $teaching_list .= '</tr>';
                 $idx++;
             }
