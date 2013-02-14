@@ -20,7 +20,7 @@
                 </tr>
                 <tr>
                     <th class="ic-teacher">Teacher</th>
-                    <td>0 Orang</td>
+                    <td><? echo $teacher . ' Orang'; ?></td>
                 </tr>
                 <tr>
                     <th class="ic-data">Data Nilai</th>

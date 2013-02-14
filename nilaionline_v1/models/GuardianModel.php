@@ -43,7 +43,7 @@ class GuardianModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectSubjectByStudentId($student_id = 0) {
+    public function selectSubjectByStudentId($student_id = 0, $classgroup_id = 0) {
         $sth = $this->db->prepare("
                         SELECT 
                             academic_teaching.teaching_id,
@@ -59,7 +59,16 @@ class GuardianModel extends Model {
                                 academic_score.score_teaching = academic_teaching.teaching_id AND 
                                 academic_score.score_type = 1 AND 
                                 academic_score.score_student IN (" . $student_id . ")
-                            ) AS midscore_count
+                            ) AS midscore_count,
+                            (SELECT 
+                                COUNT(academic_score.score_id) AS cnt
+                              FROM
+                                academic_score
+                              WHERE
+                                academic_score.score_teaching = academic_teaching.teaching_id AND 
+                                academic_score.score_type = 2 AND 
+                                academic_score.score_student IN (" . $student_id . ")
+                            ) AS finalscore_count
                           FROM
                             academic_classhistory
                             INNER JOIN academic_student ON (academic_classhistory.classhistory_student = academic_student.student_nis)
@@ -68,13 +77,15 @@ class GuardianModel extends Model {
                             INNER JOIN employees ON (academic_teaching.teaching_teacher = employees.employees_id)
                             INNER JOIN academic_subject ON (academic_teaching.teaching_subject = academic_subject.subject_id)
                           WHERE
-                            academic_student.student_nis IN (" . $student_id . ")
+                            academic_student.student_nis IN (" . $student_id . ") AND
+                            academic_teaching.teaching_classgroup = :classgroup_id
                           GROUP BY
                             academic_teaching.teaching_id
                           ORDER BY
                             academic_subject.subject_order
                           ");
         $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':classgroup_id', $classgroup_id);
         $sth->execute();
         return $sth->fetchAll();
     }

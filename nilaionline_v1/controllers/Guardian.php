@@ -36,7 +36,7 @@ class Guardian extends Controller {
         
         $student_count = count($student_list);
 
-        $subject_list = $this->model->selectSubjectByStudentId($student_id);
+        $subject_list = $this->model->selectSubjectByStudentId($student_id, $classgroup_id);
         $subject_info = array();
 
         foreach ($subject_list as $row) {
@@ -45,7 +45,8 @@ class Guardian extends Controller {
                 'employees_nip' => $row['employees_nip'],
                 'employess_name' => $row['employess_name'],
                 'subject_name' => $row['subject_name'],
-                'midscore_count' => $row['midscore_count']
+                'midscore_count' => $row['midscore_count'],
+                'finalscore_count' => $row['finalscore_count']
             );
         }
 
@@ -66,7 +67,7 @@ class Guardian extends Controller {
                     $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
                     $html_list .= '     <td>' . $row['employess_name'] . '</td>';
                     $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $student_count . ' Siswa</td>';
-                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">' . $row['finalscore_count'] . '/' . $student_count . ' Siswa</td>';
                     $html_list .= '     <td align="center">Lihat</td>';
                     $html_list .= '</tr>';
                     $i++;
@@ -88,7 +89,7 @@ class Guardian extends Controller {
                     $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
                     $html_list .= '     <td>' . $row['employess_name'] . '</td>';
                     $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $student_count . ' Siswa</td>';
-                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">' . $row['finalscore_count'] . '/' . $student_count . ' Siswa</td>';
                     $html_list .= '     <td align="center">Lihat</td>';
                     $html_list .= '</tr>';
                     $i++;
@@ -110,7 +111,7 @@ class Guardian extends Controller {
                     $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
                     $html_list .= '     <td>' . $row['employess_name'] . '</td>';
                     $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $student_count . ' Siswa</td>';
-                    $html_list .= '     <td align="center">-</td>';
+                    $html_list .= '     <td align="center">' . $row['finalscore_count'] . '/' . $student_count . ' Siswa</td>';
                     $html_list .= '     <td align="center">Lihat</td>';
                     $html_list .= '</tr>';
                     $i++;

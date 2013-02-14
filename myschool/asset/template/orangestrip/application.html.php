@@ -44,7 +44,7 @@ $protection = Session::get('login_status');
             <!-- BEGIN : Header box fixed -->
             <div id="header">
                 <div id="logo" class="fl-left">
-                    Sekolah+<sup><span style="font-size: 11px;">&nbsp;(beta)</span></sup>
+                    Sekolah+
                 </div>
                 <?php if ($protection) { ?>
                     <div id="m-account" class="fl-right">

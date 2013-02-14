@@ -123,30 +123,33 @@ class Report extends Controller {
             $error_hendling = 0;
             $error_message = '';
             
-            if ($score_list) {
+            if (!$score_list) {
                 $error_hendling++;
                 $error_message .= '<div> &bullet; Data nilai mata pelajaran tidak ditemukan.</div>';
             }
             
-            if ($extracurricular_score_list) {
+            /*
+            if (!$extracurricular_score_list) {
                 $error_hendling++;
                 $error_message .= '<div> &bullet; Data nilai ekstrakurikuler tidak ditemukan.</div>';
             }
+             */
             
-            if ($guidance_score_list) {
+            if (!$guidance_score_list) {
                 $error_hendling++;
                 $error_message .= '<div> &bullet; Data nilai bimbingan konseling tidak ditemukan.</div>';
             }
             
-            if ($attendance_list) {
+            if (!$attendance_list) {
                 $error_hendling++;
                 $error_message .= '<div> &bullet; Data absensi tidak ditemukan.</div>';
             }
             
-            if ($report_publishing_list) {
+            if (!$report_publishing_list) {
                 $error_hendling++;
                 $error_message .= '<div> &bullet; Data titimangsa tidak ditemukan.</div>';
             }
+            
             
             if ($error_hendling == 0) {
                 $score_info = array();

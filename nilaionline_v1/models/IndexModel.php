@@ -19,5 +19,18 @@ class IndexModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
+ 
+    public function countTeacher() {
+        $sth = $this->db->prepare('SELECT COUNT(*) cnt FROM
+                                    (SELECT 
+                                     academic_teaching.teaching_teacher
+                                   FROM
+                                     academic_teaching
+                                   GROUP BY
+                                     academic_teaching.teaching_teacher) dd');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);        
+        $sth->execute();
+        return $sth->fetchAll();
+    }
     
 }

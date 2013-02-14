@@ -290,147 +290,273 @@ class Import extends Controller {
         }
     }
 
-    public function classHistroryUpdate() {
-        $list1 = $this->model->selectAllClassHistory();
-        $newid = 1212010001;
-        foreach ($list1 as $value) {
-            $this->model->updateClassHistory($newid, $value['classhistory_id']);
-            echo $newid . '<br>';
-            $newid++;
+    public function teaching() {
+        $inputFileName = Web::path() . 'asset/upload/ptk/jadwalmengajar.xls';
+        if (file_exists($inputFileName)) {
+            Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
+            $objPHPExcel = $objReader->load($inputFileName);
+
+            try {
+                $data = array();
+                $html = '
+                    <table border="1">
+                        <tr>
+                            <td>ID</td>
+                            <td>NAMA</td>
+                            <td>MAPEL</td>
+                            <td>KELAS</td>
+                            <td>PERIOD</td>
+                            <td>SEMESTER</td>
+                            <td>JAM</td>
+                        </tr>
+                    ';
+                $count_student = 358;
+                $numrow = 3;
+                $sheet = $objPHPExcel->getActiveSheet();
+                for ($i = 1; $i <= $count_student; $i++) {
+
+                    $id = $sheet->getCell('A' . $numrow)->getValue();
+                    $nama = $sheet->getCell('B' . $numrow)->getValue();
+                    $mapel = $sheet->getCell('C' . $numrow)->getValue();
+                    $kelas = $sheet->getCell('D' . $numrow)->getValue();
+                    $period = $sheet->getCell('E' . $numrow)->getValue();
+                    $semester = $sheet->getCell('F' . $numrow)->getValue();
+                    $jam = $sheet->getCell('G' . $numrow)->getValue();
+
+                    $html .= '
+                        <tr>
+                            <td>' . $id . '</td>
+                            <td>' . $nama . '</td>
+                            <td>' . $mapel . '</td>
+                            <td>' . $kelas . '</td>
+                            <td>' . $period . '</td>
+                            <td>' . $semester . '</td>
+                            <td>' . $jam . '</td>
+                        </tr>
+                    ';
+
+                    $data['id'] = $id;
+                    $data['mapel'] = $mapel;
+                    $data['kelas'] = $kelas;
+                    $data['period'] = $period;
+                    $data['semester'] = $semester;
+                    $data['jam'] = $jam;
+
+                    $this->model->saveTeaching($data);
+
+                    $numrow++;
+                }
+                $html .= '</table>';
+
+                echo $html;
+            } catch (Exception $exc) {
+                
+            }
+        } else {
+            echo 'File Tidak ditemukan : ' . $inputFileName;
         }
     }
 
-    public function exportTest() {
-        Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
-        // Create new PHPExcel object
-        $objPHPExcel = new PHPExcel();
-        // Set document properties
-        $objPHPExcel->getProperties()->setCreator("Maarten Balliauw")
-                ->setLastModifiedBy("Maarten Balliauw")
-                ->setTitle("Office 2007 XLSX Test Document")
-                ->setSubject("Office 2007 XLSX Test Document")
-                ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
-                ->setKeywords("office 2007 openxml php")
-                ->setCategory("Test result file");
-
-        /*
-          // Add some data
-          $objPHPExcel->setActiveSheetIndex(0)
-          ->setCellValue('A1', 'NIS')
-          ->setCellValue('B1', 'NAMA')
-          ->setCellValue('C1', 'Nilai');
-
-          // Miscellaneous glyphs, UTF-8
-          $objPHPExcel->setActiveSheetIndex(0)
-          ->setCellValue('A2', '19394040')
-          ->setCellValue('B2', 'Warman Suganda');
-
-          // Rename worksheet
-          $objPHPExcel->getActiveSheet()->setTitle('Simple');
-         */
-
-        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
-        $objPHPExcel->setActiveSheetIndex(0);
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Latihan Layouting');
-        $objPHPExcel->getActiveSheet()->mergeCells('A1:C1');
-
-        $objPHPExcel->getActiveSheet()->setCellValue('C2', date('Y-m-d'));
-        $objPHPExcel->getActiveSheet()->getStyle('C2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-        $objPHPExcel->getActiveSheet()->setCellValue('C3', 'Warman Suganda');
-        $objPHPExcel->getActiveSheet()->setCellValue('C4', 'Sebagai mana mestiinya apa yang akan kita lakukan adalah menjadi yang terbaik');
-
-        $objPHPExcel->getActiveSheet()->getStyle('C4')->getAlignment()->setWrapText(true);
-
-        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(40);
-        $objPHPExcel->getActiveSheet()->getRowDimension('4')->setRowHeight(120);
-        $objPHPExcel->getActiveSheet()->getStyle('A4:C4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
-
-        $defaultBorder = array(
-            'style' => PHPExcel_Style_Border::BORDER_THIN,
-            'color' => array('rgb' => '1006A3')
-        );
-
-        $style_header = array(
-            'borders' => array(
-                'top' => $defaultBorder,
-                'bottom' => $defaultBorder,
-                'left' => $defaultBorder,
-                'right' => $defaultBorder
-            ),
-            'fill' => array(
-                'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                'color' => array('rgb' => 'E1E0F7')
-            ),
-            'font' => array(
-                'bold' => true
-            )
-        );
-
-        $objPHPExcel->getActiveSheet()->getStyle('A1:C1')->applyFromArray($style_header);
-
-        $objPHPExcel->getActiveSheet()->setCellValue('E1', 10);
-        $objPHPExcel->getActiveSheet()->setCellValue('F1', 20);
-        $objPHPExcel->getActiveSheet()->setCellValue('G1', '=SUM(E1:F1)');
-
-        // Redirect output to a client’s web browser (Excel5)
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="01simple.xls"');
-        header('Cache-Control: max-age=0');
-
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        $objWriter->save('php://output');
-        exit;
-    }
-
-    public function importTest() {
-        $inputFileType = 'Excel5';
-        $inputFileName = Web::path() . 'asset/upload/file/mlc.xls';
-
+    public function mlc() {
+        $inputFileName = Web::path() . 'asset/upload/ptk/kkm.xls';
         if (file_exists($inputFileName)) {
-
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
-            $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-
-            $chunkSize = 649;
-            $startRow = 2;
-
-            /**  Create a new Instance of our Read Filter, passing in the limits on which rows we want to read  * */
-            $chunkFilter = new chunkReadFilter($startRow, $chunkSize);
-            /**  Tell the Reader that we want to use the new Read Filter that we've just Instantiated  * */
-            $objReader->setReadFilter($chunkFilter);
-            /**  Load only the rows that match our filter from $inputFileName to a PHPExcel Object  * */
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
             $objPHPExcel = $objReader->load($inputFileName);
 
-            $sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
+            try {
+                $data = array();
+                $html = '
+                    <table border="1">
+                        <tr>
+                            <td>ID</td>
+                            <td>MAPEL</td>
+                            <td>VII</td>
+                            <td>VIII</td>
+                            <td>IX</td>
+                            <td>PERIOD</td>
+                            <td>SEMESTER</td>
+                        </tr>
+                    ';
+                $count_student = 23;
+                $numrow = 4;
+                $sheet = $objPHPExcel->getActiveSheet();
+                for ($i = 1; $i <= $count_student; $i++) {
 
-            unset($sheetData[1]);
+                    $id = $sheet->getCell('A' . $numrow)->getValue();
+                    $mapel = $sheet->getCell('B' . $numrow)->getValue();
+                    $kelas7 = $sheet->getCell('C' . $numrow)->getValue();
+                    $kelas8 = $sheet->getCell('D' . $numrow)->getValue();
+                    $kelas9 = $sheet->getCell('E' . $numrow)->getValue();
+                    $period = $sheet->getCell('F' . $numrow)->getValue();
+                    $semester = $sheet->getCell('G' . $numrow)->getValue();
 
-            $html = '<table border=1>';
-            $html .= '<tr>';
-            $html .= '<td>ID</td>';
-            $html .= '<td>NAMA</td>';
-            $html .= '<td>USERNAME</td>';
-            $html .= '<td>PASSWORD</td>';
-            $html .= '</tr>';
-            foreach ($sheetData as $key => $row) {
-                $html .= '<tr>';
+                    $html .= '
+                        <tr>
+                            <td>' . $id . '</td>
+                            <td>' . $mapel . '</td>
+                            <td>' . $kelas7 . '</td>
+                            <td>' . $kelas8 . '</td>
+                            <td>' . $kelas9 . '</td>
+                            <td>' . $period . '</td>
+                            <td>' . $semester . '</td>
+                        </tr>
+                    ';
 
-                $html .= '<td>' . $row['A'] . '</td>';
-                $html .= '<td>' . $row['B'] . '</td>';
-                $html .= '<td>' . $row['C'] . '</td>';
-                $html .= '<td>' . $row['D'] . '</td>';
+                    $data['subject'] = $id;
+                    $data['mapel'] = $mapel;
+                    $data['period'] = $period;
+                    $data['semester'] = $semester;
 
-                $html .= '</tr>';
+                    if ($kelas7) {
+                        $data['value'] = $kelas7;
+                        $data['grade'] = 1;
+                        $this->model->saveMlc($data);
+                    }
 
-                $data['subject'] = $row['A'];
-                $data['period'] = $row['D'];
-                $data['grade'] = $row['E'];
-                $data['value'] = $row['C'];
-                $this->model->saveMlc($data);
+                    if ($kelas8) {
+                        $data['value'] = $kelas8;
+                        $data['grade'] = 2;
+                        $this->model->saveMlc($data);
+                    }
+
+                    if ($kelas9) {
+                        $data['value'] = $kelas9;
+                        $data['grade'] = 3;
+                        $this->model->saveMlc($data);
+                    }
+
+                    $numrow++;
+                }
+                $html .= '</table>';
+
+                echo $html;
+            } catch (Exception $exc) {
+                
             }
-            $html .= '</table>';
-            echo $html;
+        } else {
+            echo 'File Tidak ditemukan : ' . $inputFileName;
+        }
+    }
+
+    public function guidance() {
+        $inputFileName = Web::path() . 'asset/upload/ptk/bk.xls';
+        if (file_exists($inputFileName)) {
+            Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
+            $objPHPExcel = $objReader->load($inputFileName);
+
+            try {
+                $data = array();
+                $html = '
+                    <table border="1">
+                        <tr>
+                            <td>ID</td>
+                            <td>NAMA</td>
+                            <td>KELAS</td>
+                            <td>PERIOD</td>
+                            <td>SEMESTER</td>
+                        </tr>
+                    ';
+                $count_student = 1;
+                $numrow = 26;
+                $sheet = $objPHPExcel->getActiveSheet();
+                for ($i = 1; $i <= $count_student; $i++) {
+
+                    $id = $sheet->getCell('A' . $numrow)->getValue();
+                    $nama = $sheet->getCell('B' . $numrow)->getValue();
+                    $kelas = $sheet->getCell('C' . $numrow)->getValue();
+                    $period= $sheet->getCell('D' . $numrow)->getValue();
+                    $semester = $sheet->getCell('E' . $numrow)->getValue();
+
+                    $html .= '
+                        <tr>
+                            <td>' . $id . '</td>
+                            <td>' . $nama . '</td>
+                            <td>' . $kelas . '</td>
+                            <td>' . $period . '</td>
+                            <td>' . $semester . '</td>
+                        </tr>
+                    ';
+
+                    $data['teacher'] = $id;
+                    $data['classgroup'] = $kelas;
+                    $data['period'] = $period;
+                    $data['semester'] = $semester;
+
+                    $this->model->saveGuidance($data);
+
+                    $numrow++;
+                }
+                $html .= '</table>';
+
+                echo $html;
+            } catch (Exception $exc) {
+                
+            }
+        } else {
+            echo 'File Tidak ditemukan : ' . $inputFileName;
+        }
+    }
+
+    public function pembinaeskul() {
+        $inputFileName = Web::path() . 'asset/upload/ptk/pembina_eskul.xls';
+        if (file_exists($inputFileName)) {
+            Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
+            $objPHPExcel = $objReader->load($inputFileName);
+
+            try {
+                $data = array();
+                $html = '
+                    <table border="1">
+                        <tr>
+                            <td>ID</td>
+                            <td>NAMA</td>
+                            <td>KELAS</td>
+                            <td>PERIOD</td>
+                            <td>SEMESTER</td>
+                        </tr>
+                    ';
+                $count_student = 19;
+                $numrow = 3;
+                $sheet = $objPHPExcel->getActiveSheet();
+                for ($i = 1; $i <= $count_student; $i++) {
+
+                    $id = $sheet->getCell('A' . $numrow)->getValue();
+                    $nama = $sheet->getCell('B' . $numrow)->getValue();
+                    $kelas = $sheet->getCell('C' . $numrow)->getValue();
+                    $period= $sheet->getCell('D' . $numrow)->getValue();
+                    $semester = $sheet->getCell('E' . $numrow)->getValue();
+
+                    $html .= '
+                        <tr>
+                            <td>' . $id . '</td>
+                            <td>' . $nama . '</td>
+                            <td>' . $kelas . '</td>
+                            <td>' . $period . '</td>
+                            <td>' . $semester . '</td>
+                        </tr>
+                    ';
+
+                    $data['teacher'] = $id;
+                    $data['eskul'] = $kelas;
+                    $data['period'] = $period;
+                    $data['semester'] = $semester;
+
+                    $this->model->saveGuidanceEskul($data);
+
+                    $numrow++;
+                }
+                $html .= '</table>';
+
+                echo $html;
+            } catch (Exception $exc) {
+                
+            }
+        } else {
+            echo 'File Tidak ditemukan : ' . $inputFileName;
         }
     }
 

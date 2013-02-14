@@ -83,7 +83,7 @@
         <table id="list-teaching" cellspacing="0" cellpadding="0" link_r="<?php echo $link_r_teaching; ?>">
             <thead>
                 <tr>
-                    <td class="first" style="width: 40px;text-align: center;">No.</td>
+                    <td class="first" style="width: 50px;text-align: center;">No.</td>
                     <td>Mata Pelajaran</td>
                     <td style="width: 150px;text-align: center;">Kelas</td>
                     <td style="width: 100px;text-align: center;">Total Mengajar</td>
