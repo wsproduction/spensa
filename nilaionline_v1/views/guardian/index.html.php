@@ -48,7 +48,7 @@
     <div class="description">Berikut adalah daftar tugas mengajar : </div>
     <div style="padding: 5px;"><b>&bullet; MATA PELAJARAN</b></div>
     <div>
-        <table id="list-teaching" cellspacing="0" cellpadding="0" link_r="<?php echo $link_read_subject; ?>">
+        <table id="list-teaching" cellspacing="0"  class="table-list" cellpadding="0" link_r="<?php echo $link_read_subject; ?>">
             <thead>
                 <tr>
                     <td rowspan="2" class="first" style="width: 40px;text-align: center;">No.</td>

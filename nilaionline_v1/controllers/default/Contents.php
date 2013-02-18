@@ -174,12 +174,12 @@ class Contents extends Controller {
     }
 
     public function monthList() {
-        $list = array(1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember');
+        $list = array(1 => 'januari', 2 => 'februari', 3 => 'maret', 4 => 'april', 5 => 'mei', 6 => 'juni', 7 => 'juli', 8 => 'agustus', 9 => 'september', 10 => 'oktober', 11 => 'november', 12 => 'desember');
         return $list;
     }
 
     public function monthName($id) {
-        $list = array('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
+        $list = array('januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
         return $list[$id - 1];
     }
 
@@ -187,7 +187,7 @@ class Contents extends Controller {
         $desc = '';
         if (!is_null($score)) {
             if ($score > $mlc) {
-                $desc = 'terlamapaui';
+                $desc = 'terlampaui';
             } else if ($score == $mlc) {
                 $desc = 'tercapai';
             } else if ($score < $mlc) {
@@ -198,18 +198,18 @@ class Contents extends Controller {
     }
     
     public function descIndex($index) {
-        switch ($index) {
-            case 'A' :
+        switch (strtolower($index)) {
+            case 'a' :
                     $desc = 'sangat baik';
                 break;
-            case 'B' :
+            case 'b' :
                     $desc = 'baik';
                 break;
-            case 'C' :
+            case 'c' :
                     $desc = 'cukup';
                 break;
             default:
-                $desc = 'h';
+                $desc = '-';
                 break;
         }
         return $desc;

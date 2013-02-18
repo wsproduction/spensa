@@ -43,13 +43,18 @@ class GuardianModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectSubjectByStudentId($student_id = 0, $classgroup_id = 0) {
+    public function selectSubjectByStudentId($student_id = 0, $grade = 0, $period = 0, $semester = 0) {
         $sth = $this->db->prepare("
                         SELECT 
+                            academic_grade.grade_title,
+                            academic_classroom.classroom_name,
+                            academic_classgroup.classgroup_id,
                             academic_teaching.teaching_id,
+                            academic_subject.subject_name,
+                            academic_subject.subject_id,
+                            employees.employees_id,
                             employees.employees_nip,
                             employees.employess_name,
-                            academic_subject.subject_name,
                             academic_subject.subject_category,
                             (SELECT 
                                 COUNT(academic_score.score_id) AS cnt
@@ -68,24 +73,38 @@ class GuardianModel extends Model {
                                 academic_score.score_teaching = academic_teaching.teaching_id AND 
                                 academic_score.score_type = 2 AND 
                                 academic_score.score_student IN (" . $student_id . ")
-                            ) AS finalscore_count
+                            ) AS finalscore_count,
+                            (SELECT 
+                                COUNT(academic_classhistory.classhistory_id) AS cnt
+                              FROM
+                                academic_classhistory
+                              WHERE
+                                academic_classhistory.classhistory_classgroup = academic_classgroup.classgroup_id AND 
+                                academic_classhistory.classhistory_student IN (" . $student_id . ")
+                              ) AS student_count
                           FROM
                             academic_classhistory
                             INNER JOIN academic_student ON (academic_classhistory.classhistory_student = academic_student.student_nis)
                             INNER JOIN academic_classgroup ON (academic_classhistory.classhistory_classgroup = academic_classgroup.classgroup_id)
+                            INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
+                            INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
                             INNER JOIN academic_teaching ON (academic_classgroup.classgroup_id = academic_teaching.teaching_classgroup)
-                            INNER JOIN employees ON (academic_teaching.teaching_teacher = employees.employees_id)
                             INNER JOIN academic_subject ON (academic_teaching.teaching_subject = academic_subject.subject_id)
+                            INNER JOIN employees ON (academic_teaching.teaching_teacher = employees.employees_id)
                           WHERE
                             academic_student.student_nis IN (" . $student_id . ") AND
-                            academic_teaching.teaching_classgroup = :classgroup_id
+                            academic_classgroup.classgroup_grade  = :grade AND 
+                            academic_classgroup.classgroup_period = :period AND 
+                            academic_classgroup.classgroup_semester = :semester
                           GROUP BY
-                            academic_teaching.teaching_id
-                          ORDER BY
-                            academic_subject.subject_order
+                            subject_id,
+                            employees.employees_id,
+                            classgroup_id
                           ");
         $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->bindValue(':classgroup_id', $classgroup_id);
+        $sth->bindValue(':grade', $grade);
+        $sth->bindValue(':period', $period);
+        $sth->bindValue(':semester', $semester);
         $sth->execute();
         return $sth->fetchAll();
     }

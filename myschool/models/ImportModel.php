@@ -449,7 +449,7 @@ class ImportModel extends Model {
 
         return $sth->execute();
     }
-
+    
     public function selectAllClassHistory() {
         $sth = $this->db->prepare('
                                 SELECT 
@@ -478,6 +478,38 @@ class ImportModel extends Model {
                             ');
         $sth->bindValue(':newid', $newid);
         $sth->bindValue(':oldid', $oldid);
+        return $sth->execute();
+    }
+    
+    
+    public function saveEskulParticipan($data) {
+        $sth = $this->db->prepare('
+                                INSERT INTO
+                                    academic_extracurricular_participant(
+                                        extracurricular_participant_id,
+                                        extracurricular_participant_name,
+                                        extracurricular_participant_activity,
+                                        extracurricular_participant_entry,
+                                        extracurricular_participant_entry_update)
+                                  VALUES(
+                                        ( SELECT IF (
+                                            (SELECT COUNT(e.extracurricular_participant_id) FROM academic_extracurricular_participant AS e 
+                                                    WHERE e.extracurricular_participant_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                    ORDER BY e.extracurricular_participant_id DESC LIMIT 1
+                                            ) > 0,
+                                            (SELECT ( e.extracurricular_participant_id + 1 ) FROM academic_extracurricular_participant AS e 
+                                                    WHERE e.extracurricular_participant_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                    ORDER BY e.extracurricular_participant_id DESC LIMIT 1),
+                                            (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"0001")))
+                                        ),
+                                        :student,
+                                        :eskul,
+                                        NOW(),
+                                        NOW())
+                            ');
+
+        $sth->bindValue(':student', $data['student']);
+        $sth->bindValue(':eskul', $data['eskul']);
         return $sth->execute();
     }
 

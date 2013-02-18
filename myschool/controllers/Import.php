@@ -311,8 +311,8 @@ class Import extends Controller {
                             <td>JAM</td>
                         </tr>
                     ';
-                $count_student = 358;
-                $numrow = 3;
+                $count_student = 6;
+                $numrow = 361;
                 $sheet = $objPHPExcel->getActiveSheet();
                 for ($i = 1; $i <= $count_student; $i++) {
 
@@ -546,6 +546,122 @@ class Import extends Controller {
                     $data['semester'] = $semester;
 
                     $this->model->saveGuidanceEskul($data);
+
+                    $numrow++;
+                }
+                $html .= '</table>';
+
+                echo $html;
+            } catch (Exception $exc) {
+                
+            }
+        } else {
+            echo 'File Tidak ditemukan : ' . $inputFileName;
+        }
+    }
+
+    public function pbkl() {
+        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/pbkl.xls';
+        if (file_exists($inputFileName)) {
+            Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
+            $objPHPExcel = $objReader->load($inputFileName);
+
+            try {
+                $data = array();
+                $html = '
+                    <table border="1">
+                        <tr>
+                            <td>ID</td>
+                            <td>NAMA</td>
+                            <td>KELAS</td>
+                            <td>PERIOD</td>
+                            <td>SEMESTER</td>
+                        </tr>
+                    ';
+                $count_student = 11;
+                $numrow = 2;
+                
+                $objPHPExcel->setActiveSheetIndex(19);
+                $sheet = $objPHPExcel->getActiveSheet();
+                for ($i = 1; $i <= $count_student; $i++) {
+
+                    $id = $sheet->getCell('D' . $numrow)->getValue();
+                    $nama = $sheet->getCell('B' . $numrow)->getValue();
+                    $kelas = $sheet->getCell('G' . $numrow)->getValue();
+                    $period= $sheet->getCell('F' . $numrow)->getValue();
+                    $semester = $sheet->getCell('E' . $numrow)->getValue();
+
+                    $html .= '
+                        <tr>
+                            <td>' . $id . '</td>
+                            <td>' . $nama . '</td>
+                            <td>' . $kelas . '</td>
+                            <td>' . $period . '</td>
+                            <td>' . $semester . '</td>
+                        </tr>
+                    ';
+
+                    $data['nis'] = $id;
+                    $data['class_group'] = $kelas;
+                    $data['status'] = 3; // 1 : Siswa Baru, 3 : Naik Kelas
+
+                    $this->model->saveClassGroup($data);
+
+                    $numrow++;
+                }
+                $html .= '</table>';
+
+                echo $html;
+            } catch (Exception $exc) {
+                
+            }
+        } else {
+            echo 'File Tidak ditemukan : ' . $inputFileName;
+        }
+    }
+
+    public function pesertaeskul() {
+        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/peserta_eskul.xls';
+        if (file_exists($inputFileName)) {
+            Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
+            $objPHPExcel = $objReader->load($inputFileName);
+
+            try {
+                $data = array();
+                $html = '
+                    <table border="1">
+                        <tr>
+                            <td>NIS</td>
+                            <td>NAMA</td>
+                            <td>ESKUL</td>
+                        </tr>
+                    ';
+                $count_student = 14;
+                $numrow = 2;
+                
+                $objPHPExcel->setActiveSheetIndex(0);
+                $sheet = $objPHPExcel->getActiveSheet();
+                for ($i = 1; $i <= $count_student; $i++) {
+
+                    $id = $sheet->getCell('A' . $numrow)->getValue();
+                    $nama = $sheet->getCell('B' . $numrow)->getValue();
+                    $kelas = $sheet->getCell('C' . $numrow)->getValue();
+                    
+
+                    $html .= '
+                        <tr>
+                            <td>' . $id . '</td>
+                            <td>' . $nama . '</td>
+                            <td>' . $kelas . '</td>
+                        </tr>
+                    ';
+
+                    $data['student'] = $id;
+                    $data['eskul'] = $kelas;
+
+                    $this->model->saveEskulParticipan($data);
 
                     $numrow++;
                 }

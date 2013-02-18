@@ -21,6 +21,7 @@ class Apps extends Controller {
         Src::plugin()->jQueryValidation();
         Src::plugin()->jQueryAlphaNumeric();
         Src::plugin()->jQueryBase64();
+        Src::plugin()->elrte();
         
         $this->view->apps_alias = $apps_alias;
         $apps_info = $this->model->selectAppsByAlias($apps_alias);

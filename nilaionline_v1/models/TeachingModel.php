@@ -74,6 +74,8 @@ class TeachingModel extends Model {
                                     academic_period.period_status
                                 FROM
                                     academic_period
+                                WHERE
+                                    academic_period.period_status <> 0
                           ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();

@@ -68,6 +68,6 @@
         <div class="left"><?php echo Web::getTitle(); ?></div>
     </div>
     <div style="text-align: center;">
-        <iframe id="viewreport" frameborder="0" class="v-repots"></iframe>
+        <iframe id="viewreport" frameborder="0" style="width: 100%;height: 400px;"></iframe>
     </div>
 </div>

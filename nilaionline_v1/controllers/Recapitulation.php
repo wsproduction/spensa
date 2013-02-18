@@ -19,7 +19,7 @@ class Recapitulation extends Controller {
             Web::setTitle('Rekapitulasi Nilai ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
 
             $this->view->link_back = $this->content->setParentLink('myclass/view/' . $class_info['subject_id'] . '.' . $class_info['grade_id'] . '.' . $class_info['period_id'] . '.' . $class_info['semester_id']);
-            $this->view->link_r = $this->content->setLink('recapitulation/readscore/' . $teachingid . '.' . $class_info['classgroup_id'] . '.' . $class_info['mlc_value']);
+            $this->view->link_r = $this->content->setLink('recapitulation/readscore/' . $teachingid . '.' . $class_info['classgroup_id'] . '.' . $class_info['classgroup_id'] . '.' . $class_info['mlc_value']);
 
             $this->view->render('recapitulation/index');
         } else {
@@ -27,12 +27,47 @@ class Recapitulation extends Controller {
         }
     }
 
+    public function notification($tempid = 0) {
+        Web::setTitle('Rekapitulasi Laporan Nilai');
+
+        list($teaching, $classgroup_id, $classgroup_id_mapel) = explode('.', $tempid);
+
+        Session::init();
+        $user_references = Session::get('user_references');
+        $guardian_list = $this->model->selectGuardianInformation($classgroup_id, $user_references);
+
+        if ($guardian_list) {
+            $class_list = $this->model->selectClassListByTeachingId($teaching, null);
+
+            if ($class_list) {
+                $guardian_info = $guardian_list[0];
+                $this->view->guardian_info = $guardian_info;
+
+                $class_info = $class_list[0];
+                $this->view->class_info = $class_info;
+
+                $this->view->link_back = $this->content->setParentLink('guardian/page/' . $classgroup_id);
+                $this->view->link_r = $this->content->setLink('recapitulation/readscore/' . $teaching . '.' . $classgroup_id . '.' . $classgroup_id_mapel . '.' . $class_info['mlc_value']);
+
+                $this->view->render('recapitulation/notification');
+            } else {
+                $this->view->render('guardian/303');
+            }
+        } else {
+            $this->view->render('guardian/404');
+        }
+    }
+
     public function readScore($tempid = 0) {
 
-        list ($teachingid, $class_group_id, $mlc) = explode('.', $tempid);
+        list ($teachingid, $class_group_id, $classgroup_id_mapel, $mlc) = explode('.', $tempid);
 
-        $student_list = $this->model->selectStudentByClassGroupId($class_group_id);
+        $student_list_main = $this->model->selectStudentByClassGroupId($class_group_id);
+        $student_id_list_main = $this->parsingStudentId($student_list_main);
+        
+        $student_list = $this->model->selectStudentByClassGroupIdAndStudentId($classgroup_id_mapel, $student_id_list_main);
         $student_id_list = $this->parsingStudentId($student_list);
+        
         $score_list = $this->model->selectSocoreByScoreFilter($student_id_list, $teachingid);
         $score_data = $this->parsingScore($score_list);
 

@@ -119,38 +119,38 @@ class Report extends Controller {
             $guidance_score_list = $this->model->selectGuidanceScore($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $report_type);
             $attendance_list = $this->model->selectAttendance($student_info['student_nis'], $student_info['period_id'], $student_info['semester_id'], $report_type);
             $report_publishing_list = $this->model->selectReportPublishing($student_info['period_id'], $student_info['semester_id'], $report_type);
-            
+
             $error_hendling = 0;
             $error_message = '';
-            
-            if (!$score_list) {
+
+            if (count($score_list) == 0) {
                 $error_hendling++;
                 $error_message .= '<div> &bullet; Data nilai mata pelajaran tidak ditemukan.</div>';
             }
-            
+
             /*
-            if (!$extracurricular_score_list) {
-                $error_hendling++;
-                $error_message .= '<div> &bullet; Data nilai ekstrakurikuler tidak ditemukan.</div>';
-            }
+              if (!$extracurricular_score_list) {
+              $error_hendling++;
+              $error_message .= '<div> &bullet; Data nilai ekstrakurikuler tidak ditemukan.</div>';
+              }
              */
-            
-            if (!$guidance_score_list) {
+
+            if (count($guidance_score_list) == 0) {
                 $error_hendling++;
                 $error_message .= '<div> &bullet; Data nilai bimbingan konseling tidak ditemukan.</div>';
             }
-            
-            if (!$attendance_list) {
+
+            if (count($attendance_list) == 0) {
                 $error_hendling++;
                 $error_message .= '<div> &bullet; Data absensi tidak ditemukan.</div>';
             }
-            
-            if (!$report_publishing_list) {
+
+            if (count($report_publishing_list) == 0) {
                 $error_hendling++;
                 $error_message .= '<div> &bullet; Data titimangsa tidak ditemukan.</div>';
             }
-            
-            
+
+
             if ($error_hendling == 0) {
                 $score_info = array();
                 foreach ($score_list as $rowscore) {
@@ -589,7 +589,11 @@ class Report extends Controller {
                         }
                     }
 
-                    $average_score = number_format($total_score / $total_subject, 2, '.', ' ');
+                    $average_score = 0;
+                    if ($total_score > 0 && $total_subject > 0) {
+                        $average_score = number_format($total_score / $total_subject, 2, '.', ' ');
+                    }
+                    
                     if (stristr($average_score, '.') == '.00') {
                         list($value, $point) = explode('.', $average_score);
                         $average_score = $value;
@@ -657,8 +661,8 @@ class Report extends Controller {
                 $html .= '
                 </table>';
 
-                $attitude_score = '';
-                $personality_score = '';
+                $attitude_score = '-';
+                $personality_score = '-';
                 if (count($guidance_score_list) > 0) {
                     $guidance_score = $guidance_score_list[0];
                     $attitude_score = $guidance_score['attitude_score'];

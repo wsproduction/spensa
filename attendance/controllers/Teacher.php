@@ -217,7 +217,7 @@ class Teacher extends Controller {
 
         $listData = $this->model->selectUserInfo();
 
-        $pdf = Src::plugin()->tcPdf();
+        $pdf = Src::plugin()->tcPdf('P', 'mm', 'F4', true, 'UTF-8', false, false);
 
         // set document information
         $pdf->SetCreator(PDF_CREATOR);
@@ -236,7 +236,7 @@ class Teacher extends Controller {
         $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
         //set margins
-        $pdf->SetMargins(18, 12, PDF_MARGIN_RIGHT);
+        $pdf->SetMargins(18, 8, PDF_MARGIN_RIGHT);
         $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
         $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
@@ -265,7 +265,7 @@ class Teacher extends Controller {
                     <style type="text/css">
                         .header {
                             text-align : center;
-                            font-size : 12pt;
+                            font-size : 9pt;
                             font-weight : bold;
                         }
                         .date {
@@ -275,7 +275,7 @@ class Teacher extends Controller {
                         .list-data {
                         }
                         .list-data .th {
-                            font-size : 8pt;
+                            font-size : 7pt;
                             border-top : 1px solid #000;
                             border-bottom : 1px solid #000;
                             border-right : 1px solid #000;
@@ -286,7 +286,7 @@ class Teacher extends Controller {
                             border-left : 1px solid #000;
                         }
                         .list-data .td {
-                            font-size : 8pt;
+                            font-size : 7pt;
                             border-bottom : 1px solid #000;
                             border-right : 1px solid #000;
                         }
@@ -340,7 +340,7 @@ class Teacher extends Controller {
                 }
 
                 if ($clockin == '-' && $clockout == '-') {
-                    $note = 'Alpha';
+                    $note = 'tanpa keterangan';
                     $style = 'style="color:red;"';
                 } else {
                     $note = '';
@@ -502,18 +502,18 @@ class Teacher extends Controller {
                             border-right : 1px solid #000;
                         }
                     </style> ';
-        
+
         $html .= '<div class="header">DAFTAR HADIR PEGAWAI<br>SMP NEGERI 1 SUBANG</div>';
         $html .= '<br>';
         $html .= '<table cellpadding="0" cellspacing="0" width="650">
                     <tr>
                         <td align="left" height="18"><b>Keterangan :</b> Guru</td>
-                        <td align="right"><b>Hari/Tanggal :</b> </td>';// . $dayname . ', ' . $date . '</td>
+                        <td align="right"><b>Hari/Tanggal :</b> </td>'; // . $dayname . ', ' . $date . '</td>
         $html .= '  </tr>
                   </table>';
-        
+
         $dateWidth = 18 * $sumDay;
-        
+
         $html .= '<table class="list-data">
                     <thead>
                         <tr>
@@ -524,20 +524,20 @@ class Teacher extends Controller {
                             <td colspan="4" class="th">KETERANGAN</td>
                         </tr>
                         <tr>';
-        
+
         for ($day = 1; $day <= $sumDay; $day++) {
             $html .= '<td width="18" class="th">' . $day . '</td>';
         }
-        
+
         $html .= '          <td class="th">D</td>';
         $html .= '          <td class="th">S</td>';
         $html .= '          <td class="th">I</td>';
         $html .= '          <td class="th">A</td>';
-        
+
         $html .= '      </tr>
                     </thead>
                   </table>';
-        
+
         $pdf->writeHTML($html, true, false, true, false, '');
 
 

@@ -1,5 +1,5 @@
-<div class="hr"></div>
-<div>
+
+<div style="display: none;">
     <div class="fl-left">
         <b>Welcome, Warman Suganda!</b>
     </div>

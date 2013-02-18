@@ -19,7 +19,7 @@ class Collection extends Controller {
         $this->view->link_r = $this->content->setLink('collection/read');
         $this->view->link_d = $this->content->setLink('collection/delete');
         $this->view->link_p = $this->content->setLink('collection/addprint');
-        $this->view->link_pl = $this->content->setLink('collection/printlist');
+        $this->view->link_pl = $this->content->setLink('catalogue/printlistbarcode');
         $this->view->render('collection/index');
     }
 

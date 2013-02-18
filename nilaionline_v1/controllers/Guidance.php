@@ -265,9 +265,9 @@ class Guidance extends Controller {
 
         Session::init();
         $user_references = Session::get('user_references');
-        list($coachid, $type_id) = explode('.', $id);
+        list($teachingid, $type_id) = explode('.', $id);
 
-        $class_list = $this->model->selectExtracurricularCoachById($coachid, $user_references);
+        $class_list = $this->model->selectClassListByTeachingId($teachingid, $user_references);
 
         if ($class_list) {
             $class_info = $class_list[0];
@@ -310,11 +310,10 @@ class Guidance extends Controller {
             $objPHPExcel->getActiveSheet()->getStyle('B1:B2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             $objPHPExcel->getActiveSheet()->getStyle('B1:B2')->applyFromArray(array('font' => array('bold' => true)));
 
-
             // Document Description
             //$objPHPExcel->getActiveSheet()->setCellValue('A4', $class_info['classgroup_id'])->setCellValue('B4', 'Kelas')->setCellValue('D4', ': ' . $class_info['grade_title'] . ' (' . $class_info['grade_name'] . ') ' . $class_info['classroom_name']);
             $objPHPExcel->getActiveSheet()->setCellValue('A5', $class_info['period_id'] . '_' . $class_info['semester_id'])->setCellValue('B5', 'Tahun Akademik')->setCellValue('D5', ': ' . $class_info['period_years_start'] . '/' . $class_info['period_years_end'] . ' - ' . $class_info['semester_name']);
-            $objPHPExcel->getActiveSheet()->setCellValueExplicit('A6', $coachid, PHPExcel_Cell_DataType::TYPE_STRING)->setCellValue('B6', 'Nama Ekstrakurikuler')->setCellValue('D6', ': ' . $class_info['extracurricular_name']);
+            //$objPHPExcel->getActiveSheet()->setCellValueExplicit('A6', $teachingid, PHPExcel_Cell_DataType::TYPE_STRING)->setCellValue('B6', 'Mata Pelajaran')->setCellValue('D6', ': ' . $class_info['subject_name']);
             //$objPHPExcel->getActiveSheet()->setCellValue('A7', $class_info['mlc_value'])->setCellValue('B7', 'KKM')->setCellValue('D7', ': ' . $class_info['mlc_value']);
 
             $objPHPExcel->getActiveSheet()->getStyle('B4:B9')->applyFromArray(array('font' => array('bold' => true)));
@@ -343,9 +342,9 @@ class Guidance extends Controller {
             $objPHPExcel->getActiveSheet()->setCellValue('D12', 'NISN');
 
             // List Data
-            $student_list = $this->model->selectStudentByClassGroupId($coachid);
+            $student_list = $this->model->selectStudentByClassGroupId($class_info['classgroup_id']);
             $student_id_list = $this->parsingStudentId($student_list);
-            $score_list = $this->model->selectSocoreByScoreFilter($student_id_list, $coachid, $type_id);
+            $score_list = $this->model->selectSocoreByScoreFilter($student_id_list, $teachingid, 1, 1);
             $score_data = $this->parsingScore($score_list);
 
             $nourut = 0;
@@ -368,7 +367,7 @@ class Guidance extends Controller {
                         ->setCellValueExplicit('D' . $rowno, $row['student_nisn'], PHPExcel_Cell_DataType::TYPE_STRING)
                         ->setCellValue('E' . $rowno, $row['student_name'])
                         ->setCellValue('F' . $rowno, $score)
-                        ->setCellValue('G' . $rowno, '=IF(ISBLANK(' . $cell_value . '),"-",IF(' . $cell_value . '="A","Sangat Baik", IF(' . $cell_value . '="B","Baik","Cukup")))');
+                        ->setCellValue('G' . $rowno, '=IF(ISBLANK(' . $cell_value . '),"-",IF(' . $cell_value . '>A$7,"Terlampaui", IF(' . $cell_value . '=A$7,"Tercapai","Tidak Tercapai")))');
             }
 
             $objPHPExcel->getActiveSheet()->setCellValue('A12', $nourut);
@@ -379,7 +378,7 @@ class Guidance extends Controller {
 
             // Redirect output to a client’s web browser (Excel5)
             header('Content-Type: application/vnd.ms-excel');
-            header('Content-Disposition: attachment;filename="' . $filename . '-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $class_info['semester_id'] . '-' . $class_info['extracurricular_name'] . '.xls"');
+            header('Content-Disposition: attachment;filename="' . $filename . '-' . $class_info['period_years_start'] . $class_info['period_years_end'] . $class_info['semester_id'] . '-' . $class_info['grade_title'] . $class_info['classroom_name'] . '.xls"');
             header('Cache-Control: max-age=0');
 
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
@@ -513,18 +512,18 @@ class Guidance extends Controller {
 
             list ($teachingid, $class_group_id) = explode('.', $tempid);
             $type = $this->method->post('type');
-            
+
             /*
-            $sick = $data[0];
-            unset($sick[0]);
-            var_dump($sick);
-            */
+              $sick = $data[0];
+              unset($sick[0]);
+              var_dump($sick);
+             */
             try {
-                
+
                 $sick = $data[0];
                 $leave = $data[1];
                 $alpha = $data[2];
-                
+
                 unset($sick[0]);
                 unset($leave[0]);
                 unset($alpha[0]);

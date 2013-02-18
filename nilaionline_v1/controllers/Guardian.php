@@ -17,8 +17,7 @@ class Guardian extends Controller {
 
             $this->view->link_back = $this->content->setParentLink('teaching');
             $this->view->link_rapor = $this->content->setParentLink('report/preview/' . $classgroup_id);
-            $this->view->link_read_subject = $this->content->setLink('guardian/readsubject/' . $classgroup_id);
-            $this->view->link_read_pbkl = $this->content->setLink('guardian/readpbkl/' . $classgroup_id);
+            $this->view->link_read_subject = $this->content->setLink('guardian/readsubject/' . $classgroup_id . '.' . $guardian_info['classgroup_grade'] . '.' . $guardian_info['classgroup_period'] . '.' . $guardian_info['classgroup_semester']);
             $this->view->link_read_eskul = $this->content->setLink('guardian/readeskul/' . $classgroup_id);
             $this->view->render('guardian/index');
         } else {
@@ -26,17 +25,17 @@ class Guardian extends Controller {
         }
     }
 
-    public function readSubject($classgroup_id = 0) {
+    public function readSubject($tempid = 0) {
+
+        list($classgroup_id, $grade, $period, $semester) = explode('.', $tempid);
 
         $student_list = $this->model->selectSubjectByClassGroup($classgroup_id);
         $student_id = '0';
         foreach ($student_list as $row) {
             $student_id .= ',' . $row['student_nis'];
         }
-        
-        $student_count = count($student_list);
 
-        $subject_list = $this->model->selectSubjectByStudentId($student_id, $classgroup_id);
+        $subject_list = $this->model->selectSubjectByStudentId($student_id, $grade, $period, $semester);
         $subject_info = array();
 
         foreach ($subject_list as $row) {
@@ -46,7 +45,9 @@ class Guardian extends Controller {
                 'employess_name' => $row['employess_name'],
                 'subject_name' => $row['subject_name'],
                 'midscore_count' => $row['midscore_count'],
-                'finalscore_count' => $row['finalscore_count']
+                'finalscore_count' => $row['finalscore_count'],
+                'student_count' => $row['student_count'],
+                'classgroup_id' => $row['classgroup_id']
             );
         }
 
@@ -63,21 +64,25 @@ class Guardian extends Controller {
                                </tr>';
                 $i = 'a';
                 foreach ($subject_info[1] as $row) {
+
+                    $sc1 = $row['student_count'];
+                    $link_view = $this->content->setParentLink('recapitulation/notification/' . $row['teaching_id'] . '.' . $classgroup_id . '.' .$row['classgroup_id']);
+
                     $html_list .= '<tr>';
                     $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
                     $html_list .= '     <td>' . $row['employess_name'] . '</td>';
-                    $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $student_count . ' Siswa</td>';
-                    $html_list .= '     <td align="center">' . $row['finalscore_count'] . '/' . $student_count . ' Siswa</td>';
-                    $html_list .= '     <td align="center">Lihat</td>';
+                    $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $sc1 . ' Siswa</td>';
+                    $html_list .= '     <td align="center">' . $row['finalscore_count'] . '/' . $sc1 . ' Siswa</td>';
+                    $html_list .= '     <td align="center"><a href="' . $link_view . '">Lihat</a></td>';
                     $html_list .= '</tr>';
                     $i++;
                 }
                 $idx++;
             }
-            
+
             /* Matapelajaran Pilihan */
             if (isset($subject_info[2])) {
-                
+
                 $rowspan = count($subject_info[2]) + 1;
                 $html_list .= '<tr>
                                     <td class="first" align="center" valign="top" rowspan="' . $rowspan . '" style="font-weight:bold;">' . $idx . ' .</td>
@@ -85,21 +90,25 @@ class Guardian extends Controller {
                                </tr>';
                 $i = 'a';
                 foreach ($subject_info[2] as $row) {
+                    
+                    $sc2 = $row['student_count'];
+                    $link_view = $this->content->setParentLink('recapitulation/notification/' . $row['teaching_id'] . '.' . $classgroup_id . '.' . $row['classgroup_id']);
+
                     $html_list .= '<tr>';
                     $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
                     $html_list .= '     <td>' . $row['employess_name'] . '</td>';
-                    $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $student_count . ' Siswa</td>';
-                    $html_list .= '     <td align="center">' . $row['finalscore_count'] . '/' . $student_count . ' Siswa</td>';
-                    $html_list .= '     <td align="center">Lihat</td>';
+                    $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $sc2 . ' Siswa</td>';
+                    $html_list .= '     <td align="center">' . $row['finalscore_count'] . '/' . $sc2 . ' Siswa</td>';
+                    $html_list .= '     <td align="center"><a href="' . $link_view . '">Lihat</a></td>';
                     $html_list .= '</tr>';
                     $i++;
                 }
                 $idx++;
             }
-            
+
             /* Matapelajaran Mulok */
             if (isset($subject_info[3])) {
-                
+
                 $rowspan = count($subject_info[3]) + 1;
                 $html_list .= '<tr>
                                     <td class="first" align="center" valign="top" rowspan="' . $rowspan . '" style="font-weight:bold;">' . $idx . ' .</td>
@@ -107,12 +116,16 @@ class Guardian extends Controller {
                                </tr>';
                 $i = 'a';
                 foreach ($subject_info[3] as $row) {
+
+                    $sc3 = $row['student_count'];
+                    $link_view = $this->content->setParentLink('recapitulation/notification/' . $row['teaching_id'] . '.' . $classgroup_id . '.' . $row['classgroup_id']);
+
                     $html_list .= '<tr>';
                     $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
                     $html_list .= '     <td>' . $row['employess_name'] . '</td>';
-                    $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $student_count . ' Siswa</td>';
-                    $html_list .= '     <td align="center">' . $row['finalscore_count'] . '/' . $student_count . ' Siswa</td>';
-                    $html_list .= '     <td align="center">Lihat</td>';
+                    $html_list .= '     <td align="center">' . $row['midscore_count'] . '/' . $sc3 . ' Siswa</td>';
+                    $html_list .= '     <td align="center">' . $row['finalscore_count'] . '/' . $sc3 . ' Siswa</td>';
+                    $html_list .= '     <td align="center"><a href="' . $link_view . '">Lihat</a></td>';
                     $html_list .= '</tr>';
                     $i++;
                 }
