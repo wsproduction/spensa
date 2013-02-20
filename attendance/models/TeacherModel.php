@@ -22,19 +22,7 @@ class TeacherModel extends Model {
         }
     }
     
-    public function selectAllCheckTime($sdate, $fdate) {
-        $name = $this->method->post('name', 0);
-        $nameid = $this->method->post('nameid', 0);
-
-        $newfdate = new DateTime(date('Y-m-d', strtotime($fdate)));
-        $newfdate = $newfdate->modify('+1 day');
-        $fdate = $newfdate->format('m/d/Y');
-
-        $in = $name;
-        if (empty($name)) {
-            $in = $nameid;
-        }
-
+    public function selectAllCheckTime($nameid, $sdate, $fdate) {
         $sth = $this->db->prepare("
                             SELECT 
                                 CHECKINOUT.USERID,
@@ -42,7 +30,7 @@ class TeacherModel extends Model {
                             FROM 
                                 CHECKINOUT
                             WHERE
-                                CHECKINOUT.USERID IN(" . $in . ") AND
+                                CHECKINOUT.USERID IN(" . $nameid . ") AND
                                 CHECKINOUT.CHECKTIME BETWEEN #" . $sdate . "# AND #" . $fdate . "#
                             ORDER BY CHECKINOUT.USERID;
                         ");
@@ -54,14 +42,7 @@ class TeacherModel extends Model {
         }
     }
 
-    public function selectUserInfo() {
-        $name = $this->method->post('name', 0);
-        $nameid = $this->method->post('nameid', 0);
-
-        $in = $name;
-        if (empty($name)) {
-            $in = $nameid;
-        }
+    public function selectUserInfo($nameid) {
 
         $sth = $this->db->prepare("
                             SELECT 
@@ -86,7 +67,7 @@ class TeacherModel extends Model {
                                 INNER JOIN USER_OF_RUN ON USERINFO.USERID = USER_OF_RUN.USERID) 
                                 INNER JOIN SCHCLASS ON USER_OF_RUN.NUM_OF_RUN_ID = SCHCLASS.SCHCLASSID
                             WHERE 
-                                USERINFO.USERID IN(" . $in . ") 
+                                USERINFO.USERID IN(" . $nameid . ") 
                             ORDER BY USERINFO.Name
                         ");
         if ($sth->execute()) {

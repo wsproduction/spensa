@@ -76,6 +76,7 @@
                     $(frmID)[0].reset();
                     $(this).loadingProgress('stop');
                     $(msgID).html(o[1]).fadeIn('slow');
+                    $('#username').focus();
                 }
             }, 'json');
             return false;

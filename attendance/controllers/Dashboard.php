@@ -11,7 +11,7 @@ class Dashboard extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Dashboard');
+        Web::setTitle('Beranda');
         $this->view->render('dashboard/index');
     }
 

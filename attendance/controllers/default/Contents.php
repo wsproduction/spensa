@@ -2,11 +2,6 @@
 
 class Contents extends Controller {
 
-    private $prevId = 'prevPaging';
-    private $pageId = 'pagePaging';
-    private $nextId = 'nextPaging';
-    private $maxId = 'maxPaging';
-
     public function __construct() {
         $this->model = Content::loadModel();
         $this->url = new URL();
@@ -21,114 +16,6 @@ class Contents extends Controller {
             $this->url->redirect($url);
             exit;
         }
-    }
-
-    public function topMenu() {
-        $html = '<ul id="navigation" class="dropdown">';
-
-        $menu = $this->model->selectMenu(1, 1);
-        $level1 = array();
-        $level2 = array();
-        $level3 = array();
-        $level4 = array();
-        foreach ($menu as $value) {
-            if (Session::get('loginStatus')) {
-                if ($value['is_protect']) {
-                    switch ($value['level']) {
-                        case 1 :$level1[] = $value;
-                            break;
-                        case 2 :$level2[] = $value;
-                            break;
-                        case 3 :$level3[] = $value;
-                            break;
-                        case 4 :$level4[] = $value;
-                            break;
-                    }
-                }
-            } else {
-                if (!$value['is_protect']) {
-                    switch ($value['level']) {
-                        case 1 :$level1[] = $value;
-                            break;
-                        case 2 :$level2[] = $value;
-                            break;
-                        case 3 :$level3[] = $value;
-                            break;
-                        case 4 :$level4[] = $value;
-                            break;
-                    }
-                }
-            }
-        }
-
-        foreach ($level1 as $val_level1) {
-            $html .= '<li>' . URL::link($this->setLink($val_level1['menu_link']), $val_level1['menu_title'], 'attach');
-
-            // View Menu Level 2
-            if ($this->countChildMenu($level2, $val_level1['menu_id']) > 0) {
-                $html .= '<ul style="width: 285px;">';
-                foreach ($level2 as $val_level2) {
-                    if ($val_level2['menu_parent'] == $val_level1['menu_id']) {
-                        $html .= '<li>' . URL::link($this->setLink($val_level2['menu_link']), $val_level2['menu_title'], 'attach');
-
-                        // View Menu Leve 3
-                        if ($this->countChildMenu($level3, $val_level2['menu_id']) > 0) {
-                            $html .= '<ul style="width: 150px;">';
-                            foreach ($level3 as $val_level3) {
-                                if ($val_level3['menu_parent'] == $val_level2['menu_id']) {
-                                    $html .= '<li>' . URL::link($this->setLink($val_level3['menu_link']), $val_level3['menu_title'], 'attach');
-
-                                    // View Menu Leve 3
-                                    if ($this->countChildMenu($level4, $val_level3['menu_id']) > 0) {
-                                        $html .= '<ul style="width: 150px;">';
-                                        foreach ($level4 as $val_level4) {
-                                            if ($val_level4['menu_parent'] == $val_level3['menu_id']) {
-                                                $html .= '<li>' . URL::link($this->setLink($val_level4['menu_link']), $val_level4['menu_title'], 'attach') . '</li>';
-                                            }
-                                        }
-                                        $html .= '</ul>';
-                                    }
-                                    $html .= '</li>';
-                                }
-                            }
-                            $html .= '</ul>';
-                        }
-                        $html .= '</li>';
-                    }
-                }
-                $html .= '</ul>';
-            }
-            $html .= '</li>';
-        }
-
-        /*
-          $html .= '<li>';
-          $html .= URL::link('#', 'Data Master', 'attach');
-          $html .= '  <ul style="width: 180px;">';
-          $html .= '      <li>' . URL::link('http://' . $house . '/ddc', 'DDC', 'attach') . '</li>';
-          $html .= '      <li>' . URL::link('#', 'Buku', 'attach');
-          $html .= '          <ul style="width: 150px;">';
-          $html .= '              <li>' . URL::link('http://' . $house . '/jenis_buku', 'Jenis Buku', 'attach') . '</li>';
-          $html .= '              <li>' . URL::link('http://' . $house . '/katalog_buku', 'Katalog Buku', 'attach') . '</li>';
-          $html .= '          </ul>';
-          $html .= '      </li>';
-          $html .= '  </ul>';
-          $html .= '</li>';
-          $html .= '<li>' . URL::link('http://' . $house . '/login/stop', 'Logout', 'attach') . '</li>';
-         */
-        $html .= '</ul>';
-
-        return $html;
-    }
-
-    public function countChildMenu($list, $parent) {
-        $count = 0;
-        foreach ($list as $value) {
-            if ($value['menu_parent'] == $parent) {
-                $count++;
-            }
-        }
-        return $count;
     }
 
     public function setLink($val = '', $ssl = false) {
@@ -148,54 +35,6 @@ class Contents extends Controller {
             $link = '#';
         }
         return $link;
-    }
-
-    public function customPagingId($prevId = '', $pageId = '', $nextId = '', $maxId = '') {
-        if ($prevId != '')
-            $this->prevId = $prevId;
-        if ($pageId != '')
-            $this->pageId = $pageId;
-        if ($nextId != '')
-            $this->nextId = $nextId;
-        if ($maxId != '')
-            $this->maxId = $maxId;
-    }
-
-    public function paging($colspan = 1, $count = 1, $current = 1) {
-        $html = '<tr class="paging">';
-        $html .= '  <td colspan="' . $colspan . '" class="first">';
-        $html .= '      <div class="left">';
-
-        Form::create('button', $this->prevId);
-        Form::value('Prev');
-        Form::style('action_prev');
-        $html .= Form::commit('attach');
-
-        $num = array();
-        for ($i = 1; $i <= $count; $i++) {
-            $num[$i] = $i;
-        }
-
-        Form::create('select', $this->pageId);
-        Form::option($num, '', $current);
-        $html .= Form::commit('attach');
-
-        Form::create('hidden', $this->maxId);
-        Form::value($i);
-        $html .= Form::commit('attach');
-
-        Form::create('button', $this->nextId);
-        Form::value('Next');
-        Form::style('action_next');
-        $html .= Form::commit('attach');
-
-        $html .= '      </div>';
-        $html .= '      <div class="right">';
-        $html .= '          Page ' . $current . ' of ' . $count;
-        $html .= '      </div>';
-        $html .= '  </td>';
-        $html .= '</tr>';
-        return $html;
     }
 
     public function numberFormat($number = 0) {
@@ -250,6 +89,95 @@ class Contents extends Controller {
         }
 
         return $new_array;
+    }
+
+    public function pasingCheckTime($checktime) {
+        $checkinout = array();
+        foreach ($checktime as $value) {
+            // Keterangan : $checkinout['USERID']['TANGGAL']['INDEX'] = 'JAM'
+            $checkinout[$value['USERID']][date('d/m/Y', strtotime($value['CHECKTIME']))][] = date('H:i', strtotime($value['CHECKTIME']));
+        }
+        return $checkinout;
+    }
+
+    public function parsingDateList($begin, $end) {
+        $dateList = array();
+        $interval = new DateInterval('P1D');
+        $daterange = new DatePeriod($begin, $interval, $end);
+
+        foreach ($daterange as $date) {
+            $dateList[] = $date->format('d/m/Y');
+        }
+        return $dateList;
+    }
+
+    public function parsingListView($listData, $dateList, $checkInOut) {
+        $listView = array();
+        foreach ($listData as $row) {
+
+            foreach ($dateList as $dList) {
+
+                // START : Set Clock In / Clock Out
+                $clockin = '-';
+                $clockout = '-';
+                if (isset($checkInOut[$row['USERID']][$dList])) {
+                    $time = $checkInOut[$row['USERID']][$dList];
+                    $timecount = count($time);
+                    if ($timecount > 0) {
+                        sort($time);
+                        $clockfirst = $time[0];
+                        $clocklast = $time[$timecount - 1];
+
+                        if ($clockfirst >= date('H:i', strtotime(substr($row['CHECKINTIME1'], -8, 8))) && $clockfirst <= date('H:i', strtotime(substr($row['CHECKINTIME2'], -8, 8)))) {
+                            $clockin = $clockfirst;
+                        }
+
+                        if ($clocklast >= date('H:i', strtotime(substr($row['CHECKOUTTIME1'], -8, 8))) && $clocklast <= date('H:i', strtotime(substr($row['CHECKOUTTIME2'], -8, 8)))) {
+                            $clockout = $clocklast;
+                        }
+                    }
+                }
+
+                if ($clockin == '-' && $clockout == '-') {
+                    $note = 'Alpha';
+                    $style = 'style="color:red;"';
+                } else {
+                    $note = '';
+                    $style = 'style="color:black;"';
+                }
+                // END : Set Clock In / Clock Out
+
+                $ssn = '-';
+                if (!empty($row['SSN'])) {
+                    $ssn = $row['SSN'];
+                }
+
+                $CardNo = '-';
+                if (!empty($row['CardNo'])) {
+                    $CardNo = $row['CardNo'];
+                }
+
+                $gender = "Perempuan";
+                if ($row['Gender'] == 'Male')
+                    $gender = "Laki-Laki";
+
+
+                $listView[] = array(
+                    'USERID' => $row['USERID'],
+                    'SSN' => $ssn,
+                    'CardNo' => $CardNo,
+                    'Name' => $row['Name'],
+                    'Gender' => $gender,
+                    'DateList' => $dList,
+                    'ClockIn' => $clockin,
+                    'ClockOut' => $clockout,
+                    'Note' => $note,
+                    'Style' => $style
+                );
+            }
+        }
+
+        return $listView;
     }
 
 }

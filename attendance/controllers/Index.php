@@ -9,9 +9,7 @@ class Index extends Controller {
             $this->url->redirect('http://' . Web::$host . '/' . Web::$webAlias . '/dashboard');
             exit;
         }
-        
-        $this->view->topMenu = $this->content->topMenu();
-        
+                
         Src::plugin()->jQueryValidation();
         Src::plugin()->poshytip();
     }

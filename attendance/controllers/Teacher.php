@@ -5,13 +5,13 @@ class Teacher extends Controller {
     public function __construct() {
         parent::__construct();
         $this->content->accessRight();
-        $this->view->topMenu = $this->content->topMenu();
 
         Src::plugin()->jQueryValidation();
         Src::plugin()->jQueryAlphaNumeric();
         Src::plugin()->poshytip();
         Src::plugin()->elrte();
         Src::plugin()->flexiGrid();
+        Src::plugin()->jQueryMultiSelect();
     }
 
     public function index() {
@@ -55,99 +55,44 @@ class Teacher extends Controller {
 
             if ($action == 999) {
 
+                $nameid = $this->method->post('nameid', 0);
                 $sdate = $this->method->post('sdate', 0);
                 $fdate = $this->method->post('fdate', 0);
 
-                $checktime = $this->model->selectAllCheckTime($sdate, $fdate);
-                $checkinout = array();
-                foreach ($checktime as $value) {
-                    //$checkinout['USERID']['TANGGAL']['INDEX'] = 'JAM'
-                    $checkinout[$value['USERID']][date('d/m/Y', strtotime($value['CHECKTIME']))][] = date('H:i', strtotime($value['CHECKTIME']));
-                }
-
-                $dateList = array();
                 $begin = new DateTime(date('Y-m-d', strtotime($sdate)));
-                $end = new DateTime(date('Y-m-d', strtotime($fdate)));
-                $end = $end->modify('+1 day');
-                $interval = new DateInterval('P1D');
-                $daterange = new DatePeriod($begin, $interval, $end);
+                $end_temp = new DateTime(date('Y-m-d', strtotime($fdate)));
+                $end = $end_temp->modify('+1 day');
 
-                foreach ($daterange as $date) {
-                    $dateList[] = $date->format('d/m/Y');
-                }
+                $checktime = $this->model->selectAllCheckTime($nameid, $begin->format('m/d/Y'), $end->format('m/d/Y'));
+                $checkInOut = $this->content->pasingCheckTime($checktime);
 
+                $dateList = $this->content->parsingDateList($begin, $end);
+                $listData = $this->model->selectUserInfo($nameid);
 
+                $listView = $this->content->parsingListView($listData, $dateList, $checkInOut);
+                
                 $page = 1;
-                $listData = $this->model->selectUserInfo();
-                $total = 1; //$this->model->countAllDdc();
-
+                $total = count($listView);
 
                 $xml .= "<page>$page</page>";
                 $xml .= "<total>$total</total>";
 
-                foreach ($listData AS $row) {
-
-                    foreach ($dateList as $dList) {
-
-                        // START : Set Clock In / Clock Out
-                        $clockin = '-';
-                        $clockout = '-';
-                        if (isset($checkinout[$row['USERID']][$dList])) {
-                            $time = $checkinout[$row['USERID']][$dList];
-                            $timecount = count($time);
-                            if ($timecount > 0) {
-                                sort($time);
-                                $clockfirst = $time[0];
-                                $clocklast = $time[$timecount - 1];
-
-                                if ($clockfirst >= date('H:i', strtotime(substr($row['CHECKINTIME1'], -8, 8))) && $clockfirst <= date('H:i', strtotime(substr($row['CHECKINTIME2'], -8, 8)))) {
-                                    $clockin = $clockfirst;
-                                }
-
-                                if ($clocklast >= date('H:i', strtotime(substr($row['CHECKOUTTIME1'], -8, 8))) && $clocklast <= date('H:i', strtotime(substr($row['CHECKOUTTIME2'], -8, 8)))) {
-                                    $clockout = $clocklast;
-                                }
-                            }
-                        }
-
-                        if ($clockin == '-' && $clockout == '-') {
-                            $note = 'Alpha';
-                            $style = 'style="color:red;"';
-                        } else {
-                            $note = '';
-                            $style = 'style="color:black;"';
-                        }
-                        // END : Set Clock In / Clock Out
-
-                        $nip = '-';
-                        if (!empty($row['SSN'])) {
-                            $nip = $row['SSN'];
-                        }
-
-                        $nuptk = '-';
-                        if (!empty($row['CardNo'])) {
-                            $nuptk = $row['CardNo'];
-                        }
-
-
-                        $xml .= "<row id='" . $row['USERID'] . "'>";
-                        $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['USERID'] . "</span>]]></cell>";
-                        $xml .= "<cell><![CDATA[<span " . $style . ">" . $nip . "</span>]]></cell>";
-                        $xml .= "<cell><![CDATA[<span " . $style . ">" . $nuptk . "</span>]]></cell>";
-                        $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['Name'] . "</span>]]></cell>";
-                        $gender = "Perempuan";
-                        if ($row['Gender'] == 'Male')
-                            $gender = "Laki-Laki";
-                        $xml .= "<cell><![CDATA[<span " . $style . ">" . $gender . "</span>]]></cell>";
-                        $xml .= "<cell><![CDATA[<span " . $style . ">" . $dList . "</span>]]></cell>";
-                        $xml .= "<cell><![CDATA[<span " . $style . ">" . $clockin . "</span>]]></cell>";
-                        $xml .= "<cell><![CDATA[<span " . $style . ">" . $clockout . "</span>]]></cell>";
-                        $xml .= "<cell><![CDATA[<span " . $style . ">" . $note . "</span>]]></cell>";
-                        $xml .= "</row>";
-                    }
+                foreach ($listView as $row) {
+                    
+                    $style = $row['Style'];
+                    
+                    $xml .= "<row id='" . $row['USERID'] . "'>";
+                    $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['USERID'] . "</span>]]></cell>";
+                    $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['SSN'] . "</span>]]></cell>";
+                    $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['CardNo'] . "</span>]]></cell>";
+                    $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['Name'] . "</span>]]></cell>";
+                    $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['Gender'] . "</span>]]></cell>";
+                    $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['DateList'] . "</span>]]></cell>";
+                    $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['ClockIn'] . "</span>]]></cell>";
+                    $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['ClockOut'] . "</span>]]></cell>";
+                    $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['Note'] . "</span>]]></cell>";
+                    $xml .= "</row>";
                 }
-            } else {
-                
             }
 
             $xml .= "</rows>";

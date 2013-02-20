@@ -35,6 +35,30 @@
                 <div class="cl">&nbsp;</div>
             </div>
             <div id="page_menu">
+                <ul id="navigation" class="dropdown">
+                    <?php
+                    $hostname = 'http://' . Web::getHost();
+                    ?>
+                    <li><a href="<?php echo $hostname . '/dashboard'; ?>">Beranda</a></li>
+                    <li>
+                        <a>Data Absensi</a>
+                        <ul>
+                            <li><a href="<?php echo $hostname . '/student'; ?>">Siswa</a></li>
+                            <li><a href="<?php echo $hostname . '/teacher'; ?>">Guru</a></li>
+                            <li><a href="<?php echo $hostname . '/tu'; ?>">Tata Usaha</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a>Laporan Absensi</a>
+                        <ul>
+                            <li><a href="<?php echo $hostname . '/student'; ?>">Siswa</a></li>
+                            <li><a href="<?php echo $hostname . '/teacher'; ?>">Guru</a></li>
+                            <li><a href="<?php echo $hostname . '/tu'; ?>">Tata Usaha</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="">Grafik</a></li>
+                    <li><a href="">Logout</a></li>
+                </ul>
                 <div class="cl">&nbsp;</div>
             </div>
             <div id="content">
@@ -43,7 +67,8 @@
             </div>
         </div>
         <div id="footer">
-            <b>Digital Library &copy; 2012 | Develope by : </b> <b><a href="www.facebook.com/warman.suganda">Warman Suganda</a> <br>Best View</b>&nbsp;with <b><a href="www.google.com/chrome">Google Chrome</a></b>, <b>Screen Resolution</b>&nbsp;: 1280 x 800 Pixcel
+            <b>SMP Negeri 1 Subang &copy; 2012 | Develope by : </b> <b><a href="www.facebook.com/warman.suganda">Warman S. & Novie H.P.</a></b> &nbsp; Members of SiFTech (Solution of Information Technology) 
+            <br><b>Best View</b>&nbsp;with <b><a href="www.google.com/chrome">Google Chrome</a></b>, <b>Screen Resolution</b>&nbsp;: 1280 x 800 Pixcel
         </div>
 
         <script>
