@@ -139,7 +139,7 @@ class Contents extends Controller {
                 }
 
                 if ($clockin == '-' && $clockout == '-') {
-                    $note = 'Alpha';
+                    $note = 'Tanpa Keterangan';
                     $style = 'style="color:red;"';
                 } else {
                     $note = '';

@@ -15,6 +15,10 @@ root {
     display: block;
 }
 
+label {
+    font-weight: bold;
+}
+
 
 body {
     background: #f7f7f7;

@@ -1,11 +1,10 @@
-
 <fieldset>
     <legend>Data Filter</legend>
     <div>
         <?php Form::begin('fFilter', 'attendance/read', 'post'); ?>
         <table>
             <tr>
-                <td style="width: 80px;"><?php Form::label('Nama', 'sdate'); ?></td>
+                <td style="width: 120px;"><?php Form::label('Nama', 'sdate'); ?></td>
                 <td>:</td>
                 <td>
                     <?php
@@ -21,7 +20,7 @@
                 </td>
             </tr>
             <tr>
-                <td><?php Form::label('Tanggal ', 'sdate'); ?></td>
+                <td><?php Form::label('Tanggal ', 'sdate'); ?> <font color="#999">(mm/dd/yy)</font></td>
                 <td>:</td>
                 <td>
                     <?php
@@ -29,7 +28,7 @@
                     Form::validation()->requaired();
                     Form::commit();
 
-                    Form::label(' s.d ', 'fdate');
+                    Form::label(' s.d. ', 'fdate');
 
                     Form::create('text', 'fdate');
                     Form::validation()->requaired();
@@ -55,17 +54,95 @@
         <?php Form::end(); ?>
     </div>
 </fieldset>
-
 <br>
-
 <table id="list" title="<?php echo Web::getTitle(); ?>" link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_d="<?php echo $link_d; ?>" style="display: none;">
 </table>
+
+<div id="box-add-attendance">
+    <?php
+    Form::begin('fAddAttendance', 'teacher/addattendance', 'post', true);
+    ?>
+
+    <table>
+        <tr>
+            <td style="width: 100px;">Nama</td>
+            <td>:</td>
+            <td>
+                <?php
+                Form::create('select', 'name');
+                Form::option($option_name);
+                Form::properties(array('multiple' => 'multiple'));
+                Form::commit();
+
+                Form::create('hidden', 'nameid');
+                Form::value(0);
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>Tanggal</td>
+            <td>:</td>
+            <td>
+                <?php
+                Form::create('text', 'sdate');
+                Form::validation()->requaired();
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>Jam</td>
+            <td>:</td>
+            <td>
+                <?php
+                Form::create('text', 'sdate');
+                Form::validation()->requaired();
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>
+                <?php
+                Form::create('submit', 'bSubmit');
+                Form::value('Simpan');
+                Form::style('action_save');
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+    </table>
+
+    <?php
+    Form::end();
+    ?>
+</div>
+
+<div id="box-edit-description">
+    <?php
+    Form::begin('fEditDescription', 'teacher/editdescription', 'post', true);
+    ?>
+
+    <table>
+        <tr>
+            <td></td>
+        </tr>
+    </table>
+
+    <?php
+    Form::end();
+    ?>
+</div>
 
 <script>
     $(function(){
         
-        $("#name").multiselect({
-            selectedText: "# of # selected"
+        $("#fFilter #name").multiselect({
+            selectedText: "# dari # dipilih",
+            noneSelectedText: 'Pilih Nama Guru'
         }).multiselectfilter();
     
         $('#sdate').datepicker({
@@ -84,68 +161,50 @@
             colModel : [ {
                     display : 'ID',
                     align : 'center',
-                    width : 40,
-                    sortable : true,
-                    hide : true
+                    width : 50
                 }, {
                     display : 'NIP',
-                    name : 'ddc_classification_number',
-                    width : 110,
-                    sortable : true,
-                    align : 'center'
+                    align : 'center',
+                    width : 110
                 }, {
                     display : 'NUPTK',
-                    name : 'ddc_classification_number',
-                    width : 100,
-                    sortable : true,
-                    align : 'center'
+                    align : 'center',
+                    width : 100
+                    
                 }, {
                     display : 'Nama',
-                    name : 'ddc_title',
-                    width : 250,
-                    sortable : true,
-                    align : 'left'
+                    align : 'left',
+                    width : 250
                 }, {
                     display : 'Jenis Kelamin',
-                    name : 'ddc_title',
-                    width : 80,
-                    sortable : true,
-                    align : 'center'
+                    align : 'center',
+                    width : 80
                 }, {
                     display : 'Tanggal',
-                    name : 'ddc_classification_number',
-                    width : 80,
-                    sortable : true,
-                    align : 'center'
+                    align : 'center',
+                    width : 80
                 }, {
                     display : 'Jam Datang',
-                    name : 'ddc_level',
-                    width : 100,
-                    sortable : true,
                     align : 'center',
-                    hide : true
+                    width : 100
                 }, {
                     display : 'Jam Pulang',
-                    name : 'option',
-                    width : 80,
-                    align : 'center'
+                    align : 'center',
+                    width : 80
                 }, {
                     display : 'Keterangan',
-                    name : 'option',
-                    width : 80,
-                    align : 'center'
+                    align : 'center',
+                    width : 100
                 }, {
-                    display : 'Option',
-                    name : 'ddc_classification_number',
-                    width : 80,
-                    sortable : true,
-                    align : 'left'
+                    display : 'Pilihan',
+                    align : 'center',
+                    width : 80
                 }],
             buttons : [ {
                     name : 'Lupa Check In / Out',
                     bclass : 'add',
                     onpress : function() {
-                        window.location = $('#list').attr('link_c');
+                        $('#box-add-attendance').dialog('open');
                     }
                 }, {
                     name : 'Hapus',
@@ -175,8 +234,6 @@
                     }
                 }],
             nowrap : false,
-            sortname : "ddc_id",
-            sortorder : "asc",
             usepager : true,
             title : $('#list').attr('title'),
             useRp : false,
@@ -220,6 +277,32 @@
         
         $('#btnBack').live('click',function(){
             window.location = $(this).attr('link');
+        });
+        
+        $('#box-add-attendance').dialog({
+            title : 'Formulir Lupa Check In/Out',
+            closeOnEscape: false,
+            autoOpen: false,
+            height: 300,
+            width: 500,
+            modal: true,
+            resizable: false,
+            draggable: false
+        });
+        
+        $('#box-edit-description').dialog({
+            title : 'Formulir Perbaharui Keterangan',
+            closeOnEscape: false,
+            autoOpen: false,
+            height: 300,
+            width: 500,
+            modal: true,
+            resizable: false,
+            draggable: false
+        });
+        
+        $('.edit').live('click',function(){
+            $('#box-edit-description').dialog('open');
         });
     
     });

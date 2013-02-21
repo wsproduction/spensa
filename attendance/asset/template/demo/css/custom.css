@@ -156,30 +156,6 @@ label.error {
     font-family: Arial,Helvetica,sans-serif;
 }
 
-input[type=text], input[type=password], textarea {
-    border: 1px solid #ccc;
-    padding: 6px;
-    color: #00102d;
-    
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
-    font-family: Arial,Helvetica,sans-serif;
-    font-size: 12px;
-}
-
-select {
-    border: 1px solid #ccc;
-    padding: 5px;
-    color: #00102d;
-    
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
-    font-family: Arial,Helvetica,sans-serif;
-    font-size: 12px;
-}
-
 input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover{
     background-color: #f4f4f4;
 }
@@ -196,9 +172,6 @@ input[type=button], input[type=submit], input[type=reset] {
     cursor: pointer;
     font-family: Arial,Helvetica,sans-serif;
     font-size: 14px;
-    -moz-box-shadow:    0px 0px 2px 0px #000;
-    -webkit-box-shadow: 0px 0px 2px 0px #000;
-    box-shadow:         0px 0px 2px 0px #000;
 }
 
 input[class=action_add] {
@@ -257,6 +230,12 @@ input[class=action_prev] {
 
 input[class=action_print] {
     background: url('../images/print.png') no-repeat;
+    background-position: 5px 5px;
+    background-color: #e6e6e6;
+}
+
+input[class=action_preview] {
+    background: url('../images/preview.png') no-repeat;
     background-position: 5px 5px;
     background-color: #e6e6e6;
 }

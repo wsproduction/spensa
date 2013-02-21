@@ -5,8 +5,8 @@ class Index extends Controller {
     public function __construct() {
         parent::__construct();
         Session::init();
-        if (Session::get('loginStatus')) {
-            $this->url->redirect('http://' . Web::$host . '/' . Web::$webAlias . '/dashboard');
+        if (Session::get('login_status')) {
+            $this->url->redirect($this->content->setLink('dashboard'));
             exit;
         }
                 
