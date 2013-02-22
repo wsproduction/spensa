@@ -44,7 +44,7 @@
                         $hostname = 'http://' . Web::getHost();
                         ?>
                         <li><a href="<?php echo $hostname . '/dashboard'; ?>">Beranda</a></li>
-                        <li><a href="<?php echo $hostname . '/dashboard'; ?>">Hari Libur</a></li>
+                        <li><a href="<?php echo $hostname . '/holidays'; ?>">Hari Libur</a></li>
                         <li>
                             <a style="cursor: pointer;">Dispensasi</a>
                             <ul>
@@ -54,7 +54,7 @@
                             </ul>
                         </li>
                         <li>
-                            <a style="cursor: pointer;">Data Absensi</a>
+                            <a style="cursor: pointer;">Daftar Hadir</a>
                             <ul>
                                 <li><a href="<?php echo $hostname . '/student'; ?>">Siswa</a></li>
                                 <li><a href="<?php echo $hostname . '/teacher'; ?>">Guru</a></li>
@@ -62,7 +62,7 @@
                             </ul>
                         </li>
                         <li>
-                            <a style="cursor: pointer;">Laporan Absensi</a>
+                            <a style="cursor: pointer;">Laporan Daftar Hadir</a>
                             <ul>
                                 <li><a href="<?php echo $hostname . '/student/report'; ?>">Siswa</a></li>
                                 <li><a href="<?php echo $hostname . '/teacher/report'; ?>">Guru</a></li>

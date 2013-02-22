@@ -41,6 +41,30 @@ class Contents extends Controller {
         return number_format($number, 0, ',', '.');
     }
 
+    public function getMonthList($lang) {
+        $month = array(
+            'ina' => array('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'),
+            'eng' => array('January', 'February', 'Mart', 'April', 'May', 'Juny', 'July', 'Agust', 'September', 'October', 'November', 'Desember')
+        );
+        return $month[$lang];
+    }
+
+    public function getYearsList($start, $end) {
+        $list = array();
+
+        if ($start >= $end) {
+            for ($start; $start >= $end; $start--) {
+                $list[$start] = $start;
+            }
+        } else {
+            for ($start; $start <= $end; $start++) {
+                $list[$start] = $start;
+            }
+        }
+
+        return $list;
+    }
+
     public function getMonthName($idx, $lang) {
         $month = array(
             'ina' => array('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'),
