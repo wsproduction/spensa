@@ -58,12 +58,14 @@ class Holidays extends Controller {
                     $date = $start_date;
                     if ($start_date != $end_date)
                         $date = $start_date . ' <span style="color:blue;">s.d.</span> ' . $end_date;
+                    
+                    $btn_edit = Src::image('edit.gif', null, array('rel' => $row['HOLIDAYID'], 'title' => 'Perbaharui Keterangan', 'class' => 'edit', 'style' => 'cursor:pointer'));
 
                     $xml .= "<row id='" . $row['HOLIDAYID'] . "'>";
                     $xml .= "<cell><![CDATA[" . $row['HOLIDAYID'] . "]]></cell>";
                     $xml .= "<cell><![CDATA[" . $row['HOLIDAYNAME'] . "]]></cell>";
                     $xml .= "<cell><![CDATA[" . $date . "]]></cell>";
-                    $xml .= "<cell><![CDATA[dd]]></cell>";
+                    $xml .= "<cell><![CDATA[" . $btn_edit . "]]></cell>";
                     $xml .= "</row>";
                 }
             }

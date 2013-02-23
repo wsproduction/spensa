@@ -35,13 +35,56 @@
 <table id="list" title="<?php echo Web::getTitle(); ?>" link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_d="<?php echo $link_d; ?>" style="display: none;">
 </table>
 
-<div>
+<div id="box-add">
     <?php
-    Form::begin('fAdd', 'holidays/addsave');
+    Form::begin('fAdd', 'holidays');
     ?>
-    
-    
-    
+    <div id="view-message"></div>
+    <table>
+        <tr>
+            <td style="width: 150px;"><?php Form::label('Keterangan ', 'description'); ?></td>
+            <td>:</td>
+            <td>
+                <?php
+                Form::create('text', 'description');
+                Form::size(55);
+                Form::validation()->requaired('*');
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td><?php Form::label('Tanggal ', 'sdate'); ?> <font color="#999">(mm/dd/yy)</font></td>
+            <td>:</td>
+            <td>
+                <?php
+                Form::create('text', 'sdate');
+                Form::validation()->requaired('*');
+                Form::commit();
+
+                Form::label(' s.d ', 'fdate');
+
+                Form::create('text', 'fdate');
+                Form::validation()->requaired('*');
+                Form::validation()->largerDateFrom('#sdate');
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>
+                <?php
+                Form::create('submit', 'bSubmit');
+                Form::value('Simpan');
+                Form::style('action_save');
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+    </table>
+
     <?php
     Form::end();
     ?>
@@ -49,6 +92,19 @@
 
 <script>
     $(function(){
+        
+        var action = 'create';
+        var f_title = 'Formulir Tambah Daftar Hari Libur';
+        var f_desc = '';
+        var f_sdate = '';
+        var f_fdate = '';
+        
+        var set_form = function(title, desc, sdate, fdate) {
+            f_title = title;
+            f_desc = desc;
+            f_sdate = sdate;
+            f_fdate = fdate;
+        };
          
         $('#list').flexigrid({
             url : $('#list').attr('link_r'),
@@ -77,7 +133,15 @@
                     name : 'Tambah',
                     bclass : 'add',
                     onpress : function() {
-                        $('#box-add-attendance').dialog('open');
+                        action = 'create';
+                        set_form('Formulir Tambah Daftar Hari Libur','','','');
+                        $('#box-add').dialog('open');
+                    }
+                }, {
+                    name : 'Hilangkan Seleksi',
+                    bclass : 'add',
+                    onpress : function() {
+                        $('#list tbody tr').removeClass('trSelected');
                     }
                 }, {
                     name : 'Hapus',
@@ -97,7 +161,9 @@
                                     id : tempId.join(',')
                                 }, function(o){
                                     if (o) {
-                                        $('#list').flexReload();
+                                        $('#list').flexOptions({
+                                            newp: 999
+                                        }).flexReload();
                                     } else {
                                         alert('Process delete failed.');
                                     }                            
@@ -138,6 +204,59 @@
             }).flexReload();
             return false;
         });
-           
+                
+        $('.edit').live('click', function(){
+            action = 'update';
+            var rel = $(this).attr('rel');
+            var desc = $('#row' + rel).children('td:first').next('td').text();
+            
+            set_form('Formulir Edit Daftar Hari Libur', desc,'','');
+            
+            $('#list tbody tr').removeClass('trSelected');
+            $('#box-add').dialog('open');
+        });
+        
+        /* ADD SCRIPT */        
+        $('#box-add').dialog({
+            title : '',
+            closeOnEscape: false,
+            autoOpen: false,
+            height: 300,
+            width: 500,
+            modal: true,
+            resizable: false,
+            draggable: false,
+            open : function() {
+                $('.ui-dialog-title').text(f_title);
+                $('#fAdd #description').val(f_desc);
+            }
+        });
+        
+        $('#fAdd #sdate').datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
+    
+        $('#fAdd #fdate').datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#fAdd').live('submit',function(){
+            var parent = $(this);
+            var url = $(parent).attr('action') + '/' + action;
+            var data = $(parent).serializeArray();
+            
+            $.post(url, data, function(o){
+                if (o[0]) {
+                    if (o[1]) {
+                        $(parent)[0].reset();
+                    }
+                }
+                $('#view-message', parent).html(o[2]).fadeIn('slow');
+            }, 'json');
+            return false;
+        });
+        
     });
 </script>

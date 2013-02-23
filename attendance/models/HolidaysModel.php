@@ -27,69 +27,49 @@ class HolidaysModel extends Model {
         }
     }
 
-    public function selectAllCheckTime($nameid, $sdate, $fdate) {
-        $sth = $this->db->prepare("
-                            SELECT 
-                                CHECKINOUT.USERID,
-                                CHECKINOUT.CHECKTIME
-                            FROM 
-                                CHECKINOUT
-                            WHERE
-                                CHECKINOUT.USERID IN(" . $nameid . ") AND
-                                CHECKINOUT.CHECKTIME BETWEEN #" . $sdate . "# AND #" . $fdate . "#
-                            ORDER BY CHECKINOUT.USERID;
-                        ");
-        if ($sth->execute()) {
-            $sth->setFetchMode(PDO::FETCH_ASSOC);
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
-    }
-
-    public function selectUserInfo($nameid) {
-
-        $sth = $this->db->prepare("
-                            SELECT 
-                                USERINFO.USERID, 
-                                USERINFO.Name, 
-                                USERINFO.Gender, 
-                                USERINFO.SSN, 
-                                USERINFO.CardNo,
-                                SCHCLASS.SCHNAME, 
-                                SCHCLASS.STARTTIME, 
-                                SCHCLASS.ENDTIME, 
-                                SCHCLASS.LATEMINUTES, 
-                                SCHCLASS.CHECKIN, 
-                                SCHCLASS.CHECKOUT, 
-                                SCHCLASS.CHECKINTIME1, 
-                                SCHCLASS.CHECKINTIME2, 
-                                SCHCLASS.CHECKOUTTIME1, 
-                                SCHCLASS.CHECKOUTTIME2, 
-                                SCHCLASS.WorkDay
-                            FROM (
-                                USERINFO 
-                                INNER JOIN USER_OF_RUN ON USERINFO.USERID = USER_OF_RUN.USERID) 
-                                INNER JOIN SCHCLASS ON USER_OF_RUN.NUM_OF_RUN_ID = SCHCLASS.SCHCLASSID
-                            WHERE 
-                                USERINFO.USERID IN(" . $nameid . ") 
-                            ORDER BY USERINFO.Name
-                        ");
-        if ($sth->execute()) {
-            $sth->setFetchMode(PDO::FETCH_ASSOC);
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
-    }
-
-    public function deleteSave($id) {
+    public function deleteSave() {
         $id = $this->method->post('id', 0);
         $sth = $this->db->prepare("
                             DELETE 
                             FROM HOLIDAYS 
                             WHERE HOLIDAYS.HOLIDAYID IN (" . $id . ")
                         ");
+        return $sth->execute();
+    }
+
+    public function createSave() {
+        $description = $this->method->post('description', null);
+        $sdate = $this->method->post('sdate', null);
+        $fdate = $this->method->post('fdate', null);
+
+        $datetime1 = new DateTime(date('Y-m-d', strtotime($sdate)));
+        $datetime2 = new DateTime(date('Y-m-d', strtotime($fdate)));
+        $datetime2->modify('+1 day');
+        $interval = $datetime1->diff($datetime2);
+        $duration = $interval->format('%a');
+
+        $sth = $this->db->prepare("
+                            INSERT INTO 
+                                HOLIDAYS (
+                                    HOLIDAYNAME,
+                                    HOLIDAYDAY,
+                                    STARTTIME,
+                                    DURATION,
+                                    DeptID
+                                )
+                            VALUES (
+                                :holidayname,
+                                :holidayday,
+                                :starttime,
+                                :duration,
+                                :deptid
+                            )
+                        ");
+        $sth->bindValue(':holidayname', $description);
+        $sth->bindValue(':holidayday', 1);
+        $sth->bindValue(':starttime', $sdate);
+        $sth->bindValue(':duration', $duration);
+        $sth->bindValue(':deptid', 0);
         return $sth->execute();
     }
 

@@ -32,13 +32,13 @@
                         <td>
                             <?php
                             Form::create('text', 'sdate');
-                            Form::validation()->requaired();
+                            Form::validation()->requaired('*');
                             Form::commit();
 
                             Form::label(' s.d ', 'fdate');
 
                             Form::create('text', 'fdate');
-                            Form::validation()->requaired();
+                            Form::validation()->requaired('*');
                             Form::validation()->largerDateFrom('#sdate');
                             Form::commit();
                             ?>
