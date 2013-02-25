@@ -53,12 +53,12 @@ class Holidays extends Controller {
                 $xml .= "<total>$total</total>";
 
                 foreach ($listView as $row) {
-                    $start_date = date('d/m/Y', strtotime($row['STARTTIME']));
-                    $end_date = date('d/m/Y', strtotime($row['INTERVAL']));
-                    $date = $start_date;
+                    $start_date = date('m/d/Y', strtotime($row['STARTTIME']));
+                    $end_date = date('m/d/Y', strtotime($row['INTERVAL']));
+                    $date = '<span class="start_date">' . $start_date . ' </span> <span class="finish_date" style="display:none;">' . $end_date . '</span>';
                     if ($start_date != $end_date)
-                        $date = $start_date . ' <span style="color:blue;">s.d.</span> ' . $end_date;
-                    
+                        $date = '<span class="start_date">' . $start_date . ' </span> <span style="color:blue;">s.d.</span> <span class="finish_date">' . $end_date . '</span>';
+
                     $btn_edit = Src::image('edit.gif', null, array('rel' => $row['HOLIDAYID'], 'title' => 'Perbaharui Keterangan', 'class' => 'edit', 'style' => 'cursor:pointer'));
 
                     $xml .= "<row id='" . $row['HOLIDAYID'] . "'>";
@@ -83,7 +83,7 @@ class Holidays extends Controller {
         }
         echo json_encode($ket);
     }
-    
+
     public function delete() {
         if ($this->model->deleteSave()) {
             $ket = array(1, 0, $this->message->saveSucces());

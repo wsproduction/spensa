@@ -12,6 +12,7 @@ class Teacher extends Controller {
         Src::plugin()->elrte();
         Src::plugin()->flexiGrid();
         Src::plugin()->jQueryMultiSelect();
+        Src::plugin()->jQueryGlobalize();
     }
 
     public function index() {
@@ -35,8 +36,8 @@ class Teacher extends Controller {
         Web::setTitle('Edit DDC');
     }
 
-    public function create() {
-        if ($this->model->createSave()) {
+    public function addAttendance() {
+        if ($this->model->addAttendanceSave()) {
             $ket = array(1, 1, $this->message->saveSucces()); // sucess, reset, message
         } else {
             $ket = array(0, 0, $this->message->saveError()); // no sucess, no reset, message
@@ -81,7 +82,7 @@ class Teacher extends Controller {
 
                     $style = $row['Style'];
 
-                    $btn_edit = Src::image('edit.gif', null, array('title' => 'Perbaharui Keterangan', 'class' => 'edit', 'style' => 'cursor:pointer'));
+                    $btn_edit = Src::image('edit.gif', null, array('rel' => $row['USERID'], 'title' => 'Perbaharui Keterangan', 'class' => 'edit', 'style' => 'cursor:pointer'));
 
                     $xml .= "<row id='" . $row['USERID'] . "'>";
                     $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['USERID'] . "</span>]]></cell>";

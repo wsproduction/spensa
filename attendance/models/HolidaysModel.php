@@ -73,4 +73,35 @@ class HolidaysModel extends Model {
         return $sth->execute();
     }
 
+    public function updateSave($id = 0) {
+        $description = $this->method->post('description', null);
+        $sdate = $this->method->post('sdate', null);
+        $fdate = $this->method->post('fdate', null);
+
+        $datetime1 = new DateTime(date('Y-m-d', strtotime($sdate)));
+        $datetime2 = new DateTime(date('Y-m-d', strtotime($fdate)));
+        $datetime2->modify('+1 day');
+        $interval = $datetime1->diff($datetime2);
+        $duration = $interval->format('%a');
+
+        $sth = $this->db->prepare("
+                            UPDATE HOLIDAYS
+                            SET
+                              HOLIDAYS.HOLIDAYNAME = :holidayname,
+                              HOLIDAYS.HOLIDAYDAY = :holidayday,
+                              HOLIDAYS.STARTTIME = :starttime,
+                              HOLIDAYS.DURATION = :duration,
+                              HOLIDAYS.DeptID = :deptid
+                            WHERE
+                              HOLIDAYS.HOLIDAYID = :holidayid
+                        ");
+        $sth->bindValue(':holidayname', $description);
+        $sth->bindValue(':holidayday', 1);
+        $sth->bindValue(':starttime', $sdate);
+        $sth->bindValue(':duration', $duration);
+        $sth->bindValue(':deptid', 0);
+        $sth->bindValue(':holidayid', $id);
+        return $sth->execute();
+    }
+
 }

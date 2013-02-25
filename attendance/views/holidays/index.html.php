@@ -42,7 +42,7 @@
     <div id="view-message"></div>
     <table>
         <tr>
-            <td style="width: 150px;"><?php Form::label('Keterangan ', 'description'); ?></td>
+            <td style="width: 200px;"><?php Form::label('Keterangan ', 'description'); ?></td>
             <td>:</td>
             <td>
                 <?php
@@ -120,7 +120,7 @@
                     align : 'left',
                     width : 300
                 }, {
-                    display : 'Tanggal (dd/mm/yy)',
+                    display : 'Tanggal <font color="#999"> (mm/dd/yy)</font>',
                     align : 'center',
                     width : 140
                     
@@ -206,11 +206,15 @@
         });
                 
         $('.edit').live('click', function(){
-            action = 'update';
+            
             var rel = $(this).attr('rel');
             var desc = $('#row' + rel).children('td:first').next('td').text();
+            var sdate = $('#row' + rel).children('td:first').next('td').next('td').children('div').children('.start_date').text();
+            var fdate = $('#row' + rel).children('td:first').next('td').next('td').children('div').children('.finish_date').text();
             
-            set_form('Formulir Edit Daftar Hari Libur', desc,'','');
+            action = 'update/' + rel;
+            
+            set_form('Formulir Edit Daftar Hari Libur', desc, sdate, fdate);
             
             $('#list tbody tr').removeClass('trSelected');
             $('#box-add').dialog('open');
@@ -228,7 +232,10 @@
             draggable: false,
             open : function() {
                 $('.ui-dialog-title').text(f_title);
+                $('#box-add #view-message').html('');
                 $('#fAdd #description').val(f_desc);
+                $('#fAdd #sdate').val(f_sdate);
+                $('#fAdd #fdate').val(f_fdate);
             }
         });
         
