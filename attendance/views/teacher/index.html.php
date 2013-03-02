@@ -131,14 +131,29 @@
     <div id="view-message"></div>
     <table>
         <tr>
-            <td style="width: 100px;"><?php Form::label('Nama', 'name2'); ?>Nama</td>
+            <td style="width: 150px;"><?php Form::label('Nama', 'name2'); ?>Nama</td>
             <td>:</td>
-            <td id="view-name" style="font-weight: bold;"></td>
+            <td>
+                <?php
+                Form::create('hidden', 'hide_tempid');
+                Form::commit();
+                Form::create('text', 'hide_names');
+                Form::size(40);
+                Form::properties(array('readonly' => 'readonly'));
+                Form::commit();
+                ?>
+            </td>
         </tr>
         <tr>
             <td><?php Form::label('Tanggal', 'dates'); ?> <font color="#999">(mm/dd/yy)</font></td>
             <td>:</td>
-            <td id="view-dates" style="font-weight: bold;"></td>
+            <td>
+                <?php
+                Form::create('text', 'hide_dates');
+                Form::properties(array('readonly' => 'readonly'));
+                Form::commit();
+                ?>
+            </td>
         </tr>
         <tr>
             <td><?php Form::label('Keterangan', 'description'); ?></td>
@@ -146,6 +161,7 @@
             <td>
                 <?php
                 Form::create('select', 'description');
+                Form::option($option_description);
                 Form::validation()->requaired('*');
                 Form::commit();
                 ?>
@@ -211,6 +227,7 @@
         
         var tempid = 0;
         var f_name = '';
+        var f_date = '';
         
         $("#fFilter #name").multiselect({
             selectedText: "# dari # dipilih",
@@ -258,6 +275,8 @@
                 }, {
                     display : 'Tanggal <font color="#999"> (mm/dd/yy)</font>',
                     align : 'center',
+                    name : 'dates',
+                    sortable : true,
                     width : 100
                 }, {
                     display : 'Jam Datang',
@@ -325,6 +344,12 @@
                     params: dt
                 });
                 return true;
+            },
+            onSuccess : function(o) {
+                var pageStatus = o.pDiv.outerText;
+                var textSplit = pageStatus.split(" ");
+                var msg = "Menampilkan 1 sampai # dari # item";
+                $('.pPageStat').text(msg.replace(/\#/g, textSplit[5]));
             }
         });  
         
@@ -354,11 +379,11 @@
             
             var rel = $(this).attr('rel');
             var name = $('#row' + rel).children('td[abbr=name]').text();
-            var sdate = $('#row' + rel).children('td:first').next('td').next('td').children('div').children('.start_date').text();
-            var fdate = $('#row' + rel).children('td:first').next('td').next('td').children('div').children('.finish_date').text();
+            var date = $('#row' + rel).children('td[abbr=dates]').text();
             
             tempid = rel;
             f_name = name;
+            f_date = date;
             
             $('#list tbody tr').removeClass('trSelected');
             $('#box-edit-description').dialog('open');
@@ -422,8 +447,26 @@
             resizable: false,
             draggable: false,
             open : function(){
-                $('#view-name').text(f_name);
+                $('#hide_tempid').val(tempid);
+                $('#hide_names').val(f_name);
+                $('#hide_dates').val(f_date);
             }
+        });
+        
+        $('#fEditDescription').live('submit', function(){
+            var parent = $(this);
+            var data = $(parent).serializeArray();
+            var url = $(parent).attr('action');
+            
+            $.post(url, data, function(o){
+                if (o[0]) {
+                    if (o[1]) {
+                        $(parent)[0].reset();
+                    }
+                }
+                $('#view-message', parent).html(o[2]).fadeIn('slow');
+            }, 'json');
+            return false;
         });
     
     });

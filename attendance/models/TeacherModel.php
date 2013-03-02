@@ -6,22 +6,6 @@ class TeacherModel extends Model {
         parent::__construct();
     }
 
-    public function selectUserByDeptId($deptid = 0) {
-
-        $sth = $this->db->prepare("
-                            SELECT * FROM USERINFO WHERE DEFAULTDEPTID = :deptid ORDER BY Name
-                        ");
-
-        $sth->bindValue(':deptid', $deptid);
-
-        if ($sth->execute()) {
-            $sth->setFetchMode(PDO::FETCH_ASSOC);
-            return $sth->fetchAll();
-        } else {
-            return false;
-        }
-    }
-
     public function selectAllCheckTime($nameid, $sdate, $fdate) {
         $sth = $this->db->prepare("
                             SELECT 
@@ -114,6 +98,45 @@ class TeacherModel extends Model {
                 $sth->bindValue(':sensorid', 1);
                 $sth->execute();
             }
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $exc) {
+            $this->db->rollBack();
+            return true;
+        }
+    }
+
+    public function editDescriptionSave() {
+        try {
+
+            $dateid = $this->method->post('description');
+            $dateid = $this->method->post('description');
+            
+            $sth = $this->db->prepare("
+                            INSERT INTO 
+                                USER_SPEDAY (
+                                    USERID,
+                                    STARTSPECDAY,
+                                    ENDSPECDAY,
+                                    DATEID,
+                                    YUANYING
+                                )
+                            VALUES (
+                                :userid,
+                                :startspecday,
+                                :endspecday,
+                                :dateid,
+                                :yuanying
+                            )
+                        ");
+
+            $sth->bindValue(':userid', $userid);
+            $sth->bindValue(':startspecday', $checktime);
+            $sth->bindValue(':endspecday', 'I');
+            $sth->bindValue(':dateid', 1);
+            $sth->bindValue(':yuanying', 1);
+            $sth->execute();
 
             $this->db->commit();
             return true;

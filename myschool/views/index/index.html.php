@@ -91,7 +91,7 @@
                 <div class="fitur-content fl-left">
                     <div class="title">Hiburan</div>
                     <div class="description">
-                        Hiburan adalah segala sesuatu – baik yang berbentuk kata-kata, tempat, benda, perilaku – yang dapat menjadi penghibur atau pelipur hati yang susah atau sedih.
+                        Fitur hiburan ini diantaranya, Game, Media Player, Cerita Bergambar.
                         <a href="#">Pelajari selengkapnya &RightArrow;</a>
                     </div>
                 </div>

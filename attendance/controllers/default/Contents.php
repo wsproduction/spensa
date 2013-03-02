@@ -119,7 +119,7 @@ class Contents extends Controller {
         $checkinout = array();
         foreach ($checktime as $value) {
             // Keterangan : $checkinout['USERID']['TANGGAL']['INDEX'] = 'JAM'
-            $checkinout[$value['USERID']][date('d/m/Y', strtotime($value['CHECKTIME']))][] = date('H:i', strtotime($value['CHECKTIME']));
+            $checkinout[$value['USERID']][date('m/d/Y', strtotime($value['CHECKTIME']))][] = date('H:i', strtotime($value['CHECKTIME']));
         }
         return $checkinout;
     }
@@ -130,7 +130,7 @@ class Contents extends Controller {
         $daterange = new DatePeriod($begin, $interval, $end);
 
         foreach ($daterange as $date) {
-            $dateList[] = $date->format('d/m/Y');
+            $dateList[] = $date->format('m/d/Y');
         }
         return $dateList;
     }
@@ -203,5 +203,26 @@ class Contents extends Controller {
 
         return $listView;
     }
-
+    
+    public function optionName($deptId = 0) {
+        $list = $this->model->selectUserByDeptId($deptId);
+        $name = array();
+        $idx = 1;
+        foreach ($list as $value) {
+            $name[$value['USERID']] = $value['Name'];
+            $idx++;
+        }
+        return $name;
+    }
+    
+    public function optionDescription() {
+        $list = $this->model->selectDescription();
+        $name = array();
+        $idx = 1;
+        foreach ($list as $value) {
+            $name[$value['LEAVEID']] = $value['LEAVENAME'];
+            $idx++;
+        }
+        return $name;
+    }
 }

@@ -20,7 +20,8 @@ class Teacher extends Controller {
         $this->view->link_r = $this->content->setLink('teacher/read');
         $this->view->link_c = $this->content->setLink('teacher/add');
         $this->view->link_d = $this->content->setLink('teacher/delete');
-        $this->view->option_name = $this->optionName(2);
+        $this->view->option_name = $this->content->optionName(2);
+        $this->view->option_description = $this->content->optionDescription();
         $this->view->render('teacher/index');
     }
 
@@ -83,7 +84,7 @@ class Teacher extends Controller {
                     $style = $row['Style'];
 
                     $btn_edit = Src::image('edit.gif', null, array('rel' => $row['USERID'], 'title' => 'Perbaharui Keterangan', 'class' => 'edit', 'style' => 'cursor:pointer'));
-
+                    
                     $xml .= "<row id='" . $row['USERID'] . "'>";
                     $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['USERID'] . "</span>]]></cell>";
                     $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['SSN'] . "</span>]]></cell>";
@@ -121,15 +122,12 @@ class Teacher extends Controller {
         echo json_encode($res);
     }
 
-    public function optionName($deptId = 0) {
-        $list = $this->model->selectUserByDeptId($deptId);
-        $name = array();
-        $idx = 1;
-        foreach ($list as $value) {
-            $name[$value['USERID']] = $value['Name'];
-            $idx++;
+    public function editDescription() {
+        $ket = array(0, 0, $this->message->saveError());
+        if ($this->model->editDescriptionSave()) {
+            $res = array(1, 1, $this->message->saveError());
         }
-        return $name;
+        echo json_encode($ket);
     }
 
     public function report() {
