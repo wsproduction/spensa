@@ -62,6 +62,28 @@ class TeacherModel extends Model {
         }
     }
 
+    public function selectSpeday($nameid) {
+
+        $sth = $this->db->prepare("
+                            SELECT 
+                                USER_SPEDAY.USERID,
+                                USER_SPEDAY.STARTSPECDAY, 
+                                USER_SPEDAY.ENDSPECDAY, 
+                                USER_SPEDAY.DATEID, 
+                                USER_SPEDAY.YUANYING
+                            FROM
+                                USER_SPEDAY
+                            WHERE 
+                                USER_SPEDAY.USERID IN (" . $nameid . ")   
+                        ");
+        if ($sth->execute()) {
+            $sth->setFetchMode(PDO::FETCH_ASSOC);
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
+    }
+
     public function addAttendanceSave() {
         try {
 
@@ -103,16 +125,24 @@ class TeacherModel extends Model {
             return true;
         } catch (Exception $exc) {
             $this->db->rollBack();
-            return true;
+            return false;
         }
     }
 
     public function editDescriptionSave() {
         try {
+            $this->db->beginTransaction();
+            
+            $userid = $this->method->post('hide_tempid');
+            $dates = $this->method->post('hide_dates');
+
+            $startspecday = date('m/d/Y h:i:s', strtotime($dates));
+            $endspecday = date('m/d/Y h:i:s', strtotime($dates));
 
             $dateid = $this->method->post('description');
-            $dateid = $this->method->post('description');
-            
+            $yuanying = $this->method->post('reason');
+
+
             $sth = $this->db->prepare("
                             INSERT INTO 
                                 USER_SPEDAY (
@@ -132,18 +162,19 @@ class TeacherModel extends Model {
                         ");
 
             $sth->bindValue(':userid', $userid);
-            $sth->bindValue(':startspecday', $checktime);
-            $sth->bindValue(':endspecday', 'I');
-            $sth->bindValue(':dateid', 1);
-            $sth->bindValue(':yuanying', 1);
+            $sth->bindValue(':startspecday', $startspecday);
+            $sth->bindValue(':endspecday', $endspecday);
+            $sth->bindValue(':dateid', $dateid);
+            $sth->bindValue(':yuanying', $yuanying);
             $sth->execute();
 
             $this->db->commit();
             return true;
         } catch (Exception $exc) {
             $this->db->rollBack();
-            return true;
+            return false;
         }
     }
-
+    
+    
 }

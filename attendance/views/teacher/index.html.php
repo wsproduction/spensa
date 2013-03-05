@@ -145,7 +145,7 @@
             </td>
         </tr>
         <tr>
-            <td><?php Form::label('Tanggal', 'dates'); ?> <font color="#999">(mm/dd/yy)</font></td>
+            <td><?php Form::label('Tanggal', 'dates'); ?> <font color="#999"> (mm/dd/yy)</font></td>
             <td>:</td>
             <td>
                 <?php
@@ -288,6 +288,10 @@
                     width : 80
                 }, {
                     display : 'Keterangan',
+                    align : 'center',
+                    width : 100
+                }, {
+                    display : 'Alasan',
                     align : 'center',
                     width : 100
                 }, {

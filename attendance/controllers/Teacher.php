@@ -71,7 +71,22 @@ class Teacher extends Controller {
                 $dateList = $this->content->parsingDateList($begin, $end);
                 $listData = $this->model->selectUserInfo($nameid);
 
-                $listView = $this->content->parsingListView($listData, $dateList, $checkInOut);
+                $spedayList = $this->model->selectSpeday($nameid);
+                $userSpeday = array();
+
+                foreach ($spedayList as $row_sd) {
+                    $s = new DateTime(date('Y-m-d', strtotime($row_sd['STARTSPECDAY'])));
+                    $e_temp = new DateTime(date('Y-m-d', strtotime($row_sd['ENDSPECDAY'])));
+                    $e = $e_temp->modify('+1 day');
+
+                    foreach ($this->content->parsingDateList($s, $e) as $row_d) {
+                        $userSpeday[$row_sd['USERID']][$row_d][] = $row_sd['YUANYING'];
+                    }
+                }
+
+                //var_dump($userSpeday);
+
+                $listView = $this->content->parsingListView($listData, $dateList, $checkInOut, $userSpeday);
 
                 $page = 1;
                 $total = count($listView);
@@ -84,7 +99,7 @@ class Teacher extends Controller {
                     $style = $row['Style'];
 
                     $btn_edit = Src::image('edit.gif', null, array('rel' => $row['USERID'], 'title' => 'Perbaharui Keterangan', 'class' => 'edit', 'style' => 'cursor:pointer'));
-                    
+
                     $xml .= "<row id='" . $row['USERID'] . "'>";
                     $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['USERID'] . "</span>]]></cell>";
                     $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['SSN'] . "</span>]]></cell>";
@@ -95,6 +110,7 @@ class Teacher extends Controller {
                     $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['ClockIn'] . "</span>]]></cell>";
                     $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['ClockOut'] . "</span>]]></cell>";
                     $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['Note'] . "</span>]]></cell>";
+                    $xml .= "<cell><![CDATA[<span " . $style . ">" . $row['USER_SPEDAY'] . "</span>]]></cell>";
                     $xml .= "<cell><![CDATA[" . $btn_edit . "]]></cell>";
                     $xml .= "</row>";
                 }
@@ -125,7 +141,7 @@ class Teacher extends Controller {
     public function editDescription() {
         $ket = array(0, 0, $this->message->saveError());
         if ($this->model->editDescriptionSave()) {
-            $res = array(1, 1, $this->message->saveError());
+            $ket = array(1, 0, $this->message->saveSucces());
         }
         echo json_encode($ket);
     }

@@ -135,7 +135,7 @@ class Contents extends Controller {
         return $dateList;
     }
 
-    public function parsingListView($listData, $dateList, $checkInOut) {
+    public function parsingListView($listData, $dateList, $checkInOut, $userSpeday) {
         $listView = array();
         foreach ($listData as $row) {
 
@@ -163,9 +163,18 @@ class Contents extends Controller {
                 }
 
                 if ($clockin == '-' && $clockout == '-') {
-                    $note = 'Tanpa Keterangan';
-                    $style = 'style="color:red;"';
+                    // User Speday
+                    if (isset($userSpeday[$row['USERID']][$dList])) {
+                        $descUserSpeday = implode(',', $userSpeday[$row['USERID']][$dList]);
+                        $note = 'Sakit';
+                        $style = 'style="color:green;"';
+                    } else {
+                        $descUserSpeday = '';
+                        $note = 'Tanpa Keterangan';
+                        $style = 'style="color:red;"';
+                    }
                 } else {
+                    $descUserSpeday = '';
                     $note = '';
                     $style = 'style="color:black;"';
                 }
@@ -196,14 +205,15 @@ class Contents extends Controller {
                     'ClockIn' => $clockin,
                     'ClockOut' => $clockout,
                     'Note' => $note,
-                    'Style' => $style
+                    'Style' => $style,
+                    'USER_SPEDAY' => $descUserSpeday
                 );
             }
         }
 
         return $listView;
     }
-    
+
     public function optionName($deptId = 0) {
         $list = $this->model->selectUserByDeptId($deptId);
         $name = array();
@@ -214,7 +224,7 @@ class Contents extends Controller {
         }
         return $name;
     }
-    
+
     public function optionDescription() {
         $list = $this->model->selectDescription();
         $name = array();
@@ -225,4 +235,5 @@ class Contents extends Controller {
         }
         return $name;
     }
+
 }
