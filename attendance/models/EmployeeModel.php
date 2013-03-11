@@ -1,6 +1,6 @@
 <?php
 
-class TeacherModel extends Model {
+class EmployeeModel extends Model {
 
     public function __construct() {
         parent::__construct();

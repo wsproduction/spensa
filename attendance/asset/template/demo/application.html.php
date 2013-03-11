@@ -46,19 +46,19 @@
                         <li><a href="<?php echo $hostname . '/dashboard'; ?>">Beranda</a></li>
                         <li><a href="<?php echo $hostname . '/holidays'; ?>">Hari Libur</a></li>
                         <li>
-                            <a style="cursor: pointer;">Dispensasi</a>
-                            <ul>
-                                <li><a href="<?php echo $hostname . '/student/dispensation'; ?>">Siswa</a></li>
-                                <li><a href="<?php echo $hostname . '/teacher/dispensation'; ?>">Guru</a></li>
-                                <li><a href="<?php echo $hostname . '/tu/dispensation'; ?>">Tata Usaha</a></li>
-                            </ul>
-                        </li>
-                        <li>
                             <a style="cursor: pointer;">Daftar Hadir</a>
                             <ul>
                                 <li><a href="<?php echo $hostname . '/student'; ?>">Siswa</a></li>
                                 <li><a href="<?php echo $hostname . '/teacher'; ?>">Guru</a></li>
-                                <li><a href="<?php echo $hostname . '/tu'; ?>">Tata Usaha</a></li>
+                                <li><a href="<?php echo $hostname . '/employee'; ?>">Tata Usaha</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a style="cursor: pointer;">Dispensasi</a>
+                            <ul>
+                                <li><a href="<?php echo $hostname . '/student/dispensation'; ?>">Siswa</a></li>
+                                <li><a href="<?php echo $hostname . '/teacher/dispensation'; ?>">Guru</a></li>
+                                <li><a href="<?php echo $hostname . '/employee/dispensation'; ?>">Tata Usaha</a></li>
                             </ul>
                         </li>
                         <li>
@@ -66,7 +66,7 @@
                             <ul>
                                 <li><a href="<?php echo $hostname . '/student/report'; ?>">Siswa</a></li>
                                 <li><a href="<?php echo $hostname . '/teacher/report'; ?>">Guru</a></li>
-                                <li><a href="<?php echo $hostname . '/tu/report'; ?>">Tata Usaha</a></li>
+                                <li><a href="<?php echo $hostname . '/employee/report'; ?>">Tata Usaha</a></li>
                             </ul>
                         </li>
                         <li><a href="<?php echo $hostname . '/chart'; ?>">Grafik</a></li>

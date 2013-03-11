@@ -115,7 +115,8 @@ class Contents extends Controller {
         return $new_array;
     }
 
-    public function pasingCheckTime($checktime) {
+    public function pasingCheckTime($nameid, $sdate, $fdate) {
+        $checktime = $this->model->selectAllCheckTime($nameid, $sdate, $fdate);
         $checkinout = array();
         foreach ($checktime as $value) {
             // Keterangan : $checkinout['USERID']['TANGGAL']['INDEX'] = 'JAM'
@@ -135,7 +136,7 @@ class Contents extends Controller {
         return $dateList;
     }
 
-    public function parsingListView($listData, $dateList, $checkInOut, $userSpeday) {
+    public function parsingListView($listData, $dateList, $checkInOut, $userSpeday, $holidays) {
         $listView = array();
         foreach ($listData as $row) {
 
@@ -162,22 +163,35 @@ class Contents extends Controller {
                     }
                 }
 
-                if ($clockin == '-' && $clockout == '-') {
-                    // User Speday
-                    if (isset($userSpeday[$row['USERID']][$dList])) {
-                        $descUserSpeday = implode(',', $userSpeday[$row['USERID']][$dList]);
-                        $note = 'Sakit';
-                        $style = 'style="color:green;"';
+                if (isset($holidays[$dList])) {// Cek hari libur
+                    $descUserSpeday = $holidays[$dList];
+                    $note = 'Libur';
+                    $style = 'style="color:#d500cd;"';
+                } else {
+                    if ($clockin == '-' && $clockout == '-') { // Cek List Jam datang dan pulang
+                        // User Speday
+                        if (isset($userSpeday[$row['USERID']][$dList][0])) {
+                            $dataUserSpeday = $userSpeday[$row['USERID']][$dList][0]; //implode(',', $userSpeday[$row['USERID']][$dList]);
+                            $descUserSpeday = $dataUserSpeday['reaseon'];
+                            $note = $dataUserSpeday['desc'];
+
+                            if ($dataUserSpeday['id'] == 1) {
+                                $style = 'style="color:green;"';
+                            } else {
+                                $style = 'style="color:blue;"';
+                            }
+                        } else {
+                            $descUserSpeday = '';
+                            $note = 'Tanpa Keterangan';
+                            $style = 'style="color:red;"';
+                        }
                     } else {
                         $descUserSpeday = '';
-                        $note = 'Tanpa Keterangan';
-                        $style = 'style="color:red;"';
+                        $note = '';
+                        $style = 'style="color:black;"';
                     }
-                } else {
-                    $descUserSpeday = '';
-                    $note = '';
-                    $style = 'style="color:black;"';
                 }
+
                 // END : Set Clock In / Clock Out
 
                 $ssn = '-';
@@ -214,6 +228,36 @@ class Contents extends Controller {
         return $listView;
     }
 
+    public function parsingSpeday($nameid, $sdate, $fdate) {
+        $spedayList = $this->model->selectSpeday($nameid, $sdate, $fdate);
+        $userSpeday = array();
+        foreach ($spedayList as $row_sd) {
+            $s = new DateTime(date('Y-m-d', strtotime($row_sd['STARTSPECDAY'])));
+            $e_temp = new DateTime(date('Y-m-d', strtotime($row_sd['ENDSPECDAY'])));
+            $e = $e_temp->modify('+1 day');
+
+            foreach ($this->parsingDateList($s, $e) as $row_d) {
+                $userSpeday[$row_sd['USERID']][$row_d][] = array('id' => $row_sd['DATEID'], 'desc' => $row_sd['LEAVENAME'], 'reaseon' => $row_sd['YUANYING']);
+            }
+        }
+        return $userSpeday;
+    }
+
+    public function parsingHolidays($sdate, $fdate) {
+        $holidayList = $this->model->selectHolidays($sdate, $fdate);
+        $holidays = array();
+        foreach ($holidayList as $row_sd) {
+            $s = new DateTime(date('Y-m-d', strtotime($row_sd['STARTTIME'])));
+            $e_temp = new DateTime(date('Y-m-d', strtotime($row_sd['ENDTIME'])));
+            $e = $e_temp->modify('+1 day');
+
+            foreach ($this->parsingDateList($s, $e) as $row_d) {
+                $holidays[$row_d] = $row_sd['HOLIDAYNAME'];
+            }
+        }
+        return $holidays;
+    }
+
     public function optionName($deptId = 0) {
         $list = $this->model->selectUserByDeptId($deptId);
         $name = array();
@@ -234,6 +278,10 @@ class Contents extends Controller {
             $idx++;
         }
         return $name;
+    }
+
+    public function getUserInfo($nameid) {
+        return $this->model->selectUserInfo($nameid);
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-class Teacher extends Controller {
+class Employee extends Controller {
 
     public function __construct() {
         parent::__construct();
@@ -16,21 +16,13 @@ class Teacher extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Daftar Hadir Guru');
-        $this->view->link_r = $this->content->setLink('teacher/read');
-        $this->view->link_c = $this->content->setLink('teacher/add');
-        $this->view->link_d = $this->content->setLink('teacher/delete');
-        $this->view->option_name = $this->content->optionName(2);
+        Web::setTitle('Daftar Hadir Tata Usaha');
+        $this->view->link_r = $this->content->setLink('employee/read');
+        $this->view->link_c = $this->content->setLink('employee/add');
+        $this->view->link_d = $this->content->setLink('employee/delete');
+        $this->view->option_name = $this->content->optionName(3);
         $this->view->option_description = $this->content->optionDescription();
-        $this->view->render('teacher/index');
-    }
-
-    public function add() {
-        Web::setTitle('Add DDC');
-        $this->view->ddcLevel = $this->model->selectLevelDDC();
-        $this->view->link_back = $this->content->setLink('ddc');
-        $this->view->link_sub1 = $this->content->setLink('ddc/getSub1');
-        $this->view->render('ddc/add');
+        $this->view->render('employee/index');
     }
 
     public function edit($id = 0) {
@@ -136,7 +128,7 @@ class Teacher extends Controller {
         $this->view->link_r = $this->content->setLink('teacher/read');
         $this->view->link_c = $this->content->setLink('teacher/add');
         $this->view->link_d = $this->content->setLink('teacher/delete');
-        $this->view->option_name = $this->content->optionName(2);
+        $this->view->option_name = $this->optionName(2);
         $this->view->option_month_name = $this->optionMonth();
         $this->view->option_years = $this->optionYears();
         $this->view->render('teacher/report');
@@ -152,11 +144,11 @@ class Teacher extends Controller {
         $end_temp = new DateTime(date('Y-m-d', strtotime($fdate)));
         $end = $end_temp->modify('+1 day');
 
+        $checktime = $this->model->selectAllCheckTime($nameid, $begin->format('m/d/Y'), $end->format('m/d/Y'));
+        $checkInOut = $this->content->pasingCheckTime($checktime);
 
-        $checkInOut = $this->content->pasingCheckTime($nameid, $begin->format('m/d/Y'), $end->format('m/d/Y'));
         $dateList = $this->content->parsingDateList($begin, $end);
-        $listData = $this->content->getUserInfo($nameid);
-        $userSpeday = $this->content->parsingSpeday($nameid);
+        $listData = $this->model->selectUserInfo($nameid);
 
         //$listView = $this->content->parsingListView($listData, $dateList, $checkInOut);
 
@@ -191,7 +183,7 @@ class Teacher extends Controller {
 
         foreach ($dateList as $dlRow) {
 
-            list($m, $d, $y) = explode('/', $dlRow);
+            list($d, $m, $y) = explode('/', $dlRow);
 
             $dayname = $this->content->getDayName($y . '-' . $m . '-' . $d, 'ina');
             $date = $d . ' ' . $this->content->getMonthName($m, 'ina') . ' ' . $y;
@@ -342,11 +334,11 @@ class Teacher extends Controller {
             $html .= '      <td height="75">&nbsp;</td>';
             $html .= '  </tr>';
             $html .= '  <tr>';
-            $html .= '      <td><u>ANDA SUGANDA, S.Pd.,M.Pd.</u></td>';
+            $html .= '      <td><u>E. HENI RODIAH, S.Pd.,M.M.Pd.</u></td>';
             $html .= '      <td><u>DAYAT</u></td>';
             $html .= '  </tr>';
             $html .= '  <tr>';
-            $html .= '      <td>NIP. 19620102 198503 1 009</td>';
+            $html .= '      <td>NIP. 19570326 197703 2 002</td>';
             $html .= '      <td>NIP. 19620825 198703 1 006</td>';
             $html .= '  </tr>';
             $html .= '</table>';
@@ -380,10 +372,9 @@ class Teacher extends Controller {
         $sdate = $firtDate[1] . '/' . $firtDate[0] . '/' . $firtDate[2];
         $fdate = $lastDate[1] . '/' . $lastDate[0] . '/' . $lastDate[2];
 
-        //$checkInOut = $this->content->pasingCheckTime($nameid, $begin->format('m/d/Y'), $end->format('m/d/Y'));
-        //$dateList = $this->content->parsingDateList($begin, $end);
-        $listData = $this->content->getUserInfo($nameid);
-        $userSpeday = $this->content->parsingSpeday($nameid);
+        $checktime = $this->model->selectAllCheckTime($nameid, $sdate, $fdate);
+        $checkInOut = $this->content->pasingCheckTime($checktime);
+        $listData = $this->model->selectUserInfo($nameid);
 
         $pdf = Src::plugin()->tcPdf('P', 'mm', 'F4', true, 'UTF-8', false, false);
 
@@ -519,7 +510,7 @@ class Teacher extends Controller {
             $html .= '          <td class="td" align="center">' . $Gender . '</td>';
 
             for ($day = 1; $day <= $sumDay; $day++) {
-                $html .= '<td width="18" class="td" align="center">.</td>';
+                $html .= '<td width="18" class="td" align="center">' . $day . '</td>';
             }
 
             $html .= '          <td class="td" align="center">D</td>';

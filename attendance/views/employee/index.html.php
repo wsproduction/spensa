@@ -60,7 +60,7 @@
 
 <div id="box-add-attendance">
     <?php
-    Form::begin('fAddAttendance', 'teacher/addattendance', 'post', true);
+    Form::begin('fAddAttendance', 'employee/addattendance', 'post', true);
     ?>
     <div id="view-message"></div>
     <table>
@@ -125,7 +125,7 @@
 
 <div id="box-edit-description">
     <?php
-    Form::begin('fEditDescription', 'teacher/editdescription', 'post', true);
+    Form::begin('fEditDescription', 'employee/editdescription', 'post', true);
     ?>
 
     <div id="view-message"></div>
@@ -231,7 +231,7 @@
         
         $("#fFilter #name").multiselect({
             selectedText: "# dari # dipilih",
-            noneSelectedText: 'Pilih Nama Guru'
+            noneSelectedText: 'Pilih Nama Staff TU'
         }).multiselectfilter();
     
         $('#sdate').datepicker({

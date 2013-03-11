@@ -1,9 +1,23 @@
 <?php
 
-class TeacherModel extends Model {
+class StudentModel extends Model {
 
     public function __construct() {
         parent::__construct();
+    }
+
+    public function selectDepartmentByParentId($parentid) {
+        $sth = $this->db->prepare("
+                            SELECT DEPARTMENTS.DEPTID, DEPARTMENTS.DEPTNAME, DEPARTMENTS.SUPDEPTID
+                            FROM DEPARTMENTS
+                            WHERE DEPARTMENTS.SUPDEPTID IN (" . $parentid . ")
+                        ");        
+        if ($sth->execute()) {
+            $sth->setFetchMode(PDO::FETCH_ASSOC);
+            return $sth->fetchAll();
+        } else {
+            return false;
+        }
     }
 
     public function addAttendanceSave() {
@@ -54,7 +68,7 @@ class TeacherModel extends Model {
     public function editDescriptionSave() {
         try {
             $this->db->beginTransaction();
-            
+
             $userid = $this->method->post('hide_tempid');
             $dates = $this->method->post('hide_dates');
 
@@ -97,6 +111,5 @@ class TeacherModel extends Model {
             return false;
         }
     }
-    
-    
+
 }

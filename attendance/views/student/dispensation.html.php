@@ -4,17 +4,13 @@
         <?php Form::begin('fFilter', 'attendance/read', 'post'); ?>
         <table>
             <tr>
-                <td style="width: 120px;"><?php Form::label('Nama', 'sdate'); ?></td>
+                <td style="width: 120px;"><?php Form::label('Kelas', 'class_name'); ?></td>
                 <td>:</td>
                 <td>
                     <?php
-                    Form::create('select', 'name');
-                    Form::option($option_name);
-                    Form::properties(array('multiple' => 'multiple'));
-                    Form::commit();
-
-                    Form::create('hidden', 'nameid');
-                    Form::value(0);
+                    Form::create('optgroup', 'class_name');
+                    Form::option($option_class_name);
+                    Form::properties(array('link' => $link_class_name));
                     Form::commit();
                     ?>
                 </td>
@@ -60,17 +56,29 @@
 
 <div id="box-add-attendance">
     <?php
-    Form::begin('fAddAttendance', 'teacher/addattendance', 'post', true);
+    Form::begin('fAddAttendance', 'student/addattendance', 'post', true);
     ?>
     <div id="view-message"></div>
     <table>
+        <tr>
+            <td style="width: 120px;"><?php Form::label('Kelas', 'class_name2'); ?></td>
+            <td>:</td>
+            <td>
+                <?php
+                Form::create('optgroup', 'class_name2');
+                Form::option($option_class_name);
+                Form::properties(array('link' => $link_class_name));
+                Form::commit();
+                ?>
+            </td>
+        </tr>
         <tr>
             <td style="width: 100px;"><?php Form::label('Nama', 'name2'); ?></td>
             <td>:</td>
             <td>
                 <?php
                 Form::create('select', 'name2');
-                Form::option($option_name);
+                Form::option();
                 Form::properties(array('multiple' => 'multiple'));
                 Form::commit();
 
@@ -125,7 +133,7 @@
 
 <div id="box-edit-description">
     <?php
-    Form::begin('fEditDescription', 'teacher/editdescription', 'post', true);
+    Form::begin('fEditDescription', 'student/editdescription', 'post', true);
     ?>
 
     <div id="view-message"></div>
@@ -229,11 +237,29 @@
         var f_name = '';
         var f_date = '';
         
+        var classNameChange = function(resource, target) {
+            var url = $(resource).attr('link');
+            var id = $(resource).val();
+            $.post(url, {id:id}, function(o){
+                $(target).html(o).multiselect("refresh");
+            }, 'json');
+        };
+                        
         $("#fFilter #name").multiselect({
             selectedText: "# dari # dipilih",
-            noneSelectedText: 'Pilih Nama Guru'
+            noneSelectedText: 'Pilih Nama Siswa'
         }).multiselectfilter();
-    
+        
+        classNameChange("#fFilter #class_name","#fFilter #name");
+        
+        $("#fFilter #class_name").multiselect({
+            multiple: false,
+            header: "Pilih Kelas",
+            selectedList: 1
+        }).live('change',function(){
+            classNameChange("#fFilter #class_name","#fFilter #name");
+        });
+        
         $('#sdate').datepicker({
             changeMonth: true,
             changeYear: true
@@ -254,11 +280,11 @@
                     align : 'center',
                     width : 50
                 }, {
-                    display : 'NIP',
+                    display : 'NIS',
                     align : 'center',
                     width : 110
                 }, {
-                    display : 'NUPTK',
+                    display : 'NISN',
                     align : 'center',
                     width : 100
                     
@@ -300,7 +326,7 @@
                     width : 80
                 }],
             buttons : [ {
-                    name : 'Lupa Check In / Out',
+                    name : 'Tambah Data Dispensasi',
                     bclass : 'add',
                     onpress : function() {
                         $('#box-add-attendance #view-message').html('');
@@ -409,6 +435,16 @@
             selectedText: "# dari # dipilih",
             noneSelectedText: 'Pilih Nama Guru'
         }).multiselectfilter();
+        
+        classNameChange("#fAddAttendance #class_name2","#fAddAttendance #name2");
+        
+        $("#fAddAttendance #class_name2").multiselect({
+            multiple: false,
+            header: "Pilih Kelas",
+            selectedList: 1
+        }).live('change',function(){
+            classNameChange("#fAddAttendance #class_name2","#fAddAttendance #name2");
+        });
         
         $('#dates').datepicker({
             changeMonth: true,
