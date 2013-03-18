@@ -41,13 +41,13 @@
     <div class="fl-left">
         <div class="box-front">
             <div class="title">
-                Sekolah+
+                Meshplace
             </div>
             <div class="sub-title">
                 Your achievement is our pride.
             </div>
             <div class="description">
-                Selamat datang wargi SMP Negeri 1 Subang, nikmati fasilitas Sekolah+ untuk mendukung pembelajar. Berikut beberapa fitur yang terdapat di Sekolah+ :
+                Selamat datang wargi SMP Negeri 1 Subang, nikmati fasilitas Meshplace untuk mendukung pembelajaran. Berikut beberapa fitur yang terdapat di Meshplace :
             </div>
 
             <div class="box-fitur">
@@ -103,11 +103,11 @@
         <div class="copy-right">
             <div class="fl-left" style="margin-top: 4px;">
                 <?php
-                echo Src::image('icon.png');
+                echo Src::image('icon.png', null, array('style'=>'width:32px;'));
                 ?>
             </div>
             <div class="fl-left" style="margin-left: 10px;">
-                <div>&copy; 2013 Sekolah+</div>
+                <div>&copy; 2013 Mesh</div>
                 <div style="font-weight: bold;">ICT SMP Negeri 1 Subang</div>
                 <div>Jln. Letjen Soeprapto No. 105 Subang 41211 Telp. (0260) 411403 Fax. (0260) 411404  &nbsp; Email : ict@smpn1subang.sch.id</div>
                 <div style="margin-top: 5px;padding-top: 4px;border-top: 1px dashed #ebebeb;"><b> Developer : </b> Warman Suganda | <b> Powered by : </b> WSFramework</div>

@@ -430,6 +430,8 @@
             f_name = name;
             f_date = date;
             
+            alert(rel);
+            
             $('#list tbody tr').removeClass('trSelected');
             $('#box-edit-description').dialog('open');
         });      

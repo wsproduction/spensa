@@ -168,27 +168,34 @@ class Contents extends Controller {
                     $note = 'Libur';
                     $style = 'style="color:#d500cd;"';
                 } else {
-                    if ($clockin == '-' && $clockout == '-') { // Cek List Jam datang dan pulang
-                        // User Speday
-                        if (isset($userSpeday[$row['USERID']][$dList][0])) {
-                            $dataUserSpeday = $userSpeday[$row['USERID']][$dList][0]; //implode(',', $userSpeday[$row['USERID']][$dList]);
-                            $descUserSpeday = $dataUserSpeday['reaseon'];
-                            $note = $dataUserSpeday['desc'];
+                    $is_sunday = date('D', strtotime($dList));
+                    if ($is_sunday == 'Sun') {
+                        $descUserSpeday = 'Hari Minggu';
+                        $note = 'Libur';
+                        $style = 'style="color:#d500cd;"';
+                    } else {
+                        if ($clockin == '-' && $clockout == '-') { // Cek List Jam datang dan pulang
+                            // User Speday
+                            if (isset($userSpeday[$row['USERID']][$dList][0])) {
+                                $dataUserSpeday = $userSpeday[$row['USERID']][$dList][0]; //implode(',', $userSpeday[$row['USERID']][$dList]);
+                                $descUserSpeday = $dataUserSpeday['reaseon'];
+                                $note = $dataUserSpeday['desc'];
 
-                            if ($dataUserSpeday['id'] == 1) {
-                                $style = 'style="color:green;"';
+                                if ($dataUserSpeday['id'] == 1) {
+                                    $style = 'style="color:green;"';
+                                } else {
+                                    $style = 'style="color:blue;"';
+                                }
                             } else {
-                                $style = 'style="color:blue;"';
+                                $descUserSpeday = '';
+                                $note = 'Tanpa Keterangan';
+                                $style = 'style="color:red;"';
                             }
                         } else {
                             $descUserSpeday = '';
-                            $note = 'Tanpa Keterangan';
-                            $style = 'style="color:red;"';
+                            $note = '';
+                            $style = 'style="color:black;"';
                         }
-                    } else {
-                        $descUserSpeday = '';
-                        $note = '';
-                        $style = 'style="color:black;"';
                     }
                 }
 
@@ -230,6 +237,7 @@ class Contents extends Controller {
 
     public function parsingSpeday($nameid, $sdate, $fdate) {
         $spedayList = $this->model->selectSpeday($nameid, $sdate, $fdate);
+        
         $userSpeday = array();
         foreach ($spedayList as $row_sd) {
             $s = new DateTime(date('Y-m-d', strtotime($row_sd['STARTSPECDAY'])));

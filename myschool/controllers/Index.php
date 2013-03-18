@@ -9,7 +9,7 @@ class Index extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Welcome');
+        Web::setTitle('Selamat Datang');
         $this->view->render('index/index');
     }
 }
