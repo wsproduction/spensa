@@ -139,9 +139,9 @@ class ReportModel extends Model {
                                         academic_mlc b 
                                      WHERE 
                                         b.mlc_subject = a.subject_id AND 
-                                        b.mlc_period = academic_classgroup.classgroup_period AND 
-                                        b.mlc_semester = academic_classgroup.classgroup_semester AND 
-                                        b.mlc_grade = academic_classgroup.classgroup_grade 
+                                        b.mlc_period = :period AND 
+                                        b.mlc_semester = :semester AND 
+                                        b.mlc_grade = :grade
                                     LIMIT 1) AS mlc_value,
                                     (SELECT 
                                         AVG(c.score_value) A
@@ -152,11 +152,11 @@ class ReportModel extends Model {
                                         INNER JOIN academic_subject ON (academic_teaching.teaching_subject = academic_subject.subject_id)
                                         INNER JOIN academic_classgroup ON (academic_teaching.teaching_classgroup = academic_classgroup.classgroup_id)
                                       WHERE
-                                        c.score_student = academic_classhistory.classhistory_student AND 
+                                        c.score_student = :student AND 
                                         academic_teaching.teaching_subject = a.subject_id AND
-                                        academic_teaching.teaching_period = academic_classgroup.classgroup_period AND 
-                                        academic_teaching.teaching_semester = academic_classgroup.classgroup_semester AND 
-                                        academic_classgroup.classgroup_grade = academic_classgroup.classgroup_grade AND
+                                        academic_teaching.teaching_period = :period AND 
+                                        academic_teaching.teaching_semester = :semester AND 
+                                        academic_classgroup.classgroup_grade = :grade AND
                                         c.score_type = :type
                                     ) AS score_value
                                   FROM

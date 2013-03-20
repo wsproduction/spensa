@@ -269,11 +269,11 @@
                 var desc = '-';
                 if (!is_empty(val)) {
                     if (val == 'A') {
-                        desc = 'Sangat Baik';
+                        desc = 'sangat baik';
                     } else if (val == 'B'){
-                        desc = 'Baik';
+                        desc = 'baik';
                     } else {
-                        desc = 'Cukup';
+                        desc = 'cukup';
                     }
                     $(this).css('border','1px solid #ccc');
                 } else {

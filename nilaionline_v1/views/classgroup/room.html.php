@@ -294,11 +294,11 @@
                 var desc = '-';
                 if (!is_empty(val)) {
                     if (parseInt(val) > parseInt(mlc)) {
-                        desc = 'Terlampaui';
+                        desc = 'terlampaui';
                     } else if (parseInt(val) == parseInt(mlc)){
-                        desc = 'Tercapai';
+                        desc = 'tercapai';
                     } else {
-                        desc = 'Tidak Tercapai';
+                        desc = 'tidak Tercapai';
                     }
                     $(this).css('border','1px solid #ccc');
                 } else {
