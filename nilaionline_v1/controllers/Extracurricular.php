@@ -135,7 +135,7 @@ class Extracurricular extends Controller {
                 $title = 'DAFTAR NILAI RAPOR AKHIR SEMESTER SISWA';
                 $filename = 'NILAI_RAPOR_AKHIR_SEMESTER';
             }
-
+            
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
             $objPHPExcel = new PHPExcel();
             $objPHPExcel->setActiveSheetIndex(0);

@@ -54,8 +54,8 @@ $protection = Session::get('login_status');
                             <?php
                             $hostname = Web::getHost();
                             ?>
-                            <li><a href="#" class="orange16-ic-config">Account Settings</a></li>
-                            <li><a href="#" class="orange16-ic-lock">Privacy Settings</a></li>
+                            <li><a href="http://<?php echo $hostname; ?>/account" class="orange16-ic-config">Account Settings</a></li>
+                            <li><a href="http://<?php echo $hostname; ?>/privacy" class="orange16-ic-lock">Privacy Settings</a></li>
                             <li><a href="http://<?php echo $hostname; ?>/login/stop" class="orange16-ic-signout">Logout</a></li>
                             <li><div class="hr-solid-grey"></div></li>
                             <li><a href="http://<?php echo $hostname; ?>/login/stop" class="orange16-ic-lightbulb">Bantuan</a></li>
@@ -79,7 +79,7 @@ $protection = Session::get('login_status');
                                 <div class="left-name"><a id="profile-name-left" href="#"></a></div>
                                 <div class="left-box-main-icon">
                                     <?php
-                                    URL::link('#', Src::image('orange16/home.png', null, array('title' => 'Beranda')));
+                                    URL::link('http://' . $hostname . '/home', Src::image('orange16/home.png', null, array('title' => 'Beranda')));
                                     URL::link('#', Src::image('orange16/email.png', null, array('title' => 'Kronologi')));
                                     URL::link('#', Src::image('orange16/my-account.png', null, array('title' => 'Biodata')));
                                     URL::link('#', Src::image('orange16/photography.png', null, array('title' => 'Foto')));

@@ -275,7 +275,7 @@ class Import extends Controller {
                     $data['class_group'] = $kelas;
                     $data['status'] = 3;
 
-                    $this->model->saveClassGroup($data);
+                    //$this->model->saveClassGroup($data);
 
                     $numrow++;
                 }
@@ -343,7 +343,7 @@ class Import extends Controller {
                     $data['semester'] = $semester;
                     $data['jam'] = $jam;
 
-                    $this->model->saveTeaching($data);
+                    //$this->model->saveTeaching($data);
 
                     $numrow++;
                 }
@@ -408,7 +408,8 @@ class Import extends Controller {
                     $data['mapel'] = $mapel;
                     $data['period'] = $period;
                     $data['semester'] = $semester;
-
+                    
+                    /*
                     if ($kelas7) {
                         $data['value'] = $kelas7;
                         $data['grade'] = 1;
@@ -426,7 +427,7 @@ class Import extends Controller {
                         $data['grade'] = 3;
                         $this->model->saveMlc($data);
                     }
-
+                    */
                     $numrow++;
                 }
                 $html .= '</table>';
@@ -467,7 +468,7 @@ class Import extends Controller {
                     $id = $sheet->getCell('A' . $numrow)->getValue();
                     $nama = $sheet->getCell('B' . $numrow)->getValue();
                     $kelas = $sheet->getCell('C' . $numrow)->getValue();
-                    $period= $sheet->getCell('D' . $numrow)->getValue();
+                    $period = $sheet->getCell('D' . $numrow)->getValue();
                     $semester = $sheet->getCell('E' . $numrow)->getValue();
 
                     $html .= '
@@ -485,7 +486,7 @@ class Import extends Controller {
                     $data['period'] = $period;
                     $data['semester'] = $semester;
 
-                    $this->model->saveGuidance($data);
+                    //$this->model->saveGuidance($data);
 
                     $numrow++;
                 }
@@ -527,7 +528,7 @@ class Import extends Controller {
                     $id = $sheet->getCell('A' . $numrow)->getValue();
                     $nama = $sheet->getCell('B' . $numrow)->getValue();
                     $kelas = $sheet->getCell('C' . $numrow)->getValue();
-                    $period= $sheet->getCell('D' . $numrow)->getValue();
+                    $period = $sheet->getCell('D' . $numrow)->getValue();
                     $semester = $sheet->getCell('E' . $numrow)->getValue();
 
                     $html .= '
@@ -545,7 +546,7 @@ class Import extends Controller {
                     $data['period'] = $period;
                     $data['semester'] = $semester;
 
-                    $this->model->saveGuidanceEskul($data);
+                    //$this->model->saveGuidanceEskul($data);
 
                     $numrow++;
                 }
@@ -581,7 +582,7 @@ class Import extends Controller {
                     ';
                 $count_student = 11;
                 $numrow = 2;
-                
+
                 $objPHPExcel->setActiveSheetIndex(19);
                 $sheet = $objPHPExcel->getActiveSheet();
                 for ($i = 1; $i <= $count_student; $i++) {
@@ -589,7 +590,7 @@ class Import extends Controller {
                     $id = $sheet->getCell('D' . $numrow)->getValue();
                     $nama = $sheet->getCell('B' . $numrow)->getValue();
                     $kelas = $sheet->getCell('G' . $numrow)->getValue();
-                    $period= $sheet->getCell('F' . $numrow)->getValue();
+                    $period = $sheet->getCell('F' . $numrow)->getValue();
                     $semester = $sheet->getCell('E' . $numrow)->getValue();
 
                     $html .= '
@@ -606,7 +607,7 @@ class Import extends Controller {
                     $data['class_group'] = $kelas;
                     $data['status'] = 3; // 1 : Siswa Baru, 3 : Naik Kelas
 
-                    $this->model->saveClassGroup($data);
+                    //$this->model->saveClassGroup($data);
 
                     $numrow++;
                 }
@@ -622,7 +623,7 @@ class Import extends Controller {
     }
 
     public function pesertaeskul() {
-        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/KELAS7.xls';
+        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/KELAS9.xls';
         if (file_exists($inputFileName)) {
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
             $objReader = PHPExcel_IOFactory::createReader('Excel5');
@@ -631,7 +632,12 @@ class Import extends Controller {
             try {
                 $period_id = 1;
                 $extra_coach = $this->model->selectExtracuricularCoachByPeriod($period_id);
-                
+
+                $extra = array();
+                foreach ($extra_coach as $value) {
+                    $extra[$value['extracurricular_coach_history_field']][$value['extracurricular_coach_history_semester']] = $value['extracurricular_coach_history_id'];
+                }
+
                 $data = array();
                 $html = '
                     <table border="1">
@@ -642,9 +648,10 @@ class Import extends Controller {
                             <td>ESKUL 2</td>
                         </tr>
                     ';
-                $count_student = 236;
+
+                $count_student = 202;
                 $numrow = 7;
-                
+
                 $objPHPExcel->setActiveSheetIndex(0);
                 $sheet = $objPHPExcel->getActiveSheet();
                 for ($i = 1; $i <= $count_student; $i++) {
@@ -654,7 +661,30 @@ class Import extends Controller {
                     $eskul = $sheet->getCell('G' . $numrow)->getValue();
                     $eskul2 = $sheet->getCell('H' . $numrow)->getValue();
                     
+                    /*
+                    if (!empty($eskul)) {
+                        $data['student'] = $id;
+                        $data['eskul'] = $extra[$eskul][1];
+                        $this->model->saveEskulParticipan($data);
+                        $data['eskul'] = $extra[$eskul][2];
+                        $this->model->saveEskulParticipan($data);
+                    } else {
 
+                        $eskul = 'k';
+                    }
+
+                    if (!empty($eskul2)) {
+                        $data['student'] = $id;
+                        $data['eskul'] = $extra[$eskul2][1];
+                        $this->model->saveEskulParticipan($data);
+                        $data['eskul'] = $extra[$eskul2][2];
+                        $this->model->saveEskulParticipan($data);
+                    } else {
+
+                        $eskul2 = 'k';
+                    }
+                    */
+                    
                     $html .= '
                         <tr>
                             <td>' . $id . '</td>
@@ -663,11 +693,6 @@ class Import extends Controller {
                             <td>' . $eskul2 . '</td>
                         </tr>
                     ';
-
-                    $data['student'] = $id;
-                    $data['eskul'] = $eskul;
-
-                    //$this->model->saveEskulParticipan($data);
 
                     $numrow++;
                 }
