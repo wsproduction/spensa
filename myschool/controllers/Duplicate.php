@@ -169,17 +169,43 @@ class Duplicate extends Controller {
             $data['period'] = $value['guidance_period'];
             $data['semester'] = $new_semester_id;
             $data['semester'] = $new_semester_id;
-            
+            /*
             if ($this->model->saveGuidance($data)) {
                 echo 'OK<br>';
             } else {
                 echo 'ERROR<br>';
             }
-            
+            */
             $idx++;
         }
         
         echo $idx;
     }
+
+    public function extaracuricularCoach() {
+        $period_id = 1;
+        $semester_id = 1;
+        $new_semester_id = 2;
+
+        $list_coach = $this->model->selectExtaracuricularCoachByPeriod($period_id);
+        $data = array();
+        foreach ($list_coach as $value) {
+            $data['coach_name'] = $value['extracurricular_coach_history_name'];
+            $data['extra_name'] = $value['extracurricular_coach_history_field'];
+            $data['period'] = $value['extracurricular_coach_history_period'];
+            $data['semester'] = $new_semester_id;
+            $data['total_time'] = $value['extracurricular_coach_history_totaltime'];
+            $data['total_time'] = $value['extracurricular_coach_history_totaltime'];
+            /*
+            if ($this->model->saveExtaracuricularCoach($data)) {
+                echo 'OK<br>';
+            } else {
+                echo 'ERROR<br>';
+            }
+            */
+        }
+
+    }
+    
 
 }

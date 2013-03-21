@@ -315,4 +315,66 @@ class DuplicateModel extends Model {
         return $sth->execute();
     }
     
+    public function selectExtaracuricularCoachByPeriod($period_id) {
+        $sth = $this->db->prepare("
+              SELECT 
+                academic_extracurricular_coach_history.extracurricular_coach_history_id,
+                academic_extracurricular_coach_history.extracurricular_coach_history_name,
+                academic_extracurricular_coach_history.extracurricular_coach_history_field,
+                academic_extracurricular_coach_history.extracurricular_coach_history_period,
+                academic_extracurricular_coach_history.extracurricular_coach_history_semester,
+                academic_extracurricular_coach_history.extracurricular_coach_history_totaltime,
+                academic_extracurricular_coach_history.extracurricular_coach_history_entry,
+                academic_extracurricular_coach_history.extracurricular_coach_history_entry_update
+              FROM
+                academic_extracurricular_coach_history
+              WHERE
+                academic_extracurricular_coach_history.extracurricular_coach_history_period = :period_id
+            ");
+        $sth->bindValue(':period_id', $period_id);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function saveExtaracuricularCoach($data) {
+        $sth = $this->db->prepare('
+                                INSERT INTO
+                                    academic_extracurricular_coach_history(
+                                    extracurricular_coach_history_id,
+                                    extracurricular_coach_history_name,
+                                    extracurricular_coach_history_field,
+                                    extracurricular_coach_history_period,
+                                    extracurricular_coach_history_semester,
+                                    extracurricular_coach_history_totaltime,
+                                    extracurricular_coach_history_entry,
+                                    extracurricular_coach_history_entry_update)
+                                  VALUES(
+                                    ( SELECT IF (
+                                        (SELECT COUNT(e.extracurricular_coach_history_id) FROM academic_extracurricular_coach_history AS e 
+                                                WHERE e.extracurricular_coach_history_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                ORDER BY e.extracurricular_coach_history_id DESC LIMIT 1
+                                        ) > 0,
+                                        (SELECT ( e.extracurricular_coach_history_id + 1 ) FROM academic_extracurricular_coach_history AS e 
+                                                WHERE e.extracurricular_coach_history_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"%")) 
+                                                ORDER BY e.extracurricular_coach_history_id DESC LIMIT 1),
+                                        (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%Y%m%d"),"0001")))
+                                    ),
+                                    :coach_name,
+                                    :extra_name,
+                                    :period,
+                                    :semester,
+                                    :total_time,
+                                    NOW(),
+                                    NOW())
+                            ');
+        
+        $sth->bindValue(':coach_name', $data['coach_name']);
+        $sth->bindValue(':extra_name', $data['extra_name']);
+        $sth->bindValue(':period', $data['period']);
+        $sth->bindValue(':semester', $data['semester']);
+        $sth->bindValue(':total_time', $data['total_time']);
+        
+        return $sth->execute();
+    }
 }

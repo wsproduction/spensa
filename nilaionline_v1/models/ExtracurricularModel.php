@@ -42,7 +42,9 @@ class ExtracurricularModel extends Model {
                                     academic_extracurricular_participant
                                     INNER JOIN academic_student ON (academic_extracurricular_participant.extracurricular_participant_name = academic_student.student_nis)
                                   WHERE
-                                    academic_extracurricular_participant.extracurricular_participant_name
+                                    academic_extracurricular_participant.extracurricular_participant_activity = :classgroupid
+                                  ORDER BY 
+                                    academic_student.student_name
                           ');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':classgroupid', $classgroupid);

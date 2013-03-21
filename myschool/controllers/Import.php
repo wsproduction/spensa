@@ -622,46 +622,52 @@ class Import extends Controller {
     }
 
     public function pesertaeskul() {
-        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/peserta_eskul.xls';
+        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/KELAS7.xls';
         if (file_exists($inputFileName)) {
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
             $objReader = PHPExcel_IOFactory::createReader('Excel5');
             $objPHPExcel = $objReader->load($inputFileName);
 
             try {
+                $period_id = 1;
+                $extra_coach = $this->model->selectExtracuricularCoachByPeriod($period_id);
+                
                 $data = array();
                 $html = '
                     <table border="1">
                         <tr>
                             <td>NIS</td>
                             <td>NAMA</td>
-                            <td>ESKUL</td>
+                            <td>ESKUL 1</td>
+                            <td>ESKUL 2</td>
                         </tr>
                     ';
-                $count_student = 14;
-                $numrow = 2;
+                $count_student = 236;
+                $numrow = 7;
                 
                 $objPHPExcel->setActiveSheetIndex(0);
                 $sheet = $objPHPExcel->getActiveSheet();
                 for ($i = 1; $i <= $count_student; $i++) {
 
-                    $id = $sheet->getCell('A' . $numrow)->getValue();
-                    $nama = $sheet->getCell('B' . $numrow)->getValue();
-                    $kelas = $sheet->getCell('C' . $numrow)->getValue();
+                    $id = $sheet->getCell('B' . $numrow)->getValue();
+                    $nama = $sheet->getCell('D' . $numrow)->getValue();
+                    $eskul = $sheet->getCell('G' . $numrow)->getValue();
+                    $eskul2 = $sheet->getCell('H' . $numrow)->getValue();
                     
 
                     $html .= '
                         <tr>
                             <td>' . $id . '</td>
                             <td>' . $nama . '</td>
-                            <td>' . $kelas . '</td>
+                            <td>' . $eskul . '</td>
+                            <td>' . $eskul2 . '</td>
                         </tr>
                     ';
 
                     $data['student'] = $id;
-                    $data['eskul'] = $kelas;
+                    $data['eskul'] = $eskul;
 
-                    $this->model->saveEskulParticipan($data);
+                    //$this->model->saveEskulParticipan($data);
 
                     $numrow++;
                 }

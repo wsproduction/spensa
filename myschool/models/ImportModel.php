@@ -481,7 +481,6 @@ class ImportModel extends Model {
         return $sth->execute();
     }
     
-    
     public function saveEskulParticipan($data) {
         $sth = $this->db->prepare('
                                 INSERT INTO
@@ -512,5 +511,26 @@ class ImportModel extends Model {
         $sth->bindValue(':eskul', $data['eskul']);
         return $sth->execute();
     }
-
+    
+    public function selectExtracuricularCoachByPeriod($period_id) {
+        $sth = $this->db->prepare('
+                                SELECT 
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_id,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_name,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_field,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_period,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_semester,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_totaltime,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_entry,
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_entry_update
+                                  FROM
+                                    academic_extracurricular_coach_history
+                                  WHERE
+                                    academic_extracurricular_coach_history.extracurricular_coach_history_period = :period_id
+                            ');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':period_id', $period_id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
 }
