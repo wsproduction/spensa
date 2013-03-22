@@ -636,8 +636,71 @@ ul.m-left ul li a {
     color: #999999;
     border: 1px solid #ebebeb;
     padding: 15px;
-    
+
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+}
+
+
+
+/* 
+    Document   : ACCOUNT SETTING STYLE
+    Created on : Oct 14, 2012, 8:24:40 PM
+    Author     : Warman Suganda
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+#account_setting input[type=password] {
+    padding: 5px;
+}
+
+#account_setting input[type=submit] {
+    background: url('../images/bg-btn-blue.png') repeat-x;
+    padding: 5px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid #3079ed;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    opacity:0.8;
+    filter:alpha(opacity=80); /* For IE8 and earlier */
+    cursor: pointer;
+}
+
+#account_setting label[class=error] {
+    color : #dd3c10;
+}
+
+#account_setting input[type=submit]:hover {
+    opacity:1;
+    filter:alpha(opacity=100); /* For IE8 and earlier */
+}
+
+#account_setting .box {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+#account_setting #view-message .box_message {
+    padding: 5px;
+    font-family: "lucida grande" ,tahoma,verdana,arial,sans-serif;font-size: 11px;
+}
+
+#account_setting #view-message .error {
+    border: 1px solid #dd3c10;
+    color: #333333;
+    background-color: #ffebe8;
+    text-shadow: 2px 1px 1px #fff;
+}
+
+#account_setting #view-message .succes {
+    border: 1px solid #e2c822;
+    color: #333333;
+    background-color: #fff9d7;
+    text-shadow: 2px 1px 1px #fff;
 }

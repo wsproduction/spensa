@@ -205,7 +205,8 @@ $protection = Session::get('login_status');
                     dataType : 'json',
                     success: function(data) {
                         var thumbnail = data.thumbnail;
-                        $('a#profile-name-left').html(data.name);
+                        var name = data.name;
+                        $('a#profile-name-left').html(name.substr(0,22));
                         $('img#profile-thumbnail-small').attr('src', thumbnail.small);
                     }
                 });

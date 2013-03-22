@@ -38,7 +38,7 @@ class Export extends Controller {
             $no++;
             $row++;
         }
-        /*
+        /* 
         // Redirect output to a client’s web browser (Excel5)
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . time() . '.xls"');
@@ -47,7 +47,7 @@ class Export extends Controller {
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output');
         exit;
-         * 
+        * 
          */
     }
 

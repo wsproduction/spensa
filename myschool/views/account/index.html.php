@@ -1,18 +1,23 @@
-<div style="margin: 10px;">
+<div style="margin: 10px;" id="account_setting">
 
     <h1>Account Setting</h1>
     <br>
-    <div>
-        <h3>
-            Ganti Password
-        </h3>   
-        <div>
+    <div>  
+        <div class="box">
+
+            <h2>
+                Ganti Password
+            </h2> 
+
+            <br>
+
             <?php
             Form::begin('f_change_password', 'account/changepassword', 'post', true);
             ?>
-            <table>
+            <div id="view-message"></div>
+            <table cellpadding="5" cellspacing="5">
                 <tr>
-                    <td>Password Lama</td>
+                    <td style="width: 120px;">Password Lama</td>
                     <td>:</td>
                     <td>
                         <?php
@@ -29,8 +34,16 @@
                         <?php
                         Form::create('password', 'new_password');
                         Form::validation()->requaired();
+                        Form::validation()->minLength(8);
                         Form::commit();
                         ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div id="pwdMeter" class="neutral">Very Weak</div>
                     </td>
                 </tr>
                 <tr>
@@ -40,6 +53,7 @@
                         <?php
                         Form::create('password', 'confirm_old_password');
                         Form::validation()->requaired();
+                        Form::validation()->equalTo('#new_password');
                         Form::commit();
                         ?>
                     </td>
@@ -62,6 +76,27 @@
             ?>
         </div>
     </div>
-
-
 </div>
+
+<script>
+    $(function(){
+        
+        $('#new_password').pwdMeter({
+            displayGeneratePassword: true,
+            generatePassText: 'Password Generator',
+            generatePassClass: 'GeneratePasswordLink',
+            RandomPassLength: 13
+        });
+        
+        $('#f_change_password').live('submit', function(){
+            
+            var data = $(this).serialize();
+            var url = $(this).attr('action');
+                
+            $.post(url, data, function(o){
+                $('#f_change_password #view-message').html(o[1]);
+            }, 'json');
+            return false;
+        });
+    });
+</script>
