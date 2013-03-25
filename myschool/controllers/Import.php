@@ -311,8 +311,8 @@ class Import extends Controller {
                             <td>JAM</td>
                         </tr>
                     ';
-                $count_student = 6;
-                $numrow = 361;
+                $count_student = 8;
+                $numrow = 236;
                 $sheet = $objPHPExcel->getActiveSheet();
                 for ($i = 1; $i <= $count_student; $i++) {
 
