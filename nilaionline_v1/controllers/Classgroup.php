@@ -70,6 +70,7 @@ class Classgroup extends Controller {
                 $html_list .= '     <td align="center">' . $row['student_nis'] . '</td>';
                 $html_list .= '     <td align="center">' . $row['student_nisn'] . '</td>';
                 $html_list .= '     <td>' . $row['student_name'] . '</td>';
+                $html_list .= '     <td align="center">' . $row['class_group_name'] . '</td>';
                 $html_list .= '     <td align="center">' . $score_input . '</td>';
                 $html_list .= '     <td align="center" class="desc_' . $row['student_nis'] . '">' . $desc . '</td>';
                 $html_list .= '</tr>';

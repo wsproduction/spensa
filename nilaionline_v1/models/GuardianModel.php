@@ -124,5 +124,57 @@ class GuardianModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
+    
+    
+    public function selectExtracuriculerByStudentId($student_id = 0, $grade = 0, $period = 0, $semester = 0) {
+        $sth = $this->db->prepare("
+                        SELECT 
+                            academic_extracurricular.extracurricular_name,
+                            employees.employess_name,
+                            academic_extracurricular_coach_history.extracurricular_coach_history_id,
+                            (SELECT 
+                                COUNT(academic_score_extracurricular.score_extracurricular_id) AS cnt 
+                             FROM 
+                                academic_score_extracurricular 
+                             WHERE 
+                                academic_score_extracurricular.score_extracurricular_student IN (" . $student_id . ") AND 
+                                academic_score_extracurricular.score_extracurricular_type = 1 AND 
+                                academic_score_extracurricular.score_extracurricular = academic_extracurricular_coach_history.extracurricular_coach_history_id
+                            ) AS midscore_count,
+                            (SELECT 
+                                COUNT(academic_score_extracurricular.score_extracurricular_id) AS cnt 
+                             FROM 
+                                academic_score_extracurricular 
+                             WHERE 
+                                academic_score_extracurricular.score_extracurricular_student IN (" . $student_id . ") AND 
+                                academic_score_extracurricular.score_extracurricular_type = 2 AND 
+                                academic_score_extracurricular.score_extracurricular = academic_extracurricular_coach_history.extracurricular_coach_history_id
+                            ) AS finalscore_count,
+                            (SELECT 
+                                COUNT(academic_extracurricular_participant.extracurricular_participant_id) AS cnt
+                              FROM
+                                academic_extracurricular_participant
+                              WHERE
+                                academic_extracurricular_participant.extracurricular_participant_name IN (" . $student_id . ")  AND 
+                                academic_extracurricular_participant.extracurricular_participant_activity = academic_extracurricular_coach_history.extracurricular_coach_history_id) AS student_count
+                          FROM
+                            academic_extracurricular_participant
+                            INNER JOIN academic_extracurricular_coach_history ON (academic_extracurricular_participant.extracurricular_participant_activity = academic_extracurricular_coach_history.extracurricular_coach_history_id)
+                            INNER JOIN academic_extracurricular ON (academic_extracurricular_coach_history.extracurricular_coach_history_field = academic_extracurricular.extracurricular_id)
+                            INNER JOIN employees ON (academic_extracurricular_coach_history.extracurricular_coach_history_name = employees.employees_id)
+                          WHERE
+                            academic_extracurricular_participant.extracurricular_participant_name IN (" . $student_id . ") AND
+                            academic_extracurricular_coach_history.extracurricular_coach_history_period = :period AND 
+                            academic_extracurricular_coach_history.extracurricular_coach_history_semester = :semester
+                          GROUP BY
+                            academic_extracurricular.extracurricular_name,
+                            employees.employess_name
+                          ");
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':period', $period);
+        $sth->bindValue(':semester', $semester);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
 
 }

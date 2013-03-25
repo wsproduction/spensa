@@ -57,7 +57,7 @@ class Extracurricular extends Controller {
 
                 Form::create('select', 'score_list_' . $no);
                 Form::maxlength(3);
-                Form::option(array('A' => 'A', 'B' => 'B', 'C' => 'C'), " ", $score);
+                Form::option(array('A' => 'A', 'B' => 'B', 'C' => 'C', 'T' => 'T'), " ", $score);
                 Form::properties(array('order' => $row['student_nis']));
                 Form::style('score_list');
                 $score_input = Form::commit('attach');
@@ -67,6 +67,7 @@ class Extracurricular extends Controller {
                 $html_list .= '     <td align="center">' . $row['student_nis'] . '</td>';
                 $html_list .= '     <td align="center">' . $row['student_nisn'] . '</td>';
                 $html_list .= '     <td>' . $row['student_name'] . '</td>';
+                $html_list .= '     <td align="center">' . $row['class_group_name'] . '</td>';
                 $html_list .= '     <td align="center">' . $score_input . '</td>';
                 $html_list .= '     <td align="center" class="desc_' . $row['student_nis'] . '">' . $desc . '</td>';
                 $html_list .= '</tr>';
@@ -75,7 +76,7 @@ class Extracurricular extends Controller {
         } else {
             $html_list .= '
                         <tr>
-                            <td class="first" colspan="6">
+                            <td class="first" colspan="7">
                                 <div class="information-box">
                                     Data tidak ditemukan
                                 </div>

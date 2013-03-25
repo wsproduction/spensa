@@ -79,8 +79,8 @@
             <thead>
                 <tr>
                     <td rowspan="2" class="first" style="width: 40px;text-align: center;">No.</td>
-                    <td rowspan="2" >Mata Pelajaran</td>
-                    <td rowspan="2"  style="width: 180px;text-align: center;">Nama Guru</td>
+                    <td rowspan="2" >Nama Kegiatan</td>
+                    <td rowspan="2"  style="width: 180px;text-align: center;">Pembina</td>
                     <td style="text-align: center;" colspan="2">Keterangan Nilai</td>
                     <td rowspan="2" style="width: 100px;text-align: center;">Pilihan</td>
                 </tr>

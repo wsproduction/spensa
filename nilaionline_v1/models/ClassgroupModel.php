@@ -64,11 +64,25 @@ class ClassgroupModel extends Model {
                                     academic_student.student_nis,
                                     academic_student.student_nisn,
                                     academic_student.student_name,
-                                    public_gender.gender_title
+                                    public_gender.gender_title,
+                                    (SELECT 
+                                        CONCAT_WS(" ", academic_grade.grade_title, academic_classroom.classroom_name) AS class_history
+                                      FROM
+                                        academic_classhistory
+                                        INNER JOIN academic_classgroup ON (academic_classhistory.classhistory_classgroup = academic_classgroup.classgroup_id)
+                                        INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
+                                        INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
+                                      WHERE
+                                        academic_classhistory.classhistory_student = academic_student.student_nis AND 
+                                        academic_classgroup.classgroup_guardian <> 000000000000 AND 
+                                        academic_classgroup.classgroup_period = ac.classgroup_period AND 
+                                        academic_classgroup.classgroup_semester = ac.classgroup_semester
+                                    ) AS class_group_name
                                 FROM
                                     academic_classhistory
                                     INNER JOIN academic_student ON (academic_classhistory.classhistory_student = academic_student.student_nis)
                                     INNER JOIN public_gender ON (academic_student.student_gender = public_gender.gender_id)
+                                    INNER JOIN academic_classgroup AS ac ON (academic_classhistory.classhistory_classgroup = ac.classgroup_id)
                                 WHERE
                                     academic_classhistory.classhistory_classgroup = :classgroupid
                                 ORDER BY academic_student.student_name

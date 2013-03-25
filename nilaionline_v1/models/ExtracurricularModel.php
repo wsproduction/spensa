@@ -37,10 +37,24 @@ class ExtracurricularModel extends Model {
                                  SELECT 
                                     academic_student.student_nis,
                                     academic_student.student_nisn,
-                                    academic_student.student_name
+                                    academic_student.student_name,
+                                    (SELECT 
+                                        CONCAT_WS(" ", academic_grade.grade_title, academic_classroom.classroom_name) AS class_history
+                                      FROM
+                                        academic_classhistory
+                                        INNER JOIN academic_classgroup ON (academic_classhistory.classhistory_classgroup = academic_classgroup.classgroup_id)
+                                        INNER JOIN academic_grade ON (academic_classgroup.classgroup_grade = academic_grade.grade_id)
+                                        INNER JOIN academic_classroom ON (academic_classgroup.classgroup_name = academic_classroom.classroom_id)
+                                      WHERE
+                                        academic_classhistory.classhistory_student = academic_student.student_nis AND 
+                                        academic_classgroup.classgroup_guardian <> 000000000000 AND 
+                                        academic_classgroup.classgroup_period = academic_extracurricular_coach_history.extracurricular_coach_history_period AND 
+                                        academic_classgroup.classgroup_semester = academic_extracurricular_coach_history.extracurricular_coach_history_semester
+                                    ) AS class_group_name
                                   FROM
                                     academic_extracurricular_participant
                                     INNER JOIN academic_student ON (academic_extracurricular_participant.extracurricular_participant_name = academic_student.student_nis)
+                                    INNER JOIN academic_extracurricular_coach_history ON (academic_extracurricular_participant.extracurricular_participant_activity = academic_extracurricular_coach_history.extracurricular_coach_history_id)
                                   WHERE
                                     academic_extracurricular_participant.extracurricular_participant_activity = :classgroupid
                                   ORDER BY 

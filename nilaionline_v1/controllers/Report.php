@@ -648,6 +648,7 @@ class Report extends Controller {
                                 <td align="center" width="60" class="box-score-list-content">' . $score . ' </td>
                                 <td align="center" width="330" class="box-score-list-content">' . $this->content->descIndex($score) . '</td>
                             </tr>';
+                        $idx_extracurricular++;
                     }
                 } else {
                     $html .= '

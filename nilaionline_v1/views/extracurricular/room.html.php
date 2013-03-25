@@ -68,13 +68,14 @@
                         <tr>
                             <td align="center" class="first" colspan="3" style="border-bottom: none;">NOMOR</td>
                             <td rowspan="2" align="center">NAMA SISWA</td>
-                            <td style="width: 100px;" align="center" rowspan="2">NILAI</td>
+                            <td style="width: 50px;" align="center" rowspan="2">KELAS</td>
+                            <td style="width: 80px;" align="center" rowspan="2">NILAI</td>
                             <td style="width: 100px;" align="center" rowspan="2">KETERANGAN</td>
                         </tr>
                         <tr>
                             <td style="width: 40px;" align="center" class="first">URUT</td>
-                            <td style="width: 80px;" align="center" >INDUK</td>
-                            <td style="width: 80px;" align="center" >NISN</td>
+                            <td style="width: 75px;" align="center" >INDUK</td>
+                            <td style="width: 75px;" align="center" >NISN</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -113,13 +114,14 @@
                         <tr>
                             <td align="center" class="first" colspan="3" style="border-bottom: none;">NOMOR</td>
                             <td rowspan="2" align="center">NAMA SISWA</td>
-                            <td style="width: 100px;" align="center" rowspan="2">NILAI</td>
+                            <td style="width: 50px;" align="center" rowspan="2">KELAS</td>
+                            <td style="width: 80px;" align="center" rowspan="2">NILAI</td>
                             <td style="width: 100px;" align="center" rowspan="2">KETERANGAN</td>
                         </tr>
                         <tr>
                             <td style="width: 40px;" align="center" class="first">URUT</td>
-                            <td style="width: 80px;" align="center" >INDUK</td>
-                            <td style="width: 80px;" align="center" >NISN</td>
+                            <td style="width: 75px;" align="center" >INDUK</td>
+                            <td style="width: 75px;" align="center" >NISN</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -266,8 +268,10 @@
                         desc = 'sangat baik';
                     } else if (val == 'B'){
                         desc = 'baik';
-                    } else {
+                    } else if (val == 'C'){
                         desc = 'cukup';
+                    } else {
+                        desc = '-';
                     }
                     $(this).css('border','1px solid #ccc');
                 } else {

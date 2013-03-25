@@ -18,7 +18,7 @@ class Guardian extends Controller {
             $this->view->link_back = $this->content->setParentLink('teaching');
             $this->view->link_rapor = $this->content->setParentLink('report/preview/' . $classgroup_id);
             $this->view->link_read_subject = $this->content->setLink('guardian/readsubject/' . $classgroup_id . '.' . $guardian_info['classgroup_grade'] . '.' . $guardian_info['classgroup_period'] . '.' . $guardian_info['classgroup_semester']);
-            $this->view->link_read_eskul = $this->content->setLink('guardian/readeskul/' . $classgroup_id);
+            $this->view->link_read_eskul = $this->content->setLink('guardian/readeskul/' . $classgroup_id . '.' . $guardian_info['classgroup_grade'] . '.' . $guardian_info['classgroup_period'] . '.' . $guardian_info['classgroup_semester']);
             $this->view->render('guardian/index');
         } else {
             $this->view->render('guardian/404');
@@ -66,7 +66,7 @@ class Guardian extends Controller {
                 foreach ($subject_info[1] as $row) {
 
                     $sc1 = $row['student_count'];
-                    $link_view = $this->content->setParentLink('recapitulation/notification/' . $row['teaching_id'] . '.' . $classgroup_id . '.' .$row['classgroup_id']);
+                    $link_view = $this->content->setParentLink('recapitulation/notification/' . $row['teaching_id'] . '.' . $classgroup_id . '.' . $row['classgroup_id']);
 
                     $html_list .= '<tr>';
                     $html_list .= '     <td>' . $i . '. ' . $row['subject_name'] . '</td>';
@@ -90,7 +90,7 @@ class Guardian extends Controller {
                                </tr>';
                 $i = 'a';
                 foreach ($subject_info[2] as $row) {
-                    
+
                     $sc2 = $row['student_count'];
                     $link_view = $this->content->setParentLink('recapitulation/notification/' . $row['teaching_id'] . '.' . $classgroup_id . '.' . $row['classgroup_id']);
 
@@ -142,20 +142,31 @@ class Guardian extends Controller {
         echo json_encode($html_list);
     }
 
-    public function readEskul($classgroup_id = 0) {
-        $subject_list = $this->model->selectSubjectByClassGroup($classgroup_id);
+    public function readEskul($tempid = 0) {
+
+        list($classgroup_id, $grade, $period, $semester) = explode('.', $tempid);
+
+        $student_list = $this->model->selectSubjectByClassGroup($classgroup_id);
+        $student_id = '0';
+        foreach ($student_list as $row) {
+            $student_id .= ',' . $row['student_nis'];
+        }
+        
+        $subject_list = $this->model->selectExtracuriculerByStudentId($student_id, $grade, $period, $semester);
+
         $html_list = '';
-        if ($subject_list) {
+        if (count($subject_list) > 0) {
             $idx = 1;
-            foreach ($subject_list as $row) {
-                $html_list .= '<tr>';
-                $html_list .= '     <td class="first" align="center">' . $idx . '</td>';
-                $html_list .= '     <td>' . $row['subject_name'] . '</td>';
-                $html_list .= '     <td>' . $row['employess_name'] . '</td>';
-                $html_list .= '     <td align="center">-</td>';
-                $html_list .= '     <td align="center">-</td>';
-                $html_list .= '     <td align="center">Lihat</td>';
-                $html_list .= '</tr>';
+            foreach ($subject_list as $value) {
+                $student_count = $value['student_count'];
+                $html_list .= '<tr>
+                                <td class="first" style="text-align:center">' . $idx . '.</td>
+                                <td>' . $value['extracurricular_name'] . '</td>
+                                <td>' . $value['employess_name'] . '</td>
+                                <td style="text-align:center">' . $value['midscore_count'] . '/' . $student_count . ' Siswa</td>
+                                <td style="text-align:center">' . $value['finalscore_count'] . '/' . $student_count . ' Siswa</td>
+                                <td style="text-align:center">Lihat</td>
+                            </tr>';
                 $idx++;
             }
         } else {
