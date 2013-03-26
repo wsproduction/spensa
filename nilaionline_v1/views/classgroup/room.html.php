@@ -300,7 +300,7 @@
                     } else if (parseInt(val) == parseInt(mlc)){
                         desc = 'tercapai';
                     } else {
-                        desc = 'tidak Tercapai';
+                        desc = 'belum tercapai';
                     }
                     $(this).css('border','1px solid #ccc');
                 } else {
