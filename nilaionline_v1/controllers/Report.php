@@ -174,8 +174,8 @@ class Report extends Controller {
                 }
 
                 $guardian_id = '';
-                if (!empty($student_info['employess_nip'])) {
-                    $guardian_id = $student_info['employess_nip'];
+                if (!empty($student_info['employees_nip'])) {
+                    $guardian_id = $student_info['employees_nip'];
                 }
                 $guardian_name = $student_info['employess_name'];
 

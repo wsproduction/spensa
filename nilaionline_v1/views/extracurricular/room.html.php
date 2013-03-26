@@ -80,7 +80,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="first" colspan="6">
+                            <td class="first" colspan="7">
                                 <div class="information-box">
                                     Loading...
                                 </div>
@@ -126,7 +126,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="first" colspan="6">
+                            <td class="first" colspan="7">
                                 <div class="information-box">
                                     Loading...
                                 </div>

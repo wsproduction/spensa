@@ -291,7 +291,7 @@ class Import extends Controller {
     }
 
     public function teaching() {
-        $inputFileName = Web::path() . 'asset/upload/ptk/jadwalmengajar.xls';
+        $inputFileName = Web::path() . 'asset/upload/ptk/plh.xls';
         if (file_exists($inputFileName)) {
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
             $objReader = PHPExcel_IOFactory::createReader('Excel5');
@@ -312,14 +312,14 @@ class Import extends Controller {
                         </tr>
                     ';
                 $count_student = 8;
-                $numrow = 236;
+                $numrow = 2;
                 $sheet = $objPHPExcel->getActiveSheet();
                 for ($i = 1; $i <= $count_student; $i++) {
 
                     $id = $sheet->getCell('A' . $numrow)->getValue();
                     $nama = $sheet->getCell('B' . $numrow)->getValue();
                     $mapel = $sheet->getCell('C' . $numrow)->getValue();
-                    $kelas = $sheet->getCell('D' . $numrow)->getValue();
+                    $kelas = $sheet->getCell('H' . $numrow)->getValue();
                     $period = $sheet->getCell('E' . $numrow)->getValue();
                     $semester = $sheet->getCell('F' . $numrow)->getValue();
                     $jam = $sheet->getCell('G' . $numrow)->getValue();
@@ -343,7 +343,7 @@ class Import extends Controller {
                     $data['semester'] = $semester;
                     $data['jam'] = $jam;
 
-                    //$this->model->saveTeaching($data);
+                    $this->model->saveTeaching($data);
 
                     $numrow++;
                 }
@@ -408,26 +408,26 @@ class Import extends Controller {
                     $data['mapel'] = $mapel;
                     $data['period'] = $period;
                     $data['semester'] = $semester;
-                    
+
                     /*
-                    if ($kelas7) {
-                        $data['value'] = $kelas7;
-                        $data['grade'] = 1;
-                        $this->model->saveMlc($data);
-                    }
+                      if ($kelas7) {
+                      $data['value'] = $kelas7;
+                      $data['grade'] = 1;
+                      $this->model->saveMlc($data);
+                      }
 
-                    if ($kelas8) {
-                        $data['value'] = $kelas8;
-                        $data['grade'] = 2;
-                        $this->model->saveMlc($data);
-                    }
+                      if ($kelas8) {
+                      $data['value'] = $kelas8;
+                      $data['grade'] = 2;
+                      $this->model->saveMlc($data);
+                      }
 
-                    if ($kelas9) {
-                        $data['value'] = $kelas9;
-                        $data['grade'] = 3;
-                        $this->model->saveMlc($data);
-                    }
-                    */
+                      if ($kelas9) {
+                      $data['value'] = $kelas9;
+                      $data['grade'] = 3;
+                      $this->model->saveMlc($data);
+                      }
+                     */
                     $numrow++;
                 }
                 $html .= '</table>';
@@ -606,7 +606,6 @@ class Import extends Controller {
                     $data['nis'] = $id;
                     $data['class_group'] = $kelas;
                     $data['status'] = 3; // 1 : Siswa Baru, 3 : Naik Kelas
-
                     //$this->model->saveClassGroup($data);
 
                     $numrow++;
@@ -623,7 +622,7 @@ class Import extends Controller {
     }
 
     public function pesertaeskul() {
-        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/KELAS9.xls';
+        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/seni_tari.xls';
         if (file_exists($inputFileName)) {
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
             $objReader = PHPExcel_IOFactory::createReader('Excel5');
@@ -649,25 +648,25 @@ class Import extends Controller {
                         </tr>
                     ';
 
-                $count_student = 202;
-                $numrow = 7;
+                $count_student = 22;
+                $numrow = 2;
 
                 $objPHPExcel->setActiveSheetIndex(0);
                 $sheet = $objPHPExcel->getActiveSheet();
                 for ($i = 1; $i <= $count_student; $i++) {
 
-                    $id = $sheet->getCell('B' . $numrow)->getValue();
-                    $nama = $sheet->getCell('D' . $numrow)->getValue();
-                    $eskul = $sheet->getCell('G' . $numrow)->getValue();
-                    $eskul2 = $sheet->getCell('H' . $numrow)->getValue();
+                    $id = $sheet->getCell('A' . $numrow)->getValue();
+                    $nama = $sheet->getCell('B' . $numrow)->getValue();
+                    $eskul = $sheet->getCell('D' . $numrow)->getValue();
+                    $eskul2 = $sheet->getCell('E' . $numrow)->getValue();
                     
                     /*
                     if (!empty($eskul)) {
                         $data['student'] = $id;
-                        $data['eskul'] = $extra[$eskul][1];
+                        $data['eskul'] = $eskul; //$extra[$eskul][1];
                         $this->model->saveEskulParticipan($data);
-                        $data['eskul'] = $extra[$eskul][2];
-                        $this->model->saveEskulParticipan($data);
+                        //$data['eskul'] = $extra[$eskul][2];
+                        //$this->model->saveEskulParticipan($data);
                     } else {
 
                         $eskul = 'k';
@@ -675,10 +674,10 @@ class Import extends Controller {
 
                     if (!empty($eskul2)) {
                         $data['student'] = $id;
-                        $data['eskul'] = $extra[$eskul2][1];
+                        $data['eskul'] = $eskul2; //$extra[$eskul2][1];
                         $this->model->saveEskulParticipan($data);
-                        $data['eskul'] = $extra[$eskul2][2];
-                        $this->model->saveEskulParticipan($data);
+                        //$data['eskul'] = $extra[$eskul2][2];
+                        //$this->model->saveEskulParticipan($data);
                     } else {
 
                         $eskul2 = 'k';
@@ -706,5 +705,76 @@ class Import extends Controller {
             echo 'File Tidak ditemukan : ' . $inputFileName;
         }
     }
+    
+    public function updateClassHistrory() {
+        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/kompos.xls';
+        if (file_exists($inputFileName)) {
+            Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
+            $objPHPExcel = $objReader->load($inputFileName);
 
+            try {
+                $data = array();
+                $html = '
+                    <table border="1">
+                        <tr>
+                            <td>NIS</td>
+                            <td>NISN</td>
+                            <td>NAMA</td>
+                            <td>JK</td>
+                            <td>KELAS</td>
+                            <td>KELAS2</td>
+                        </tr>
+                    ';
+                $count_student = 10;
+                $numrow = 9;
+                $sheet = $objPHPExcel->getActiveSheet();
+                for ($i = 1; $i <= $count_student; $i++) {
+
+                    $nis = $sheet->getCell('B' . $numrow)->getValue();
+                    $nisn = $sheet->getCell('C' . $numrow)->getValue();
+                    $nama = $sheet->getCell('D' . $numrow)->getValue();
+                    $jk = $sheet->getCell('E' . $numrow)->getValue();
+                    $kelas = $sheet->getCell('F' . $numrow)->getValue();
+                    $kelas1 = $sheet->getCell('G' . $numrow)->getValue();
+
+
+                    if (strtolower($jk) == 'l') {
+                        $jk_id = 1;
+                    } else {
+                        $jk_id = 2;
+                    }
+
+                    $html .= '
+                        <tr>
+                            <td>' . $nis . '</td>
+                            <td>' . $nisn . '</td>
+                            <td>' . $nama . '</td>
+                            <td>' . $jk_id . ' - ' . $jk . '</td>
+                            <td>' . $kelas . '</td>
+                            <td>' . $kelas1 . '</td>
+                        </tr>
+                    ';
+
+                    $data['nis'] = $nis;
+                    $data['class_group'] = $kelas;
+                    $data['status'] = 3;
+                    /*
+                    $this->model->saveClassGroup($data);
+                    
+                    $data['class_group'] = $kelas1;
+                    $this->model->saveClassGroup($data);
+                    */
+                    $numrow++;
+                }
+                $html .= '</table>';
+
+                echo $html;
+            } catch (Exception $exc) {
+                
+            }
+        } else {
+            echo 'File Tidak ditemukan : ' . $inputFileName;
+        }
+    }
 }

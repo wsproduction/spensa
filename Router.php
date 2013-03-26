@@ -22,6 +22,9 @@ switch (Web::getSubDomain()) {
         Web::main('DIGITAL LIBRARY', 'digilib', 'demo');
         Web::child('OPERATOR DIGITAL LIBRARY', 'admin', 'digilib_admin', 'demo');
         break;
+    case 'madina':
+        Web::main('PT MADINA RAIHAN MAKMUR', 'madina', 'demo');
+        break;
     case 'absen':
         Web::main('ABSENSI SMPN 1 SUBANG', 'attendance', 'demo');
         break;

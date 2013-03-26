@@ -227,7 +227,7 @@ class Classgroup extends Controller {
                         ->setCellValueExplicit('D' . $rowno, $row['student_nisn'], PHPExcel_Cell_DataType::TYPE_STRING)
                         ->setCellValue('E' . $rowno, $row['student_name'])
                         ->setCellValue('F' . $rowno, $score)
-                        ->setCellValue('G' . $rowno, '=IF(ISBLANK(' . $cell_value . '),"-",IF(' . $cell_value . '>A$7,"Terlampaui", IF(' . $cell_value . '=A$7,"Tercapai","Tidak Tercapai")))');
+                        ->setCellValue('G' . $rowno, '=IF(ISBLANK(' . $cell_value . '),"-",IF(' . $cell_value . '>A$7,"terlampaui", IF(' . $cell_value . '=A$7,"tercapai","belum tercapai")))');
             }
 
             $objPHPExcel->getActiveSheet()->setCellValue('A12', $nourut);
