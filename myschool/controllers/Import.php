@@ -622,7 +622,7 @@ class Import extends Controller {
     }
 
     public function pesertaeskul() {
-        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/seni_tari.xls';
+        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/ko.xls';
         if (file_exists($inputFileName)) {
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
             $objReader = PHPExcel_IOFactory::createReader('Excel5');
@@ -648,7 +648,7 @@ class Import extends Controller {
                         </tr>
                     ';
 
-                $count_student = 22;
+                $count_student = 12;
                 $numrow = 2;
 
                 $objPHPExcel->setActiveSheetIndex(0);
@@ -660,30 +660,36 @@ class Import extends Controller {
                     $eskul = $sheet->getCell('D' . $numrow)->getValue();
                     $eskul2 = $sheet->getCell('E' . $numrow)->getValue();
                     
+                    //$data['student'] = $id;
+                    //$data['eskul'] = $eskul; //$extra[$eskul][1];
+                    //$this->model->saveEskulParticipan($data);
+                    //$data['eskul'] = $extra[$eskul][2];
+                    //$this->model->saveEskulParticipan($data);
+
                     /*
-                    if (!empty($eskul)) {
-                        $data['student'] = $id;
-                        $data['eskul'] = $eskul; //$extra[$eskul][1];
-                        $this->model->saveEskulParticipan($data);
-                        //$data['eskul'] = $extra[$eskul][2];
-                        //$this->model->saveEskulParticipan($data);
-                    } else {
+                      if (!empty($eskul)) {
+                      $data['student'] = $id;
+                      $data['eskul'] = $eskul; //$extra[$eskul][1];
+                      $this->model->saveEskulParticipan($data);
+                      //$data['eskul'] = $extra[$eskul][2];
+                      //$this->model->saveEskulParticipan($data);
+                      } else {
 
-                        $eskul = 'k';
-                    }
+                      $eskul = 'k';
+                      }
 
-                    if (!empty($eskul2)) {
-                        $data['student'] = $id;
-                        $data['eskul'] = $eskul2; //$extra[$eskul2][1];
-                        $this->model->saveEskulParticipan($data);
-                        //$data['eskul'] = $extra[$eskul2][2];
-                        //$this->model->saveEskulParticipan($data);
-                    } else {
+                      if (!empty($eskul2)) {
+                      $data['student'] = $id;
+                      $data['eskul'] = $eskul2; //$extra[$eskul2][1];
+                      $this->model->saveEskulParticipan($data);
+                      //$data['eskul'] = $extra[$eskul2][2];
+                      //$this->model->saveEskulParticipan($data);
+                      } else {
 
-                        $eskul2 = 'k';
-                    }
-                    */
-                    
+                      $eskul2 = 'k';
+                      }
+                     */
+
                     $html .= '
                         <tr>
                             <td>' . $id . '</td>
@@ -705,7 +711,7 @@ class Import extends Controller {
             echo 'File Tidak ditemukan : ' . $inputFileName;
         }
     }
-    
+
     public function updateClassHistrory() {
         $inputFileName = Web::path() . 'asset/upload/daftar_siswa/kompos.xls';
         if (file_exists($inputFileName)) {
@@ -760,11 +766,11 @@ class Import extends Controller {
                     $data['class_group'] = $kelas;
                     $data['status'] = 3;
                     /*
-                    $this->model->saveClassGroup($data);
-                    
-                    $data['class_group'] = $kelas1;
-                    $this->model->saveClassGroup($data);
-                    */
+                      $this->model->saveClassGroup($data);
+
+                      $data['class_group'] = $kelas1;
+                      $this->model->saveClassGroup($data);
+                     */
                     $numrow++;
                 }
                 $html .= '</table>';
@@ -777,4 +783,5 @@ class Import extends Controller {
             echo 'File Tidak ditemukan : ' . $inputFileName;
         }
     }
+
 }

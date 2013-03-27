@@ -279,7 +279,7 @@ class ReportModel extends Model {
                                   WHERE
                                     academic_score_guidance.score_guidance_student = academic_student.student_nis AND 
                                     academic_guidance.guidance_period = :period AND 
-                                    academic_guidance.guidance_semester = 1 AND 
+                                    academic_guidance.guidance_semester =  :semester AND 
                                     academic_score_guidance.score_guidance_desc = 2 AND 
                                     academic_score_guidance.score_guidance_type = :type
                                   LIMIT 1) AS personality_score
