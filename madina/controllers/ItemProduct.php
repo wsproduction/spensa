@@ -1,6 +1,6 @@
 <?php
 
-class Product extends Controller {
+class ItemProduct extends Controller {
 
     public function __construct() {
         parent::__construct();
@@ -11,7 +11,7 @@ class Product extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Daftar Produk');
+        Web::setTitle('Daftar Item Produk');
 
         $this->view->link_c = $this->content->setLink('product/create');
         $this->view->link_r = $this->content->setLink('product/read');
