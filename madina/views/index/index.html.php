@@ -2,7 +2,7 @@
     &nbsp;
 </div>
 
-<div id="box-login">
+<div id="box-login" style="display: none;">
     <?php
     Form::begin('frm_login', 'login/run', 'post');
     ?>

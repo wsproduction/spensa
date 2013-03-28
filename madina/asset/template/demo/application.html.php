@@ -6,6 +6,8 @@
         <meta charset="utf-8" />
 
         <?php
+        Src::icon('madina_icon.png');
+        
         /* jQuery Plugin */
         Src::plugin()->jQuery();
         Src::plugin()->jQueryUI('flick');

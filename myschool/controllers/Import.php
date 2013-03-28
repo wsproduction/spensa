@@ -713,7 +713,7 @@ class Import extends Controller {
     }
 
     public function updateClassHistrory() {
-        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/kompos.xls';
+        $inputFileName = Web::path() . 'asset/upload/daftar_siswa/seni_kriya.xls';
         if (file_exists($inputFileName)) {
             Src::plugin()->PHPExcel('IOFactory', 'chunkReadFilter');
             $objReader = PHPExcel_IOFactory::createReader('Excel5');
@@ -732,8 +732,8 @@ class Import extends Controller {
                             <td>KELAS2</td>
                         </tr>
                     ';
-                $count_student = 10;
-                $numrow = 9;
+                $count_student = 7;
+                $numrow = 2;
                 $sheet = $objPHPExcel->getActiveSheet();
                 for ($i = 1; $i <= $count_student; $i++) {
 
@@ -741,7 +741,7 @@ class Import extends Controller {
                     $nisn = $sheet->getCell('C' . $numrow)->getValue();
                     $nama = $sheet->getCell('D' . $numrow)->getValue();
                     $jk = $sheet->getCell('E' . $numrow)->getValue();
-                    $kelas = $sheet->getCell('F' . $numrow)->getValue();
+                    $kelas = $sheet->getCell('E' . $numrow)->getValue();
                     $kelas1 = $sheet->getCell('G' . $numrow)->getValue();
 
 
@@ -765,9 +765,9 @@ class Import extends Controller {
                     $data['nis'] = $nis;
                     $data['class_group'] = $kelas;
                     $data['status'] = 3;
-                    /*
-                      $this->model->saveClassGroup($data);
-
+                    
+                      //$this->model->saveClassGroup($data);
+                      /*
                       $data['class_group'] = $kelas1;
                       $this->model->saveClassGroup($data);
                      */
