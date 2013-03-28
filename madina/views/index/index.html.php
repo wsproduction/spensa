@@ -45,13 +45,6 @@
                 <button id="btn_login">Login</button>
             </td>
         </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td style="padding: 5px 0;">
-                <a href="#">Lupa Password?</a>
-            </td>
-        </tr>
     </table>
     <?php
     Form::end();
@@ -61,7 +54,7 @@
 
 <script>
     $(function() {
-        var y = screen.height * 0.72;
+        var y = screen.height * 0.70;
         $('#box-content').css('min-height',  y + "px");
         
         $('#btn_login').button({
@@ -75,7 +68,7 @@
             closeOnEscape: false,
             autoOpen: true,
             height: 250,
-            width: 450,
+            width: 400,
             modal: true,
             resizable: false,
             draggable: false,

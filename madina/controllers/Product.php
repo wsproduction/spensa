@@ -7,10 +7,11 @@ class Product extends Controller {
         $this->content->protection(true);
         Src::plugin()->jQueryValidation();
         Src::plugin()->highChart();
+        Src::plugin()->flexiGrid();
     }
 
     public function index() {
-        Web::setTitle('Login');
+        Web::setTitle('Daftar Produk');
         $this->view->render('product/index');
     }
 

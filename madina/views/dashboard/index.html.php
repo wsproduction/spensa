@@ -5,7 +5,7 @@
 
 <script>
     $(function() {
-        var y = screen.height * 0.72;
+        var y = screen.height * 0.70;
         var y2 = screen.height * 0.68;
         $('#box-content').css('min-height',  y + "px");
         $('#view_chart').css({'min-height':y2 + "px", 'margin':'12px 0 0 0'});
