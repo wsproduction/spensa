@@ -23,7 +23,7 @@
                 Form::create('select', 'category');
                 Form::option($option_category, ' ');
                 Form::validation()->requaired('*');
-                Form::properties(array('link' => $link_type, 'style' => 'min-width:100px;max-width:300px;'));
+                Form::properties(array('link' => $link_option, 'style' => 'min-width:150px;max-width:300px;'));
                 Form::commit();
                 ?>
             </td>
@@ -38,7 +38,7 @@
                 <?php
                 Form::create('select', 'type');
                 Form::validation()->requaired('*');
-                Form::properties(array('style' => 'min-width:100px;max-width:300px;'));
+                Form::properties(array('link' => $link_option, 'style' => 'min-width:150px;max-width:300px;'));
                 Form::commit();
                 ?>
             </td>
@@ -51,23 +51,66 @@
             <td>:</td>
             <td>
                 <?php
-                Form::create('text', 'name');
-                Form::size(40);
+                Form::create('select', 'name');
                 Form::validation()->requaired('*');
+                Form::properties(array('style' => 'min-width:200px;max-width:300px;'));
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="label-ina">Ukuran</div>
+                <div class="label-eng">Size</div>
+            </td>
+            <td>:</td>
+            <td>
+                <?php
+                Form::create('select', 'size');
+                Form::validation()->requaired('*');
+                Form::properties(array('style' => 'min-width:100px;max-width:300px;'));
                 Form::commit();
                 ?>
             </td>
         </tr>
         <tr>
             <td valign="top" style="padding-top: 10px;">
-                <div class="label-ina">Keterangan</div>
-                <div class="label-eng">Description</div>
+                <div class="label-ina">Stok</div>
+                <div class="label-eng">Stock</div>
             </td>
             <td valign="top" style="padding-top: 10px;">:</td>
             <td>
                 <?php
-                Form::create('textarea', 'description');
-                Form::size(40, 4);
+                Form::create('text', 'stock');
+                Form::size(10);
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" style="padding-top: 10px;">
+                <div class="label-ina">Harga</div>
+                <div class="label-eng">Price</div>
+            </td>
+            <td valign="top" style="padding-top: 10px;">:</td>
+            <td>
+                <?php
+                Form::create('text', 'price');
+                Form::size(20);
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" style="padding-top: 10px;">
+                <div class="label-ina">Diskon</div>
+                <div class="label-eng">Discount</div>
+            </td>
+            <td valign="top" style="padding-top: 10px;">:</td>
+            <td>
+                <?php
+                Form::create('text', 'discount');
+                Form::size(10);
                 Form::commit();
                 ?>
             </td>
@@ -107,12 +150,16 @@
         var form_status = 'add';
         var data;
         var set_form = function(data) {
-            $('#id').val(data['product_id']);
-            $('#category').val(data['aggregation_category']);
+            $('#id').val(data['item_id']);
+            $('#category').val(data['category_id']);
             $('#type').html(data['option_product_type']).val(data['product_type']);
-            $('#name').val(data['product_name']);
-            $('#description').val(data['product_description']);
-            $('#status').val(data['product_status']); 
+            $('#name').html(data['option_product']).val(data['product_id']);
+            $('#size').html(data['option_product_size']).val(data['size_id']);
+            $('#status').val(data['product_status']);
+            $('#stock').val(data['item_stock']);
+            $('#price').val(data['item_price']);
+            $('#discount').val(data['item_discount']);
+            $('#box-form').dialog('open');  
         };
         
         /* Index */
@@ -121,7 +168,7 @@
             dataType : 'xml',
             colModel : [ {
                     display : 'ID', 
-                    name : 'product_id', 
+                    name : 'item_id', 
                     width : 60,
                     sortable : true,
                     align : 'center'
@@ -140,24 +187,42 @@
                 },  {
                     display : 'Type',
                     name : 'category_name',
-                    width : 100,
+                    width : 80,
                     sortable : true,
                     align : 'left',
                     hide : true
                 }, {
                     display : 'Kategori',
                     name : 'category_name',
-                    width : 100,
+                    width : 90,
                     sortable : true,
                     align : 'left',
                     hide : true
                 }, {
-                    display : 'Keterangan',
+                    display : 'Ukuran',
                     name : 'category_name',
-                    width : 200,
+                    width : 90,
                     sortable : true,
                     align : 'left',
                     hide : true
+                }, {
+                    display : 'Stok',
+                    name : 'language_entry',
+                    width : 60,
+                    sortable : true,
+                    align : 'center'
+                }, {
+                    display : 'Harga',
+                    name : 'language_entry',
+                    width : 60,
+                    sortable : true,
+                    align : 'center'
+                }, {
+                    display : 'Diskon',
+                    name : 'language_entry',
+                    width : 40,
+                    sortable : true,
+                    align : 'center'
                 }, {
                     display : 'Status',
                     name : 'language_entry',
@@ -203,7 +268,7 @@
                 if (conf) {
                     if (leng > 0) {
                         var tempId = [];
-                        $('#list .trSelected td[abbr=product_id] div').each(function() {
+                        $('#list .trSelected td[abbr=item_id] div').each(function() {
                             tempId.push(parseInt($(this).text()));
                         });
                                 
@@ -224,14 +289,14 @@
         } ],
     searchitems : [ {
             display : 'ID',
-            name : 'product_id',
+            name : 'item_id',
             isdefault : true
         }, {
             display : 'Nama Produk',
             name : 'product_name'            
         } ],
     nowrap : false,
-    sortname : "product_id",
+    sortname : "item_id",
     sortorder : "asc",
     usepager : true,
     title : $('#list').attr('title'),
@@ -257,8 +322,7 @@ $('.edit').live('click', function(){
                 
         if (o[0]) {
             data = o[1];
-            set_form(data);
-            $('#box-form').dialog('open');                 
+            set_form(data);                
         } else {
             alert('Maaf, data tidak ditemukan.');
         }
@@ -291,7 +355,7 @@ $('#box-form').dialog({
     title : '',
     closeOnEscape: false,
     autoOpen: false,
-    height: 400,
+    height: 470,
     width: 500,
     modal: false,
     resizable: false,
@@ -300,11 +364,15 @@ $('#box-form').dialog({
         if (form_status == 'add') {
             $('#category').removeAttr('disabled');
             $('#type').removeAttr('disabled');
-            $('#box-form').dialog('option', 'title', 'Tambah Data Produk');
+            $('#name').removeAttr('disabled');
+            $('#size').removeAttr('disabled');
+            $('#box-form').dialog('option', 'title', 'Tambah Data Item Produk');
         } else {
             $('#category').attr('disabled','disabled');
             $('#type').attr('disabled','disabled');
-            $('#box-form').dialog('option', 'title', 'Edit Data Produk');
+            $('#name').attr('disabled','disabled');
+            $('#size').attr('disabled','disabled');
+            $('#box-form').dialog('option', 'title', 'Edit Data Product Produk');
         }
     }
 });
@@ -313,8 +381,26 @@ $('#category').live('change', function() {
     var url = $(this).attr('link');
     var id = $(this).val();
     var target = $('#type');
+    var target2 = $('#size');
+    
     target.html('<option>Loading...</option>');
-    $.post(url, { data : id }, function(o){
+    $.post(url, { data : id, get : 'type' }, function(o){
+        target.html(o);
+    }, 'json');
+    
+    target2.html('<option>Loading...</option>');
+    $.post(url, { data : id, get : 'size' }, function(o){
+        target2.html(o);
+    }, 'json');
+});
+   
+$('#type').live('change', function() {
+    var url = $(this).attr('link');
+    var id = $(this).val();
+    var target = $('#name');
+    
+    target.html('<option>Loading...</option>');
+    $.post(url, { data : id, get : 'product' }, function(o){
         target.html(o);
     }, 'json');
 });

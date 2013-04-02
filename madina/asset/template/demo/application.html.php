@@ -50,7 +50,8 @@
                                 <li><a href="<?php echo $hostname . '/itemproduct' ?>">Data Item Produk</a></li>
                             </ul>
                         </li>
-                        <li><a href="<?php echo $hostname . '/order' ?>">Data Pesanan</a></li>
+                        <li><a href="<?php echo $hostname . '/reseller' ?>">Data Reseller</a></li>
+                        <li><a href="<?php echo $hostname . '/orders' ?>">Data Pesanan</a></li>
                         <li><a>Laporan</a></li>
                         <li><a href="<?php echo $hostname . '/login/stop' ?>">Logout</a></li>
                     <?php }?>

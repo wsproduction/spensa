@@ -13,14 +13,14 @@ class ItemProduct extends Controller {
     public function index() {
         Web::setTitle('Daftar Item Produk');
 
-        $this->view->link_c = $this->content->setLink('product/create');
-        $this->view->link_r = $this->content->setLink('product/read');
-        $this->view->link_u = $this->content->setLink('product/update');
-        $this->view->link_d = $this->content->setLink('product/delete');
-        $this->view->link_type = $this->content->setLink('product/gettype');
+        $this->view->link_c = $this->content->setLink('itemproduct/create');
+        $this->view->link_r = $this->content->setLink('itemproduct/read');
+        $this->view->link_u = $this->content->setLink('itemproduct/update');
+        $this->view->link_d = $this->content->setLink('itemproduct/delete');
+        $this->view->link_option = $this->content->setLink('itemproduct/getoption');
 
         $this->view->option_category = $this->optionCategory();
-        $this->view->render('product/index');
+        $this->view->render('itemproduct/index');
     }
 
     public function read() {
@@ -45,22 +45,25 @@ class ItemProduct extends Controller {
 
             foreach ($list_data AS $value) {
 
-                $link_edit = URL::link($this->content->setLink('product/getdataproduct/' . $value['product_id']), 'Edit', false, array('class' => 'edit'));
-
+                $link_edit = URL::link($this->content->setLink('itemproduct/getdataitemproduct/' . $value['item_id']), 'Edit', false, array('class' => 'edit'));
+                
                 $status = 'Tidak Aktif';
-                if ($value['product_status'])
+                if ($value['item_status'])
                     $status = 'Aktif';
-
-                $xml .= "<row id='" . $value['product_id'] . "'>";
-                $xml .= "<cell><![CDATA[" . $value['product_id'] . "]]></cell>";
+                
+                $xml .= "<row id='" . $value['item_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $value['item_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['type_code'] . '-' . $value['product_code'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['product_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['type_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['category_name'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['product_description'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['size_description'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['item_stock'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[<span style='float:left;'>Rp</span><span style='float:right;'>" . $this->content->numberFormat($value['item_price']) . "</span>]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['item_discount'] . "%]]></cell>";
                 $xml .= "<cell><![CDATA[" . $status . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['product_entry'])) . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['product_entry_update'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['item_entry'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['item_entry_update'])) . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $link_edit . "]]></cell>";
                 $xml .= "</row>";
             }
@@ -72,25 +75,31 @@ class ItemProduct extends Controller {
 
     public function create() {
         $param = array();
-        $param['type'] = $this->request->post('type');
-        $param['name'] = $this->request->post('name');
-        $param['description'] = $this->request->post('description');
+        
+        $param['product'] = $this->request->post('name');
+        $param['size'] = $this->request->post('size');
+        $param['stock'] = $this->request->post('stock');
+        $param['price'] = $this->request->post('price');
+        $param['discount'] = $this->request->post('discount');
         $param['status'] = $this->request->post('status');
 
         $res = array(false, $this->message->saveError());
-        if ($this->model->saveProduct($param)) {
+        if ($this->model->saveItemProduct($param)) {
             $res = array(true, $this->message->saveSucces());
         }
 
         echo json_encode($res);
     }
-    
+
     public function update() {
         $param = array();
+        
         $param['id'] = $this->request->post('id');
-        $param['type'] = $this->request->post('type');
-        $param['name'] = $this->request->post('name');
-        $param['description'] = $this->request->post('description');
+        $param['product'] = $this->request->post('name');
+        $param['size'] = $this->request->post('size');
+        $param['stock'] = $this->request->post('stock');
+        $param['price'] = $this->request->post('price');
+        $param['discount'] = $this->request->post('discount');
         $param['status'] = $this->request->post('status');
 
         $res = array(false, $this->message->saveError());
@@ -106,7 +115,7 @@ class ItemProduct extends Controller {
         $param['id'] = $this->request->post('id');
 
         $res = false;
-        if ($this->model->deleteProduct($param)) {
+        if ($this->model->deleteItemProduct($param)) {
             $res = true;
         }
 
@@ -131,37 +140,78 @@ class ItemProduct extends Controller {
         return $option;
     }
 
-    public function getType() {
-        $category_id = $this->request->post('data');
-        $option = $this->optionType($category_id);
+    public function optionSize($category_id) {
+        $option = array();
+        $list = $this->model->selectSizeByCategory($category_id);
+        foreach ($list as $value) {
+            $option[$value['aggregation_id']] = $value['size_description'];
+        }
+        return $option;
+    }
+
+    public function optionProduct($type_id) {
+        $option = array();
+        $list = $this->model->selectProductByType($type_id);
+        foreach ($list as $value) {
+            $option[$value['product_id']] = $value['type_code'] . '-' . $value['product_code'] . ' ' . $value['product_name'];
+        }
+        return $option;
+    }
+    
+    public function getOption() {
+        $data_id = $this->request->post('data');
+        $get = $this->request->post('get');
+        if ($get == 'type') {
+            $option = $this->optionType($data_id);
+        } else if ($get == 'size') {
+            $option = $this->optionSize($data_id);
+        } else if ($get == 'product') {
+            $option = $this->optionProduct($data_id);
+        }
+        
         $result = '<option></option>';
         foreach ($option as $key => $value) {
             $result .= '<option value="' . $key . '">' . $value . '</option>';
         }
         echo json_encode($result);
     }
-
-    public function getDataProduct($id) {
+    
+    public function getDataItemProduct($id) {
         $data = array();
         $result = array(false, $data);
 
-        $list = $this->model->selectProductById($id);
+        $list = $this->model->selectItemProductById($id);
         if (count($list) > 0) {
             $value = $list[0];
 
             $option_product_type = '<option></option>';
-            foreach ($this->optionType($value['aggregation_category']) as $k => $v) {
+            foreach ($this->optionType($value['category_id']) as $k => $v) {
                 $option_product_type .= '<option value="' . $k . '">' . $v . '</option>';
             }
 
-            $data['product_id'] = $value['product_id'];
+            $option_product_size = '<option></option>';
+            foreach ($this->optionSize($value['category_id']) as $k => $v) {
+                $option_product_size .= '<option value="' . $k . '">' . $v . '</option>';
+            }
+
+            $option_product = '<option></option>';
+            foreach ($this->optionProduct($value['product_type']) as $k => $v) {
+                $option_product .= '<option value="' . $k . '">' . $v . '</option>';
+            }
+
+            $data['item_id'] = $value['item_id'];
             $data['product_type'] = $value['product_type'];
             $data['option_product_type'] = $option_product_type;
-            $data['product_code'] = $value['product_code'];
-            $data['product_name'] = $value['product_name'];
-            $data['product_description'] = $value['product_description'];
-            $data['product_status'] = $value['product_status'];
-            $data['aggregation_category'] = $value['aggregation_category'];
+            $data['size_id'] = $value['size_id'];
+            $data['option_product_size'] = $option_product_size;
+            $data['product_id'] = $value['product_id'];
+            $data['option_product'] = $option_product;
+            $data['category_id'] = $value['category_id'];
+            $data['item_stock'] = $value['item_stock'];
+            $data['item_price'] = $value['item_price'];
+            $data['item_discount'] = $value['item_discount'];
+            $data['item_status'] = $value['item_status'];
+            
             $result = array(true, $data);
         }
         echo json_encode($result);

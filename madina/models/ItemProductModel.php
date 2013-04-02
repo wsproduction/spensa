@@ -8,22 +8,31 @@ class ItemProductModel extends Model {
 
     public function selectAllProduct($param) {
         $prepare = ' SELECT 
-                        product.product_id,
+                        pruduct_item.item_id,
+                        pruduct_item.item_product,
+                        pruduct_item.item_size,
+                        pruduct_item.item_stock,
+                        pruduct_item.item_price,
+                        pruduct_item.item_discount,
+                        pruduct_item.item_status,
+                        pruduct_item.item_entry,
+                        pruduct_item.item_entry_update,
                         product.product_type,
                         product.product_code,
                         product.product_name,
                         product.product_description,
-                        product.product_status,
-                        product.product_entry,
-                        product.product_entry_update,
                         product_type.type_code,
                         product_type.type_name,
-                        product_category.category_name
+                        product_category.category_name,
+                        product_size.size_description
                       FROM
-                        product
+                        pruduct_item
+                        INNER JOIN product ON (pruduct_item.item_product = product.product_id)
                         INNER JOIN product_type_aggregation ON (product.product_type = product_type_aggregation.aggregation_id)
                         INNER JOIN product_type ON (product_type_aggregation.aggregation_type = product_type.type_id)
-                        INNER JOIN product_category ON (product_type_aggregation.aggregation_category = product_category.category_id)';
+                        INNER JOIN product_category ON (product_type_aggregation.aggregation_category = product_category.category_id)
+                        INNER JOIN product_size_aggregation ON (pruduct_item.item_size = product_size_aggregation.aggregation_id)
+                        INNER JOIN product_size ON (product_size_aggregation.aggregation_size = product_size.size_id)';
 
         if ($param['query'])
             $prepare .= ' WHERE ' . $param['qtype'] . ' LIKE "%' . $param['query'] . '%" ';
@@ -73,49 +82,80 @@ class ItemProductModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function saveProduct($param) {
+    public function selectSizeByCategory($category_id) {
+        $sth = $this->db->prepare('
+                             SELECT 
+                                product_size_aggregation.aggregation_id,
+                                product_size.size_description
+                              FROM
+                                product_size_aggregation
+                                INNER JOIN product_size ON (product_size_aggregation.aggregation_size = product_size.size_id)
+                              WHERE
+                                product_size_aggregation.aggregation_category = :category_id');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':category_id', $category_id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectProductByType($type_id) {
+        $sth = $this->db->prepare('
+                             SELECT 
+                                product.product_id,
+                                product_type.type_code,
+                                product.product_code,
+                                product.product_name
+                              FROM
+                                product
+                                INNER JOIN product_type_aggregation ON (product.product_type = product_type_aggregation.aggregation_id)
+                                INNER JOIN product_type ON (product_type_aggregation.aggregation_type = product_type.type_id) 
+                              WHERE
+                                product.product_type = :type_id');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':type_id', $type_id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function saveItemProduct($param) {
         $sth = $this->db->prepare('
                     INSERT INTO
-                        product(
-                        product_id,
-                        product_type,
-                        product_code,
-                        product_name,
-                        product_description,
-                        product_status,
-                        product_entry,
-                        product_entry_update)
+                        pruduct_item(
+                        item_id,
+                        item_product,
+                        item_size,
+                        item_stock,
+                        item_price,
+                        item_discount,
+                        item_status,
+                        item_entry,
+                        item_entry_update)
                       VALUES(
                         (SELECT IF (
-                            (SELECT COUNT(e.product_id) FROM product AS e 
-                                    WHERE e.product_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),"%")) 
-                                    ORDER BY e.product_id DESC LIMIT 1
+                            (SELECT COUNT(e.item_id) FROM pruduct_item AS e 
+                                    WHERE e.item_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m"),"%")) 
+                                    ORDER BY e.item_id DESC LIMIT 1
                             ) > 0,
-                            (SELECT ( e.product_id + 1 ) FROM product AS e 
-                                    WHERE e.product_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),"%")) 
-                                    ORDER BY e.product_id DESC LIMIT 1),
-                            (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y"),"0001")))
+                            (SELECT ( e.item_id + 1 ) FROM pruduct_item AS e 
+                                    WHERE e.item_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m"),"%")) 
+                                    ORDER BY e.item_id DESC LIMIT 1),
+                            (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m"),"0001")))
                         ),
-                        :type,
-                        (SELECT IF (
-                            (SELECT COUNT(e.product_type) FROM product AS e 
-                                    WHERE e.product_type  = :type
-                                    ORDER BY e.product_type DESC LIMIT 1
-                            ) > 0,
-                            (SELECT ( e.product_code + 1 ) FROM product AS e 
-                                    WHERE  e.product_type  = :type 
-                                    ORDER BY e.product_code DESC LIMIT 1), "001")
-                        ),
-                        :name,
-                        :description,
+                        :product,
+                        :size,
+                        :stock,
+                        :price,
+                        :discount,
                         :status,
                         NOW(),
                         NOW())
                 ');
 
-        $sth->bindValue(':type', $param['type']);
-        $sth->bindValue(':name', $param['name']);
-        $sth->bindValue(':description', $param['description']);
+        $sth->bindValue(':product', $param['product']);
+        $sth->bindValue(':size', $param['size']);
+        $sth->bindValue(':stock', $param['stock']);
+        $sth->bindValue(':price', $param['price']);
+        $sth->bindValue(':discount', $param['discount']);
         $sth->bindValue(':status', $param['status']);
 
         return $sth->execute();
@@ -125,46 +165,64 @@ class ItemProductModel extends Model {
 
         $sth = $this->db->prepare('
                       UPDATE
-                        product
+                        pruduct_item
                       SET
-                        product_name = :name,
-                        product_description = :description,
-                        product_status = :status,
-                        product_entry_update = NOW()
+                        item_stock = :stock,
+                        item_price = :price,
+                        item_discount = :discount,
+                        item_status = :status,
+                        item_entry_update = NOW()
                       WHERE
-                        product.product_id = :id
+                        pruduct_item.item_id = :id
                 ');
 
-        $sth->bindValue(':name', $param['name']);
-        $sth->bindValue(':description', $param['description']);
+        $sth->bindValue(':stock', $param['stock']);
+        $sth->bindValue(':price', $param['price']);
+        $sth->bindValue(':discount', $param['discount']);
         $sth->bindValue(':status', $param['status']);
         $sth->bindValue(':id', $param['id']);
-        
+
         return $sth->execute();
     }
 
-    public function deleteProduct($param) {
-        $sth = $this->db->prepare('DELETE FROM product WHERE product.product_id IN (' . $param['id'] . ')');
+    public function deleteItemProduct($param) {
+        $sth = $this->db->prepare('DELETE FROM pruduct_item WHERE pruduct_item.item_id IN (' . $param['id'] . ')');
         return $sth->execute();
     }
 
-    public function selectProductById($product_id) {
+    public function selectItemProductById($product_id) {
         $sth = $this->db->prepare('
                              SELECT 
-                                product.product_id,
+                                pruduct_item.item_id,
+                                pruduct_item.item_product,
+                                pruduct_item.item_size,
+                                pruduct_item.item_stock,
+                                pruduct_item.item_price,
+                                pruduct_item.item_discount,
+                                pruduct_item.item_status,
+                                pruduct_item.item_entry,
+                                pruduct_item.item_entry_update,
                                 product.product_type,
                                 product.product_code,
                                 product.product_name,
                                 product.product_description,
-                                product.product_status,
-                                product.product_entry,
-                                product.product_entry_update,
-                                product_type_aggregation.aggregation_category
+                                product_type.type_code,
+                                product_type.type_name,
+                                product_category.category_name,
+                                product_size.size_description,
+                                product_category.category_id,
+                                product.product_id,
+                                product_size_aggregation.aggregation_id AS size_id
                               FROM
-                                product
+                                pruduct_item
+                                INNER JOIN product ON (pruduct_item.item_product = product.product_id)
                                 INNER JOIN product_type_aggregation ON (product.product_type = product_type_aggregation.aggregation_id)
+                                INNER JOIN product_type ON (product_type_aggregation.aggregation_type = product_type.type_id)
+                                INNER JOIN product_category ON (product_type_aggregation.aggregation_category = product_category.category_id)
+                                INNER JOIN product_size_aggregation ON (pruduct_item.item_size = product_size_aggregation.aggregation_id)
+                                INNER JOIN product_size ON (product_size_aggregation.aggregation_size = product_size.size_id)
                               WHERE
-                                product.product_id = :product_id');
+                                pruduct_item.item_id = :product_id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':product_id', $product_id);
         $sth->execute();

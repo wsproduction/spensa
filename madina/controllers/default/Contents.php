@@ -175,6 +175,14 @@ class Contents extends Controller {
         return number_format($number, 0, ',', '.');
     }
 
+    public function dayList() {
+        $day = array();
+        for ($idx = 1; $idx <= 31; $idx++) {
+            $day[$idx] = $idx;
+        }
+        return $day;
+    }
+
     public function monthList() {
         $list = array(1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember');
         return $list;
