@@ -8,7 +8,7 @@ class OrdersModel extends Model {
 
     public function selectAllProduct($param) {
         $prepare = ' SELECT 
-                        orders.oder_id,
+                        orders.order_id,
                         orders.order_note,
                         orders.order_status,
                         orders.order_entry,
@@ -20,13 +20,19 @@ class OrdersModel extends Model {
                         orders.shipping_date,
                         orders.shipping_courier,
                         orders.shipping_cost,
-                        reseller.reseller_id,
-                        reseller.reseller_name,
+                        members.members_id,
+                        members.members_name,
                         payment_type.payment_type_name,
-                        payment_type.payment_type_id
+                        payment_type.payment_type_id,
+                        ( SELECT 
+                            AVG(order_detail.detail_price - (order_detail.detail_price * (order_detail.detail_discount/100))) AS a
+                          FROM
+                            order_detail
+                          WHERE
+                            order_detail.detail_order = orders.order_id ) AS invoice
                       FROM
                         orders
-                        INNER JOIN reseller ON (orders.order_reseller = reseller.reseller_id)
+                        INNER JOIN members ON (orders.order_members = members.members_id)
                         INNER JOIN payment_type ON (orders.payment_type = payment_type.payment_type_id)';
 
         if ($param['query'])
@@ -39,40 +45,6 @@ class OrdersModel extends Model {
 
         $sth = $this->db->prepare($prepare);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-
-    public function selectAllCategory() {
-        $sth = $this->db->prepare('
-                            SELECT 
-                                product_category.category_id,
-                                product_category.category_name,
-                                product_category.category_status,
-                                product_category.category_entry,
-                                product_category.category_entry_update
-                              FROM
-                                product_category
-                              WHERE
-                                product_category.category_status = 1');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-
-    public function selectTypeByCategory($category_id) {
-        $sth = $this->db->prepare('
-                             SELECT 
-                                product_type_aggregation.aggregation_id,
-                                product_type.type_code,
-                                product_type.type_name
-                              FROM
-                                product_type_aggregation
-                                INNER JOIN product_type ON (product_type_aggregation.aggregation_type = product_type.type_id)
-                              WHERE
-                                product_type_aggregation.aggregation_category = :category_id');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->bindValue(':category_id', $category_id);
         $sth->execute();
         return $sth->fetchAll();
     }
@@ -152,7 +124,40 @@ class OrdersModel extends Model {
         return $sth->execute();
     }
 
-    public function selectProductById($product_id) {
+    public function selectAllCart($param) {
+        $sth = $this->db->prepare('
+                             SELECT 
+                                order_detail.detail_id,
+                                order_detail.detail_order,
+                                order_detail.detail_item,
+                                order_detail.detail_price,
+                                order_detail.detail_discount,
+                                order_detail.detail_order_quantity,
+                                order_detail.detail_ready_quantity,
+                                order_detail.detail_status,
+                                product.product_code,
+                                product.product_name,
+                                product.product_description,
+                                product_size.size_description,
+                                product_type.type_code,
+                                product_type.type_name
+                              FROM
+                                order_detail
+                                INNER JOIN pruduct_item ON (order_detail.detail_item = pruduct_item.item_id)
+                                INNER JOIN product ON (pruduct_item.item_product = product.product_id)
+                                INNER JOIN product_type_aggregation ON (product.product_type = product_type_aggregation.aggregation_id)
+                                INNER JOIN product_size_aggregation ON (pruduct_item.item_size = product_size_aggregation.aggregation_id)
+                                INNER JOIN product_size ON (product_size_aggregation.aggregation_size = product_size.size_id)
+                                INNER JOIN product_type ON (product_type_aggregation.aggregation_type = product_type.type_id)
+                              WHERE
+                                order_detail.detail_order = :order_id');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':order_id', $param['order_id']);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectOrderById($id) {
         $sth = $this->db->prepare('
                              SELECT 
                                 product.product_id,
@@ -168,34 +173,10 @@ class OrdersModel extends Model {
                                 product
                                 INNER JOIN product_type_aggregation ON (product.product_type = product_type_aggregation.aggregation_id)
                               WHERE
-                                product.product_id = :product_id');
+                                product.product_id = :id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->bindValue(':product_id', $product_id);
+        $sth->bindValue(':id', $id);
         $sth->execute();
         return $sth->fetchAll();
     }
-
-    public function selectAllCart($product_id) {
-        $sth = $this->db->prepare('
-                             SELECT 
-                                product.product_id,
-                                product.product_type,
-                                product.product_code,
-                                product.product_name,
-                                product.product_description,
-                                product.product_status,
-                                product.product_entry,
-                                product.product_entry_update,
-                                product_type_aggregation.aggregation_category
-                              FROM
-                                product
-                                INNER JOIN product_type_aggregation ON (product.product_type = product_type_aggregation.aggregation_id)
-                              WHERE
-                                product.product_id = :product_id');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->bindValue(':product_id', $product_id);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-
 }

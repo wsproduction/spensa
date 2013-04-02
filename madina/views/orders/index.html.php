@@ -167,7 +167,7 @@
             dataType : 'xml',
             colModel : [ {
                     display : 'ID', 
-                    name : 'oder_id', 
+                    name : 'order_id', 
                     width : 60,
                     sortable : true,
                     align : 'center'
@@ -314,14 +314,14 @@
                 } ],
             searchitems : [ {
                     display : 'ID',
-                    name : 'oder_id',
+                    name : 'order_id',
                     isdefault : true
                 }, {
                     display : 'Nama Produk',
                     name : 'product_name'            
                 } ],
             nowrap : false,
-            sortname : "oder_id",
+            sortname : "order_id",
             sortorder : "asc",
             usepager : true,
             title : $('#list').attr('title'),
@@ -358,7 +358,21 @@
         });
         
         $('.cart').live('click', function() {
-            $('#box-cart').dialog('open');
+            
+            $(this).loadingProgress('start');
+            
+            var url = $(this).attr('href');
+            $.post(url, function(o){
+                $(this).loadingProgress('stop');
+                
+                if (o[0]) {
+                    /*data = o[1];
+                    set_form(data);*/
+                    $('#box-cart').dialog('open');              
+                } else {
+                    alert('Maaf, data tidak ditemukan.');
+                }
+            }, 'json');  
             return false;
         });
         

@@ -8,24 +8,24 @@ class ResellerModel extends Model {
 
     public function selectAllReseller($param) {
         $prepare = ' SELECT 
-                        reseller.reseller_id,
-                        reseller.reseller_name,
-                        reseller.reseller_nickname,
-                        reseller.reseller_gender,
-                        reseller.reseller_address,
-                        reseller.reseller_birthplace,
-                        reseller.reseller_birthdate,
-                        reseller.reseller_last_education,
-                        reseller.reseller_jobs,
-                        reseller.reseller_phone_number,
-                        reseller.reseller_email,
-                        reseller.reseller_facebook,
-                        reseller.reseller_twitter,
-                        reseller.reseller_status,
-                        reseller.reseller_entry,
-                        reseller.reseller_entry_update
+                        members.members_id,
+                        members.members_name,
+                        members.members_nickname,
+                        members.members_gender,
+                        members.members_address,
+                        members.members_birthplace,
+                        members.members_birthdate,
+                        members.members_last_education,
+                        members.members_jobs,
+                        members.members_phone_number,
+                        members.members_email,
+                        members.members_facebook,
+                        members.members_twitter,
+                        members.members_status,
+                        members.members_entry,
+                        members.members_entry_update
                       FROM
-                        reseller';
+                        members';
 
         if ($param['query'])
             $prepare .= ' WHERE ' . $param['qtype'] . ' LIKE "%' . $param['query'] . '%" ';
@@ -41,69 +41,35 @@ class ResellerModel extends Model {
         return $sth->fetchAll();
     }
 
-    public function selectAllCategory() {
-        $sth = $this->db->prepare('
-                            SELECT 
-                                product_category.category_id,
-                                product_category.category_name,
-                                product_category.category_status,
-                                product_category.category_entry,
-                                product_category.category_entry_update
-                              FROM
-                                product_category
-                              WHERE
-                                product_category.category_status = 1');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-
-    public function selectTypeByCategory($category_id) {
-        $sth = $this->db->prepare('
-                             SELECT 
-                                product_type_aggregation.aggregation_id,
-                                product_type.type_code,
-                                product_type.type_name
-                              FROM
-                                product_type_aggregation
-                                INNER JOIN product_type ON (product_type_aggregation.aggregation_type = product_type.type_id)
-                              WHERE
-                                product_type_aggregation.aggregation_category = :category_id');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->bindValue(':category_id', $category_id);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-
     public function saveReseller($param) {
         $sth = $this->db->prepare('
                     INSERT INTO
-                        reseller(
-                        reseller_id,
-                        reseller_name,
-                        reseller_nickname,
-                        reseller_gender,
-                        reseller_address,
-                        reseller_birthplace,
-                        reseller_birthdate,
-                        reseller_last_education,
-                        reseller_jobs,
-                        reseller_phone_number,
-                        reseller_email,
-                        reseller_facebook,
-                        reseller_twitter,
-                        reseller_status,
-                        reseller_entry,
-                        reseller_entry_update)
+                        members(
+                        members_id,
+                        members_name,
+                        members_nickname,
+                        members_gender,
+                        members_address,
+                        members_birthplace,
+                        members_birthdate,
+                        members_last_education,
+                        members_jobs,
+                        members_phone_number,
+                        members_email,
+                        members_facebook,
+                        members_twitter,
+                        members_status,
+                        members_entry,
+                        members_entry_update)
                       VALUES(
                         (SELECT IF (
-                            (SELECT COUNT(e.reseller_id) FROM reseller AS e 
-                                    WHERE e.reseller_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m%d"),"%")) 
-                                    ORDER BY e.reseller_id DESC LIMIT 1
+                            (SELECT COUNT(e.members_id) FROM members AS e 
+                                    WHERE e.members_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m%d"),"%")) 
+                                    ORDER BY e.members_id DESC LIMIT 1
                             ) > 0,
-                            (SELECT ( e.reseller_id + 1 ) FROM reseller AS e 
-                                    WHERE e.reseller_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m%d"),"%")) 
-                                    ORDER BY e.reseller_id DESC LIMIT 1),
+                            (SELECT ( e.members_id + 1 ) FROM members AS e 
+                                    WHERE e.members_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m%d"),"%")) 
+                                    ORDER BY e.members_id DESC LIMIT 1),
                             (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m%d"),"0001")))
                         ),
                         :fullname,
@@ -140,28 +106,28 @@ class ResellerModel extends Model {
         return $sth->execute();
     }
 
-    public function updateProduct($param) {
+    public function updateReseller($param) {
 
         $sth = $this->db->prepare('
                       UPDATE
-                        reseller
+                        members
                       SET
-                        reseller_name = :fullname,
-                        reseller_nickname = :nickname,
-                        reseller_gender = :gender,
-                        reseller_address = :address,
-                        reseller_birthplace = :birthplace,
-                        reseller_birthdate = :birthdate,
-                        reseller_last_education = :education,
-                        reseller_jobs = :jobs,
-                        reseller_phone_number = :phone,
-                        reseller_email = :email,
-                        reseller_facebook = :facebook,
-                        reseller_twitter = :twitter,
-                        reseller_status = :status,
-                        reseller_entry_update = NOW()
+                        members_name = :fullname,
+                        members_nickname = :nickname,
+                        members_gender = :gender,
+                        members_address = :address,
+                        members_birthplace = :birthplace,
+                        members_birthdate = :birthdate,
+                        members_last_education = :education,
+                        members_jobs = :jobs,
+                        members_phone_number = :phone,
+                        members_email = :email,
+                        members_facebook = :facebook,
+                        members_twitter = :twitter,
+                        members_status = :status,
+                        members_entry_update = NOW()
                       WHERE
-                        reseller.reseller_id = :id
+                        members.members_id = :id
                 ');
 
         $sth->bindValue(':fullname', $param['fullname']);
@@ -183,35 +149,35 @@ class ResellerModel extends Model {
     }
 
     public function deleteProduct($param) {
-        $sth = $this->db->prepare('DELETE FROM reseller WHERE reseller.reseller_id IN (' . $param['id'] . ')');
+        $sth = $this->db->prepare('DELETE FROM members WHERE members.members_id IN (' . $param['id'] . ')');
         return $sth->execute();
     }
 
-    public function selectResellerById($reseller_id) {
+    public function selectResellerById($members_id) {
         $sth = $this->db->prepare('
                              SELECT 
-                                reseller.reseller_id,
-                                reseller.reseller_name,
-                                reseller.reseller_nickname,
-                                reseller.reseller_gender,
-                                reseller.reseller_address,
-                                reseller.reseller_birthplace,
-                                reseller.reseller_birthdate,
-                                reseller.reseller_last_education,
-                                reseller.reseller_jobs,
-                                reseller.reseller_phone_number,
-                                reseller.reseller_email,
-                                reseller.reseller_facebook,
-                                reseller.reseller_twitter,
-                                reseller.reseller_status,
-                                reseller.reseller_entry,
-                                reseller.reseller_entry_update
+                                members.members_id,
+                                members.members_name,
+                                members.members_nickname,
+                                members.members_gender,
+                                members.members_address,
+                                members.members_birthplace,
+                                members.members_birthdate,
+                                members.members_last_education,
+                                members.members_jobs,
+                                members.members_phone_number,
+                                members.members_email,
+                                members.members_facebook,
+                                members.members_twitter,
+                                members.members_status,
+                                members.members_entry,
+                                members.members_entry_update
                               FROM
-                                reseller
+                                members
                               WHERE
-                                reseller.reseller_id = :reseller_id');
+                                members.members_id = :members_id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->bindValue(':reseller_id', $reseller_id);
+        $sth->bindValue(':members_id', $members_id);
         $sth->execute();
         return $sth->fetchAll();
     }

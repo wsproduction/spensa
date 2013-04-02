@@ -43,8 +43,8 @@ class Orders extends Controller {
 
             foreach ($list_data AS $value) {
 
-                $link_edit = URL::link($this->content->setLink('orders/getdataorder/' . $value['oder_id']), 'Edit', false, array('class' => 'edit'));
-                $link_detail = URL::link($this->content->setLink('orders/getcart/' . $value['oder_id']), 'Keranjang Pesanan', false, array('class' => 'cart'));
+                $link_edit = URL::link($this->content->setLink('orders/getdataorder/' . $value['order_id']), 'Edit', false, array('class' => 'edit'));
+                $link_detail = URL::link($this->content->setLink('orders/getdataorder/' . $value['order_id']), 'Keranjang Pesanan', false, array('class' => 'cart'));
 
                 $status = 'Tidak Aktif';
                 if ($value['order_status'])
@@ -63,9 +63,9 @@ class Orders extends Controller {
                     $shipping_date = date('d/m/Y', strtotime($value['shipping_date']));
                 }
 
-                $xml .= "<row id='" . $value['oder_id'] . "'>";
-                $xml .= "<cell><![CDATA[" . $value['oder_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['reseller_name'] . "]]></cell>";
+                $xml .= "<row id='" . $value['order_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $value['order_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['members_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $payment_status . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['payment_type_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['payment_note'] . "]]></cell>";
@@ -74,7 +74,7 @@ class Orders extends Controller {
                 $xml .= "<cell><![CDATA[" . $shipping_date . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['shipping_courier'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[<span style='float:left;'>Rp</span><span style='float:right;'>" . $this->content->numberFormat($value['shipping_cost']) . "</span>]]></cell>";
-                $xml .= "<cell><![CDATA[<span style='float:left;'>Rp</span><span style='float:right;'>" . $this->content->numberFormat($value['shipping_cost']) . "</span>]]></cell>";
+                $xml .= "<cell><![CDATA[<span style='float:left;'>Rp</span><span style='float:right;'>" . $this->content->numberFormat($value['shipping_cost'] + $value['invoice']) . "</span>]]></cell>";
                 $xml .= "<cell><![CDATA[" . $status . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['order_note'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['order_entry'])) . "]]></cell>";
@@ -130,7 +130,7 @@ class Orders extends Controller {
 
         echo json_encode($res);
     }
-    
+
     public function readcart() {
         if ($this->method->isAjax()) {
 
@@ -141,6 +141,7 @@ class Orders extends Controller {
             $param['sortorder'] = $this->request->post('sortorder', 'desc');
             $param['query'] = $this->request->post('query', false);
             $param['qtype'] = $this->request->post('qtype', false);
+            $param['order_id'] = $this->request->post('order_id', 0);
 
             $list_data = $this->model->selectAllCart($param);
             $total = count($list_data);
@@ -175,7 +176,7 @@ class Orders extends Controller {
 
                 $xml .= "<row id='" . $value['oder_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $value['oder_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['reseller_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['members_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $payment_status . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['payment_type_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['payment_note'] . "]]></cell>";
@@ -184,7 +185,7 @@ class Orders extends Controller {
                 $xml .= "<cell><![CDATA[" . $shipping_date . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['shipping_courier'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[<span style='float:left;'>Rp</span><span style='float:right;'>" . $this->content->numberFormat($value['shipping_cost']) . "</span>]]></cell>";
-                $xml .= "<cell><![CDATA[<span style='float:left;'>Rp</span><span style='float:right;'>" . $this->content->numberFormat($value['shipping_cost']) . "</span>]]></cell>";
+                $xml .= "<cell><![CDATA[<span style='float:left;'>Rp</span><span style='float:right;'>" . $value['invoice'] . "</span>]]></cell>";
                 $xml .= "<cell><![CDATA[" . $status . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['order_note'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['order_entry'])) . "]]></cell>";
@@ -197,4 +198,31 @@ class Orders extends Controller {
             echo $xml;
         }
     }
+
+    public function getDataOrder($id) {
+        $data = array();
+        $result = array(false, $data);
+
+        $list = $this->model->selectOrderById($id);
+        if (count($list) > 0) {
+            $value = $list[0];
+
+            $option_product_type = '<option></option>';
+            foreach ($this->optionType($value['aggregation_category']) as $k => $v) {
+                $option_product_type .= '<option value="' . $k . '">' . $v . '</option>';
+            }
+
+            $data['product_id'] = $value['product_id'];
+            $data['product_type'] = $value['product_type'];
+            $data['option_product_type'] = $option_product_type;
+            $data['product_code'] = $value['product_code'];
+            $data['product_name'] = $value['product_name'];
+            $data['product_description'] = $value['product_description'];
+            $data['product_status'] = $value['product_status'];
+            $data['aggregation_category'] = $value['aggregation_category'];
+            $result = array(true, $data);
+        }
+        echo json_encode($result);
+    }
+
 }

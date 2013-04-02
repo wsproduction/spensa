@@ -218,25 +218,25 @@
         var data;
         var set_form = function(data) {
             
-            var birthdate = data['reseller_birthdate'];
+            var birthdate = data['members_birthdate'];
             var pasingdate = birthdate.split('-');
             
-            $('#id').val(data['reseller_id']);
-            $('#fullname').val(data['reseller_name']);
-            $('#nickname').val(data['reseller_nickname']);
-            $('#gender').val(data['reseller_gender']);
-            $('#address').val(data['reseller_address']);
-            $('#birthplace').val(data['reseller_birthplace']);
+            $('#id').val(data['members_id']);
+            $('#fullname').val(data['members_name']);
+            $('#nickname').val(data['members_nickname']);
+            $('#gender').val(data['members_gender']);
+            $('#address').val(data['members_address']);
+            $('#birthplace').val(data['members_birthplace']);
             $('#day').val(pasingdate[2]);
             $('#month').val(pasingdate[1]);
             $('#year').val(pasingdate[0]);
-            $('#education').val(data['reseller_last_education']);
-            $('#jobs').val(data['reseller_jobs']);
-            $('#phone').val(data['reseller_phone_number']);
-            $('#email').val(data['reseller_email']);
-            $('#facebook').val(data['reseller_facebook']);
-            $('#twitter').val(data['reseller_twitter']);
-            $('#status').val(data['reseller_status']);
+            $('#education').val(data['members_last_education']);
+            $('#jobs').val(data['members_jobs']);
+            $('#phone').val(data['members_phone_number']);
+            $('#email').val(data['members_email']);
+            $('#facebook').val(data['members_facebook']);
+            $('#twitter').val(data['members_twitter']);
+            $('#status').val(data['members_status']);
         };
         
         /* Index */
@@ -245,7 +245,7 @@
             dataType : 'xml',
             colModel : [ {
                     display : 'ID', 
-                    name : 'reseller_id', 
+                    name : 'members_id', 
                     width : 60,
                     sortable : true,
                     align : 'center'
@@ -357,7 +357,7 @@
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $('#list .trSelected td[abbr=reseller_id] div').each(function() {
+                                $('#list .trSelected td[abbr=members_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
                                 
@@ -378,14 +378,14 @@
                 } ],
             searchitems : [ {
                     display : 'ID',
-                    name : 'reseller_id',
+                    name : 'members_id',
                     isdefault : true
                 }, {
                     display : 'Nama Produk',
                     name : 'product_name'            
                 } ],
             nowrap : false,
-            sortname : "reseller_id",
+            sortname : "members_id",
             sortorder : "asc",
             usepager : true,
             title : $('#list').attr('title'),
