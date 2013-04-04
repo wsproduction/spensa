@@ -44,7 +44,7 @@ class Reseller extends Controller {
             $xml .= "<total>" . $total . "</total>";
 
             foreach ($list_data AS $value) {
-
+                
                 $link_edit = URL::link($this->content->setLink('reseller/getdatareseller/' . $value['members_id']), 'Edit', false, array('class' => 'edit'));
 
                 $gender = 'Perempuan';

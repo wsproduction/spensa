@@ -25,7 +25,7 @@ class OrdersModel extends Model {
                         payment_type.payment_type_name,
                         payment_type.payment_type_id,
                         ( SELECT 
-                            AVG(order_detail.detail_price - (order_detail.detail_price * (order_detail.detail_discount/100))) AS a
+                            AVG(order_detail.detail_order_quantity * (order_detail.detail_price - (order_detail.detail_price * (order_detail.detail_discount/100)))) AS a
                           FROM
                             order_detail
                           WHERE
@@ -160,22 +160,99 @@ class OrdersModel extends Model {
     public function selectOrderById($id) {
         $sth = $this->db->prepare('
                              SELECT 
-                                product.product_id,
-                                product.product_type,
-                                product.product_code,
-                                product.product_name,
-                                product.product_description,
-                                product.product_status,
-                                product.product_entry,
-                                product.product_entry_update,
-                                product_type_aggregation.aggregation_category
+                                orders.order_id,
+                                orders.order_note,
+                                orders.order_status,
+                                orders.order_entry,
+                                orders.order_entry_update,
+                                orders.payment_status,
+                                orders.payment_note,
+                                orders.shipping_status,
+                                orders.shipping_address,
+                                orders.shipping_date,
+                                orders.shipping_courier,
+                                orders.shipping_cost,
+                                members.members_id,
+                                members.members_name,
+                                payment_type.payment_type_name,
+                                payment_type.payment_type_id,
+                                (SELECT AVG(order_detail.detail_order_quantity * (order_detail.detail_price - (order_detail.detail_price * (order_detail.detail_discount / 100)))) AS a FROM order_detail WHERE order_detail.detail_order = orders.order_id) AS invoice
                               FROM
-                                product
-                                INNER JOIN product_type_aggregation ON (product.product_type = product_type_aggregation.aggregation_id)
+                                orders
+                                INNER JOIN members ON (orders.order_members = members.members_id)
+                                INNER JOIN payment_type ON (orders.payment_type = payment_type.payment_type_id)
                               WHERE
-                                product.product_id = :id');
+                                orders.order_id = :id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':id', $id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectMembersById($id) {
+        $sth = $this->db->prepare('
+                             SELECT 
+                                members.members_id,
+                                members.members_name,
+                                members.members_nickname,
+                                members.members_gender,
+                                members.members_address,
+                                members.members_birthplace,
+                                members.members_birthdate,
+                                members.members_last_education,
+                                members.members_jobs,
+                                members.members_phone_number,
+                                members.members_email,
+                                members.members_facebook,
+                                members.members_twitter,
+                                members.members_status,
+                                members.members_entry,
+                                members.members_entry_update
+                              FROM
+                                members
+                              WHERE
+                                members.members_status = 1 AND 
+                                members.members_id = :id');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':id', $id);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function selectAllMembers($param) {
+        $prepare = '
+                             SELECT 
+                                members.members_id,
+                                members.members_name,
+                                members.members_nickname,
+                                members.members_gender,
+                                members.members_address,
+                                members.members_birthplace,
+                                members.members_birthdate,
+                                members.members_last_education,
+                                members.members_jobs,
+                                members.members_phone_number,
+                                members.members_email,
+                                members.members_facebook,
+                                members.members_twitter,
+                                members.members_status,
+                                members.members_entry,
+                                members.members_entry_update
+                              FROM
+                                members
+                              WHERE
+                                members.members_status = 1 ';
+        
+        if ($param['query'])
+            $prepare .= ' AND ' . $param['qtype'] . ' LIKE "%' . $param['query'] . '%" ';
+
+        $prepare .= ' ORDER BY ' . $param['sortname'] . ' ' . $param['sortorder'];
+
+        $start = (($param['page'] - 1) * $param['rp']);
+        $prepare .= ' LIMIT ' . $start . ',' . $param['rp'];
+        
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
     }
