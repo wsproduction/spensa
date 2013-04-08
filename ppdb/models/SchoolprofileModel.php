@@ -9,7 +9,7 @@ class SchoolprofileModel extends Model {
     public function selectAllSchool($param) {
         $prepare = ' SELECT 
                         ppdb_school_profile.school_id,
-                        ppdb_school_profile.school_npsn,
+                        ppdb_school_profile.school_nss,
                         ppdb_school_profile.school_name,
                         ppdb_school_profile.school_address,
                         ppdb_school_profile.school_rt,
@@ -17,6 +17,7 @@ class SchoolprofileModel extends Model {
                         ppdb_school_profile.school_village,
                         ppdb_school_profile.school_subdistric,
                         ppdb_school_profile.school_distric,
+                        ppdb_school_profile.school_province,
                         ppdb_school_profile.school_zipcode,
                         ppdb_school_profile.school_phone,
                         ppdb_school_profile.school_entry,
@@ -43,7 +44,7 @@ class SchoolprofileModel extends Model {
                     INSERT INTO
                         ppdb_school_profile(
                         school_id,
-                        school_npsn,
+                        school_nss,
                         school_name,
                         school_address,
                         school_rt,
@@ -51,6 +52,7 @@ class SchoolprofileModel extends Model {
                         school_village,
                         school_subdistric,
                         school_distric,
+                        school_province,
                         school_zipcode,
                         school_phone,
                         school_entry,
@@ -66,74 +68,102 @@ class SchoolprofileModel extends Model {
                                     ORDER BY e.school_id DESC LIMIT 1),
                             (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m"),"0001")))
                         ),
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL,
+                        :nss,
+                        :school_name,
+                        :address,
+                        :rt,
+                        :rw,
+                        :village,
+                        :sub_distric,
+                        :distric,
+                        :province,
+                        :zip_code,
+                        :phone,
                         NOW(),
                         NOW())
                 ');
 
-        $sth->bindValue(':type', $param['type']);
-        $sth->bindValue(':name', $param['name']);
-        $sth->bindValue(':description', $param['description']);
-        $sth->bindValue(':status', $param['status']);
+        $sth->bindValue(':nss', $param['nss']);
+        $sth->bindValue(':school_name', $param['school_name']);
+        $sth->bindValue(':address', $param['address']);
+        $sth->bindValue(':rt', $param['rt']);
+        $sth->bindValue(':rw', $param['rw']);
+        $sth->bindValue(':village', $param['village']);
+        $sth->bindValue(':sub_distric', $param['sub_distric']);
+        $sth->bindValue(':distric', $param['distric']);
+        $sth->bindValue(':province', $param['province']);
+        $sth->bindValue(':zip_code', $param['zip_code']);
+        $sth->bindValue(':phone', $param['phone']);
 
         return $sth->execute();
     }
 
-    public function updateProduct($param) {
+    public function updateSchoolProfile($param) {
 
         $sth = $this->db->prepare('
                       UPDATE
-                        product
+                        ppdb_school_profile
                       SET
-                        product_name = :name,
-                        product_description = :description,
-                        product_status = :status,
-                        product_entry_update = NOW()
+                        school_nss = :nss,
+                        school_name = :school_name,
+                        school_address = :address,
+                        school_rt = :rt,
+                        school_rw = :rw,
+                        school_village = :village,
+                        school_subdistric = :sub_distric,
+                        school_distric = :distric,
+                        school_province = :province,
+                        school_zipcode = :zip_code,
+                        school_phone = :phone,
+                        school_entry_update = NOW()
                       WHERE
-                        product.product_id = :id
+                        ppdb_school_profile.school_id = :id
                 ');
 
-        $sth->bindValue(':name', $param['name']);
-        $sth->bindValue(':description', $param['description']);
-        $sth->bindValue(':status', $param['status']);
+        $sth->bindValue(':nss', $param['nss']);
+        $sth->bindValue(':school_name', $param['school_name']);
+        $sth->bindValue(':address', $param['address']);
+        $sth->bindValue(':rt', $param['rt']);
+        $sth->bindValue(':rw', $param['rw']);
+        $sth->bindValue(':village', $param['village']);
+        $sth->bindValue(':sub_distric', $param['sub_distric']);
+        $sth->bindValue(':distric', $param['distric']);
+        $sth->bindValue(':province', $param['province']);
+        $sth->bindValue(':zip_code', $param['zip_code']);
+        $sth->bindValue(':phone', $param['phone']);
         $sth->bindValue(':id', $param['id']);
-        
+
         return $sth->execute();
     }
 
-    public function deleteProduct($param) {
-        $sth = $this->db->prepare('DELETE FROM product WHERE product.product_id IN (' . $param['id'] . ')');
+    public function deleteSchoolProfile($param) {
+        $sth = $this->db->prepare('DELETE FROM ppdb_school_profile WHERE ppdb_school_profile.school_id IN (' . $param['id'] . ')');
         return $sth->execute();
     }
 
-    public function selectProductById($product_id) {
+    public function selectSchoolProfileById($id) {
         $sth = $this->db->prepare('
                              SELECT 
-                                product.product_id,
-                                product.product_type,
-                                product.product_code,
-                                product.product_name,
-                                product.product_description,
-                                product.product_status,
-                                product.product_entry,
-                                product.product_entry_update,
-                                product_type_aggregation.aggregation_category
+                                ppdb_school_profile.school_id,
+                                ppdb_school_profile.school_nss,
+                                ppdb_school_profile.school_name,
+                                ppdb_school_profile.school_address,
+                                ppdb_school_profile.school_rt,
+                                ppdb_school_profile.school_rw,
+                                ppdb_school_profile.school_village,
+                                ppdb_school_profile.school_subdistric,
+                                ppdb_school_profile.school_distric,
+                                ppdb_school_profile.school_province,
+                                ppdb_school_profile.school_zipcode,
+                                ppdb_school_profile.school_phone,
+                                ppdb_school_profile.school_entry,
+                                ppdb_school_profile.school_entry_update
                               FROM
-                                product
-                                INNER JOIN product_type_aggregation ON (product.product_type = product_type_aggregation.aggregation_id)
+                                ppdb_school_profile
                               WHERE
-                                product.product_id = :product_id');
+                                ppdb_school_profile.school_id = :school_id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->bindValue(':product_id', $product_id);
+        $sth->bindValue(':school_id', $id);
         $sth->execute();
         return $sth->fetchAll();
     }

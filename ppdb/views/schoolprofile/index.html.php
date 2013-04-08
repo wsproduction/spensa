@@ -14,13 +14,13 @@
     <table style="margin: 5px 0 0 0;">
         <tr>
             <td>
-                <div class="label-ina">NPSN</div>
+                <div class="label-ina">NSS</div>
             </td>
             <td>:</td>
             <td>
                 <?php
-                Form::create('text', 'npsn');
-                Form::size(10);
+                Form::create('text', 'nss');
+                Form::size(15);
                 Form::commit();
                 ?>
             </td>
@@ -50,6 +50,7 @@
                 <?php
                 Form::create('textarea', 'address');
                 Form::size(40, 2);
+                Form::validation()->requaired('*');
                 Form::commit();
                 ?>
             </td>
@@ -79,7 +80,7 @@
             <td>:</td>
             <td>
                 <?php
-                Form::create('text', 'vilage');
+                Form::create('text', 'village');
                 Form::size(30);
                 Form::commit();
                 ?>
@@ -142,6 +143,20 @@
             </td>
         </tr>
         <tr>
+            <td>
+                <div class="label-ina">Telepon</div>
+                <div class="label-eng">Telephone</div>
+            </td>
+            <td>:</td>
+            <td>
+                <?php
+                Form::create('text', 'phone');
+                Form::size(15);
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
             <td></td>
             <td></td>
             <td>
@@ -163,12 +178,17 @@
         var form_status = 'add';
         var data;
         var set_form = function(data) {
-            $('#id').val(data['product_id']);
-            $('#category').val(data['aggregation_category']);
-            $('#type').html(data['option_product_type']).val(data['product_type']);
-            $('#name').val(data['product_name']);
-            $('#description').val(data['product_description']);
-            $('#status').val(data['product_status']); 
+            $('#id').val(data['school_id']);
+            $('#nss').val(data['school_nss']);
+            $('#school_name').val(data['school_name']);
+            $('#address').val(data['school_address']);
+            $('#rt').val(data['school_rt']); 
+            $('#rw').val(data['school_rw']); 
+            $('#village').val(data['school_village']); 
+            $('#sub_distric').val(data['school_subdistric']); 
+            $('#distric').val(data['school_distric']); 
+            $('#province').val(data['school_province']); 
+            $('#zip_code').val(data['school_zipcode']); 
         };
         
         /* Index */
@@ -280,7 +300,7 @@
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $('#list .trSelected td[abbr=product_id] div').each(function() {
+                                $('#list .trSelected td[abbr=school_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
                                 
@@ -368,7 +388,7 @@
             title : '',
             closeOnEscape: false,
             autoOpen: false,
-            height: 500,
+            height: 550,
             width: 500,
             modal: false,
             resizable: false,

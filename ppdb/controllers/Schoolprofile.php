@@ -43,11 +43,11 @@ class Schoolprofile extends Controller {
 
             foreach ($list_data AS $value) {
 
-                $link_edit = URL::link($this->content->setLink('schoolprofile/getdataschoolprofile/' . $value['school_npsn']), 'Edit', false, array('class' => 'edit'));
+                $link_edit = URL::link($this->content->setLink('schoolprofile/getdataschoolprofile/' . $value['school_id']), 'Edit', false, array('class' => 'edit'));
 
                 $xml .= "<row id='" . $value['school_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $value['school_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['school_npsn'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['school_nss'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['school_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['school_address'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['school_rt'] . "]]></cell>";
@@ -70,16 +70,17 @@ class Schoolprofile extends Controller {
 
     public function create() {
         $param = array();
-        $param['npsn'] = $this->request->post('npsn');
+        $param['nss'] = $this->request->post('nss');
         $param['school_name'] = $this->request->post('school_name');
         $param['address'] = $this->request->post('address');
         $param['rt'] = $this->request->post('rt');
         $param['rw'] = $this->request->post('rw');
-        $param['vilage'] = $this->request->post('vilage');
+        $param['village'] = $this->request->post('village');
         $param['sub_distric'] = $this->request->post('sub_distric');
         $param['distric'] = $this->request->post('distric');
         $param['province'] = $this->request->post('province');
         $param['zip_code'] = $this->request->post('zip_code');
+        $param['phone'] = $this->request->post('phone');
 
         $res = array(false, $this->message->saveError());
         if ($this->model->saveSchoolProfile($param)) {
@@ -92,13 +93,20 @@ class Schoolprofile extends Controller {
     public function update() {
         $param = array();
         $param['id'] = $this->request->post('id');
-        $param['type'] = $this->request->post('type');
-        $param['name'] = $this->request->post('name');
-        $param['description'] = $this->request->post('description');
-        $param['status'] = $this->request->post('status');
+        $param['nss'] = $this->request->post('nss');
+        $param['school_name'] = $this->request->post('school_name');
+        $param['address'] = $this->request->post('address');
+        $param['rt'] = $this->request->post('rt');
+        $param['rw'] = $this->request->post('rw');
+        $param['village'] = $this->request->post('village');
+        $param['sub_distric'] = $this->request->post('sub_distric');
+        $param['distric'] = $this->request->post('distric');
+        $param['province'] = $this->request->post('province');
+        $param['zip_code'] = $this->request->post('zip_code');
+        $param['phone'] = $this->request->post('phone');
 
         $res = array(false, $this->message->saveError());
-        if ($this->model->updateProduct($param)) {
+        if ($this->model->updateSchoolProfile($param)) {
             $res = array(true, $this->message->saveSucces());
         }
 
@@ -110,7 +118,7 @@ class Schoolprofile extends Controller {
         $param['id'] = $this->request->post('id');
 
         $res = false;
-        if ($this->model->deleteProduct($param)) {
+        if ($this->model->deleteSchoolProfile($param)) {
             $res = true;
         }
 
@@ -145,27 +153,24 @@ class Schoolprofile extends Controller {
         echo json_encode($result);
     }
 
-    public function getDataProduct($id) {
+    public function getDataSchoolProfile($id) {
         $data = array();
         $result = array(false, $data);
 
-        $list = $this->model->selectProductById($id);
+        $list = $this->model->selectSchoolProfileById($id);
         if (count($list) > 0) {
             $value = $list[0];
-
-            $option_product_type = '<option></option>';
-            foreach ($this->optionType($value['aggregation_category']) as $k => $v) {
-                $option_product_type .= '<option value="' . $k . '">' . $v . '</option>';
-            }
-
-            $data['product_id'] = $value['product_id'];
-            $data['product_type'] = $value['product_type'];
-            $data['option_product_type'] = $option_product_type;
-            $data['product_code'] = $value['product_code'];
-            $data['product_name'] = $value['product_name'];
-            $data['product_description'] = $value['product_description'];
-            $data['product_status'] = $value['product_status'];
-            $data['aggregation_category'] = $value['aggregation_category'];
+            $data['school_id'] = $value['school_id'];
+            $data['school_nss'] = $value['school_nss'];
+            $data['school_name'] = $value['school_name'];
+            $data['school_address'] = $value['school_address'];
+            $data['school_rt'] = $value['school_rt'];
+            $data['school_rw'] = $value['school_rw'];
+            $data['school_village'] = $value['school_village'];
+            $data['school_subdistric'] = $value['school_subdistric'];
+            $data['school_distric'] = $value['school_distric'];
+            $data['school_province'] = $value['school_province'];
+            $data['school_zipcode'] = $value['school_zipcode'];
             $result = array(true, $data);
         }
         echo json_encode($result);

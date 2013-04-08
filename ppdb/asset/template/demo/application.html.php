@@ -38,21 +38,30 @@
             </div>
             <div id="page_menu">
                 <ul id="navigation" class="dropdown">
+                    
                     <?php 
                         if (Session::get('__login_status')) {
                             $hostname = 'http://' . Web::getHost();
                     ?>
                         <li><a href="<?php echo $hostname . '/dashboard' ?>">Beranda</a></li>
-                        <li><a href="<?php echo $hostname . '/schoolprofile' ?>">Profile Sekolah</a></li>
                         <li>
-                            <a>Data Master</a>
+                            <a>Data Sekolah Asal</a>
                             <ul style="width: 150px;">
-                                <li><a href="<?php echo $hostname . '/product' ?>">Data Produk</a></li>
-                                <li><a href="<?php echo $hostname . '/itemproduct' ?>">Data Item Produk</a></li>
+                                <li><a href="<?php echo $hostname . '/schoolprofile'; ?>">Profile Sekolah</a></li>
+                                <li><a href="<?php echo $hostname . '/schoolprofile'; ?>">Keadaan Guru</a></li>
+                                <li><a href="<?php echo $hostname . '/schoolprofile'; ?>">Keadaan Siswa</a></li>
+                                <li><a href="<?php echo $hostname . '/schoolprofile'; ?>">Nilai Ujian</a></li>
                             </ul>
                         </li>
-                        <li><a href="<?php echo $hostname . '/reseller' ?>">Data Reseller</a></li>
-                        <li><a href="<?php echo $hostname . '/orders' ?>">Data Pesanan</a></li>
+                        <li>
+                            <a>Data Pelamar</a>
+                            <ul style="width: 150px;">
+                                <li><a href="<?php echo $hostname . '/schoolprofile' ?>">Biodata</a></li>
+                                <li><a href="<?php echo $hostname . '/schoolprofile' ?>">Nilai Raport</a></li>
+                                <li><a href="<?php echo $hostname . '/schoolprofile' ?>">Prestasi</a></li>
+                                <li><a href="<?php echo $hostname . '/schoolprofile' ?>">Nilai UN</a></li>
+                            </ul>
+                        </li>
                         <li><a>Laporan</a></li>
                         <li><a href="<?php echo $hostname . '/login/stop' ?>">Logout</a></li>
                     <?php }?>

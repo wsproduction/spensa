@@ -18,27 +18,25 @@
                     type: 'column'
                 },
                 title: {
-                    text: 'GRAFIK PENJUALAN TAHUN 2013'
+                    text: 'GRAFIK PENDAFTARAN PESERTA DIDIK BARU'
                 },
                 subtitle: {
-                    text: 'PT MADINA RAIHAN MAKMUR'
+                    text: 'SMP NEGERI 1 SUBANG'
                 },
                 xAxis: {title : {
-                        text: 'Bulan'
+                        text: 'Tahun Pelajaran'
                     },
                     categories: [
-                        'Juli',
-                        'Agustus',
-                        'September',
-                        'Oktober',
-                        'November',
-                        'Desember',
-                        'Januari',
-                        'Februari',
-                        'Maret',
-                        'April',
-                        'Mei',
-                        'Juni'
+                        '2004/2005',
+                        '2005/2006',
+                        '2006/2007',
+                        '2007/2008',
+                        '2008/2009',
+                        '2009/2010',
+                        '2010/2011',
+                        '2011/2012',
+                        '2012/2013',
+                        '2013/2014'
                     ]
                 },
                 yAxis: {
@@ -70,12 +68,12 @@
                     }
                 },
                 series: [{
-                        name: 'Al-Quran Madina',
-                        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+                        name: 'Laki-Laki',
+                        data: [49.9, 71.5, 106.4, 49.9, 71.5, 106.4, 49.9, 71.5, 106.4, 106.4]
     
                     }, {
-                        name: 'Cover Al-Quran',
-                        data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+                        name: 'Perempuan',
+                        data: [83.6, 78.8, 98.5, 49.9, 71.5, 106.4, 49.9, 71.5, 106.4, 106.4]
     
                     }]
             };
