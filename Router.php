@@ -36,6 +36,9 @@ switch (Web::getSubDomain()) {
         Web::main('DIGITAL LIBRARY', 'demo', 'demo');
         Web::child('ADMIN DIGITAL LIBRARY', 'admin_digilib', 'demo');
         break;
+    case 'ppdb':
+        Web::main('PPDB SMPN 1 SUBANG', 'ppdb', 'demo');
+        break;
     default:
         Web::main('DEMO', 'demo', 'demo');
         Web::child('Admin E-Commerce Portal', 'demo', 'demo');
