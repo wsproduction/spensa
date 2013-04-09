@@ -56,13 +56,13 @@
                         <li>
                             <a>Data Pelamar</a>
                             <ul style="width: 150px;">
-                                <li><a href="<?php echo $hostname . '/schoolprofile' ?>">Biodata</a></li>
-                                <li><a href="<?php echo $hostname . '/schoolprofile' ?>">Nilai Raport</a></li>
-                                <li><a href="<?php echo $hostname . '/schoolprofile' ?>">Prestasi</a></li>
-                                <li><a href="<?php echo $hostname . '/schoolprofile' ?>">Nilai UN</a></li>
+                                <li><a href="<?php echo $hostname . '/studentprofile' ?>">Biodata</a></li>
+                                <li><a href="<?php echo $hostname . '/reportscore' ?>">Nilai Raport</a></li>
+                                <li><a href="<?php echo $hostname . '/achievement' ?>">Prestasi</a></li>
+                                <li><a href="<?php echo $hostname . '/unscore' ?>">Nilai UN</a></li>
                             </ul>
                         </li>
-                        <li><a>Laporan</a></li>
+                        <li><a href="<?php echo $hostname . '/report' ?>">Laporan</a></li>
                         <li><a href="<?php echo $hostname . '/login/stop' ?>">Logout</a></li>
                     <?php }?>
 

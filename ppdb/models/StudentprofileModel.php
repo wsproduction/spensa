@@ -1,6 +1,6 @@
 <?php
 
-class OrdersModel extends Model {
+class StudentprofileModel extends Model {
 
     public function __construct() {
         parent::__construct();

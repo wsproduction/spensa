@@ -1,6 +1,6 @@
 <?php
 
-class Orders extends Controller {
+class Studentprofile extends Controller {
 
     public function __construct() {
         parent::__construct();
@@ -12,7 +12,7 @@ class Orders extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Daftar Pesanan');
+        Web::setTitle('DAFTAR PELAMAR');
 
         $this->view->link_c = $this->content->setLink('orders/create');
         $this->view->link_r = $this->content->setLink('orders/read');
@@ -21,7 +21,9 @@ class Orders extends Controller {
         $this->view->link_cart = $this->content->setLink('orders/readcart');
         $this->view->link_members_search = $this->content->setLink('orders/readmembers');
         $this->view->link_product_search = $this->content->setLink('orders/readproduct');
-        $this->view->render('orders/index');
+        $this->view->option_date = $this->content->dayList();
+        $this->view->option_moth = $this->content->monthList();
+        $this->view->render('applicant/index');
     }
 
     public function read() {

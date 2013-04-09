@@ -204,7 +204,7 @@
                 }, {
                     display : 'NPSN', 
                     name : 'school_npsn', 
-                    width : 60,
+                    width : 100,
                     sortable : true,
                     align : 'center'
                 }, {

@@ -11,7 +11,7 @@ class Schoolprofile extends Controller {
     }
 
     public function index() {
-        Web::setTitle('Profile Sekolah');
+        Web::setTitle('PROFILE SEKOLAH');
 
         $this->view->link_c = $this->content->setLink('schoolprofile/create');
         $this->view->link_r = $this->content->setLink('schoolprofile/read');
