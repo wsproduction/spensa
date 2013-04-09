@@ -493,3 +493,38 @@ legend {
 #borrowed-cart #view-invoice iframe {
     width: 100%;
 }
+
+table.list-report-score thead tr td{
+    border-right: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: bold;
+    color: #00102d;
+    padding: 9px 6px;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+table.list-report-score thead tr td.first {
+    border-left: 1px solid #ccc;
+}
+
+table.list-report-score tbody tr{
+    border-bottom: 1px solid #ccc;
+}
+
+table.list-report-score tbody tr td {
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    text-decoration: none;
+    font-size: 11px;
+    color: #00102d;
+    padding: 6px;
+}
+
+table.list-report-score tbody tr td.first {
+    border-left: 1px solid #ccc;
+}

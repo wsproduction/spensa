@@ -14,15 +14,17 @@ class Studentprofile extends Controller {
     public function index() {
         Web::setTitle('DAFTAR PELAMAR');
 
-        $this->view->link_c = $this->content->setLink('orders/create');
-        $this->view->link_r = $this->content->setLink('orders/read');
-        $this->view->link_u = $this->content->setLink('orders/update');
-        $this->view->link_d = $this->content->setLink('orders/delete');
-        $this->view->link_cart = $this->content->setLink('orders/readcart');
-        $this->view->link_members_search = $this->content->setLink('orders/readmembers');
-        $this->view->link_product_search = $this->content->setLink('orders/readproduct');
+        $this->view->link_c = $this->content->setLink('studentprofile/create');
+        $this->view->link_r = $this->content->setLink('studentprofile/read');
+        $this->view->link_u = $this->content->setLink('studentprofile/update');
+        $this->view->link_d = $this->content->setLink('studentprofile/delete');
+        $this->view->link_filter = $this->content->setLink('studentprofile/readschoolprofile');
         $this->view->option_date = $this->content->dayList();
         $this->view->option_moth = $this->content->monthList();
+        $this->view->option_gender = $this->optionGender();
+        $this->view->option_blood_group = $this->optionBloodGroup();
+        $this->view->option_religion = $this->optionReligion();
+        $this->view->table_report_score = $this->tableReportScore();
         $this->view->render('applicant/index');
     }
 
@@ -37,7 +39,7 @@ class Studentprofile extends Controller {
             $param['query'] = $this->request->post('query', false);
             $param['qtype'] = $this->request->post('qtype', false);
 
-            $list_data = $this->model->selectAllOrders($param);
+            $list_data = $this->model->selectAllStudentProfile($param);
             $total = count($list_data);
 
             header("Content-type: text/xml");
@@ -48,43 +50,22 @@ class Studentprofile extends Controller {
 
             foreach ($list_data AS $value) {
 
-                $link_edit = URL::link($this->content->setLink('orders/getdataorder/' . $value['order_id']), 'Edit', false, array('class' => 'edit'));
-                $link_detail = URL::link($this->content->setLink('orders/getdataorder/' . $value['order_id']), 'Keranjang Pesanan', false, array('class' => 'cart'));
+                $link_edit = URL::link($this->content->setLink('studentprofile/getdatastudentprofile/' . $value['applicant_id']), 'Edit Biodata', false, array('class' => 'edit'));
+                $link_report_score = URL::link($this->content->setLink('studentprofile/getdatareportscore/' . $value['applicant_id']), 'Nilai Rapor', false, array('class' => 'report_score'));
 
-                $status = 'Tidak Aktif';
-                if ($value['order_status'])
-                    $status = 'Aktif';
-
-                $payment_status = 'Pending';
-                if ($value['payment_status'])
-                    $payment_status = 'Lunas';
-
-                $shipping_status = 'Pending';
-                if ($value['shipping_status'])
-                    $shipping_status = 'Dikirim';
-
-                $shipping_date = '';
-                if (!empty($value['shipping_date'])) {
-                    $shipping_date = date('d/m/Y', strtotime($value['shipping_date']));
-                }
-
-                $xml .= "<row id='" . $value['order_id'] . "'>";
-                $xml .= "<cell><![CDATA[" . $value['order_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_name'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $payment_status . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['payment_type_name'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['payment_note'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['shipping_address'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $shipping_status . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $shipping_date . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['shipping_courier'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[<span style='float:left;'>Rp</span><span style='float:right;'>" . $this->content->numberFormat($value['shipping_cost']) . "</span>]]></cell>";
-                $xml .= "<cell><![CDATA[<span style='float:left;'>Rp</span><span style='float:right;'>" . $this->content->numberFormat($value['shipping_cost'] + $value['invoice']) . "</span>]]></cell>";
-                $xml .= "<cell><![CDATA[" . $status . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['order_note'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['order_entry'])) . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['order_entry_update'])) . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $link_edit . ' | ' . $link_detail . "]]></cell>";
+                $xml .= "<row id='" . $value['applicant_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $value['applicant_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['applicant_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['school_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['gender_title'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['religion_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['blood_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['applicant_birthplace'] . ', ' . date('d', strtotime($value['applicant_birthdate'])) . ' ' . $this->content->monthName(date('n', strtotime($value['applicant_birthdate']))) . ' ' . date('Y', strtotime($value['applicant_birthdate'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['applicant_height'] . ' Cm / ' . $value['applicant_weight'] . ' Kg' . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['applicant_disease'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['applicant_entry'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['applicant_entry_update'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $link_edit . ' | ' . $link_report_score . "]]></cell>";
                 $xml .= "</row>";
             }
 
@@ -95,13 +76,20 @@ class Studentprofile extends Controller {
 
     public function create() {
         $param = array();
-        $param['type'] = $this->request->post('type');
-        $param['name'] = $this->request->post('name');
-        $param['description'] = $this->request->post('description');
-        $param['status'] = $this->request->post('status');
+        $param['originally_school'] = $this->request->post('originally_school');
+        $param['applicant_name'] = $this->request->post('applicant_name');
+        $param['gender'] = $this->request->post('gender');
+        $param['blood_group'] = $this->request->post('blood_group');
+        $param['religion'] = $this->request->post('religion');
+        $param['birthplace'] = $this->request->post('birthplace');
+        $param['birthdate'] = $this->request->post('year') . '-' . $this->request->post('month') . '-' . $this->request->post('day');
+        $param['height'] = $this->request->post('height');
+        $param['weight'] = $this->request->post('weight');
+        $param['suffered'] = $this->request->post('suffered');
+        $param['period'] = 1;
 
         $res = array(false, $this->message->saveError());
-        if ($this->model->saveOrders($param)) {
+        if ($this->model->saveStudentProfile($param)) {
             $res = array(true, $this->message->saveSucces());
         }
 
@@ -111,13 +99,20 @@ class Studentprofile extends Controller {
     public function update() {
         $param = array();
         $param['id'] = $this->request->post('id');
-        $param['type'] = $this->request->post('type');
-        $param['name'] = $this->request->post('name');
-        $param['description'] = $this->request->post('description');
-        $param['status'] = $this->request->post('status');
+        $param['originally_school'] = $this->request->post('originally_school');
+        $param['applicant_name'] = $this->request->post('applicant_name');
+        $param['gender'] = $this->request->post('gender');
+        $param['blood_group'] = $this->request->post('blood_group');
+        $param['religion'] = $this->request->post('religion');
+        $param['birthplace'] = $this->request->post('birthplace');
+        $param['birthdate'] = $this->request->post('year') . '-' . $this->request->post('month') . '-' . $this->request->post('day');
+        $param['height'] = $this->request->post('height');
+        $param['weight'] = $this->request->post('weight');
+        $param['suffered'] = $this->request->post('suffered');
+        $param['period'] = 1;
 
         $res = array(false, $this->message->saveError());
-        if ($this->model->updateOrders($param)) {
+        if ($this->model->updateStudentProfile($param)) {
             $res = array(true, $this->message->saveSucces());
         }
 
@@ -129,54 +124,14 @@ class Studentprofile extends Controller {
         $param['id'] = $this->request->post('id');
 
         $res = false;
-        if ($this->model->deleteOrders($param)) {
+        if ($this->model->deleteStudentProfile($param)) {
             $res = true;
         }
 
         echo json_encode($res);
     }
 
-    public function readCart() {
-        if ($this->method->isAjax()) {
-
-            $param = array();
-            $param['page'] = $this->request->post('page', 1);
-            $param['rp'] = $this->request->post('rp', 10);
-            $param['sortname'] = $this->request->post('sortname', 'question_id');
-            $param['sortorder'] = $this->request->post('sortorder', 'desc');
-            $param['query'] = $this->request->post('query', false);
-            $param['qtype'] = $this->request->post('qtype', false);
-            $param['order_id'] = $this->request->post('hide_order_id', 0);
-
-            $list_data = $this->model->selectAllCart($param);
-            $total = count($list_data);
-
-            header("Content-type: text/xml");
-            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-            $xml .= "<rows>";
-            $xml .= "<page>" . $param['page'] . "</page>";
-            $xml .= "<total>" . $total . "</total>";
-
-            foreach ($list_data AS $value) {
-                
-                $total = ($value['detail_price'] - ($value['detail_price'] * ($value['detail_discount']/100))) * $value['detail_order_quantity'];
-
-                $xml .= "<row id='" . $value['detail_id'] . "'>";
-                $xml .= "<cell><![CDATA[" . $value['detail_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['type_code'] . '-' . $value['product_code'] . ' / ' . $value['type_name'] . " <br> <b>" . $value['product_name'] . ', ' . $value['size_description'] . "</b>]]></cell>";
-                $xml .= "<cell><![CDATA[<span style='float:left;'>Rp</span><span style='float:right;'>" . $this->content->numberFormat($value['detail_price']) . "</span>]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['detail_discount'] . "%]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['detail_order_quantity'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[<span style='float:left;'>Rp</span><span style='float:right;'>" . $this->content->numberFormat($total) . "</span>]]></cell>";
-                $xml .= "</row>";
-            }
-
-            $xml .= "</rows>";
-            echo $xml;
-        }
-    }
-
-    public function readMembers() {
+    public function readSchoolProfile() {
         if ($this->method->isAjax()) {
 
             $param = array();
@@ -184,10 +139,10 @@ class Studentprofile extends Controller {
             $param['rp'] = $this->request->post('rp', 10);
             $param['sortname'] = $this->request->post('sortname');
             $param['sortorder'] = $this->request->post('sortorder', 'desc');
-            $param['query'] = $this->request->post('keyword_text', false);//$this->request->post('query', false);
-            $param['qtype'] = $this->request->post('keyword_category', false);//$this->request->post('qtype', false);
+            $param['query'] = $this->request->post('keyword_text', false);
+            $param['qtype'] = $this->request->post('keyword_category', false);
 
-            $list_data = $this->model->selectAllMembers($param);
+            $list_data = $this->model->selectAllSchoolProfile($param);
             $total = count($list_data);
 
             header("Content-type: text/xml");
@@ -197,31 +152,11 @@ class Studentprofile extends Controller {
             $xml .= "<total>" . $total . "</total>";
 
             foreach ($list_data AS $value) {
-               
-                $gender = 'Perempuan';
-                if ($value['members_gender'])
-                    $gender = 'Laki-Laki';
-                
-                $status = 'Tidak Aktif';
-                if ($value['members_status'])
-                    $status = 'Aktif';
-                
-                $contact = '<b>Facebook :</b><br>' . $value['members_facebook'];
-                $contact .= '<br><b>Twitter :</b><br>' . $value['members_twitter'];
-
-                $xml .= "<row id='" . $value['members_id'] . "'>";
-                $xml .= "<cell><![CDATA[" . $value['members_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_name'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_nickname'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $gender . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_address'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_birthplace'] . ', ' . date('d-m-Y', strtotime($value['members_birthdate'])) . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_last_education'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_jobs'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_phone_number'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_email'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $contact . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $status . "]]></cell>";
+                $xml .= "<row id='" . $value['school_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $value['school_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['school_nss'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['school_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['school_address'] . "]]></cell>";
                 $xml .= "</row>";
             }
 
@@ -230,105 +165,183 @@ class Studentprofile extends Controller {
         }
     }
 
-    public function readProduct() {
-        if ($this->method->isAjax()) {
-
-            $param = array();
-            $param['page'] = $this->request->post('page', 1);
-            $param['rp'] = $this->request->post('rp', 10);
-            $param['sortname'] = $this->request->post('sortname');
-            $param['sortorder'] = $this->request->post('sortorder', 'desc');
-            $param['query'] = $this->request->post('keyword_text', false);//$this->request->post('query', false);
-            $param['qtype'] = $this->request->post('keyword_category', false);//$this->request->post('qtype', false);
-
-            $list_data = $this->model->selectAllMembers($param);
-            $total = count($list_data);
-
-            header("Content-type: text/xml");
-            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-            $xml .= "<rows>";
-            $xml .= "<page>" . $param['page'] . "</page>";
-            $xml .= "<total>" . $total . "</total>";
-
-            foreach ($list_data AS $value) {
-               
-                $gender = 'Perempuan';
-                if ($value['members_gender'])
-                    $gender = 'Laki-Laki';
-                
-                $status = 'Tidak Aktif';
-                if ($value['members_status'])
-                    $status = 'Aktif';
-                
-                $contact = '<b>Facebook :</b><br>' . $value['members_facebook'];
-                $contact .= '<br><b>Twitter :</b><br>' . $value['members_twitter'];
-
-                $xml .= "<row id='" . $value['members_id'] . "'>";
-                $xml .= "<cell><![CDATA[" . $value['members_id'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_name'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_nickname'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $gender . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_address'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_birthplace'] . ', ' . date('d-m-Y', strtotime($value['members_birthdate'])) . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_last_education'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_jobs'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_phone_number'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $value['members_email'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $contact . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $status . "]]></cell>";
-                $xml .= "</row>";
-            }
-
-            $xml .= "</rows>";
-            echo $xml;
+    private function optionGender() {
+        $list = $this->model->selectAllGender();
+        $option = array();
+        foreach ($list as $value) {
+            $option[$value['gender_id']] = $value['gender_title'];
         }
+        return $option;
     }
 
-    public function getDataOrder($id) {
+    private function optionBloodGroup() {
+        $list = $this->model->selectAllBloodGroup();
+        $option = array();
+        foreach ($list as $value) {
+            $option[$value['blood_id']] = $value['blood_name'];
+        }
+        return $option;
+    }
+
+    private function optionReligion() {
+        $list = $this->model->selectAllReligion();
+        $option = array();
+        foreach ($list as $value) {
+            $option[$value['religion_id']] = $value['religion_name'];
+        }
+        return $option;
+    }
+
+    private function tableReportScore() {
+        $list = $this->model->selectAllSubject();
+        $table = '';
+        $idx = 1;
+
+        $option_score = array();
+        for ($i = 1; $i <= 100; $i++) {
+            $option_score[$i] = $i;
+        }
+
+        $temp_id = array();
+        foreach ($list as $value) {
+
+            $temp_id[] = $value['subject_id'];
+
+            Form::create('select', 'smt_1_' . $value['subject_id']);
+            Form::option($option_score, ' ');
+            Form::style('brc_val');
+            $select1 = Form::commit('attach');
+
+            Form::create('select', 'smt_2_' . $value['subject_id']);
+            Form::option($option_score, ' ');
+            Form::style('brc_val');
+            $select2 = Form::commit('attach');
+
+            Form::create('select', 'smt_3_' . $value['subject_id']);
+            Form::option($option_score, ' ');
+            Form::style('brc_val');
+            $select3 = Form::commit('attach');
+
+            Form::create('select', 'smt_4_' . $value['subject_id']);
+            Form::option($option_score, ' ');
+            Form::style('brc_val');
+            $select4 = Form::commit('attach');
+
+            Form::create('select', 'smt_5_' . $value['subject_id']);
+            Form::option($option_score, ' ');
+            Form::style('brc_val');
+            $select5 = Form::commit('attach');
+
+            $table .= '<tr>';
+            $table .= ' <td class="first" align="center"> ' . $idx . '. </td>';
+            $table .= ' <td> ' . $value['subject_name'] . ' </td>';
+            $table .= ' <td align="center"> ' . $select1 . ' </td>';
+            $table .= ' <td align="center"> ' . $select2 . ' </td>';
+            $table .= ' <td align="center"> ' . $select3 . ' </td>';
+            $table .= ' <td align="center"> ' . $select4 . ' </td>';
+            $table .= ' <td align="center"> ' . $select5 . ' </td>';
+            $table .= '</tr>';
+            $idx++;
+        }
+
+        $res = '<tbody temp_id="' . implode(',', $temp_id) . '">';
+        $res .= $table;
+        $res .= '</tbody>';
+
+        return $res;
+    }
+
+    public function getDataStudentProfile($id) {
         $data = array();
         $result = array(false, $data);
 
-        $list = $this->model->selectOrderById($id);
+        $list = $this->model->selectStudentProfileById($id);
         if (count($list) > 0) {
             $value = $list[0];
-
-            $data['order_id'] = $value['order_id'];
-            $data['order_note'] = $value['order_note'];
-            $data['order_status'] = $value['order_status'];
-            $data['order_entry'] = $value['order_entry'];
-            $data['order_entry_update'] = $value['order_entry_update'];
-            $data['payment_status'] = $value['payment_status'];
-            $data['payment_note'] = $value['payment_note'];
-            $data['shipping_address'] = $value['shipping_address'];
-            $data['shipping_date'] = $value['shipping_date'];
-            $data['shipping_courier'] = $value['shipping_courier'];
-            $data['shipping_cost'] = $value['shipping_cost'];
-            $data['members_id'] = $value['members_id'];
-            $data['members_name'] = $value['members_name'];
-            $data['payment_type_name'] = $value['payment_type_name'];
-            $data['payment_type_id'] = $value['payment_type_id'];
-            $data['invoice'] = $value['invoice'];
+            $data['applicant_id'] = $value['applicant_id'];
+            $data['applicant_school'] = $value['applicant_school'];
+            $data['applicant_name'] = $value['applicant_name'];
+            $data['applicant_gender'] = $value['applicant_gender'];
+            $data['applicant_blood_group'] = $value['applicant_blood_group'];
+            $data['applicant_religion'] = $value['applicant_religion'];
+            $data['applicant_birthplace'] = $value['applicant_birthplace'];
+            $data['applicant_birthdate_d'] = date('d', strtotime($value['applicant_birthdate']));
+            $data['applicant_birthdate_m'] = date('n', strtotime($value['applicant_birthdate']));
+            $data['applicant_birthdate_y'] = date('Y', strtotime($value['applicant_birthdate']));
+            $data['applicant_height'] = $value['applicant_height'];
+            $data['applicant_weight'] = $value['applicant_weight'];
+            $data['applicant_disease'] = $value['applicant_disease'];
+            $data['applicant_period'] = $value['applicant_period'];
             $result = array(true, $data);
         }
         echo json_encode($result);
     }
 
-    public function getDataMembers() {
-        
-        $members_id = $this->request->post('members_id');
-        
+    public function getDataReportScore($id) {
         $data = array();
         $result = array(false, $data);
 
-        $list = $this->model->selectMembersById($members_id);
+        $list = $this->model->selectStudentProfileById($id);
         if (count($list) > 0) {
             $value = $list[0];
-
-            $data['members_id'] = $value['members_id'];
-            $data['members_name'] = $value['members_name'];
+            $data['applicant_id'] = $value['applicant_id'];
+            $data['applicant_school'] = $value['applicant_school'];
+            $data['applicant_name'] = $value['applicant_name'];
+            $data['applicant_gender'] = $value['applicant_gender'];
+            $data['applicant_blood_group'] = $value['applicant_blood_group'];
+            $data['applicant_religion'] = $value['applicant_religion'];
+            $data['applicant_birthplace'] = $value['applicant_birthplace'];
+            $data['applicant_birthdate_d'] = date('d', strtotime($value['applicant_birthdate']));
+            $data['applicant_birthdate_m'] = date('n', strtotime($value['applicant_birthdate']));
+            $data['applicant_birthdate_y'] = date('Y', strtotime($value['applicant_birthdate']));
+            $data['applicant_height'] = $value['applicant_height'];
+            $data['applicant_weight'] = $value['applicant_weight'];
+            $data['applicant_disease'] = $value['applicant_disease'];
+            $data['applicant_period'] = $value['applicant_period'];
+            $data['gender_title'] = $value['gender_title'];
+            $data['religion_name'] = $value['religion_name'];
+            $data['blood_name'] = $value['blood_name'];
+            $data['school_name'] = $value['school_name'];
+            $data['list_report_score'] = $this->listReportScore($value['applicant_id']);
             $result = array(true, $data);
         }
         echo json_encode($result);
+    }
+
+    private function listReportScore($id) {
+        $report_score = $this->model->selectReportScore($id);
+        $list = array();
+        foreach ($report_score as $value) {
+            $list[$value['score_subject']] = array(
+                'smt1' => $value['score_c4_smt1'],
+                'smt2' => $value['score_c4_smt2'],
+                'smt3' => $value['score_c5_smt1'],
+                'smt4' => $value['score_c5_smt2'],
+                'smt5' => $value['score_c6_smt1']
+            );
+        }
+        return $list;
+    }
+
+    public function createReportScore() {
+        $applicant_id = $this->request->post('brc_id');
+        $temp_id = $this->request->post('brc_tempid');
+        $param = array();
+        foreach (explode(',', $temp_id) as $value) {
+            $param[$value]['score_applicant'] = $applicant_id;
+            $param[$value]['score_c4_smt1'] = $this->request->post('smt_1_' . $value);
+            $param[$value]['score_c4_smt2'] = $this->request->post('smt_2_' . $value);
+            $param[$value]['score_c5_smt1'] = $this->request->post('smt_3_' . $value);
+            $param[$value]['score_c5_smt2'] = $this->request->post('smt_4_' . $value);
+            $param[$value]['score_c6_smt1'] = $this->request->post('smt_5_' . $value);
+        }
+
+        $res = array(false, $this->message->saveError());
+        if ($this->model->saveReportScore($param)) {
+            $res = array(true, $this->message->saveSucces());
+        }
+
+        echo json_encode($res);
     }
 
 }

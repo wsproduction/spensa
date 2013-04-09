@@ -202,7 +202,7 @@
                     sortable : true,
                     align : 'center'
                 }, {
-                    display : 'NPSN', 
+                    display : 'NSS', 
                     name : 'school_npsn', 
                     width : 100,
                     sortable : true,

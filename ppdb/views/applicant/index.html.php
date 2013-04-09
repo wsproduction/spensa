@@ -1,5 +1,5 @@
 <div id="box-content">
-    <table id="list" title="<?php echo Web::getTitle(); ?>"link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_u="<?php echo $link_u; ?>"  link_d="<?php echo $link_d; ?>">
+    <table id="list" title="<?php echo Web::getTitle(); ?>" link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_u="<?php echo $link_u; ?>"  link_d="<?php echo $link_d; ?>">
     </table>
     <div class="cl">&nbsp;</div>
 </div>
@@ -38,7 +38,7 @@
             <td>
                 <?php
                 Form::create('text', 'applicant_name');
-                Form::size(40);
+                Form::size(50);
                 Form::validation()->requaired('*');
                 Form::commit();
                 ?>
@@ -53,6 +53,8 @@
             <td>
                 <?php
                 Form::create('select', 'gender');
+                Form::option($option_gender, ' ');
+                Form::validation()->requaired('*');
                 Form::commit();
                 ?>
             </td>
@@ -65,7 +67,9 @@
             <td>:</td>
             <td>
                 <?php
-                Form::create('select', 'gender');
+                Form::create('select', 'blood_group');
+                Form::option($option_blood_group, ' ');
+                Form::validation()->requaired('*');
                 Form::commit();
                 ?>
             </td>
@@ -79,6 +83,8 @@
             <td>
                 <?php
                 Form::create('select', 'religion');
+                Form::option($option_religion, ' ');
+                Form::validation()->requaired('*');
                 Form::commit();
                 ?>
             </td>
@@ -120,9 +126,9 @@
             <td>
                 <?php
                 Form::create('text', 'height');
-                Form::size(30);
+                Form::size(5);
                 Form::commit();
-                ?>
+                ?> Cm
             </td>
         </tr>
         <tr>
@@ -136,7 +142,7 @@
                 Form::create('text', 'weight');
                 Form::size(5);
                 Form::commit();
-                ?>
+                ?> Kg
             </td>
         </tr>
         <tr>
@@ -148,7 +154,7 @@
             <td>
                 <?php
                 Form::create('text', 'suffered');
-                Form::size(15);
+                Form::size(35);
                 Form::commit();
                 ?>
             </td>
@@ -169,7 +175,7 @@
 
 <div id="box-filter">
     <?php
-    Form::begin('frm_filter_members');
+    Form::begin('frm_filter');
     ?>
     <div style="border: 1px solid #ccc; padding: 5px;margin: 5px 0 5px 0;background-color: #f9f9f9;">
         <table>
@@ -182,18 +188,93 @@
                 <td>
                     <?php
                     Form::create('select', 'keyword_category');
-                    Form::option(array('members_name' => 'Nama Reseller'));
+                    Form::option(array('school_nss' => 'NSS', 'school_name' => 'Nama Sekolah'));
                     Form::commit();
                     Form::create('text', 'keyword_text');
                     Form::commit();
                     ?>
-                    <button class="btn_filter">Cari</button>
+                    <button id="btn_filter">Cari</button>
                 </td>
             </tr>
         </table>
     </div>
-    <table id="list-school" link_r="<?php echo $link_members_search; ?>">
+    <table id="list-filter" link_r="<?php echo $link_filter; ?>">
     </table>
+    <?php
+    Form::end();
+    ?>
+</div>
+
+<div id="box-report-score">
+    <?php
+    Form::begin('frm_report_score', 'studentprofile/createreportscore', 'post');
+    Form::create('hidden', 'brc_id');
+    Form::commit();
+    Form::create('hidden', 'brc_tempid');
+    Form::commit();
+    ?>
+
+    <div class="view_message"></div>
+    <div style="border: 1px solid #ccc; padding: 5px;margin: 5px 0 5px 0;background-color: #f9f9f9;">
+        <table>
+            <tr>
+                <td style="width: 150px;">
+                    <div class="label-ina">NISN</div>
+                </td>
+                <td>:</td>
+                <td id="brc_nisn"></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Nama Pelamar</div>
+                    <div class="label-eng">Applicant Name</div>
+                </td>
+                <td>:</td>
+                <td id="brc_name"></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Jenis Kelamin</div>
+                    <div class="label-eng">Gender</div>
+                </td>
+                <td>:</td>
+                <td id="brc_gender"></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Asal Sekolah</div>
+                    <div class="label-eng">Originally School</div>
+                </td>
+                <td>:</td>
+                <td id="brc_originally_school"></td>
+            </tr>
+        </table>
+    </div>
+    <table id="brc_list" class="list-report-score">
+        <thead>
+            <tr>
+                <td align="center" class="first" rowspan="2" >No.</td>
+                <td align="center" rowspan="2" style="width: 200px;">Mata Pelajaran</td>
+                <td align="center" colspan="2" style="border-bottom: none;">Kelas 4</td>
+                <td align="center" colspan="2" style="border-bottom: none;">Kelas 5</td>
+                <td align="center" style="border-bottom: none;">Kelas 6</td>
+            </tr>
+            <tr>
+                <td align="center" style="width: 70px;" >SMT. 1</td>
+                <td align="center" style="width: 70px;" >SMT. 2</td>
+                <td align="center" style="width: 70px;" >SMT. 1</td>
+                <td align="center" style="width: 70px;" >SMT. 2</td>
+                <td align="center" style="width: 70px;" >SMT. 1</td>
+            </tr>
+        </thead>
+        <?php echo $table_report_score; ?>
+    </table>
+
+    <div style="padding: 10px 0;">
+        <button id="btn_save_report_score">Simpan</button>
+        <button id="btn_reset_report_score">Reset</button>
+    </div>
+
     <?php
     Form::end();
     ?>
@@ -201,108 +282,96 @@
 
 <script>
     $(function() {
+        
+        var is_empty = function(val) {
+            if (val == '' || val == ' ' || val == null || typeof val == 'undefined') {
+                return true;
+            } else {
+                return false;
+            }
+        };
+        
         var y = screen.height * 0.70;
         $('#box-content').css('min-height',  y + "px");
         
         var form_status = 'add';
         var data;
-        var set_form = function(data) {
-            $('#id').val(data['product_id']);
-            $('#category').val(data['aggregation_category']);
-            $('#type').html(data['option_product_type']).val(data['product_type']);
-            $('#name').val(data['product_name']);
-            $('#description').val(data['product_description']);
-            $('#status').val(data['product_status']); 
+        var set_form = function(data) {          
+            $('#id').val(data['applicant_id']);
+            $('#originally_school').val(data['applicant_school']);
+            $('#applicant_name').val(data['applicant_name']);
+            $('#gender').val(data['applicant_gender']);
+            $('#blood_group').val(data['applicant_blood_group']); 
+            $('#religion').val(data['applicant_religion']); 
+            $('#birthplace').val(data['applicant_birthplace']); 
+            $('#day').val(data['applicant_birthdate_d']); 
+            $('#month').val(data['applicant_birthdate_m']); 
+            $('#year').val(data['applicant_birthdate_y']); 
+            $('#height').val(data['applicant_height']); 
+            $('#weight').val(data['applicant_weight']); 
+            $('#suffered').val(data['applicant_disease']); 
         };
         
-        /* Index */
+        /* INDEX */
         $('#list').flexigrid({
             url : $('#list').attr('link_r'),
             dataType : 'xml',
             colModel : [ {
                     display : 'ID', 
-                    name : 'order_id', 
+                    name : 'applicant_id', 
                     width : 60,
                     sortable : true,
                     align : 'center'
                 }, {
-                    display : 'Nama Pemesan',
+                    display : 'Nama Pelamar',
                     name : 'product_name',
                     width : 120,
                     sortable : true,
                     align : 'left'
                 },{
-                    display : 'Status Pembayaran',
-                    name : 'category_name',
-                    width : 100,
-                    sortable : true,
-                    align : 'center',
-                    hide : true
-                }, {
-                    display : 'Tipe Pembayaran',
-                    name : 'category_name',
-                    width : 85,
-                    sortable : true,
-                    align : 'center',
-                    hide : true
-                }, {
-                    display : 'Info Pembayaran',
+                    display : 'Asal Sekolah',
                     name : 'category_name',
                     width : 100,
                     sortable : true,
                     align : 'left',
                     hide : true
                 }, {
-                    display : 'Alamat Pengiriman',
+                    display : 'Jenis Kelamin',
                     name : 'category_name',
-                    width : 200,
+                    width : 65,
+                    sortable : true,
+                    align : 'center',
+                    hide : true
+                }, {
+                    display : 'Agama',
+                    name : 'category_name',
+                    width : 80,
+                    sortable : true,
+                    align : 'center',
+                    hide : true
+                }, {
+                    display : 'Golongan Darah',
+                    name : 'category_name',
+                    width : 80,
+                    sortable : true,
+                    align : 'center',
+                    hide : true
+                }, {
+                    display : 'Tempat, Tanggal Lahir',
+                    name : 'category_name',
+                    width : 150,
                     sortable : true,
                     align : 'left',
                     hide : true
-                }, {
-                    display : 'Status Pengiriman',
-                    name : 'category_name',
-                    width : 100,
-                    sortable : true,
-                    align : 'center',
-                    hide : true
-                }, {
-                    display : 'Tanggal Kirim',
+                },  {
+                    display : 'Tinggi / Berat',
                     name : 'category_name',
                     width : 80,
                     sortable : true,
                     align : 'center',
                     hide : true
                 }, {
-                    display : 'Jasa Pengiriman',
-                    name : 'category_name',
-                    width : 80,
-                    sortable : true,
-                    align : 'left',
-                    hide : true
-                }, {
-                    display : 'Biaya Pengiriman',
-                    name : 'category_name',
-                    width : 80,
-                    sortable : true,
-                    align : 'center',
-                    hide : true
-                }, {
-                    display : 'Total Tagihan',
-                    name : 'category_name',
-                    width : 100,
-                    sortable : true,
-                    align : 'center',
-                    hide : true
-                }, {
-                    display : 'Status Pesanan',
-                    name : 'category_name',
-                    width : 80,
-                    sortable : true,
-                    align : 'center',
-                    hide : true
-                }, {
-                    display : 'Catatan',
+                    display : 'Penyakit yang pernah diderita',
                     name : 'category_name',
                     width : 200,
                     sortable : true,
@@ -323,18 +392,16 @@
                 }, {
                     display : 'Option',
                     name : 'option',
-                    width : 130,
+                    width : 150,
                     align : 'center'
                 }],
             buttons : [ {
                     name : 'Tambah',
                     bclass : 'add',
                     onpress : function() {
-                        /*
                         form_status = 'add';
                         $('#frm_data .view_message').html('');
                         $('#frm_data')[0].reset();
-                         */
                         $('#box-form').dialog('open');
                         
                     }
@@ -348,7 +415,7 @@
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $('#list .trSelected td[abbr=oder_id] div').each(function() {
+                                $('#list .trSelected td[abbr=applicant_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
                                 
@@ -369,14 +436,14 @@
                 } ],
             searchitems : [ {
                     display : 'ID',
-                    name : 'order_id',
+                    name : 'applicant_id',
                     isdefault : true
                 }, {
                     display : 'Nama Produk',
                     name : 'product_name'            
                 } ],
             nowrap : false,
-            sortname : "order_id",
+            sortname : "applicant_id",
             sortorder : "asc",
             usepager : true,
             title : $('#list').attr('title'),
@@ -388,6 +455,7 @@
             height : screen.height * 0.55
         });
         
+        /* EDIT */
         $('.edit').live('click', function(){
             
             form_status = 'edit';
@@ -412,9 +480,26 @@
             return false;
         });
         
+        /* FORM DATA */
+        $('#frm_data').live('submit', function() {
+            var parent = $(this);
+            var url;
+            var data = parent.serialize();
+            
+            url = $('#list').attr('link_c');
+            if (form_status == 'edit') {
+                url = $('#list').attr('link_u');                
+            }
+            
+            $.post(url, data, function(o){
+                $('.view_message', parent).html(o[1]);
+            }, 'json');
+            return false;
+        });
+        
         $('#box-form').dialog({
             title : '',
-            closeOnEscape: false,
+            closeOnEscape: true,
             autoOpen: false,
             height: 500,
             width: 620,
@@ -423,24 +508,13 @@
             draggable: true,
             open : function() {
                 if (form_status == 'add') {
-                    $('#box-form').dialog('option', 'title', 'Tambah Data Pesanan');
+                    $('#box-form').dialog('option', 'title', 'Tambah Data Biodata Pelamar');
                 } else {
-                    $('#box-form').dialog('option', 'title', 'Edit Data Pesanan');
+                    $('#box-form').dialog('option', 'title', 'Edit Data Biodata Pelamar');
                 }
             }
-        });        
-        
-        $('#box-filter').dialog({
-            title : 'Filter Sekolah Asal',
-            closeOnEscape: false,
-            autoOpen: false,
-            height: 400,
-            width: 550,
-            modal: false,
-            resizable: false,
-            draggable: true
-        });  
-        
+        });       
+                
         $('#btn_save').button({
             icons: {
                 primary: "ui-icon-disk"
@@ -466,15 +540,214 @@
             },
             text: false
         }).live('click', function(){
-            $('#box-filter').dialog('open');/*$('#btn_search_members').attr('disabled','disabled');*/
+            $('#box-filter').dialog('open');
             return false;
         });
         
+        /* FILTER SCHOOL */
+        $('#list-filter').flexigrid({
+            url : $('#list-filter').attr('link_r'),
+            dataType : 'xml',
+            colModel : [ {
+                    display : 'ID', 
+                    name : 'school_id', 
+                    width : 50,
+                    sortable : true,
+                    align : 'center'
+                }, {
+                    display : 'NSS',
+                    name : 'product_name',
+                    width : 75,
+                    sortable : true,
+                    align : 'center'
+                }, {
+                    display : 'Nama Sekolah',
+                    name : 'product_name',
+                    width : 120,
+                    sortable : true,
+                    align : 'left'
+                },{
+                    display : 'Alamat',
+                    name : 'category_name',
+                    width : 205,
+                    sortable : true,
+                    align : 'left',
+                    hide : true
+                }],
+            buttons : [ {
+                    name : 'Insert Pilihan',
+                    bclass : 'tick',
+                    onpress : function() {
+                        var leng = $('#list-filter .trSelected').length;
+                        if (leng > 0) {
+                            var tempId;
+                            $('#list-filter .trSelected td[abbr=school_id] div').each(function() {
+                                tempId = parseInt($(this).text());
+                            });
+                            $('#originally_school').val(tempId).focus();
+                            $('#box-filter').dialog('close');
+                        } else {
+                            alert('Belum ada reseller yang dipilih.');
+                        }
+                    }
+                } ],
+            nowrap : false,
+            sortname : "school_id",
+            sortorder : "asc",
+            usepager : true,
+            title : 'DAFTAR SEKOLAH',
+            useRp : true,
+            rp : 15,
+            showTableToggleBtn : false,
+            resizable : false,
+            width : '100%',
+            height : 170, 
+            singleSelect:true,
+            onSubmit: function() {
+                var dt = $('#frm_filter').serializeArray();
+                $('#list-filter').flexOptions({
+                    params: dt
+                });
+                return true;
+            }
+        });
         
-        $('.btn_filter').button({
+        $('#box-filter').dialog({
+            title : 'Filter Sekolah Asal',
+            closeOnEscape: true,
+            autoOpen: false,
+            height: 400,
+            width: 550,
+            modal: false,
+            resizable: false,
+            draggable: true
+        });  
+        
+        $('#btn_filter').button({
             icons: {
                 primary: "ui-icon-search"
             }
+        }).live('click', function(){
+            $('#list-filter').flexOptions({
+                newp: 1
+            }).flexReload();
+            return false;
         });
+        
+        /* REPORT SCORE */
+        var data_info_box_report;
+        var set_info_box_report = function(data) {
+            $('#brc_id').val(data['applicant_id']);
+            $('#brc_nisn').text();
+            $('#brc_name').text(data['applicant_name']);
+            $('#brc_gender').text(data['gender_title']);
+            $('#brc_originally_school').text(data['school_name']);
+        };
+        
+        $('.report_score').live('click', function(){ 
+            $('#frm_data .view_message').html('');
+            $('#frm_data')[0].reset();
+            
+            $(this).loadingProgress('start');
+            
+            var url = $(this).attr('href');
+            $.post(url, function(o){
+                $(this).loadingProgress('stop');
+                
+                if (o[0]) {
+                    data_info_box_report = o[1];
+                    set_info_box_report(data_info_box_report);
+                    
+                    var temp_id = $('#brc_list').children('tbody').attr('temp_id');
+                    var id = temp_id.split(',');
+                    
+                    $('#brc_tempid').val(temp_id);
+                    
+                    var i = 0;
+                    var list_report_score = data_info_box_report['list_report_score'];
+                    $.each(id, function(){
+                        if (typeof list_report_score[id[i]] != 'undefined') {
+                            $('#frm_report_score #smt_1_' + id[i]).val(list_report_score[id[i]]['smt1']);
+                            $('#frm_report_score #smt_2_' + id[i]).val(list_report_score[id[i]]['smt2']);
+                            $('#frm_report_score #smt_3_' + id[i]).val(list_report_score[id[i]]['smt3']);
+                            $('#frm_report_score #smt_4_' + id[i]).val(list_report_score[id[i]]['smt4']);
+                            $('#frm_report_score #smt_5_' + id[i]).val(list_report_score[id[i]]['smt5']);
+                        }
+                        i++;
+                    });
+                    
+                    $('#box-report-score').dialog('open');                  
+                } else {
+                    alert('Maaf, data tidak ditemukan.');
+                }
+            }, 'json');            
+            
+            return false;
+        });
+        
+        $('#box-report-score').dialog({
+            title : 'Nilai Rapor',
+            closeOnEscape: true,
+            autoOpen: false,
+            height: 555,
+            width: 620,
+            modal: false,
+            resizable: false,
+            draggable: true
+        }); 
+        
+        $('#btn_save_report_score').button({
+            icons: {
+                primary: "ui-icon-disk"
+            }
+        });
+        
+        $('#btn_reset_report_score').button({
+            icons: {
+                primary: "ui-icon-refresh"
+            }
+        }).live('click', function(){
+            if (form_status == 'add') {
+                $('#frm_report_score')[0].reset();
+            } else {
+                set_info_box_report(data);
+            }
+            return false;
+        });
+        
+        $('#frm_report_score').live('submit', function(){
+            
+            var parent = $(this);
+            var url = parent.attr('action');
+            var data = parent.serialize();
+            
+            var error_log = 0;
+            $('#frm_report_score .brc_val').each(function() {
+                var val = $(this).val();
+                if (is_empty(val)) {
+                    error_log++;
+                    $(this).attr('style','border-color:red;');
+                } else {
+                    $(this).attr('style','border-color:#ccc;');
+                }
+            });
+            
+            if (error_log == 0) {
+                $.post(url, data, function(o){
+                    $('.view_message', parent).html(o[1]);
+                }, 'json');
+            }
+            return false;
+        });
+        
+        $('#frm_report_score .brc_val').live('change', function() {
+            var val = $(this).val();
+            if (is_empty(val)) {
+                $(this).attr('style','border-color:red;');
+            } else {
+                $(this).attr('style','border-color:#ccc;');
+            }
+        });
+        
     });
 </script>
