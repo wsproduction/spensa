@@ -7,7 +7,7 @@
 
         <?php
         /* Src::icon('madina_icon.png'); */
-        
+
         /* jQuery Plugin */
         Src::plugin()->jQuery();
         Src::plugin()->jQueryUI('flick');
@@ -38,11 +38,11 @@
             </div>
             <div id="page_menu">
                 <ul id="navigation" class="dropdown">
-                    
-                    <?php 
-                        if (Session::get('__login_status')) {
-                            $hostname = 'http://' . Web::getHost();
-                    ?>
+
+                    <?php
+                    if (Session::get('__login_status')) {
+                        $hostname = 'http://' . Web::getHost();
+                        ?>
                         <li><a href="<?php echo $hostname . '/dashboard' ?>">Beranda</a></li>
                         <li>
                             <a>Data Sekolah Asal</a>
@@ -53,18 +53,10 @@
                                 <li><a href="<?php echo $hostname . '/schoolprofile'; ?>">Nilai Ujian</a></li>
                             </ul>
                         </li>
-                        <li>
-                            <a>Data Pelamar</a>
-                            <ul style="width: 150px;">
-                                <li><a href="<?php echo $hostname . '/studentprofile' ?>">Biodata</a></li>
-                                <li><a href="<?php echo $hostname . '/reportscore' ?>">Nilai Raport</a></li>
-                                <li><a href="<?php echo $hostname . '/achievement' ?>">Prestasi</a></li>
-                                <li><a href="<?php echo $hostname . '/unscore' ?>">Nilai UN</a></li>
-                            </ul>
-                        </li>
+                        <li><a href="<?php echo $hostname . '/studentprofile' ?>">Data Pelamar</a></li>
                         <li><a href="<?php echo $hostname . '/report' ?>">Laporan</a></li>
                         <li><a href="<?php echo $hostname . '/login/stop' ?>">Logout</a></li>
-                    <?php }?>
+                    <?php } ?>
 
                 </ul>
                 <div class="cl">&nbsp;</div>

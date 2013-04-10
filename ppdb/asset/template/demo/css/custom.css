@@ -57,7 +57,7 @@ ul#navigation li ul li {
 }
 
 ul#navigation li ul li:hover {
-    
+
 }
 
 ul#navigation li ul li a {
@@ -160,7 +160,7 @@ input[type=text], input[type=password], textarea {
     border: 1px solid #ccc;
     padding: 6px;
     color: #00102d;
-    
+
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
@@ -172,7 +172,7 @@ select {
     border: 1px solid #ccc;
     padding: 5px;
     color: #00102d;
-    
+
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
@@ -359,7 +359,7 @@ legend {
     border: 1px solid #ccc;
     width: 600px;
     padding: 30px 10px;
-  
+
     -moz-box-shadow:    0px 0px 5px 1px #ccc;
     -webkit-box-shadow: 0px 0px 5px 1px #ccc;
     box-shadow:         0px 0px 5px 1px #ccc;
@@ -425,7 +425,7 @@ legend {
 }
 
 .tips-ina {
-    
+
 }
 
 .tips-eng {
@@ -527,4 +527,15 @@ table.list-report-score tbody tr td {
 
 table.list-report-score tbody tr td.first {
     border-left: 1px solid #ccc;
+}
+
+img[class=icon_grid] {
+    width:16px;
+    padding:2px;
+    border: 1px solid #ccc;
+}
+
+img[class=icon_grid]:hover {
+    background-color: #81CEF9;
+    border-color: #00acf2;
 }

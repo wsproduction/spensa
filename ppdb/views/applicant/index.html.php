@@ -280,6 +280,174 @@
     ?>
 </div>
 
+<div id="box-rank-class">
+    <?php
+    Form::begin('frm_rank_class', 'studentprofile/createrankclass', 'post');
+    Form::create('hidden', 'brank_id');
+    Form::commit();
+    ?>
+
+    <div class="view_message"></div>
+    <div style="border: 1px solid #ccc; padding: 5px;margin: 5px 0 5px 0;background-color: #f9f9f9;">
+        <table>
+            <tr>
+                <td style="width: 150px;">
+                    <div class="label-ina">NISN</div>
+                </td>
+                <td>:</td>
+                <td id="brank_nisn"></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Nama Pelamar</div>
+                    <div class="label-eng">Applicant Name</div>
+                </td>
+                <td>:</td>
+                <td id="brank_name"></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Jenis Kelamin</div>
+                    <div class="label-eng">Gender</div>
+                </td>
+                <td>:</td>
+                <td id="brank_gender"></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Asal Sekolah</div>
+                    <div class="label-eng">Originally School</div>
+                </td>
+                <td>:</td>
+                <td id="brank_originally_school"></td>
+            </tr>
+        </table>
+    </div>
+    <table id="brank_list" class="list-report-score">
+        <thead>
+            <tr>
+                <td align="center" class="first">No.</td>
+                <td align="center" style="width: 100px;">Kelas</td>
+                <td align="center" style="width: 80px;">Semester</td>
+                <td align="center">No. Peringkat di Kelas</td>
+                <td align="center">Jumlah Siswa dalam Kelas</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td align="center" rowspan="2" class="first">1.</td>
+                <td align="center" rowspan="2">Kelas 4</td>
+                <td align="center">SMT. 1</td>
+                <td align="center">
+                    <?php
+                    Form::create('text', 'brank_r_smt1');
+                    Form::properties(array('style' => 'text-align:center;'));
+                    Form::style('brank_input');
+                    Form::commit();
+                    ?>
+                </td>
+                <td align="center">
+                    <?php
+                    Form::create('text', 'brank_s_smt1');
+                    Form::properties(array('style' => 'text-align:center;'));
+                    Form::style('brank_input');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">SMT. 2</td>
+                <td align="center">
+                    <?php
+                    Form::create('text', 'brank_r_smt2');
+                    Form::properties(array('style' => 'text-align:center;'));
+                    Form::style('brank_input');
+                    Form::commit();
+                    ?>
+                </td>
+                <td align="center">
+                    <?php
+                    Form::create('text', 'brank_s_smt2');
+                    Form::properties(array('style' => 'text-align:center;'));
+                    Form::style('brank_input');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" rowspan="2" class="first">2.</td>
+                <td align="center" rowspan="2">Kelas 5</td>
+                <td align="center">SMT. 1</td>
+                <td align="center">
+                    <?php
+                    Form::create('text', 'brank_r_smt3');
+                    Form::properties(array('style' => 'text-align:center;'));
+                    Form::style('brank_input');
+                    Form::commit();
+                    ?>
+                </td>
+                <td align="center">
+                    <?php
+                    Form::create('text', 'brank_s_smt3');
+                    Form::properties(array('style' => 'text-align:center;'));
+                    Form::style('brank_input');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">SMT. 2</td>
+                <td align="center">
+                    <?php
+                    Form::create('text', 'brank_r_smt4');
+                    Form::properties(array('style' => 'text-align:center;'));
+                    Form::style('brank_input');
+                    Form::commit();
+                    ?>
+                </td>
+                <td align="center">
+                    <?php
+                    Form::create('text', 'brank_s_smt4');
+                    Form::properties(array('style' => 'text-align:center;'));
+                    Form::style('brank_input');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" rowspan="2" class="first">3.</td>
+                <td align="center" rowspan="2">Kelas 6</td>
+                <td align="center">SMT. 1</td>
+                <td align="center">
+                    <?php
+                    Form::create('text', 'brank_r_smt5');
+                    Form::properties(array('style' => 'text-align:center;'));
+                    Form::style('brank_input');
+                    Form::commit();
+                    ?>
+                </td>
+                <td align="center">
+                    <?php
+                    Form::create('text', 'brank_s_smt5');
+                    Form::properties(array('style' => 'text-align:center;'));
+                    Form::style('brank_input');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="padding: 10px 0;">
+        <button id="btn_save_rank_class">Simpan</button>
+        <button id="btn_reset_rank_class">Reset</button>
+    </div>
+
+    <?php
+    Form::end();
+    ?>
+</div>
+
 <script>
     $(function() {
         
@@ -644,9 +812,42 @@
             $('#brc_originally_school').text(data['school_name']);
         };
         
+        var set_val_report_score = function(list_report_score) {
+            var temp_id = $('#brc_list').children('tbody').attr('temp_id');
+            var id = temp_id.split(',');
+                    
+            $('#brc_tempid').val(temp_id);
+                    
+            var i = 0;
+            $.each(id, function(){
+                
+                var smt1 = '';
+                var smt2 = '';
+                var smt3 = '';
+                var smt4 = '';
+                var smt5 = '';
+                
+                if (typeof list_report_score[id[i]] != 'undefined') {
+                    smt1 = list_report_score[id[i]]['smt1'];
+                    smt2 = list_report_score[id[i]]['smt2'];
+                    smt3 = list_report_score[id[i]]['smt3'];
+                    smt4 = list_report_score[id[i]]['smt4'];
+                    smt5 = list_report_score[id[i]]['smt5'];
+                }
+                
+                $('#frm_report_score #smt_1_' + id[i]).val(smt1);
+                $('#frm_report_score #smt_2_' + id[i]).val(smt2);
+                $('#frm_report_score #smt_3_' + id[i]).val(smt3);
+                $('#frm_report_score #smt_4_' + id[i]).val(smt4);
+                $('#frm_report_score #smt_5_' + id[i]).val(smt5);
+                
+                i++;
+            });
+        };
+        
         $('.report_score').live('click', function(){ 
-            $('#frm_data .view_message').html('');
-            $('#frm_data')[0].reset();
+            $('#frm_report_score .view_message').html('');
+            $('#frm_report_score')[0].reset();
             
             $(this).loadingProgress('start');
             
@@ -657,24 +858,7 @@
                 if (o[0]) {
                     data_info_box_report = o[1];
                     set_info_box_report(data_info_box_report);
-                    
-                    var temp_id = $('#brc_list').children('tbody').attr('temp_id');
-                    var id = temp_id.split(',');
-                    
-                    $('#brc_tempid').val(temp_id);
-                    
-                    var i = 0;
-                    var list_report_score = data_info_box_report['list_report_score'];
-                    $.each(id, function(){
-                        if (typeof list_report_score[id[i]] != 'undefined') {
-                            $('#frm_report_score #smt_1_' + id[i]).val(list_report_score[id[i]]['smt1']);
-                            $('#frm_report_score #smt_2_' + id[i]).val(list_report_score[id[i]]['smt2']);
-                            $('#frm_report_score #smt_3_' + id[i]).val(list_report_score[id[i]]['smt3']);
-                            $('#frm_report_score #smt_4_' + id[i]).val(list_report_score[id[i]]['smt4']);
-                            $('#frm_report_score #smt_5_' + id[i]).val(list_report_score[id[i]]['smt5']);
-                        }
-                        i++;
-                    });
+                    set_val_report_score(data_info_box_report['list_report_score']);
                     
                     $('#box-report-score').dialog('open');                  
                 } else {
@@ -707,11 +891,9 @@
                 primary: "ui-icon-refresh"
             }
         }).live('click', function(){
-            if (form_status == 'add') {
-                $('#frm_report_score')[0].reset();
-            } else {
-                set_info_box_report(data);
-            }
+            $('#frm_report_score')[0].reset();
+            set_info_box_report(data_info_box_report);
+            set_val_report_score(data_info_box_report['list_report_score']);
             return false;
         });
         
@@ -747,6 +929,90 @@
             } else {
                 $(this).attr('style','border-color:#ccc;');
             }
+        });
+        
+        /* RANK CLASS */
+        var data_info_rank_class;
+        var set_info_rank_class = function(data) {
+            $('#brank_id').val(data['applicant_id']);
+            $('#brank_nisn').text();
+            $('#brank_name').text(data['applicant_name']);
+            $('#brank_gender').text(data['gender_title']);
+            $('#brank_originally_school').text(data['school_name']);
+        };
+        
+        $('#box-rank-class').dialog({
+            title : 'Peringkat di Kelas',
+            closeOnEscape: true,
+            autoOpen: false,
+            height: 555,
+            width: 620,
+            modal: false,
+            resizable: false,
+            draggable: true
+        }); 
+        
+        $('.rank_class').live('click', function(){ 
+            
+            $('#frm_rank_class .view_message').html('');
+            $('#frm_rank_class')[0].reset();
+            
+            $(this).loadingProgress('start');
+            
+            var url = $(this).attr('href');
+            $.post(url, function(o){
+                $(this).loadingProgress('stop');
+                if (o[0]) {  
+                    data_info_rank_class = o[1];
+                    set_info_rank_class(data_info_rank_class);
+                    $('#box-rank-class').dialog('open');                   
+                } else {
+                    alert('Maaf, data tidak ditemukan.');
+                }
+            }, 'json');  
+            return false;
+        });
+        
+        $('#btn_save_rank_class').button({
+            icons: {
+                primary: "ui-icon-disk"
+            }
+        });
+        
+        $('#btn_reset_rank_class').button({
+            icons: {
+                primary: "ui-icon-refresh"
+            }
+        }).live('click', function(){
+            $('#frm_rank_class')[0].reset();
+            set_info_box_report(data_info_box_report);
+            set_val_report_score(data_info_box_report['list_report_score']);
+            return false;
+        });
+        
+        $('#frm_rank_class').live('submit', function(){
+            
+            var parent = $(this);
+            var url = parent.attr('action');
+            var data = parent.serialize();
+            
+            var error_log = 0;
+            $('#frm_rank_class .brank_input').each(function() {
+                var val = $(this).val();
+                if (is_empty(val)) {
+                    error_log++;
+                    $(this).attr('style','border-color:red;text-align:center;');
+                } else {
+                    $(this).attr('style','border-color:#ccc;text-align:center;');
+                }
+            });
+            
+            if (error_log == 0) {
+                $.post(url, data, function(o){
+                    $('.view_message', parent).html(o[1]);
+                }, 'json');
+            }
+            return false;
         });
         
     });

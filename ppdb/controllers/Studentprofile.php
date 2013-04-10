@@ -50,8 +50,12 @@ class Studentprofile extends Controller {
 
             foreach ($list_data AS $value) {
 
-                $link_edit = URL::link($this->content->setLink('studentprofile/getdatastudentprofile/' . $value['applicant_id']), 'Edit Biodata', false, array('class' => 'edit'));
-                $link_report_score = URL::link($this->content->setLink('studentprofile/getdatareportscore/' . $value['applicant_id']), 'Nilai Rapor', false, array('class' => 'report_score'));
+                $link_edit = URL::link($this->content->setLink('studentprofile/getdatastudentprofile/' . $value['applicant_id']), Src::image('1365588894_user_info.png', null, array('class' => 'icon_grid', 'title' => 'Edit Biodata Pelamar')), false, array('class' => 'edit'));
+                $link_report_score = URL::link($this->content->setLink('studentprofile/getdatareportscore/' . $value['applicant_id']), Src::image('1365589927_report.png', null, array('class' => 'icon_grid', 'title' => 'Data Nilai Rapor')), false, array('class' => 'report_score'));
+                $link_rank_class = URL::link($this->content->setLink('studentprofile/getdatarankclass/' . $value['applicant_id']), Src::image('1365589049_rank.png', null, array('class' => 'icon_grid', 'title' => 'Peringkat di Sekolah')), false, array('class' => 'rank_class'));
+                $link_achievement = URL::link($this->content->setLink('studentprofile/getdatarankclass/' . $value['applicant_id']), Src::image('1365588680_bestseller.png', null, array('class' => 'icon_grid', 'title' => 'Data Prestasi')), false, array('class' => 'rank_class'));
+                $link_family = URL::link($this->content->setLink('studentprofile/getdatarankclass/' . $value['applicant_id']), Src::image('1365589090_agt_family.png', null, array('class' => 'icon_grid', 'title' => 'Data Keluarga Pelamar')), false, array('class' => 'rank_class'));
+                $link_education = URL::link($this->content->setLink('studentprofile/getdatarankclass/' . $value['applicant_id']), Src::image('1365589267_Student_3D.png', null, array('class' => 'icon_grid', 'title' => 'Riwayat Pindidikan Pelamar')), false, array('class' => 'rank_class'));
 
                 $xml .= "<row id='" . $value['applicant_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $value['applicant_id'] . "]]></cell>";
@@ -65,7 +69,7 @@ class Studentprofile extends Controller {
                 $xml .= "<cell><![CDATA[" . $value['applicant_disease'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['applicant_entry'])) . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($value['applicant_entry_update'])) . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $link_edit . ' | ' . $link_report_score . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $link_edit . ' ' . $link_family . ' ' . $link_education . '  ' . $link_report_score . '  ' . $link_rank_class . ' ' . $link_achievement . "]]></cell>";
                 $xml .= "</row>";
             }
 
@@ -324,6 +328,58 @@ class Studentprofile extends Controller {
     }
 
     public function createReportScore() {
+        $applicant_id = $this->request->post('brc_id');
+        $temp_id = $this->request->post('brc_tempid');
+        $param = array();
+        foreach (explode(',', $temp_id) as $value) {
+            $param[$value]['score_applicant'] = $applicant_id;
+            $param[$value]['score_c4_smt1'] = $this->request->post('smt_1_' . $value);
+            $param[$value]['score_c4_smt2'] = $this->request->post('smt_2_' . $value);
+            $param[$value]['score_c5_smt1'] = $this->request->post('smt_3_' . $value);
+            $param[$value]['score_c5_smt2'] = $this->request->post('smt_4_' . $value);
+            $param[$value]['score_c6_smt1'] = $this->request->post('smt_5_' . $value);
+        }
+
+        $res = array(false, $this->message->saveError());
+        if ($this->model->saveReportScore($param)) {
+            $res = array(true, $this->message->saveSucces());
+        }
+
+        echo json_encode($res);
+    }
+
+    public function getDataRankClass($id) {
+        $data = array();
+        $result = array(false, $data);
+
+        $list = $this->model->selectStudentProfileById($id);
+        if (count($list) > 0) {
+            $value = $list[0];
+            $data['applicant_id'] = $value['applicant_id'];
+            $data['applicant_school'] = $value['applicant_school'];
+            $data['applicant_name'] = $value['applicant_name'];
+            $data['applicant_gender'] = $value['applicant_gender'];
+            $data['applicant_blood_group'] = $value['applicant_blood_group'];
+            $data['applicant_religion'] = $value['applicant_religion'];
+            $data['applicant_birthplace'] = $value['applicant_birthplace'];
+            $data['applicant_birthdate_d'] = date('d', strtotime($value['applicant_birthdate']));
+            $data['applicant_birthdate_m'] = date('n', strtotime($value['applicant_birthdate']));
+            $data['applicant_birthdate_y'] = date('Y', strtotime($value['applicant_birthdate']));
+            $data['applicant_height'] = $value['applicant_height'];
+            $data['applicant_weight'] = $value['applicant_weight'];
+            $data['applicant_disease'] = $value['applicant_disease'];
+            $data['applicant_period'] = $value['applicant_period'];
+            $data['gender_title'] = $value['gender_title'];
+            $data['religion_name'] = $value['religion_name'];
+            $data['blood_name'] = $value['blood_name'];
+            $data['school_name'] = $value['school_name'];
+            $data['list_report_score'] = $this->listReportScore($value['applicant_id']);
+            $result = array(true, $data);
+        }
+        echo json_encode($result);
+    }
+    
+    public function createRankClass() {
         $applicant_id = $this->request->post('brc_id');
         $temp_id = $this->request->post('brc_tempid');
         $param = array();
