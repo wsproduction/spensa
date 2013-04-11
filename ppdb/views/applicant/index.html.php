@@ -941,11 +941,26 @@
             $('#brank_originally_school').text(data['school_name']);
         };
         
+        var set_form_rank_class = function(data) {
+            if (data.length != 0) {
+                $('#brank_r_smt1').val(data[1]['r_smt1']);
+                $('#brank_s_smt1').val(data[1]['s_smt1']);
+                $('#brank_r_smt2').val(data[1]['r_smt2']);
+                $('#brank_s_smt2').val(data[1]['s_smt2']);
+                $('#brank_r_smt3').val(data[1]['r_smt3']);
+                $('#brank_s_smt3').val(data[1]['s_smt3']);
+                $('#brank_r_smt4').val(data[1]['r_smt4']);
+                $('#brank_s_smt4').val(data[1]['s_smt4']);
+                $('#brank_r_smt5').val(data[1]['r_smt5']);
+                $('#brank_s_smt5').val(data[1]['s_smt5']);
+            }
+        };
+        
         $('#box-rank-class').dialog({
             title : 'Peringkat di Kelas',
             closeOnEscape: true,
             autoOpen: false,
-            height: 555,
+            height: 585,
             width: 620,
             modal: false,
             resizable: false,
@@ -965,6 +980,7 @@
                 if (o[0]) {  
                     data_info_rank_class = o[1];
                     set_info_rank_class(data_info_rank_class);
+                    set_form_rank_class(data_info_rank_class['list_rank_class']);
                     $('#box-rank-class').dialog('open');                   
                 } else {
                     alert('Maaf, data tidak ditemukan.');
@@ -985,8 +1001,8 @@
             }
         }).live('click', function(){
             $('#frm_rank_class')[0].reset();
-            set_info_box_report(data_info_box_report);
-            set_val_report_score(data_info_box_report['list_report_score']);
+            set_info_rank_class(data_info_rank_class);
+            set_form_rank_class(data_info_rank_class['list_rank_class']);
             return false;
         });
         
@@ -1013,6 +1029,15 @@
                 }, 'json');
             }
             return false;
+        });
+        
+        $('#frm_rank_class .brank_input').live('change', function() {
+            var val = $(this).val();
+            if (is_empty(val)) {
+                $(this).attr('style','border-color:red;text-align:center;');
+            } else {
+                $(this).attr('style','border-color:#ccc;text-align:center;');
+            }
         });
         
     });

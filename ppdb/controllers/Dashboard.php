@@ -14,4 +14,12 @@ class Dashboard extends Controller {
         $this->view->render('dashboard/index');
     }
 
+    public function heseweleh1() {
+        echo 'hello world aja!';
+    }
+
+    public function heseweleh($a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k) {
+        echo 'hello world : ' . $a . $b . $c . $d . $e . $f . $g . $h . $i . $j . $k;
+    }
+
 }

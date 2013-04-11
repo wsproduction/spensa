@@ -373,27 +373,49 @@ class Studentprofile extends Controller {
             $data['religion_name'] = $value['religion_name'];
             $data['blood_name'] = $value['blood_name'];
             $data['school_name'] = $value['school_name'];
-            $data['list_report_score'] = $this->listReportScore($value['applicant_id']);
+            $data['list_rank_class'] = $this->listRankScore($value['applicant_id']);
             $result = array(true, $data);
         }
         echo json_encode($result);
     }
     
-    public function createRankClass() {
-        $applicant_id = $this->request->post('brc_id');
-        $temp_id = $this->request->post('brc_tempid');
-        $param = array();
-        foreach (explode(',', $temp_id) as $value) {
-            $param[$value]['score_applicant'] = $applicant_id;
-            $param[$value]['score_c4_smt1'] = $this->request->post('smt_1_' . $value);
-            $param[$value]['score_c4_smt2'] = $this->request->post('smt_2_' . $value);
-            $param[$value]['score_c5_smt1'] = $this->request->post('smt_3_' . $value);
-            $param[$value]['score_c5_smt2'] = $this->request->post('smt_4_' . $value);
-            $param[$value]['score_c6_smt1'] = $this->request->post('smt_5_' . $value);
+    private function listRankScore($id) {
+        $report_score = $this->model->selectRankClass($id);
+        $list = array();
+        foreach ($report_score as $value) {
+            $list[1] = array(
+                'r_smt1' => $value['rank_class_r4_smt1'],
+                's_smt1' => $value['rank_class_s4_smt1'],
+                'r_smt2' => $value['rank_class_r4_smt2'],
+                's_smt2' => $value['rank_class_s4_smt2'],
+                'r_smt3' => $value['rank_class_r5_smt1'],
+                's_smt3' => $value['rank_class_s5_smt1'],
+                'r_smt4' => $value['rank_class_r5_smt2'],
+                's_smt4' => $value['rank_class_s5_smt2'],
+                'r_smt5' => $value['rank_class_r6_smt1'],
+                's_smt5' => $value['rank_class_s6_smt1']
+            );
         }
-
+        return $list;
+    }
+    
+    public function createRankClass() {
+        
+        $param = array();
+        $param['brank_id'] = $this->request->post('brank_id');
+        $param['brank_r_smt1'] = $this->request->post('brank_r_smt1');
+        $param['brank_s_smt1'] = $this->request->post('brank_s_smt1');
+        $param['brank_r_smt2'] = $this->request->post('brank_r_smt2');
+        $param['brank_s_smt2'] = $this->request->post('brank_s_smt2');
+        $param['brank_r_smt3'] = $this->request->post('brank_r_smt3');
+        $param['brank_s_smt3'] = $this->request->post('brank_s_smt3');
+        $param['brank_r_smt4'] = $this->request->post('brank_r_smt4');
+        $param['brank_s_smt4'] = $this->request->post('brank_s_smt4');
+        $param['brank_r_smt5'] = $this->request->post('brank_r_smt5');
+        $param['brank_s_smt5'] = $this->request->post('brank_s_smt5');
+        
         $res = array(false, $this->message->saveError());
-        if ($this->model->saveReportScore($param)) {
+        if ($this->model->saveRankClass($param)) {
             $res = array(true, $this->message->saveSucces());
         }
 

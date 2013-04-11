@@ -316,7 +316,7 @@ class StudentprofileModel extends Model {
                                                 score_entry_update = NOW()
                                               WHERE
                                                 ppdb_report_score.score_id = :id');
-                    
+
                     $sth->bindValue(':id', $data['score_id']);
                     $sth->bindValue(':smt1', $value['score_c4_smt1']);
                     $sth->bindValue(':smt2', $value['score_c4_smt2']);
@@ -389,6 +389,136 @@ class StudentprofileModel extends Model {
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
+    }
+
+    public function selectRankClass($id) {
+        $sth = $this->db->prepare('SELECT 
+                                        ppdb_rank_class.rank_class_id,
+                                        ppdb_rank_class.rank_class_applicant,
+                                        ppdb_rank_class.rank_class_r4_smt1,
+                                        ppdb_rank_class.rank_class_s4_smt1,
+                                        ppdb_rank_class.rank_class_r4_smt2,
+                                        ppdb_rank_class.rank_class_s4_smt2,
+                                        ppdb_rank_class.rank_class_r5_smt1,
+                                        ppdb_rank_class.rank_class_s5_smt1,
+                                        ppdb_rank_class.rank_class_r5_smt2,
+                                        ppdb_rank_class.rank_class_s5_smt2,
+                                        ppdb_rank_class.rank_class_r6_smt1,
+                                        ppdb_rank_class.rank_class_s6_smt1,
+                                        ppdb_rank_class.rank_class_entry,
+                                        ppdb_rank_class.rank_class_entry_update
+                                      FROM
+                                        ppdb_rank_class
+                                      WHERE
+                                        ppdb_rank_class.rank_class_applicant = :id
+                                  ');
+
+        $sth->bindValue(':id', $id);
+
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function saveRankClass($param) {
+
+        $this->db->beginTransaction();
+        try {
+
+            $temp_data = $this->selectRankClass($param['brank_id']);
+            if (count($temp_data) > 0) {
+                $data = $temp_data[0];
+                $sth = $this->db->prepare('  UPDATE
+                                                ppdb_rank_class
+                                              SET
+                                                rank_class_r4_smt1 = :brank_r_smt1,
+                                                rank_class_s4_smt1 = :brank_s_smt1,
+                                                rank_class_r4_smt2 = :brank_r_smt2,
+                                                rank_class_s4_smt2 = :brank_s_smt2,
+                                                rank_class_r5_smt1 = :brank_r_smt3,
+                                                rank_class_s5_smt1 = :brank_s_smt3,
+                                                rank_class_r5_smt2 = :brank_r_smt4,
+                                                rank_class_s5_smt2 = :brank_s_smt4,
+                                                rank_class_r6_smt1 = :brank_r_smt5,
+                                                rank_class_s6_smt1 = :brank_s_smt5,
+                                                rank_class_entry_update = NOW()
+                                              WHERE
+                                                ppdb_rank_class.rank_class_id = :id');
+
+                $sth->bindValue(':id', $data['rank_class_id']);
+                $sth->bindValue(':brank_r_smt1', $param['brank_r_smt1']);
+                $sth->bindValue(':brank_s_smt1', $param['brank_s_smt1']);
+                $sth->bindValue(':brank_r_smt2', $param['brank_r_smt2']);
+                $sth->bindValue(':brank_s_smt2', $param['brank_s_smt2']);
+                $sth->bindValue(':brank_r_smt3', $param['brank_r_smt3']);
+                $sth->bindValue(':brank_s_smt3', $param['brank_s_smt3']);
+                $sth->bindValue(':brank_r_smt4', $param['brank_r_smt4']);
+                $sth->bindValue(':brank_s_smt4', $param['brank_s_smt4']);
+                $sth->bindValue(':brank_r_smt5', $param['brank_r_smt5']);
+                $sth->bindValue(':brank_s_smt5', $param['brank_s_smt5']);
+                $sth->execute();
+            } else {
+                $sth = $this->db->prepare('INSERT INTO
+                                            ppdb_rank_class(
+                                            rank_class_id,
+                                            rank_class_applicant,
+                                            rank_class_r4_smt1,
+                                            rank_class_s4_smt1,
+                                            rank_class_r4_smt2,
+                                            rank_class_s4_smt2,
+                                            rank_class_r5_smt1,
+                                            rank_class_s5_smt1,
+                                            rank_class_r5_smt2,
+                                            rank_class_s5_smt2,
+                                            rank_class_r6_smt1,
+                                            rank_class_s6_smt1,
+                                            rank_class_entry,
+                                            rank_class_entry_update)
+                                          VALUES(
+                                            ( SELECT IF (
+                                                (SELECT COUNT(e.rank_class_id) FROM ppdb_rank_class AS e 
+                                                        WHERE e.rank_class_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m"),"%")) 
+                                                        ORDER BY e.rank_class_id DESC LIMIT 1
+                                                ) > 0,
+                                                (SELECT ( e.rank_class_id + 1 ) FROM ppdb_rank_class AS e 
+                                                        WHERE e.rank_class_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m"),"%")) 
+                                                        ORDER BY e.rank_class_id DESC LIMIT 1),
+                                                (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m"),"0001")))
+                                            ),
+                                            :applicant,
+                                            :brank_r_smt1,
+                                            :brank_s_smt1,
+                                            :brank_r_smt2,
+                                            :brank_s_smt2,
+                                            :brank_r_smt3,
+                                            :brank_s_smt3,
+                                            :brank_r_smt4,
+                                            :brank_s_smt4,
+                                            :brank_r_smt5,
+                                            :brank_s_smt5,
+                                            NOW(),
+                                            NOW())');
+                
+                $sth->bindValue(':applicant', $param['brank_id']);
+                $sth->bindValue(':brank_r_smt1', $param['brank_r_smt1']);
+                $sth->bindValue(':brank_s_smt1', $param['brank_s_smt1']);
+                $sth->bindValue(':brank_r_smt2', $param['brank_r_smt2']);
+                $sth->bindValue(':brank_s_smt2', $param['brank_s_smt2']);
+                $sth->bindValue(':brank_r_smt3', $param['brank_r_smt3']);
+                $sth->bindValue(':brank_s_smt3', $param['brank_s_smt3']);
+                $sth->bindValue(':brank_r_smt4', $param['brank_r_smt4']);
+                $sth->bindValue(':brank_s_smt4', $param['brank_s_smt4']);
+                $sth->bindValue(':brank_r_smt5', $param['brank_r_smt5']);
+                $sth->bindValue(':brank_s_smt5', $param['brank_s_smt5']);
+                $sth->execute();
+            }
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $exc) {
+            $this->db->rollBack();
+            return false;
+        }
     }
 
 }
