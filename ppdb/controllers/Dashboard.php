@@ -18,8 +18,8 @@ class Dashboard extends Controller {
         echo 'hello world aja!';
     }
 
-    public function heseweleh($a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k) {
-        echo 'hello world : ' . $a . $b . $c . $d . $e . $f . $g . $h . $i . $j . $k;
+    public function heseweleh($a, $b, $c, $d, $e) {
+        echo 'hello world : ' . $a . $b . $c . $d;
     }
 
 }

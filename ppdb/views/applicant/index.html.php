@@ -31,6 +31,20 @@
         </tr>
         <tr>
             <td>
+                <div class="label-ina">NISN</div>
+            </td>
+            <td>:</td>
+            <td>
+                <?php
+                Form::create('text', 'nisn');
+                Form::size(15);
+                Form::validation()->requaired('*');
+                Form::commit();
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <div class="label-ina">Nama Pelamar</div>
                 <div class="label-eng">Applicant Name</div>
             </td>
@@ -234,14 +248,6 @@
             </tr>
             <tr>
                 <td>
-                    <div class="label-ina">Jenis Kelamin</div>
-                    <div class="label-eng">Gender</div>
-                </td>
-                <td>:</td>
-                <td id="brc_gender"></td>
-            </tr>
-            <tr>
-                <td>
                     <div class="label-ina">Asal Sekolah</div>
                     <div class="label-eng">Originally School</div>
                 </td>
@@ -304,14 +310,6 @@
                 </td>
                 <td>:</td>
                 <td id="brank_name"></td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="label-ina">Jenis Kelamin</div>
-                    <div class="label-eng">Gender</div>
-                </td>
-                <td>:</td>
-                <td id="brank_gender"></td>
             </tr>
             <tr>
                 <td>
@@ -448,6 +446,145 @@
     ?>
 </div>
 
+<div id="box-family">
+    <?php
+    Form::begin('frm_family', 'studentprofile/createfamily', 'post');
+    Form::create('hidden', 'family_id');
+    Form::commit();
+    ?>
+
+    <div class="view_message"></div>
+    <div style="border: 1px solid #ccc; padding: 5px;margin: 5px 0 5px 0;background-color: #f9f9f9;">
+        <table>
+            <tr>
+                <td style="width: 150px;">
+                    <div class="label-ina">NISN</div>
+                </td>
+                <td>:</td>
+                <td id="family_nisn"></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Nama Pelamar</div>
+                    <div class="label-eng">Applicant Name</div>
+                </td>
+                <td>:</td>
+                <td id="family_name"></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Asal Sekolah</div>
+                    <div class="label-eng">Originally School</div>
+                </td>
+                <td>:</td>
+                <td id="family_originally_school"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="padding: 5px;border: 1px solid #ccc;">
+        <table style="margin: 5px 0 0 0;">
+            <tr>
+                <td style="width: 150px;">
+                    <div class="label-ina">Nama</div>
+                    <div class="label-eng">Name</div>
+                </td>
+                <td>:</td>
+                <td>
+                    <?php
+                    Form::create('text', 'familyname');
+                    Form::size(40);
+                    Form::validation()->requaired('*');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Hubungan Keluarga</div>
+                    <div class="label-eng">Family Relationship</div>
+                </td>
+                <td>:</td>
+                <td>
+                    <?php
+                    Form::create('select', 'family_relationship');
+                    Form::validation()->requaired('*');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Jenis Kelamin</div>
+                    <div class="label-eng">Gender</div>
+                </td>
+                <td>:</td>
+                <td>
+                    <?php
+                    Form::create('select', 'family_relationship');
+                    Form::validation()->requaired('*');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Pendidikan Terakhir</div>
+                    <div class="label-eng">Last Education</div>
+                </td>
+                <td>:</td>
+                <td>
+                    <?php
+                    Form::create('select', 'family_relationship');
+                    Form::validation()->requaired('*');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Pekerjaan</div>
+                    <div class="label-eng">Jobs</div>
+                </td>
+                <td>:</td>
+                <td>
+                    <?php
+                    Form::create('select', 'family_relationship');
+                    Form::validation()->requaired('*');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    <button id="btn_save_rank_class">Simpan</button>
+                    <button id="btn_reset_rank_class">Reset</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <table id="family_list" class="list-report-score">
+        <thead>
+            <tr>
+                <td align="center" class="first">No.</td>
+                <td align="center" style="width: 100px;">Kelas</td>
+                <td align="center" style="width: 80px;">Semester</td>
+                <td align="center">No. Peringkat di Kelas</td>
+                <td align="center">Jumlah Siswa dalam Kelas</td>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+    <?php
+    Form::end();
+    ?>
+</div>
+
 <script>
     $(function() {
         
@@ -468,6 +605,7 @@
             $('#id').val(data['applicant_id']);
             $('#originally_school').val(data['applicant_school']);
             $('#applicant_name').val(data['applicant_name']);
+            $('#nisn').val(data['applicant_nisn']);
             $('#gender').val(data['applicant_gender']);
             $('#blood_group').val(data['applicant_blood_group']); 
             $('#religion').val(data['applicant_religion']); 
@@ -487,7 +625,13 @@
             colModel : [ {
                     display : 'ID', 
                     name : 'applicant_id', 
-                    width : 60,
+                    width : 48,
+                    sortable : true,
+                    align : 'center'
+                }, {
+                    display : 'NISN', 
+                    name : 'applicant_nisn', 
+                    width : 70,
                     sortable : true,
                     align : 'center'
                 }, {
@@ -499,7 +643,7 @@
                 },{
                     display : 'Asal Sekolah',
                     name : 'category_name',
-                    width : 100,
+                    width : 90,
                     sortable : true,
                     align : 'left',
                     hide : true
@@ -513,7 +657,7 @@
                 }, {
                     display : 'Agama',
                     name : 'category_name',
-                    width : 80,
+                    width : 70,
                     sortable : true,
                     align : 'center',
                     hide : true
@@ -541,7 +685,7 @@
                 }, {
                     display : 'Penyakit yang pernah diderita',
                     name : 'category_name',
-                    width : 200,
+                    width : 145,
                     sortable : true,
                     align : 'left',
                     hide : true
@@ -669,7 +813,7 @@
             title : '',
             closeOnEscape: true,
             autoOpen: false,
-            height: 500,
+            height: 550,
             width: 620,
             modal: false,
             resizable: false,
@@ -806,9 +950,8 @@
         var data_info_box_report;
         var set_info_box_report = function(data) {
             $('#brc_id').val(data['applicant_id']);
-            $('#brc_nisn').text();
+            $('#brc_nisn').text(data['applicant_nisn']);
             $('#brc_name').text(data['applicant_name']);
-            $('#brc_gender').text(data['gender_title']);
             $('#brc_originally_school').text(data['school_name']);
         };
         
@@ -935,9 +1078,8 @@
         var data_info_rank_class;
         var set_info_rank_class = function(data) {
             $('#brank_id').val(data['applicant_id']);
-            $('#brank_nisn').text();
+            $('#brank_nisn').text(data['applicant_nisn']);
             $('#brank_name').text(data['applicant_name']);
-            $('#brank_gender').text(data['gender_title']);
             $('#brank_originally_school').text(data['school_name']);
         };
         
@@ -1038,6 +1180,47 @@
             } else {
                 $(this).attr('style','border-color:#ccc;text-align:center;');
             }
+        });
+        
+        /* FAMILY */
+        var data_info_family;
+        var set_info_family = function(data) {
+            $('#family_id').val(data['applicant_id']);
+            $('#family_nisn').text(data['applicant_nisn']);
+            $('#family_name').text(data['applicant_name']);
+            $('#family_originally_school').text(data['school_name']);
+        };
+        
+        $('#box-family').dialog({
+            title : 'Data Keluarga',
+            closeOnEscape: true,
+            autoOpen: false,
+            height: 585,
+            width: 620,
+            modal: false,
+            resizable: false,
+            draggable: true
+        }); 
+        
+        $('.family').live('click', function(){ 
+            
+            $('#frm_family .view_message').html('');
+            $('#frm_family')[0].reset();
+            
+            $(this).loadingProgress('start');
+            
+            var url = $(this).attr('href');
+            $.post(url, function(o){
+                $(this).loadingProgress('stop');
+                if (o[0]) {  
+                    data_info_family = o[1];
+                    set_info_family(data_info_family);
+                    $('#box-family').dialog('open');                   
+                } else {
+                    alert('Maaf, data tidak ditemukan.');
+                }
+            }, 'json');  
+            return false;
         });
         
     });

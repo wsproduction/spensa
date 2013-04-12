@@ -54,11 +54,12 @@ class Studentprofile extends Controller {
                 $link_report_score = URL::link($this->content->setLink('studentprofile/getdatareportscore/' . $value['applicant_id']), Src::image('1365589927_report.png', null, array('class' => 'icon_grid', 'title' => 'Data Nilai Rapor')), false, array('class' => 'report_score'));
                 $link_rank_class = URL::link($this->content->setLink('studentprofile/getdatarankclass/' . $value['applicant_id']), Src::image('1365589049_rank.png', null, array('class' => 'icon_grid', 'title' => 'Peringkat di Sekolah')), false, array('class' => 'rank_class'));
                 $link_achievement = URL::link($this->content->setLink('studentprofile/getdatarankclass/' . $value['applicant_id']), Src::image('1365588680_bestseller.png', null, array('class' => 'icon_grid', 'title' => 'Data Prestasi')), false, array('class' => 'rank_class'));
-                $link_family = URL::link($this->content->setLink('studentprofile/getdatarankclass/' . $value['applicant_id']), Src::image('1365589090_agt_family.png', null, array('class' => 'icon_grid', 'title' => 'Data Keluarga Pelamar')), false, array('class' => 'rank_class'));
+                $link_family = URL::link($this->content->setLink('studentprofile/getdatafamily/' . $value['applicant_id']), Src::image('1365589090_agt_family.png', null, array('class' => 'icon_grid', 'title' => 'Data Keluarga Pelamar')), false, array('class' => 'family'));
                 $link_education = URL::link($this->content->setLink('studentprofile/getdatarankclass/' . $value['applicant_id']), Src::image('1365589267_Student_3D.png', null, array('class' => 'icon_grid', 'title' => 'Riwayat Pindidikan Pelamar')), false, array('class' => 'rank_class'));
 
                 $xml .= "<row id='" . $value['applicant_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $value['applicant_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['applicant_nisn'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['applicant_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['school_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $value['gender_title'] . "]]></cell>";
@@ -81,6 +82,7 @@ class Studentprofile extends Controller {
     public function create() {
         $param = array();
         $param['originally_school'] = $this->request->post('originally_school');
+        $param['nisn'] = $this->request->post('nisn');
         $param['applicant_name'] = $this->request->post('applicant_name');
         $param['gender'] = $this->request->post('gender');
         $param['blood_group'] = $this->request->post('blood_group');
@@ -104,6 +106,7 @@ class Studentprofile extends Controller {
         $param = array();
         $param['id'] = $this->request->post('id');
         $param['originally_school'] = $this->request->post('originally_school');
+        $param['nisn'] = $this->request->post('nisn');
         $param['applicant_name'] = $this->request->post('applicant_name');
         $param['gender'] = $this->request->post('gender');
         $param['blood_group'] = $this->request->post('blood_group');
@@ -264,6 +267,7 @@ class Studentprofile extends Controller {
             $value = $list[0];
             $data['applicant_id'] = $value['applicant_id'];
             $data['applicant_school'] = $value['applicant_school'];
+            $data['applicant_nisn'] = $value['applicant_nisn'];
             $data['applicant_name'] = $value['applicant_name'];
             $data['applicant_gender'] = $value['applicant_gender'];
             $data['applicant_blood_group'] = $value['applicant_blood_group'];
@@ -291,6 +295,7 @@ class Studentprofile extends Controller {
             $data['applicant_id'] = $value['applicant_id'];
             $data['applicant_school'] = $value['applicant_school'];
             $data['applicant_name'] = $value['applicant_name'];
+            $data['applicant_nisn'] = $value['applicant_nisn'];
             $data['applicant_gender'] = $value['applicant_gender'];
             $data['applicant_blood_group'] = $value['applicant_blood_group'];
             $data['applicant_religion'] = $value['applicant_religion'];
@@ -357,6 +362,7 @@ class Studentprofile extends Controller {
             $value = $list[0];
             $data['applicant_id'] = $value['applicant_id'];
             $data['applicant_school'] = $value['applicant_school'];
+            $data['applicant_nisn'] = $value['applicant_nisn'];
             $data['applicant_name'] = $value['applicant_name'];
             $data['applicant_gender'] = $value['applicant_gender'];
             $data['applicant_blood_group'] = $value['applicant_blood_group'];
@@ -421,5 +427,36 @@ class Studentprofile extends Controller {
 
         echo json_encode($res);
     }
+    
+    public function getDataFamily($id) {
+        $data = array();
+        $result = array(false, $data);
 
+        $list = $this->model->selectStudentProfileById($id);
+        if (count($list) > 0) {
+            $value = $list[0];
+            $data['applicant_id'] = $value['applicant_id'];
+            $data['applicant_school'] = $value['applicant_school'];
+            $data['applicant_nisn'] = $value['applicant_nisn'];
+            $data['applicant_name'] = $value['applicant_name'];
+            $data['applicant_gender'] = $value['applicant_gender'];
+            $data['applicant_blood_group'] = $value['applicant_blood_group'];
+            $data['applicant_religion'] = $value['applicant_religion'];
+            $data['applicant_birthplace'] = $value['applicant_birthplace'];
+            $data['applicant_birthdate_d'] = date('d', strtotime($value['applicant_birthdate']));
+            $data['applicant_birthdate_m'] = date('n', strtotime($value['applicant_birthdate']));
+            $data['applicant_birthdate_y'] = date('Y', strtotime($value['applicant_birthdate']));
+            $data['applicant_height'] = $value['applicant_height'];
+            $data['applicant_weight'] = $value['applicant_weight'];
+            $data['applicant_disease'] = $value['applicant_disease'];
+            $data['applicant_period'] = $value['applicant_period'];
+            $data['gender_title'] = $value['gender_title'];
+            $data['religion_name'] = $value['religion_name'];
+            $data['blood_name'] = $value['blood_name'];
+            $data['school_name'] = $value['school_name'];
+            $data['list_rank_class'] = $this->listRankScore($value['applicant_id']);
+            $result = array(true, $data);
+        }
+        echo json_encode($result);
+    }
 }

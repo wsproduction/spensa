@@ -10,6 +10,7 @@ class StudentprofileModel extends Model {
         $prepare = ' SELECT 
                         ppdb_applicant_profile.applicant_id,
                         ppdb_applicant_profile.applicant_school,
+                        ppdb_applicant_profile.applicant_nisn,
                         ppdb_applicant_profile.applicant_name,
                         ppdb_applicant_profile.applicant_gender,
                         ppdb_applicant_profile.applicant_religion,
@@ -53,6 +54,7 @@ class StudentprofileModel extends Model {
                         ppdb_applicant_profile(
                         applicant_id,
                         applicant_school,
+                        applicant_nisn,
                         applicant_name,
                         applicant_gender,
                         applicant_religion,
@@ -77,6 +79,7 @@ class StudentprofileModel extends Model {
                             (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m"),"0001")))
                         ),
                         :originally_school,
+                        :nisn,
                         :applicant_name,
                         :gender,
                         :religion,
@@ -92,6 +95,7 @@ class StudentprofileModel extends Model {
                 ');
 
         $sth->bindValue(':originally_school', $param['originally_school']);
+        $sth->bindValue(':nisn', $param['nisn']);
         $sth->bindValue(':applicant_name', $param['applicant_name']);
         $sth->bindValue(':gender', $param['gender']);
         $sth->bindValue(':religion', $param['religion']);
@@ -113,6 +117,7 @@ class StudentprofileModel extends Model {
                         ppdb_applicant_profile
                       SET
                         applicant_school = :originally_school,
+                        applicant_nisn = :nisn,
                         applicant_name = :applicant_name,
                         applicant_gender = :gender,
                         applicant_religion = :religion,
@@ -130,6 +135,7 @@ class StudentprofileModel extends Model {
 
         $sth->bindValue(':originally_school', $param['originally_school']);
         $sth->bindValue(':applicant_name', $param['applicant_name']);
+        $sth->bindValue(':nisn', $param['nisn']);
         $sth->bindValue(':gender', $param['gender']);
         $sth->bindValue(':religion', $param['religion']);
         $sth->bindValue(':blood_group', $param['blood_group']);
@@ -224,6 +230,7 @@ class StudentprofileModel extends Model {
         $sth = $this->db->prepare('SELECT 
                                     ppdb_applicant_profile.applicant_id,
                                     ppdb_applicant_profile.applicant_school,
+                                    ppdb_applicant_profile.applicant_nisn,
                                     ppdb_applicant_profile.applicant_name,
                                     ppdb_applicant_profile.applicant_gender,
                                     ppdb_applicant_profile.applicant_religion,
