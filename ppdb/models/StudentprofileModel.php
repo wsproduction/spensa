@@ -226,6 +226,44 @@ class StudentprofileModel extends Model {
         return $sth->fetchAll();
     }
 
+    public function selectAllFamilyRelationship() {
+        $sth = $this->db->prepare('SELECT 
+                                    public_family_relationship.family_relationship_id,
+                                    public_family_relationship.family_relationship_title
+                                  FROM
+                                    public_family_relationship');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectAllEducation() {
+        $sth = $this->db->prepare('SELECT 
+                                    public_education.education_id,
+                                    public_education.educaition_title,
+                                    public_education.education_entry,
+                                    public_education.education_entry_update
+                                  FROM
+                                    public_education');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectAllJobs() {
+        $sth = $this->db->prepare('SELECT 
+                                    public_job.job_id,
+                                    public_job.job_name,
+                                    public_job.job_isother,
+                                    public_job.job_entry,
+                                    public_job.job_entry_update
+                                  FROM
+                                    public_job');
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
     public function selectStudentProfileById($id) {
         $sth = $this->db->prepare('SELECT 
                                     ppdb_applicant_profile.applicant_id,
@@ -527,5 +565,87 @@ class StudentprofileModel extends Model {
             return false;
         }
     }
+    
+    public function selectAllFamily($param) {
+        $prepare = ' SELECT 
+                       ppdb_school_profile.school_id,
+                       ppdb_school_profile.school_nss,
+                       ppdb_school_profile.school_name,
+                       ppdb_school_profile.school_address,
+                       ppdb_school_profile.school_rt,
+                       ppdb_school_profile.school_rw,
+                       ppdb_school_profile.school_village,
+                       ppdb_school_profile.school_subdistric,
+                       ppdb_school_profile.school_distric,
+                       ppdb_school_profile.school_province,
+                       ppdb_school_profile.school_zipcode,
+                       ppdb_school_profile.school_phone,
+                       ppdb_school_profile.school_entry,
+                       ppdb_school_profile.school_entry_update
+                     FROM
+                       ppdb_school_profile ';
 
+        if ($param['query'])
+            $prepare .= ' WHERE ' . $param['qtype'] . ' LIKE "%' . $param['query'] . '%" ';
+
+        $prepare .= ' ORDER BY ' . $param['sortname'] . ' ' . $param['sortorder'];
+
+        $start = (($param['page'] - 1) * $param['rp']);
+        $prepare .= ' LIMIT ' . $start . ',' . $param['rp'];
+
+        $sth = $this->db->prepare($prepare);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
+    public function saveFamily($param) {
+        $sth = $this->db->prepare('
+                    INSERT INTO
+                        ppdb_appilicant_family(
+                        family_id,
+                        family_applicant,
+                        family_relationship,
+                        family_name,
+                        family_gender,
+                        family_lasteducation,
+                        family_jobs,
+                        family_phone,
+                        family_is_parent,
+                        family_entry,
+                        family_entry_update)
+                      VALUES(
+                        ( SELECT IF (
+                                                (SELECT COUNT(e.rank_class_id) FROM ppdb_rank_class AS e 
+                                                        WHERE e.rank_class_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m"),"%")) 
+                                                        ORDER BY e.rank_class_id DESC LIMIT 1
+                                                ) > 0,
+                                                (SELECT ( e.rank_class_id + 1 ) FROM ppdb_rank_class AS e 
+                                                        WHERE e.rank_class_id  LIKE  (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m"),"%")) 
+                                                        ORDER BY e.rank_class_id DESC LIMIT 1),
+                                                (SELECT CONCAT(DATE_FORMAT(CURDATE(),"%y%m"),"0001")))
+                                            ),
+                        :family_applicant_id,
+                        :family_relationship,
+                        :familyname,
+                        :family_gender,
+                        :family_lasteducation,
+                        :family_jobs,
+                        :family_phone,
+                        :family_isparent,
+                        NOW(),
+                        NOW())
+                ');
+
+        $sth->bindValue(':family_applicant_id', $param['family_applicant_id']);
+        $sth->bindValue(':family_relationship', $param['family_relationship']);
+        $sth->bindValue(':familyname', $param['familyname']);
+        $sth->bindValue(':family_gender', $param['family_gender']);
+        $sth->bindValue(':family_lasteducation', $param['family_lasteducation']);
+        $sth->bindValue(':family_jobs', $param['family_jobs']);
+        $sth->bindValue(':family_phone', $param['family_phone']);
+        $sth->bindValue(':family_isparent', $param['family_isparent']);
+
+        return $sth->execute();
+    }
 }

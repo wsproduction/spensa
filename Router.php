@@ -39,6 +39,9 @@ switch (Web::getSubDomain()) {
     case 'ppdb':
         Web::main('PPDB SMPN 1 SUBANG', 'ppdb', 'demo');
         break;
+    case 'wedding':
+        Web::main('Official Website Pernikahan Warman Suganda & Finny Alviani', 'wedding', 'demo');
+        break;
     default:
         Web::main('DEMO', 'demo', 'demo');
         Web::child('Admin E-Commerce Portal', 'demo', 'demo');

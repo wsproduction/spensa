@@ -448,12 +448,12 @@
 
 <div id="box-family">
     <?php
-    Form::begin('frm_family', 'studentprofile/createfamily', 'post');
-    Form::create('hidden', 'family_id');
+    Form::begin('frm_temp_family');
+    Form::create('hidden', 'temp_applicant_id');
     Form::commit();
+    Form::end();
     ?>
 
-    <div class="view_message"></div>
     <div style="border: 1px solid #ccc; padding: 5px;margin: 5px 0 5px 0;background-color: #f9f9f9;">
         <table>
             <tr>
@@ -482,7 +482,15 @@
         </table>
     </div>
 
-    <div style="padding: 5px;border: 1px solid #ccc;">
+    <?php
+    Form::begin('frm_family', 'studentprofile/createfamily', 'post');
+    Form::create('hidden', 'family_id');
+    Form::commit();
+    Form::create('hidden', 'family_applicant_id');
+    Form::commit();
+    ?>
+    <div class="view_message"></div>
+    <div style="padding: 5px;border: 1px solid #ccc;margin-bottom: 5px">
         <table style="margin: 5px 0 0 0;">
             <tr>
                 <td style="width: 150px;">
@@ -508,6 +516,7 @@
                 <td>
                     <?php
                     Form::create('select', 'family_relationship');
+                    Form::option($option_family_relationship, ' ');
                     Form::validation()->requaired('*');
                     Form::commit();
                     ?>
@@ -521,7 +530,8 @@
                 <td>:</td>
                 <td>
                     <?php
-                    Form::create('select', 'family_relationship');
+                    Form::create('select', 'family_gender');
+                    Form::option($option_gender, ' ');
                     Form::validation()->requaired('*');
                     Form::commit();
                     ?>
@@ -535,7 +545,8 @@
                 <td>:</td>
                 <td>
                     <?php
-                    Form::create('select', 'family_relationship');
+                    Form::create('select', 'family_lasteducation');
+                    Form::option($option_education, ' ');
                     Form::validation()->requaired('*');
                     Form::commit();
                     ?>
@@ -549,7 +560,36 @@
                 <td>:</td>
                 <td>
                     <?php
-                    Form::create('select', 'family_relationship');
+                    Form::create('select', 'family_jobs');
+                    Form::option($option_jobs, ' ');
+                    Form::validation()->requaired('*');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Telepon</div>
+                    <div class="label-eng">Pnone</div>
+                </td>
+                <td>:</td>
+                <td>
+                    <?php
+                    Form::create('text', 'family_jobs');
+                    Form::validation()->requaired('*');
+                    Form::commit();
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="label-ina">Keterangan</div>
+                    <div class="label-eng">Description</div>
+                </td>
+                <td>:</td>
+                <td>
+                    <?php
+                    Form::create('text', 'family_jobs');
                     Form::validation()->requaired('*');
                     Form::commit();
                     ?>
@@ -565,24 +605,13 @@
             </tr>
         </table>
     </div>
-
-    <table id="family_list" class="list-report-score">
-        <thead>
-            <tr>
-                <td align="center" class="first">No.</td>
-                <td align="center" style="width: 100px;">Kelas</td>
-                <td align="center" style="width: 80px;">Semester</td>
-                <td align="center">No. Peringkat di Kelas</td>
-                <td align="center">Jumlah Siswa dalam Kelas</td>
-            </tr>
-        </thead>
-        <tbody>
-
-        </tbody>
-    </table>
     <?php
     Form::end();
     ?>
+
+    <table id="family-list" link_r="<?php echo $link_family; ?>">
+    </table>
+
 </div>
 
 <script>
@@ -1185,7 +1214,8 @@
         /* FAMILY */
         var data_info_family;
         var set_info_family = function(data) {
-            $('#family_id').val(data['applicant_id']);
+            $('#temp_applicant_id').val(data['applicant_id']);
+            $('#family_applicant_id').val(data['applicant_id']);
             $('#family_nisn').text(data['applicant_nisn']);
             $('#family_name').text(data['applicant_name']);
             $('#family_originally_school').text(data['school_name']);
@@ -1195,7 +1225,7 @@
             title : 'Data Keluarga',
             closeOnEscape: true,
             autoOpen: false,
-            height: 585,
+            height: 750,
             width: 620,
             modal: false,
             resizable: false,
@@ -1222,6 +1252,107 @@
             }, 'json');  
             return false;
         });
+        
+        $('#family-list').flexigrid({
+            url : $('#family-list').attr('link_r'),
+            dataType : 'xml',
+            colModel : [ {
+                    display : 'ID', 
+                    name : 'school_id', 
+                    width : 50,
+                    sortable : true,
+                    align : 'center'
+                }, {
+                    display : 'Nama',
+                    name : 'product_name',
+                    width : 100,
+                    sortable : true,
+                    align : 'left'
+                }, {
+                    display : 'Hubungan Keluarga',
+                    name : 'product_name',
+                    width : 95,
+                    sortable : true,
+                    align : 'left'
+                },{
+                    display : 'Jenis Kelamin',
+                    name : 'category_name',
+                    width : 65,
+                    sortable : true,
+                    align : 'left',
+                    hide : true
+                },{
+                    display : 'Pendidikan',
+                    name : 'category_name',
+                    width : 80,
+                    sortable : true,
+                    align : 'left',
+                    hide : true
+                },{
+                    display : 'Pekerjaan',
+                    name : 'category_name',
+                    width : 80,
+                    sortable : true,
+                    align : 'left',
+                    hide : true
+                },{
+                    display : 'Keterangan',
+                    name : 'category_name',
+                    width : 80,
+                    sortable : true,
+                    align : 'left',
+                    hide : true
+                }],
+            buttons : [ {
+                    name : 'Hapus',
+                    bclass : 'delete',
+                    onpress : function() {
+                        var leng = $('#list-family .trSelected').length;
+                        if (leng > 0) {
+                            var tempId;
+                            $('#list-family .trSelected td[abbr=school_id] div').each(function() {
+                                tempId = parseInt($(this).text());
+                            });
+                            $('#originally_school').val(tempId).focus();
+                            $('#list-family').dialog('close');
+                        } else {
+                            alert('Belum ada reseller yang dipilih.');
+                        }
+                    }
+                } ],
+            nowrap : false,
+            sortname : "school_id",
+            sortorder : "asc",
+            usepager : false,
+            title : 'DAFTAR KELUARGA',
+            useRp : false,
+            rp : 15,
+            showTableToggleBtn : false,
+            resizable : false,
+            width : '100%',
+            height : 140,
+            singleSelect:true,
+            onSubmit: function() {
+                var dt = $('#frm_temp_family').serializeArray();
+                $('#list-family').flexOptions({
+                    params: dt
+                });
+                return true;
+            }
+        });
+        
+        $('#frm_family').live('submit', function(){
+            
+            var parent = $(this);
+            var url = parent.attr('action');
+            var data = parent.serialize();
+            $.post(url, data, function(o){
+                $('.view_message', parent).html(o[1]);
+            }, 'json');
+            
+            return false;
+        });
+        
         
     });
 </script>

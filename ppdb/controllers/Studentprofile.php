@@ -19,11 +19,15 @@ class Studentprofile extends Controller {
         $this->view->link_u = $this->content->setLink('studentprofile/update');
         $this->view->link_d = $this->content->setLink('studentprofile/delete');
         $this->view->link_filter = $this->content->setLink('studentprofile/readschoolprofile');
+        $this->view->link_family = $this->content->setLink('studentprofile/readfamily');
         $this->view->option_date = $this->content->dayList();
         $this->view->option_moth = $this->content->monthList();
         $this->view->option_gender = $this->optionGender();
         $this->view->option_blood_group = $this->optionBloodGroup();
         $this->view->option_religion = $this->optionReligion();
+        $this->view->option_education = $this->optionEducation();
+        $this->view->option_jobs = $this->optionJobs();
+        $this->view->option_family_relationship = $this->optionFamilyRelationschip();
         $this->view->table_report_score = $this->tableReportScore();
         $this->view->render('applicant/index');
     }
@@ -172,6 +176,40 @@ class Studentprofile extends Controller {
         }
     }
 
+    public function readFamily() {
+        if ($this->method->isAjax()) {
+
+            $param = array();
+            $param['page'] = $this->request->post('page', 1);
+            $param['rp'] = $this->request->post('rp', 10);
+            $param['sortname'] = $this->request->post('sortname');
+            $param['sortorder'] = $this->request->post('sortorder', 'desc');
+            $param['query'] = $this->request->post('keyword_text', false);
+            $param['qtype'] = $this->request->post('keyword_category', false);
+
+            $list_data = $this->model->selectAllFamily($param);
+            $total = count($list_data);
+
+            header("Content-type: text/xml");
+            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            $xml .= "<rows>";
+            $xml .= "<page>" . $param['page'] . "</page>";
+            $xml .= "<total>" . $total . "</total>";
+
+            foreach ($list_data AS $value) {
+                $xml .= "<row id='" . $value['school_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $value['school_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['school_nss'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['school_name'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $value['school_address'] . "]]></cell>";
+                $xml .= "</row>";
+            }
+
+            $xml .= "</rows>";
+            echo $xml;
+        }
+    }
+
     private function optionGender() {
         $list = $this->model->selectAllGender();
         $option = array();
@@ -195,6 +233,33 @@ class Studentprofile extends Controller {
         $option = array();
         foreach ($list as $value) {
             $option[$value['religion_id']] = $value['religion_name'];
+        }
+        return $option;
+    }
+
+    private function optionFamilyRelationschip() {
+        $list = $this->model->selectAllFamilyRelationship();
+        $option = array();
+        foreach ($list as $value) {
+            $option[$value['family_relationship_id']] = $value['family_relationship_title'];
+        }
+        return $option;
+    }
+
+    private function optionEducation() {
+        $list = $this->model->selectAllEducation();
+        $option = array();
+        foreach ($list as $value) {
+            $option[$value['education_id']] = $value['educaition_title'];
+        }
+        return $option;
+    }
+
+    private function optionJobs() {
+        $list = $this->model->selectAllJobs();
+        $option = array();
+        foreach ($list as $value) {
+            $option[$value['job_id']] = $value['job_name'];
         }
         return $option;
     }
@@ -347,6 +412,25 @@ class Studentprofile extends Controller {
 
         $res = array(false, $this->message->saveError());
         if ($this->model->saveReportScore($param)) {
+            $res = array(true, $this->message->saveSucces());
+        }
+
+        echo json_encode($res);
+    }
+
+    public function createFamily() {
+        $param = array();
+        $param['family_applicant_id'] = $this->request->post('family_applicant_id');
+        $param['familyname'] = $this->request->post('familyname');
+        $param['family_relationship'] = $this->request->post('family_relationship');
+        $param['family_gender'] = $this->request->post('family_gender');
+        $param['family_lasteducation'] = $this->request->post('family_lasteducation');
+        $param['family_jobs'] = $this->request->post('family_jobs');
+        $param['family_phone'] = $this->request->post('family_phone');
+        $param['family_isparent'] = $this->request->post('family_isparent');
+        
+        $res = array(false, $this->message->saveError());
+        if ($this->model->saveFamily($param)) {
             $res = array(true, $this->message->saveSucces());
         }
 

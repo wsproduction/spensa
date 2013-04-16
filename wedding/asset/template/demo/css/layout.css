@@ -1,0 +1,201 @@
+body {
+    padding: 0;
+    margin:0;
+    font-family: "lucida grande", tahoma, verdana, arial, sans-serif;  
+    font-size: 11px;
+}
+
+.cl {
+    clear: both;
+    display: block;
+}
+
+#frame-template {
+    background: url('../images/frame.png');
+    background-position: top center;
+    height: 700px;
+    width: 851px;
+}
+
+#header {
+    height: 212px;
+}
+
+#page-menu {
+}
+
+#page-menu ul {
+    list-style: none;
+}
+
+#page-menu ul li{
+    float: left;
+}
+
+#page-menu ul li a {
+    border: 1px solid #6c9400;
+    padding: 10px;
+    display: block;
+    margin-right: 8px;
+    font-family: "lucida grande", tahoma, verdana, arial, sans-serif;  
+    font-weight: bold;
+    font-size: 14px;
+    text-decoration: none;
+
+    background: #bfd255; /* Old browsers */
+    background: -moz-linear-gradient(top,  #bfd255 0%, #8eb92a 50%, #72aa00 51%, #9ecb2d 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bfd255), color-stop(50%,#8eb92a), color-stop(51%,#72aa00), color-stop(100%,#9ecb2d)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bfd255', endColorstr='#9ecb2d',GradientType=0 ); /* IE6-9 */
+
+    color: #fff;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+#page-menu ul li a:hover {
+    background: #d8f630; /* Old browsers */
+    background: -moz-linear-gradient(top,  #d8f630 0%, #9cdb09 50%, #71aa00 51%, #aeee0a 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d8f630), color-stop(50%,#9cdb09), color-stop(51%,#71aa00), color-stop(100%,#aeee0a)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #d8f630 0%,#9cdb09 50%,#71aa00 51%,#aeee0a 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #d8f630 0%,#9cdb09 50%,#71aa00 51%,#aeee0a 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #d8f630 0%,#9cdb09 50%,#71aa00 51%,#aeee0a 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #d8f630 0%,#9cdb09 50%,#71aa00 51%,#aeee0a 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d8f630', endColorstr='#aeee0a',GradientType=0 ); /* IE6-9 */
+}
+
+#page-menu ul li a[class=active] {
+    background: #d8f630; /* Old browsers */
+    background: -moz-linear-gradient(top,  #d8f630 0%, #9cdb09 50%, #71aa00 51%, #aeee0a 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d8f630), color-stop(50%,#9cdb09), color-stop(51%,#71aa00), color-stop(100%,#aeee0a)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #d8f630 0%,#9cdb09 50%,#71aa00 51%,#aeee0a 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #d8f630 0%,#9cdb09 50%,#71aa00 51%,#aeee0a 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #d8f630 0%,#9cdb09 50%,#71aa00 51%,#aeee0a 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #d8f630 0%,#9cdb09 50%,#71aa00 51%,#aeee0a 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d8f630', endColorstr='#aeee0a',GradientType=0 ); /* IE6-9 */
+}
+
+#page-content {
+    padding: 0 40px;
+    height: 380px;
+    margin: 5px;
+}
+
+#box-count-down {
+    float: right;
+    width: 200px;
+    margin-right: 40px;
+}
+
+#view-count-down {
+    height: 37px;
+    font-size: 12px;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.content {
+    display: none;
+    text-align: left;
+}
+
+#guestbook {
+    overflow-y: scroll;
+    height: 385px;
+}
+
+/*
+ * jQuery Nivo Slider v2.7.1
+ * http://nivo.dev7studios.com
+ *
+ * Copyright 2011, Gilbert Pellegrom
+ * Free to use and abuse under the MIT license.
+ * http://www.opensource.org/licenses/mit-license.php
+ * 
+ * March 2010
+*/
+
+
+/* The Nivo Slider styles */
+.nivoSlider {
+    position:relative;
+}
+.nivoSlider img {
+    position:absolute;
+    top:0px;
+    left:0px;
+}
+/* If an image is wrapped in a link */
+.nivoSlider a.nivo-imageLink {
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:100%;
+    height:100%;
+    border:0;
+    padding:0;
+    margin:0;
+    z-index:6;
+    display:none;
+}
+/* The slices and boxes in the Slider */
+.nivo-slice {
+    display:block;
+    position:absolute;
+    z-index:5;
+    height:100%;
+}
+.nivo-box {
+    display:block;
+    position:absolute;
+    z-index:5;
+}
+/* Caption styles */
+.nivo-caption {
+    position:absolute;
+    left:0px;
+    bottom:0px;
+    background:#000;
+    color:#fff;
+    opacity:0.8; /* Overridden by captionOpacity setting */
+    width:100%;
+    z-index:8;
+}
+.nivo-caption p {
+    padding:5px;
+    margin:0;
+}
+.nivo-caption a {
+    display:inline !important;
+}
+.nivo-html-caption {
+    display:none;
+}
+/* Direction nav styles (e.g. Next & Prev) */
+.nivo-directionNav a {
+    position:absolute;
+    top:45%;
+    z-index:9;
+    cursor:pointer;
+}
+.nivo-prevNav {
+    left:0px;
+}
+.nivo-nextNav {
+    right:0px;
+}
+/* Control nav styles (e.g. 1,2,3...) */
+.nivo-controlNav a {
+    position:relative;
+    z-index:9;
+    cursor:pointer;
+}
+.nivo-controlNav a.active {
+    font-weight:bold;
+}
