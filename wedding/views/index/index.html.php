@@ -9,25 +9,72 @@
     </div>
 </div>
 
-
 <div id="invitation" class="content">Undangan</div>
 
-<div id="maps" class="content">Peta</div>
+<div id="maps" class="content">
+    <div class="title">Peta Lokasi</div>
+    <div class="view-map">
+        <div class="small">
+            <?php
+            echo Src::image('maps.jpg');
+            ?>
+        </div>
+        <div class="big" style="display: none;">
+            <?php
+            echo Src::image('big_map.jpg');
+            ?>
+        </div>
+    </div>
+    <div class="note">
+        <div><b>Catatan :</b></div>
+        <div>Klik pada gambar untuk memperbesar peta, untuk mendownload peta siliah klik tombol dibawah ini!</div>
+        <div class="box-button"><button id="button-download">Donwload</button></div>
+    </div>
+    <div class="cl">&nbsp;</div>
+</div>
 
 <div id="guestbook" class="content">
-    <div class="fb-comments" data-href="http://www.warmanandfinny.tk" data-width="735" data-num-posts="3"></div>
-    <div id="fb-root"></div>
+    <div class="title">
+        Buku Tamu
+    </div>
+    <div class="list">
+        <div class="fb-comments" data-href="http://www.warmanandfinny.tk" data-width="735" data-num-posts="2"></div>
+        <div id="fb-root"></div>
+    </div>
 </div>
+
+<div id="aboutaour" class="content">Tentang Kami</div>
 
 <script type="text/javascript">
     $(function(){
-        
-        $('#gallery').fadeIn('slow');
         $('a[href=#gallery]').addClass('active');
         
         $('#slider').nivoSlider({
             animSpeed:1000,
             pauseTime:5000
+        });
+        
+        $('.view-map').live('click', function() {
+            $('.big').dialog('open');
+        });
+        
+        $('.big').dialog({
+            title : 'Peta Lokasi',
+            closeOnEscape: true,
+            autoOpen: false,
+            height: 560,
+            width: 930,
+            modal: true,
+            resizable: false,
+            draggable: false
+        }); 
+        
+        $('#button-download').button({
+            icons: {
+                primary: "ui-icon-image"
+            }
+        }).live('click', function(){
+            window.location = 'index/download/big_maps.jpg';
         });
     });
 </script>

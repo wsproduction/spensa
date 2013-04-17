@@ -19,6 +19,11 @@ body {
 
 #header {
     height: 212px;
+    width: 851px;
+}
+
+#footer {
+    width: 851px;
 }
 
 #page-menu {
@@ -105,9 +110,36 @@ body {
     text-align: left;
 }
 
-#guestbook {
+#guestbook .list {
     overflow-y: scroll;
-    height: 385px;
+    height: 355px;
+}
+
+#guestbook .title {
+    font-size: 14px;
+    padding-bottom: 5px;
+}
+
+#maps .title {
+    font-size: 14px;
+    padding-bottom: 5px;
+}
+
+#maps .view-map {
+    float: left;
+    cursor: -webkit-zoom-in; 
+    cursor: -moz-zoom-in;
+}
+
+#maps .note {
+    float: left;
+    margin-left: 8px;
+    width: 115px;
+}
+
+#maps .note .box-button {
+    text-align: center;
+    padding-top: 10px;
 }
 
 /*

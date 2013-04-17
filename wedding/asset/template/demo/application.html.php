@@ -11,6 +11,7 @@
         /* jQuery Plugin */
         Src::plugin()->jQuery();
         Src::plugin()->jQueryUI('flick');
+        Src::plugin()->jQueryAddress();
 
         Src::css('layout');
 
@@ -29,10 +30,11 @@
             <div id="header">&nbsp;</div>
             <div id="page-menu">
                 <ul id="page-menu-navigation">
-                    <li><a href='#gallery'>Photo</a></li>
-                    <li><a href='#invitation'>Undangan</a></li>
-                    <li><a href='#maps'>Peta Lokasi</a></li>
-                    <li><a href='#guestbook'>Buku Tamu</a></li>
+                    <li><a href='/gallery' ref='#gallery' title="Welcome">Photo</a></li>
+                    <li><a href='/invitation' ref='#invitation' title="Undangan">Undangan</a></li>
+                    <li><a href='/maps' ref='#maps' title="Peta Lokasi">Peta Lokasi</a></li>
+                    <li><a href='/guestbook' ref='#guestbook' title="Buku Tamu">Buku Tamu</a></li>
+                    <li><a href='/aboutaour' ref='#aboutaour' title="Tentang Kami">Tentang Kami</a></li>
                 </ul>
                 <div id="box-count-down">
                     <div id="view-count-down"></div>
@@ -41,16 +43,61 @@
             </div>
             <div id="page-content">{PAGE_CONTENT}</div>
         </div>
-        <div id="footer"><?php echo date('Y') . ' '; ?> &copy; Warman Suganda | Powered By : WS Framework</div>
+        <div id="footer">
+            <div style="text-align: center;margin-top: 5px;float: left;margin-left: 38px;">
+                <div class="fb-like" data-href="http://www.warmanandfinny.tk" data-send="true" data-width="250" data-show-faces="false" data-font="arial"></div>
+            </div>
+            <div style="float: right;margin-right: 38px;padding-top: 8px;color: #333333;"><?php echo date('Y') . ' '; ?> &copy; Warman Suganda | <b> Developed by </b> : Warman Suganda with <u>WSFramework</u></div>
+            <div class="cl"></div>
+        </div>
     </center>
 </body>
 <script>
     $(function() {
+        
+        /* Jquery Address Configuration */
+        
+        var temp_page = '#gallery';
+        var slide_efect = function(old_target, new_target) {
+                           
+            $('#page-menu-navigation a').removeClass('active');
+            $('a[ref=' + new_target + ']').addClass('active');
+                
+            var title = $('a[ref=' + new_target + ']').attr('title');
+            document.title = 'Official Website Pernikahan Warman Suganda & Finny Alviani | ' + title;
+            
+            $(old_target).fadeOut(400, function(){
+                $(new_target).fadeIn(400);
+            }); 
+        };
+        
+        var handler = function(event) {
+            var val = event.value;
+            var target = '#' + val.replace('/','');
+                                        
+            if (target == '#' || target == temp_page) {
+                target = temp_page;
+                slide_efect(temp_page, target);
+            } else {
+                slide_efect(temp_page, target);
+                temp_page = target;
+            }
+        };
+        
+        $.address.init(function(event) {
+            $('#page-menu-navigation a').address(function() {
+                return $(this).attr('href').replace(location.pathname, '');
+            });
+        }).change(function(event) {
+            handler(event);
+        });
+        
         var austDay = new Date(2013,4,8);
         /*austDay = new Date(austDay.getFullYear() + 1, 1 - 1, 26);*/
         $('#view-count-down').countdown({until: austDay});
         $('#year').text(austDay.getFullYear());
         
+        /*
         var temp_page = '#gallery';
         
         $('#page-menu-navigation a').live('click', function() {
@@ -65,6 +112,16 @@
             }
             return false;
         });
+         */
     });
+</script>
+<script>
+    (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=448958111808939";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
 </script>
 </html>
