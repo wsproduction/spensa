@@ -1,10 +1,19 @@
 <?php Session::init(); ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:og='http://ogp.me/ns#'>
     <head>
         <title><?php echo Web::getTitle(true, '|'); ?></title>
         <meta charset="utf-8" />
-
+		
+		<!-- Start of Facebook Meta Tags by shailan (http://shailan.com) -->
+			<meta property="og:title" content="Undangan Pernikahan Warman Suganda & Finny Alviani" /> 
+			<meta property="og:type" content="article" /> 
+			<meta property="og:url" content="http://warmanandfinny.tk/index/" /> 
+			<meta property="og:image" content="http://warmanandfinny.tk/web/src/wedding/asset/template/demo/images/thumbnail.jpg" /> 
+			<meta property="og:site_name" content="warmanandfinny.tk"/> 
+			<meta property="og:description" content="Maha suci Allah yang telah menciptakan mahluk-Nya berpasang-pasangan. Ya Allah perkenankanlah kami merangkaikan kasih sayang yang kau ciptakan diantara kami." /> 
+		<!-- End of Facebook Meta Tags -->
+		
         <?php
         /* Src::icon('madina_icon.png'); */
 

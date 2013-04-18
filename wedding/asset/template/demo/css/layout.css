@@ -24,6 +24,7 @@ body {
 
 #footer {
     width: 851px;
+	margin-bottom:10px;
 }
 
 #page-menu {
@@ -131,6 +132,10 @@ body {
     cursor: -moz-zoom-in;
 }
 
+#maps .view-map .small img {
+    
+}
+
 #maps .note {
     float: left;
     margin-left: 8px;
@@ -141,6 +146,33 @@ body {
     text-align: center;
     padding-top: 10px;
 }
+
+#aboutaour .title {
+    font-size: 14px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #ccc;
+    margin-bottom: 20px;
+}
+
+#aboutaour .label {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#aboutaour .content-text {
+    font-size: 12px;
+}
+
+#aboutaour .pp {
+    -webkit-box-shadow:  0px 0px 10px 1px #a8a8a8;
+    box-shadow:   0px 0px 10px 1px #a8a8a8;
+}
+
+#invitation img[class=invitation] {
+    -webkit-box-shadow:  0px 0px 10px 1px #a8a8a8;
+    box-shadow:   0px 0px 10px 1px #a8a8a8;
+}
+
 
 /*
  * jQuery Nivo Slider v2.7.1
