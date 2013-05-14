@@ -510,3 +510,45 @@ legend {
 #borrowed-cart #view-invoice iframe {
     width: 100%;
 }
+
+/*
+Style for jadwal UN
+*/
+
+.ballon-tips {
+    position: absolute;
+    padding: 10px;
+    width: 259px;
+    height: 234px;
+}
+
+.ballon-bg-first {
+    background: url('../images/callout.png') no-repeat;
+    margin-right: 27px;
+}
+
+.ballon-bg-second {
+    background: url('../images/callout2.png') no-repeat;
+}
+
+.ballon-tips .baloon-frame {
+    background-color: greenyellow;
+    height: 110px;
+    padding: 10px;
+}
+
+.ballon-tips .baloon-frame .baloon-title {
+    font-family: "lucida grande", tahoma, verdana, arial, sans-serif; 
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.ballon-tips .baloon-frame .baloon-content {
+    font-family: "lucida grande", tahoma, verdana, arial, sans-serif; 
+    font-size: 16px;
+}
+
+.ballon-tips .baloon-frame .baloon-content ol {
+    padding-left: 28px;
+}
