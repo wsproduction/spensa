@@ -1,0 +1,276 @@
+/* 
+    Document   : custom
+    Created on : Jan 5, 2012, 2:06:15 AM
+    Author     : WS
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+#loading-progress {
+    display: none;
+}
+
+.cls {
+    font-size:0;
+    line-height:0;
+    height:0;
+    display:block;
+    clear:both;
+}
+
+body {
+    background: #f7f7f7;
+    padding: 0px;
+    margin: 0px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 10pt;
+}
+
+
+h5 {
+    font-size: 10pt;
+    margin: 0;
+    padding: 0;
+}
+
+.mainwrapper {
+    min-width: 800px;
+}
+
+.header {
+    height: 110px;
+    background-color: #0866c6;
+}
+
+.logo {
+    float: left;
+    color: #fff;
+    width: 260px;
+    text-align: center;
+    margin: 28px 0 0 0;
+}
+
+.user-logged-info {
+    float: right;
+    width: 315px;
+    margin: 11px 0 0 0;
+}
+
+.user-logged-info .photo {
+    float: left;
+    padding: 3px;
+    background-color: #3985d2;
+    width: 80px;
+    height: 80px;
+}
+
+.user-logged-info .user-info {
+    float: left;
+    margin: 0 0 0 10px;
+    color: #fff;
+}
+
+.user-logged-info .user-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0 0;
+    width: 212px;
+    font-size: 8pt;
+}
+
+.user-logged-info .user-info ul li {
+    -moz-transition:background-color 0.5s;
+    -webkit-transition:background-color 0.5s;
+    -o-transition:background-color 0.5s;
+    transition:background-color 0.5s;
+
+    background-color: #2075cc;
+    margin: 1px 0;
+    padding: 3px 4px;
+}
+
+.user-logged-info .user-info ul li:hover {
+    background-color: #579ade;
+}
+
+.user-logged-info .user-info ul li a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+}
+
+.left-panel {
+    width: 260px;
+    background-color: #282828;
+}
+
+.right-panel {
+    min-width: 740px;
+}
+
+.left-menu .nav-title {
+    background-color: #232323;
+    color: #8f8f8f;
+    font-size: 8pt;
+    height: 24px;
+    padding: 8px 0 0 14px;
+}
+
+.left-menu .nav {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.left-menu .nav li {
+    -moz-transition:background-color 0.5s;
+    -webkit-transition:background-color 0.5s;
+    -o-transition:background-color 0.5s;
+    transition:background-color 0.5s;
+}
+
+.left-menu .nav li:hover {
+    background-color: #2c2c2c;
+}
+
+.left-menu .nav a {
+    -moz-transition: opacity 0.5s;
+    -webkit-transition: opacity 0.5s;
+    -o-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+
+    display: block;
+    padding: 12px 10px 12px 45px;
+    font-size: 11pt;
+    text-decoration: none;
+    color: #fff;
+    border-bottom: 1px solid #232323;
+
+    background-position:  15px center;
+    
+    opacity:0.5;
+    filter:alpha(opacity=50);
+}
+
+.left-menu .nav a:hover {
+    opacity:1;
+    filter:alpha(opacity=100);
+}
+
+.ic-black-leaf {
+    background: url(../images/black-leaf.png) no-repeat;
+}
+
+.ic-black-folder-open {
+    background: url(../images/black-folder-open.png) no-repeat;
+}
+
+.ic-black-home {
+    background: url(../images/black-home.png) no-repeat;
+}
+
+.ic-black-cargo {
+    background: url(../images/black-cargo.png) no-repeat;
+}
+
+.ic-black-book {
+    background: url(../images/black-book.png) no-repeat;
+}
+
+.ic-black-qrcode {
+    background: url(../images/black-qrcode.png) no-repeat;
+}
+
+.ic-black-retweet2 {
+    background: url(../images/black-retweet2.png) no-repeat;
+}
+
+.ic-black-shopping-cart {
+    background: url(../images/black-shopping-cart.png) no-repeat;
+}
+
+.ic-black-parents {
+    background: url(../images/black-parents.png) no-repeat;
+}
+
+.ic-black-file {
+    background: url(../images/black-file.png) no-repeat;
+}
+
+.ic-black-charts {
+    background: url(../images/black-charts.png) no-repeat;
+}
+
+.bg-medium {
+    -moz-background-size: auto 16px;
+    -o-background-size: auto 16px;
+    -webkit-background-size: auto 16px; 
+    background-size: auto 16px;
+}
+
+.dropdown {
+    background: url(../images/bcarrow.png) no-repeat;
+    background-position:  240px center; 
+}
+
+.breadcrumbs {
+   background: url(../images/bg2.png) repeat-x; 
+   height: 31px;
+}
+
+.breadcrumbs .home {
+    float: left;
+    margin: 0 0 0 10px;
+}
+
+.breadcrumbs ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumbs ul li {
+    float: left;
+    padding: 0 0 0 10px;
+    margin-left: 5px;
+    margin-top: 7px;
+    font-size: 8pt;
+    background: url(../images/bcarrow.png) no-repeat; 
+    background-position: left center;
+}
+
+.signin {
+    width: 300px;
+}
+
+.signin input[type=text], .signin input[type=password] {
+    padding: 10px;
+    border: none;
+    width: 250px;
+}
+
+.signin input[type=submit] {
+    border : 1px solid #0c57a3;
+    padding : 10px;
+    width: 272px;
+    background-color: #0972dd;
+    color: #fff;
+    font-weight: bold;
+    font-size: 11pt;
+}
+
+.signin .keepme {
+    text-align: left;
+    color: #fff;
+    font-size: 10pt;
+    padding:5px 0 0 12px;
+}

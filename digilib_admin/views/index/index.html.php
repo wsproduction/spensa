@@ -1,75 +1,65 @@
-<div id="box">
-    <div id="box_title">
-        <div class="left"><?php echo Web::getTitle(); ?></div>
-    </div>
-    <div id="board_content">
+<center>
+    <div class="signin">
+        <div>
+            <?php
+            echo Src::image('logo.png');
+            ?>
+        </div>
         <div id="message"></div>
-        <?php
-        Form::begin('fLogin', 'login/run', 'post');
-        ?>
-        <table>
-            <tr>
-                <td style="width: 100px;">
-                    <div class="label-ina">Nama User</div>
-                    <div class="label-eng">Username</div>
-                </td>
-                <td>:</td>
-                <td>
-                    <?php
-                    Form::create('text', 'username');
-                    Form::tips('Enter your username');
-                    Form::size(30);
-                    Form::validation()->requaired();
-                    Form::commit();
-                    ?>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="label-ina">Kata Password</div>
-                    <div class="label-eng">Password</div>
-                </td>
-                <td>:</td>
-                <td>
-                    <?php
-                    Form::create('password', 'password');
-                    Form::tips('Enter your password');
-                    Form::size(30);
-                    Form::validation()->requaired();
-                    Form::commit();
-                    ?>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td>
-                    <?php
-                    Form::create('submit', 'btnLgoin');
-                    Form::value('Login');
-                    Form::style('action_login');
-                    Form::commit();
-                    ?>
-                </td>
-            </tr>
-        </table>
-        <?php
-        Form::end();
-        ?>
+        <div>
+            <?php
+            Form::begin('fLogin', 'login/run', 'post');
+            ?>
+            <div>
+                <?php
+                Form::create('text', 'username');
+                Form::tips('Enter your username');
+                Form::size(30);
+                Form::validation()->requaired();
+                Form::commit();
+                ?>
+            </div>
+            <div>
+                <?php
+                Form::create('password', 'password');
+                Form::tips('Enter your password');
+                Form::size(30);
+                Form::validation()->requaired();
+                Form::commit();
+                ?>
+            </div>
+            <div>
+                <?php
+                Form::create('submit', 'btnLgoin');
+                Form::value('SIGN IN');
+                Form::commit();
+                ?>
+            </div>
+            <div class="keepme">
+                <?php
+                Form::create('checkbox', 'btnLgoin');
+                Form::commit();
+                echo 'Keep me sign in'
+                ?>
+            </div>
+            <?php
+            Form::end();
+            ?>
+        </div>
     </div>
-</div>
+</center>
 
 <script>
-    $(function(){
+    $(function() {
         $('#username').focus();
-        $('#fLogin').live('submit',function(){
+        $('#fLogin').live('submit', function() {
             frmID = $(this);
             msgID = $('#message');
-            var url =  $(frmID).attr('action');
-            var data =  $(frmID).serialize();
+            var url = $(frmID).attr('action');
+            var data = $(frmID).serialize();
             $(this).loadingProgress('start');
             $(msgID).fadeOut('slow');
-            $.post(url, data, function(o){
+            $.post(url, data, function(o) {
                 if (o[0]) {
                     window.location = o[1];
                 } else {
@@ -80,6 +70,6 @@
                 }
             }, 'json');
             return false;
-        });    
+        });
     });
 </script>

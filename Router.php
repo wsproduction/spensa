@@ -20,7 +20,7 @@ switch (Web::getSubDomain()) {
         break;
     case 'digilib':
         Web::main('DIGITAL LIBRARY', 'digilib', 'demo');
-        Web::child('OPERATOR DIGITAL LIBRARY', 'admin', 'digilib_admin', 'demo');
+        Web::child('OPERATOR DIGITAL LIBRARY', 'admin', 'digilib_admin', 'metrostyle');
         break;
     case 'madina':
         Web::main('PT MADINA RAIHAN MAKMUR', 'madina', 'demo');

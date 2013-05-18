@@ -33,7 +33,7 @@ $(function(){
         }, 'json');
         
         return false;
-    })
+    });
     
     $('.delete').live('click',function(){
         
@@ -212,5 +212,5 @@ $(function () {
         });
     });
     
-});​
+});
 
