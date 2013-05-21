@@ -79,13 +79,43 @@
                                 <div class="left-menu">
                                     <div class="nav-title">NAVIGATION</div>
                                     <ul class="nav">
-                                        <li><a href="" class="ic-black-home bg-medium">Beranda</a></li>
-                                        <li class="dropdown"><a href="" class="ic-black-cargo bg-medium">Data Master</a></li>
-                                        <li><a href="" class="ic-black-book bg-medium">Data Buku</a></li>
-                                        <li><a href="" class="ic-black-shopping-cart bg-medium">Data Transaksi</a></li>
-                                        <li><a href="" class="ic-black-parents bg-medium">Data Anggota</a></li>
-                                        <li><a href="" class="ic-black-file bg-medium">Laporan</a></li>
-                                        <li><a href="" class="ic-black-charts bg-medium">Grafik</a></li>
+                                        <?php $nav_link = Web::getHost() . '/' . Web::$webAlias; ?>
+                                        <li><a href="http://<?php echo $nav_link;  ?>/dashboard" class="ic-black-home bg-medium">Beranda</a></li>
+                                        <li class="dropdown">
+                                            <a href="#" class="ic-black-cargo bg-medium">Data Master</a>
+                                            <ul>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/ddc" class="ic-grey-arrow1">DDC (Dewey Decimal Classification)</a></li>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/authordescription" class="ic-grey-arrow1">Keterangan Pengarang</a></li>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/language" class="ic-grey-arrow1">Daftar Bahasa</a></li>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/accountingsymbol" class="ic-grey-arrow1">Mata Uang</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown">
+                                            <a href="#" class="ic-black-book bg-medium">Data Buku</a>
+                                            <ul>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/booksource" class="ic-grey-arrow1">Sumber Buku</a></li>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/publisher" class="ic-grey-arrow1">Daftar Penerbit</a></li>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/catalogue" class="ic-grey-arrow1">Katalog</a></li>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/collection" class="ic-grey-arrow1">Buku Induk</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown">
+                                            <a href="#" class="ic-black-shopping-cart bg-medium">Data Transaksi</a>
+                                            <ul>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/borrow" class="ic-grey-arrow1">Peminjaman</a></li>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/returnbook" class="ic-grey-arrow1">Pengembalian</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="http://<?php echo $nav_link;  ?>/members" class="ic-black-parents bg-medium">Data Anggota</a></li>
+                                        <li class="dropdown">
+                                            <a href="#" class="ic-black-file bg-medium">Laporan</a>
+                                            <ul>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/report/borrow" class="ic-grey-arrow1">Buku Yang Dipinjam</a></li>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/report/borrower" class="ic-grey-arrow1">Peminjam Buku</a></li>
+                                                <li><a href="http://<?php echo $nav_link;  ?>/report/pinalty" class="ic-grey-arrow1">Denda</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="http://<?php echo $nav_link;  ?>/chart" class="ic-black-charts bg-medium">Grafik</a></li>
                                     </ul>
                                 </div>
                             </td>
@@ -111,11 +141,20 @@
                     </table>
                 </div>
 
+                <script>
+                    $(function(){
+                        $('.dropdown a[href=#]').live('click', function(){
+                            $(this).next('ul').slideToggle('slow');
+                            return false;
+                        });
+                    });
+                </script>
+
             <?php else : ?>
                 {PAGE_CONTENT}
                 <script>
                     $(function() {
-                        $('body').css({'background-color' : '#0866c6', 'padding-top' : screen.height * 0.3});
+                        $('body').css({'background-color': '#0866c6', 'padding-top': screen.height * 0.3});
                     });
                 </script>        
 

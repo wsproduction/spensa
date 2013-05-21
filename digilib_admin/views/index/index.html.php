@@ -13,7 +13,6 @@
             <div>
                 <?php
                 Form::create('text', 'username');
-                Form::tips('Enter your username');
                 Form::size(30);
                 Form::validation()->requaired();
                 Form::commit();
@@ -22,7 +21,6 @@
             <div>
                 <?php
                 Form::create('password', 'password');
-                Form::tips('Enter your password');
                 Form::size(30);
                 Form::validation()->requaired();
                 Form::commit();

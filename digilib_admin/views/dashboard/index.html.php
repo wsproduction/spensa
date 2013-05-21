@@ -1,8 +1,8 @@
-<div id="box">
-    <div id="box_title">
-        <div class="left"><?php echo Web::getTitle(); ?></div>
+<div class="maincontent">
+    <div class="maincontentinner">
+        <div id="container" style="min-width: 800px; margin: 10px 0 0 0"></div>
     </div>
-    <div id="container" style="min-width: 400px; margin: 10px 0 0 0"></div>
+    
     <?php
     Form::create('hidden', 'period');
     Form::value($period_id);
@@ -12,7 +12,7 @@
 
 <script>
     $(function(){
-        $('#container').css('height',screen.height * 0.65);
+        $('#container').css('height', screen.height * 0.65);
         
         var chart;
         $(document).ready(function() {
