@@ -60,6 +60,9 @@ class Ddc extends Controller {
                     }
                     $this->view->listSub2 = array($listSub2, $listData['ddc_main_parent']);
                     break;
+                default :
+                    $this->view->link_sub1 = $this->content->setLink('ddc/getSub1');
+                    break;
             }
             $this->view->render('ddc/edit');
         } else {
@@ -97,13 +100,13 @@ class Ddc extends Controller {
                 $xml .= "<row id='" . $row['ddc_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['ddc_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['ddc_classification_number'] . "]]></cell>";
-                
+
                 if ($row['ddc_description'] == "") {
                     $xml .= "<cell><![CDATA[" . $row['ddc_title'] . "</div>]]></cell>";
                 } else {
                     $xml .= "<cell><![CDATA[<div><b>" . $row['ddc_title'] . "</b></div><div>" . $row['ddc_description'] . "</div>]]></cell>";
                 }
-                
+
                 $xml .= "<cell><![CDATA[" . $row['ddc_level'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $link_detail . " | " . $link_edit . "]]></cell>";
                 $xml .= "</row>";
@@ -141,6 +144,7 @@ class Ddc extends Controller {
         Form::tips('Chose Level DDC');
         Form::validation()->requaired();
         Form::option($list, ' ');
+        Form::style('form-grey');
         Form::properties(array('link' => $this->content->setLink('ddc/getSub2')));
         $html = Form::commit('attach');
 
@@ -157,6 +161,7 @@ class Ddc extends Controller {
         Form::tips('Chose Level DDC');
         Form::validation()->requaired();
         Form::option($list, ' ');
+        Form::style('form-grey');
         $html = Form::commit('attach');
 
         echo json_encode($html);

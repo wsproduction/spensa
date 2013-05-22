@@ -6,6 +6,16 @@ class DashboardModel extends Model {
         parent::__construct();
     }
     
+    public function selectCountBook() {
+        $sth = $this->db->prepare("SELECT 
+                                    COUNT(book_register_id) AS cnt
+                                  FROM
+                                    digilib_book_register");
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+    
     public function selectPeiodByStatus($status = 0) {
         $sth = $this->db->prepare("SELECT 
                                     public_period.period_id,

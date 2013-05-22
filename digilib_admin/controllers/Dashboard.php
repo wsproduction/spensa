@@ -15,6 +15,9 @@ class Dashboard extends Controller {
         Web::setTitle('Dashboard');
         $period_list = $this->model->selectPeiodByStatus(1);
         $period_data = $period_list[0];
+        $list_book = $this->model->selectCountBook();
+        $data_book = $list_book[0];
+        $this->view->count_book = $data_book['cnt'];
         $this->view->period_id = $period_data['period_id'];
         $this->view->render('dashboard/index');
     }

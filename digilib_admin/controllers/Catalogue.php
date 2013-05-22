@@ -463,7 +463,7 @@ class Catalogue extends Controller {
 
                 $stock = $row['book_quantity'] - $row['count_borrowed'];
 
-                $description  = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
+                $description = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
                 $description .= '<br><b>' . $row['book_title'] . $foreign_title . '.</b> ';
                 $description .= '<br><font style="font-style:italic;color:#666;">' . $this->content->sortAuthor($author) . '</font>';
                 $description .= '<font style="font-style:italic;color:#666;"> ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . '</font>';
@@ -865,6 +865,10 @@ class Catalogue extends Controller {
             // set header and footer fonts
             $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
             $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+            // remove default header/footer
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
 
             // set default monospaced font
             $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);

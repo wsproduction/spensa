@@ -16,8 +16,24 @@ root {
 }
 
 #loading-progress {
+    border: 1px solid #F8BB00;
+    background: url('../images/loading.gif');
+    background-color: #fff;
+    width: 160px;
+    height: 54px;
+    left: 44%;
+    top: 10%;
+    position: absolute;
+    z-index: 9999;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow:    0px 0px 10px 1px #ccc;
+    -webkit-box-shadow: 0px 0px 10px 1px #ccc;
+    box-shadow:         0px 0px 10px 1px #ccc;
     display: none;
 }
+
 
 .cls {
     font-size:0;
@@ -113,7 +129,7 @@ h5 {
 }
 
 .right-panel {
-    
+
 }
 
 .left-menu .nav-title {
@@ -155,7 +171,7 @@ h5 {
     border-bottom: 1px solid #232323;
 
     background-position:  15px center;
-    
+
     opacity:0.5;
     filter:alpha(opacity=50);
 }
@@ -185,8 +201,6 @@ h5 {
     color: #333;
     border-bottom: 1px solid #ddd;
 
-    background-position:  15px center;
-    
     opacity:1;
     filter:alpha(opacity=100);
 }
@@ -195,14 +209,14 @@ h5 {
     background-color: #fff;
 }
 
-.dropdown {
+.left-menu .nav li.dropdown {
     background: url(../images/bcarrow.png) no-repeat;
-    background-position:  240px 15px; 
+    background-position:  right 10px top 15px;
 }
 
 .breadcrumbs {
-   background: url(../images/bg2.png) repeat-x; 
-   height: 31px;
+    background: url(../images/bg2.png) repeat-x; 
+    height: 31px;
 }
 
 .breadcrumbs .home {
@@ -229,6 +243,75 @@ h5 {
 .maincontent .maincontentinner {
     background: url(../images/bg1.png); 
     padding: 20px;
+}
+
+.headtitle {
+    background-color: #0866c6;
+}
+
+.headtitle .widgettitle {
+    color: #fff;
+    padding: 10px;
+    float: left;
+}
+
+.headtitle .btn-group {
+    float: right;
+    border-left: 1px solid #3985d2;
+    position:relative;
+}
+
+.headtitle .btn-group a[class=dropdown] {
+    display: block;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    padding: 10px 25px 10px 10px;
+    background: url(../images/arrow2.png) no-repeat;
+    background-position:  right 10px center;
+}
+
+.headtitle .btn-group ul {
+    display: none;
+    position: absolute;
+    right: 5px;
+    bottom: -68px;
+    padding: 5px;
+    margin: 0;
+    list-style: none;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    min-width: 150px;
+
+    -moz-box-shadow: 0 0 5px 1px #ccc;
+    -webkit-box-shadow: 0 0 5px 1px #ccc;
+    box-shadow: 0 0 5px 1px #ccc;
+}
+
+.headtitle .btn-group ul li a{
+    padding: 5px;
+    display: block;
+    text-decoration: none;
+    color: #333;
+    -moz-transition: background-color 0.5s, color 0.5s;
+    -webkit-transition: background-color 0.5s, color 0.5s;
+    -o-transition: background-color 0.5s, color 0.5s;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+.headtitle .btn-group ul li a:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.widgetcontent {
+    padding: 10px;
+    background-color: #fff;
+    border-bottom: 2px solid #0866c6;
+    border-left: 2px solid #0866c6;
+    border-right: 2px solid #0866c6;
 }
 
 
@@ -353,4 +436,166 @@ h5 {
     -o-background-size: auto 16px;
     -webkit-background-size: auto 16px; 
     background-size: auto 16px;
+}
+
+/* Form */
+.form-grey {
+    border: 1px solid #ccc;
+    padding: 6px;
+}
+
+.button-mid-solid-blue {
+    padding: 6px 10px;
+    border: 1px solid #0a6bce;
+    background-color: #0866c6;
+    color: #fff;
+}
+
+.button-mid-solid-red {
+    padding: 6px 10px;
+    border: 1px solid #aa0000;
+    background-color: #dd0000;
+    color: #fff;
+}
+
+.button-mid-solid-orange {
+    padding: 6px 10px;
+    border: 1px solid #daa004;
+    background-color: #fcb904;
+    color: #fff;
+}
+
+.button-mid-solid-green {
+    padding: 6px 10px;
+    border: 1px solid #6db814;
+    background-color: #86d628;
+    color: #fff;
+}
+
+.button-mid-solid-bluesky {
+    padding: 6px 10px;
+    border: 1px solid #4a96d1;
+    background-color: #71b8ee;
+    color: #fff;
+}
+
+.button-mid-solid-black {
+    padding: 6px 10px;
+    border: 1px solid #272727;
+    background-color: #333333;
+    color: #fff;
+}
+
+.button-mid-solid-grey {
+    padding: 6px 10px;
+    border: 1px solid #bbbbbb;
+    background-color: #eeeeee;
+    color: #fff;
+}
+
+.button-mid-outline-blue {
+    padding: 6px 10px;
+    border: 1px solid #0a6bce;
+    background-color: #fff;
+    color: #0a6bce;
+}
+
+.button-mid-outline-red {
+    padding: 6px 10px;
+    border: 1px solid #aa0000;
+    background-color: #fff;
+    color: #aa0000;
+}
+
+.button-mid-outline-orange {
+    padding: 6px 10px;
+    border: 1px solid #daa004;
+    background-color: #fff;
+    color: #daa004;
+}
+
+.button-mid-outline-green {
+    padding: 6px 10px;
+    border: 1px solid #6db814;
+    background-color: #fff;
+    color: #6db814;
+}
+
+.button-mid-outline-bluesky {
+    padding: 6px 10px;
+    border: 1px solid #4a96d1;
+    background-color: #fff;
+    color: #4a96d1;
+}
+
+.button-mid-outline-black {
+    padding: 6px 10px;
+    border: 1px solid #272727;
+    background-color: #fff;
+    color: #272727;
+}
+
+.button-mid-outline-grey {
+    padding: 6px 10px;
+    border: 1px solid #bbbbbb;
+    background-color: #fff;
+    color: #bbbbbb;
+}
+
+/* Custom */
+.ftitle {
+    text-align: left;
+}
+
+/* Message */
+
+div.box_message {
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    padding: 5px 5px 5px 70px;
+    min-height: 50px;
+    margin: 5px 0 10px 0;
+}
+
+div.error {
+    border: 1px solid #e8aaad;
+    background: url('../images/comment_error.png') no-repeat;
+    background-color: #f9e5e6;
+}
+
+div.error div.title_message_error {
+    color: #b50007;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+div.error div.description_message_error {
+    color: #b50007;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+div.succes {
+    border: 1px solid #b4e8aa;
+    background: url('../images/comment_add.png') no-repeat;
+    background-color: #e9f9e5;
+}
+
+div.succes div.title_message_sucess {
+    color: #1c8400;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+div.succes div.description_message_succes {
+    color: #1c8400;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px #fff;
 }
