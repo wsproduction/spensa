@@ -1,45 +1,44 @@
-<div id="box">
-    <div id="box_title">
-        <div class="left"><?php echo Web::getTitle(); ?></div>
-    </div>
+<div class="maincontent">
+    <div class="maincontentinner">
 
-    <div style="margin: 10px 0;">
-        <fieldset>
-            <legend>Filter Data</legend>
-            <?php Form::begin('fChartFilter', 'chart/chart', 'post'); ?>
-            <table>
-                <tr>
-                    <td width="150">
-                        <div class="label-ina">Tahun Ajaran</div>
-                        <div class="label-eng">Academic Period</div>
-                    </td>
-                    <td>:</td>
-                    <td>
-                        <?php
-                        Form::create('select', 'period');
-                        Form::properties(array('style' => 'width:120px;'));
-                        Form::option($option_period);
-                        Form::commit();
-                        echo ' ';
-                        Form::create('submit', 'bSubmit');
-                        Form::value('Cari');
-                        Form::style('action_search');
-                        Form::commit();
-                        ?>
-                    </td>
-                </tr>
-            </table>
-            <?php Form::end(); ?>
-        </fieldset>
-    </div>
+        <div style="margin: 10px 0;">
+            <fieldset>
+                <legend>Filter Data</legend>
+                <?php Form::begin('fChartFilter', 'chart/chart', 'post'); ?>
+                <table>
+                    <tr>
+                        <td width="150">
+                            <div class="label-ina">Tahun Ajaran</div>
+                            <div class="label-eng">Academic Period</div>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <?php
+                            Form::create('select', 'period');
+                            Form::properties(array('style' => 'width:120px;'));
+                            Form::option($option_period);
+                            Form::commit();
+                            echo ' ';
+                            Form::create('submit', 'bSubmit');
+                            Form::value('Cari');
+                            Form::style('action_search');
+                            Form::commit();
+                            ?>
+                        </td>
+                    </tr>
+                </table>
+                <?php Form::end(); ?>
+            </fieldset>
+        </div>
 
-    <div id="container" style="min-width: 400px; margin: 10px 0 0 0"></div>
+        <div id="container" style="min-width: 400px; margin: 10px 0 0 0"></div>
+    </div>
 </div>
 
 <script>
-    $(function(){
-        $('#container').css('height',screen.height * 0.55);
-        
+    $(function() {
+        $('#container').css({'height': screen.height * 0.55});
+
         var chart;
         $(document).ready(function() {
             var option = {
@@ -53,7 +52,7 @@
                 subtitle: {
                     text: 'SMP NEGERI 1 SUBANG'
                 },
-                xAxis: {title : {
+                xAxis: {title: {
                         text: 'Bulan'
                     },
                     categories: [
@@ -89,8 +88,8 @@
                 },
                 tooltip: {
                     formatter: function() {
-                        return ''+
-                            this.x +': '+ this.y;
+                        return '' +
+                                this.x + ': ' + this.y;
                     }
                 },
                 plotOptions: {
@@ -100,19 +99,19 @@
                     }
                 },
                 series: [{
-                        name: 'Siswa'    
+                        name: 'Siswa'
                     }, {
-                        name: 'Guru' 
+                        name: 'Guru'
                     }, {
-                        name: 'Karyawan'    
+                        name: 'Karyawan'
                     }]
             };
-            
+
             var getChart = function() {
                 $(this).loadingProgress('start');
                 $.get('chart/chart', {
-                    period : $('#period').val()
-                }, function (o){
+                    period: $('#period').val()
+                }, function(o) {
                     var title = o['title'];
                     var data = o['data'];
                     option.series[0].data = data[0];
@@ -123,14 +122,14 @@
                     $(this).loadingProgress('stop');
                 }, 'json');
             };
-            
+
             getChart();
-            
-            $('#fChartFilter').live('submit',function(){
+
+            $('#fChartFilter').live('submit', function() {
                 getChart();
                 return false;
             });
-            
+
             Highcharts.theme = {
                 colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
                 chart: {
