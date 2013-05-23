@@ -34,7 +34,6 @@ root {
     display: none;
 }
 
-
 .cls {
     font-size:0;
     line-height:0;
@@ -43,18 +42,56 @@ root {
     clear:both;
 }
 
+label.error {
+    color: red;
+    font-style: italic;
+    font-size: 10px;
+    font-family: Arial,Helvetica,sans-serif;
+    display: block;
+}
+
+table.table-form td {
+    vertical-align:middle;
+}
+
+table.table-form td:first-child {
+    vertical-align: top;
+}
+
+table.table-form td:first-child + td {
+    vertical-align: top;
+    padding: 9px 0 0 0;
+}
+
+.box-button-tab {
+    text-align: right;
+    border-top: 1px dashed #4a96d1;
+    margin: 10px 0 0 0;
+    padding: 10px 0 0 0;
+}
+
 body {
     background: #f7f7f7;
     padding: 0px;
     margin: 0px;
     font-family: Arial,Helvetica,sans-serif;
-    font-size: 10pt;
+    font-size: 12px;
 }
 
 h5 {
     font-size: 10pt;
     margin: 0;
     padding: 0;
+}
+
+
+fieldset {
+    border: 1px solid #ccc;
+}
+
+fieldset legend {
+    border: 1px solid #ccc;
+    padding: 5px;
 }
 
 .mainwrapper {
@@ -277,7 +314,7 @@ h5 {
     display: none;
     position: absolute;
     right: 5px;
-    bottom: -68px;
+    top: 40px;
     padding: 5px;
     margin: 0;
     list-style: none;
@@ -353,6 +390,31 @@ h5 {
     font-style: italic;
     font-size: 10px;
 }
+
+#preview_call_number {
+    border: 1px solid #ccc;
+    width: 135px;
+    padding: 10px;
+    float: left;
+}
+
+#preview_call_number div {
+    padding: 5px;
+    background-color: #f8f8f8;
+    margin: 4px 0;
+    text-align: center;
+}
+
+#desc_call_number {
+    padding: 10px;
+    float: left;
+}
+
+#desc_call_number div {
+    padding: 5px;
+    margin: 4px 0;
+}
+
 
 /* Icon */
 .ic-black-leaf {
@@ -543,12 +605,15 @@ h5 {
 }
 
 /* Custom */
-.ftitle {
+.flexigrid {
     text-align: left;
 }
 
-/* Message */
+.ui-multiselect {
+    height: 32px;
+}
 
+/* Message */
 div.box_message {
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;

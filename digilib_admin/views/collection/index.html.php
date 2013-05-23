@@ -1,7 +1,9 @@
 <div class="maincontent">
     <div class="maincontentinner">
-        <table id="list" title="<?php echo Web::getTitle(); ?>" link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_d="<?php echo $link_d; ?>" link_pl="<?php echo $link_pl; ?>" style="display: none;">
-        </table>
+        <center>
+            <table id="list" title="<?php echo Web::getTitle(); ?>" link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_d="<?php echo $link_d; ?>" link_pl="<?php echo $link_pl; ?>" style="display: none;">
+            </table>            
+        </center>
     </div>
 </div>
 

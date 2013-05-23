@@ -23,6 +23,7 @@ class Catalogue extends Controller {
         Src::plugin()->elrte();
         Src::plugin()->tokenInput();
         Src::plugin()->flexiGrid();
+        Src::plugin()->jQueryMultiSelect();
     }
 
     public function index() {

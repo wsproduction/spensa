@@ -6,7 +6,7 @@
             <div class="btn-group">
                 <a href="#" class="dropdown">Aksi</a>
                 <ul>
-                    <li><a href="#">Kembali</a></li>
+                    <li><a href="<?php echo $link_back; ?>">Kembali</a></li>
                 </ul>
             </div>
             <div class="cls">&nbsp;</div>
@@ -146,25 +146,10 @@
 <script>
 
     $(function() {
-        /* Action Button */
-        $('.headtitle .btn-group a[class=dropdown]').live('click', function() {
 
-            var href = $(this).attr('href');
-
-            if (href === '#') {
-                $(this).next('ul').fadeIn('fast');
-                $(this).attr('href', '#active');
-            } else {
-                $(this).next('ul').fadeOut('fast');
-                $(this).attr('href', '#');
-            }
-            return false;
-        });
-
-
-        if ($('#level').val() == 2) {
+        if ($('#level').val() === 2) {
             $('tr.sub1').fadeIn('slow');
-        } else if ($('#level').val() == 3) {
+        } else if ($('#level').val() === 3) {
             $('tr.sub1').fadeIn('slow');
             $('tr.sub2').fadeIn('slow');
         }

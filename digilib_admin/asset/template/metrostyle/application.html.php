@@ -8,7 +8,7 @@
         <?php
         /* jQuery Plugin */
         Src::plugin()->jQuery();
-        Src::plugin()->jQueryUI('ui-lightness');
+        Src::plugin()->jQueryUI('flick');
 
         Src::css('default');
 
@@ -41,6 +41,7 @@
             }('c.9.e({b:2(0){6 7.8(2(){1(0==\'a\'){$(\'#3-4\').d(\'5\')}f 1(0==\'g\'){$(\'#3-4\').h(\'5\')}})}});', 18, 18, 'action|if|function|loading|progress|fast|return|this|each|fn|start|loadingProgress|jQuery|slideDown|extend|else|stop|slideUp'.split('|'), 0, {}));
         </script>
 
+        <?php $nav_link = Web::getHost() . '/' . Web::$webAlias; ?>
     </head>
     <body>
         <div id="loading-progress">&nbsp;</div>
@@ -64,7 +65,7 @@
                             <ul>
                                 <li><a href="">Edit Profile</a></li>
                                 <li><a href="">Account Setting</a></li>
-                                <li><a href="login/stop">Sign Out</a></li>
+                                <li><a href="http://<?php echo $nav_link; ?>/login/stop">Sign Out</a></li>
                             </ul>
                         </div>
                         <div class="cls">&nbsp;</div>
@@ -79,43 +80,42 @@
                                 <div class="left-menu">
                                     <div class="nav-title">NAVIGATION</div>
                                     <ul class="nav">
-                                        <?php $nav_link = Web::getHost() . '/' . Web::$webAlias; ?>
-                                        <li><a href="http://<?php echo $nav_link;  ?>/dashboard" class="ic-black-home bg-medium">Beranda</a></li>
+                                        <li><a href="http://<?php echo $nav_link; ?>/dashboard" class="ic-black-home bg-medium">Beranda</a></li>
                                         <li class="dropdown">
                                             <a href="#" class="ic-black-cargo bg-medium">Data Master</a>
                                             <ul>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/ddc" class="ic-grey-arrow1">DDC (Dewey Decimal Classification)</a></li>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/authordescription" class="ic-grey-arrow1">Keterangan Pengarang</a></li>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/language" class="ic-grey-arrow1">Daftar Bahasa</a></li>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/accountingsymbol" class="ic-grey-arrow1">Mata Uang</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/ddc" class="ic-grey-arrow1">DDC (Dewey Decimal Classification)</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/authordescription" class="ic-grey-arrow1">Keterangan Pengarang</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/language" class="ic-grey-arrow1">Daftar Bahasa</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/accountingsymbol" class="ic-grey-arrow1">Mata Uang</a></li>
                                             </ul>
                                         </li>
                                         <li class="dropdown">
                                             <a href="#" class="ic-black-book bg-medium">Data Buku</a>
                                             <ul>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/booksource" class="ic-grey-arrow1">Sumber Buku</a></li>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/publisher" class="ic-grey-arrow1">Daftar Penerbit</a></li>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/catalogue" class="ic-grey-arrow1">Katalog</a></li>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/collection" class="ic-grey-arrow1">Buku Induk</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/booksource" class="ic-grey-arrow1">Sumber Buku</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/publisher" class="ic-grey-arrow1">Daftar Penerbit</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/catalogue" class="ic-grey-arrow1">Katalog</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/collection" class="ic-grey-arrow1">Buku Induk</a></li>
                                             </ul>
                                         </li>
                                         <li class="dropdown">
                                             <a href="#" class="ic-black-shopping-cart bg-medium">Data Transaksi</a>
                                             <ul>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/borrow" class="ic-grey-arrow1">Peminjaman</a></li>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/returnbook" class="ic-grey-arrow1">Pengembalian</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/borrow" class="ic-grey-arrow1">Peminjaman</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/returnbook" class="ic-grey-arrow1">Pengembalian</a></li>
                                             </ul>
                                         </li>
-                                        <li><a href="http://<?php echo $nav_link;  ?>/members" class="ic-black-parents bg-medium">Data Anggota</a></li>
+                                        <li><a href="http://<?php echo $nav_link; ?>/members" class="ic-black-parents bg-medium">Data Anggota</a></li>
                                         <li class="dropdown">
                                             <a href="#" class="ic-black-file bg-medium">Laporan</a>
                                             <ul>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/report/borrow" class="ic-grey-arrow1">Buku Yang Dipinjam</a></li>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/report/borrower" class="ic-grey-arrow1">Peminjam Buku</a></li>
-                                                <li><a href="http://<?php echo $nav_link;  ?>/report/pinalty" class="ic-grey-arrow1">Denda</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/report/borrow" class="ic-grey-arrow1">Buku Yang Dipinjam</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/report/borrower" class="ic-grey-arrow1">Peminjam Buku</a></li>
+                                                <li><a href="http://<?php echo $nav_link; ?>/report/pinalty" class="ic-grey-arrow1">Denda</a></li>
                                             </ul>
                                         </li>
-                                        <li><a href="http://<?php echo $nav_link;  ?>/chart" class="ic-black-charts bg-medium">Grafik</a></li>
+                                        <li><a href="http://<?php echo $nav_link; ?>/chart" class="ic-black-charts bg-medium">Grafik</a></li>
                                     </ul>
                                 </div>
                             </td>
@@ -142,9 +142,25 @@
                 </div>
 
                 <script>
-                    $(function(){
-                        $('.dropdown a[href=#]').live('click', function(){
+                    $(function() {
+                        /* Left Menu */
+                        $('.dropdown a[href=#]').live('click', function() {
                             $(this).next('ul').slideToggle('slow');
+                            return false;
+                        });
+
+                        /* Action Button */
+                        $('.headtitle .btn-group a[class=dropdown]').live('click', function() {
+
+                            var href = $(this).attr('href');
+
+                            if (href === '#') {
+                                $(this).next('ul').fadeIn('fast');
+                                $(this).attr('href', '#active');
+                            } else {
+                                $(this).next('ul').fadeOut('fast');
+                                $(this).attr('href', '#');
+                            }
                             return false;
                         });
                     });
