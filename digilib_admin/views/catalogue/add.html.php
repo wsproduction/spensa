@@ -376,7 +376,7 @@
                                                 <div class="label-eng">Country</div>
                                             </td>
                                             <td style="width: 5px;">:</td>
-                                            <td>
+                                            <td style="width: 240px;">
                                                 <?php
                                                 Form::create('select', 'country');
                                                 Form::tips('Select Country');
@@ -387,7 +387,7 @@
                                                 Form::commit();
                                                 ?>
                                             </td>
-                                            <td rowspan="4" valign="top" id="view_info_publisher" align="right">
+                                            <td rowspan="4" valign="top" align="center" id="view_info_publisher">
                                                 <?php
                                                 Form::create('hidden', 'publisher');
                                                 Form::validation()->requaired();
@@ -456,17 +456,17 @@
                             <td valign="top" style="padding-top: 10px;width: 500px;">
                                 <fieldset>
                                     <legend>Penanggung Jawab</legend>
-                                    <table>
+                                    <table style="width: 100%">
                                         <tr>
-                                            <td valign="top" style="width: 410px;">
+                                            <td valign="top" style="width: 348px;">
                                                 <table>
                                                     <tr>
                                                         <td style="width: 100px;">
                                                             <div class="label-ina">Keterangan</div>
                                                             <div class="label-eng">Description</div>
                                                         </td>
-                                                        <td>:</td>
-                                                        <td>
+                                                        <td style="width: 5px;">:</td>
+                                                        <td style="width: 240px;">
                                                             <?php
                                                             Form::create('select', 'description_author');
                                                             Form::tips('Pilih keterangan penanggun jawab');
@@ -573,7 +573,7 @@
                                                     </tr>
                                                 </table>
                                             </td>
-                                            <td valign="top">
+                                            <td valign="top" align="center">
                                                 <table id="list-author-selected" title="Daftar Penanggung Jawab" link_r="<?php echo $link_r_author_temp; ?>" link_d="<?php echo $link_d_author_temp; ?>"></table>
                                             </td>
                                         </tr>
@@ -811,8 +811,26 @@
                 required: status
             });
         };
+     
+        var set_callnumber = function(row2, row3) {
+            alert(row2.indexOf('.'));/* Mecari jumlah huruf dalam kalimat */
+            $('.print_row_2').text(row2.substr(0,3));
+            $('.print_row_3').text(row3.substr(0,1));
+        };
         
-        //buat seleksi authro
+        var setting_callnumber = function(author, title) {
+            var author_count = author['count'];
+            var author_primary = author['primary'];
+            var author_primary_status = author_primary['status'];
+            var author_primary_name = author_primary['name'];
+            
+            if (author_count > 0 && author_count <= 3) {
+                set_callnumber(author_primary_name['first_name'], title);
+            } else {
+                set_callnumber(title, null);
+            }
+            
+        };
 
         /* Multiselect */
         $("#language").multiselect({
@@ -849,6 +867,7 @@
                     width: 40,
                     sortable: true,
                     align: 'center'
+
                 }, {
                     display: 'Nama Penerbit',
                     name: 'publisher_name',
@@ -1229,7 +1248,7 @@
                 } else {
                     /* Cek Author */
                     $.get('getAuhtorPrimaryTemp', function(o) {
-                        console.log(o);
+                        setting_callnumber(o, 'Semelekete');
                     }, 'json');
                     curentTab = parseInt(stepStatus) + 1;
                 }
@@ -1290,7 +1309,7 @@
 
 
     });
-        
+
     function generateCatalogue() {
         var contentRow1 = '';
         var contentRow2 = '';

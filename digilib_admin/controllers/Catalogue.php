@@ -822,8 +822,19 @@ class Catalogue extends Controller {
 
     public function getAuhtorPrimaryTemp() {
         $list_author_temp = $this->model->selectAuthorPrimaryTemp();
-        $data_author_temp = $list_author_temp[0];
-        echo json_encode(array('first_name' => $data_author_temp['author_firstname'], 'last_name' => $data_author_temp['author_lastname']));
+        $count_author_temp = count($list_author_temp);
+        $primary_status = false;
+        $primary_name = array();
+        
+        foreach ($list_author_temp as $value) {
+            if ($value['book_author_temp_primary']) {
+                $primary_status = true;
+                $primary_name['first_name'] = $value['author_firstname'];
+                $primary_name['last_name'] = $value['author_lastname'];
+            }
+        }
+
+        echo json_encode(array('count' => $count_author_temp, 'primary' => array('status' => $primary_status, 'name' => $primary_name)));
     }
 
     public function getAuhtorTemp() {

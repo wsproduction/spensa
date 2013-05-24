@@ -1311,14 +1311,19 @@ class CatalogueModel extends Model {
         $sth = $this->db->prepare('
                               SELECT 
                                 digilib_author.author_firstname,
-                                digilib_author.author_lastname
+                                digilib_author.author_lastname,
+                                digilib_author_description.author_description_title,
+                                digilib_book_author_temp.book_author_temp_primary
                               FROM
                                 digilib_book_author_temp
                                 INNER JOIN digilib_author ON (digilib_book_author_temp.book_author_temp_name = digilib_author.author_id)
+                                INNER JOIN digilib_author_description ON (digilib_author.author_description = digilib_author_description.author_description_id)
                               WHERE
-                                digilib_book_author_temp.book_author_temp_session = :session AND 
-                                digilib_book_author_temp.book_author_temp_primary = 1
-                              LIMIT 1
+                                digilib_author_description.author_description_id = 1 AND 
+                                digilib_book_author_temp.book_author_temp_session = :session
+                              ORDER BY
+                                digilib_author_description.author_description_level,
+                                digilib_book_author_temp.book_author_temp_id
                         ');
 
         $sth->setFetchMode(PDO::FETCH_ASSOC);

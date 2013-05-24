@@ -42,6 +42,14 @@ root {
     clear:both;
 }
 
+.fright {
+    float: right;
+}
+
+.print_row_2, .print_row_3 {
+    text-transform: uppercase;
+}
+
 label.error {
     color: red;
     font-style: italic;
