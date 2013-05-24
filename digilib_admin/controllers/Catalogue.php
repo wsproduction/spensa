@@ -60,7 +60,7 @@ class Catalogue extends Controller {
         $listDad = array();
         foreach ($this->model->selectAllAuthorDescription() as $value) {
             $listDadID[] = $value['author_description_id'];
-            $listDad[$value['author_description_id']] = $value['author_description'];
+            $listDad[$value['author_description_id']] = $value['author_description_title'];
         }
 
         $this->dataAuthorTempDescriptionID = $listDadID;
@@ -70,7 +70,7 @@ class Catalogue extends Controller {
 
         $varAuthor = array();
         foreach ($dataAuthor as $value) {
-            $varAuthor[$value['session_id']][$value['author_description']][] = array('first_name' => $value['author_first_name'], 'last_name' => $value['author_last_name']);
+            $varAuthor[$value['book_author_temp_session']][$value['book_author_temp_name']][] = array('first_name' => $value['author_firstname'], 'last_name' => $value['author_lastname']);
         }
         $this->dataAuthorTemp = $varAuthor;
     }
@@ -741,7 +741,7 @@ class Catalogue extends Controller {
     }
 
     public function optionAuthor() {
-        $option = '<option value=""></option>';
+        $option = '';
         $countryid = $this->method->get('id');
         $listprovince = $this->model->selectAuthorByDescrtiptionId($countryid);
         foreach ($listprovince as $row) {
@@ -820,6 +820,12 @@ class Catalogue extends Controller {
         echo json_encode($html);
     }
 
+    public function getAuhtorPrimaryTemp() {
+        $list_author_temp = $this->model->selectAuthorPrimaryTemp();
+        $data_author_temp = $list_author_temp[0];
+        echo json_encode(array('first_name' => $data_author_temp['author_firstname'], 'last_name' => $data_author_temp['author_lastname']));
+    }
+
     public function getAuhtorTemp() {
         $this->setAuthorTemp();
 
@@ -829,7 +835,7 @@ class Catalogue extends Controller {
         $tempCount = 0;
 
         foreach ($this->dataAuthorTempDescription as $keyAD => $valueAD) {
-            $res = $this->parsingAuthorTemp($this->method->get('sa'), $keyAD);
+            $res = $this->parsingAuthorTemp($keyAD);
 
             if ($res[0] > 0 && $countAuthor)
                 $outAuthor .= '; ';

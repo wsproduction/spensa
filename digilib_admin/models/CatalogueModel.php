@@ -445,7 +445,7 @@ class CatalogueModel extends Model {
                     ':name' => $name,
                     ':profile' => $address,
                     ':id' => $id
-                ));
+        ));
     }
 
     public function saveCover($id, $cover) {
@@ -718,15 +718,15 @@ class CatalogueModel extends Model {
 
     public function selectAllAuthorDescription() {
         $sth = $this->db->prepare('
-                            SELECT 
+                              SELECT 
                                 digilib_author_description.author_description_id,
                                 digilib_author_description.author_description_title,
                                 digilib_author_description.author_description_level,
                                 digilib_author_description.author_description_entry,
                                 digilib_author_description.author_description_entry_update
-                            FROM
+                              FROM
                                 digilib_author_description
-                            ORDER BY digilib_author_description.author_description_level');
+                              ORDER BY digilib_author_description.author_description_level');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -1290,11 +1290,35 @@ class CatalogueModel extends Model {
                                 digilib_book_author_temp.book_author_temp_id,
                                 digilib_book_author_temp.book_author_temp_session,
                                 digilib_book_author_temp.book_author_temp_name,
-                                digilib_book_author_temp.book_author_temp_primary
+                                digilib_book_author_temp.book_author_temp_primary,
+                                digilib_author.author_firstname,
+                                digilib_author.author_lastname
                             FROM
                                 digilib_book_author_temp
+                                INNER JOIN digilib_author ON (digilib_book_author_temp.book_author_temp_name = digilib_author.author_id)
                             WHERE
                                 digilib_book_author_temp.book_author_temp_session = :session
+                        ');
+
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':session', Session::id());
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectAuthorPrimaryTemp() {
+        Session::init();
+        $sth = $this->db->prepare('
+                              SELECT 
+                                digilib_author.author_firstname,
+                                digilib_author.author_lastname
+                              FROM
+                                digilib_book_author_temp
+                                INNER JOIN digilib_author ON (digilib_book_author_temp.book_author_temp_name = digilib_author.author_id)
+                              WHERE
+                                digilib_book_author_temp.book_author_temp_session = :session AND 
+                                digilib_book_author_temp.book_author_temp_primary = 1
+                              LIMIT 1
                         ');
 
         $sth->setFetchMode(PDO::FETCH_ASSOC);
@@ -1504,20 +1528,20 @@ class CatalogueModel extends Model {
         $count = $tempCount[0];
         return $count['cnt'];
     }
-    
+
     public function deletePrintListBarcode() {
         $id = $this->method->post('id', 0);
         $sth = $this->db->prepare('DELETE FROM digilib_book_temp_barcodeprint WHERE digilib_book_temp_barcodeprint.book_temp_barcodeprint IN (' . $id . ')');
         return $sth->execute();
     }
-    
+
     public function deletePrintListBarcodeAll() {
         Session::init();
         $sth = $this->db->prepare('DELETE FROM digilib_book_temp_barcodeprint WHERE digilib_book_temp_barcodeprint.book_temp_barcodeprint_session = :sessionid');
         $sth->bindValue(':sessionid', Session::id());
         return $sth->execute();
     }
-    
+
     public function selectPrintBarcodeList() {
         Session::init();
         $prepare = 'SELECT 
@@ -1538,7 +1562,7 @@ class CatalogueModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectBookLanguageByBookId($bookid = 0) {
         $prepare = 'SELECT 
                         public_language.language_name
@@ -1554,7 +1578,7 @@ class CatalogueModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+
     public function selectDdcParent($ddcid = 0) {
         $prepare = ' SELECT 
                         ddc2.ddc_classification_number AS cn2,
@@ -1572,6 +1596,5 @@ class CatalogueModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
-    
+
 }

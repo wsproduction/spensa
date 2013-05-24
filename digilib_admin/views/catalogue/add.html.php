@@ -369,25 +369,25 @@
                             <td style="border-bottom: 1px dashed #ccc;padding-bottom: 10px;">
                                 <fieldset>
                                     <legend>Keterangan Penerbit</legend>
-                                    <table style="width: 100%;" >
+                                    <table style="width: 100%;">
                                         <tr>
-                                            <td style="width: 120px;">
+                                            <td style="width: 100px;">
                                                 <div class="label-ina">Negara</div>
                                                 <div class="label-eng">Country</div>
                                             </td>
                                             <td style="width: 5px;">:</td>
-                                            <td style="width: 280px;">
+                                            <td>
                                                 <?php
                                                 Form::create('select', 'country');
                                                 Form::tips('Select Country');
                                                 Form::option($country, ' ');
                                                 Form::validation()->requaired();
-                                                Form::properties(array('link' => $link_province, 'style' => 'max-width:250px;'));
+                                                Form::properties(array('link' => $link_province, 'style' => 'max-width:200px;'));
                                                 Form::style('form-grey');
                                                 Form::commit();
                                                 ?>
                                             </td>
-                                            <td rowspan="4" valign="top" id="view_info_publisher">
+                                            <td rowspan="4" valign="top" id="view_info_publisher" align="right">
                                                 <?php
                                                 Form::create('hidden', 'publisher');
                                                 Form::validation()->requaired();
@@ -408,7 +408,7 @@
                                                 Form::create('select', 'province');
                                                 Form::tips('Select Country');
                                                 Form::validation()->requaired();
-                                                Form::properties(array('link' => $link_city, 'style' => 'max-width:250px;'));
+                                                Form::properties(array('link' => $link_city, 'style' => 'max-width:200px;'));
                                                 Form::style('form-grey');
                                                 Form::commit();
                                                 ?>
@@ -425,7 +425,7 @@
                                                 Form::create('select', 'city');
                                                 Form::tips('Select City');
                                                 Form::validation()->requaired();
-                                                Form::properties(array('style' => 'max-width:250px;'));
+                                                Form::properties(array('style' => 'max-width:200px;'));
                                                 Form::style('form-grey');
                                                 Form::commit();
                                                 ?>
@@ -461,7 +461,7 @@
                                             <td valign="top" style="width: 410px;">
                                                 <table>
                                                     <tr>
-                                                        <td style="width: 120px;">
+                                                        <td style="width: 100px;">
                                                             <div class="label-ina">Keterangan</div>
                                                             <div class="label-eng">Description</div>
                                                         </td>
@@ -471,7 +471,7 @@
                                                             Form::create('select', 'description_author');
                                                             Form::tips('Pilih keterangan penanggun jawab');
                                                             Form::option($author_description, ' ');
-                                                            Form::properties(array('link' => $link_author, 'style' => 'max-width:250px;'));
+                                                            Form::properties(array('link' => $link_author, 'style' => 'max-width:200px;'));
                                                             Form::style('form-grey');
                                                             Form::commit();
                                                             ?>
@@ -487,7 +487,7 @@
                                                             <?php
                                                             Form::create('select', 'option_author');
                                                             Form::tips('Pilih keterangan penanggun jawab');
-                                                            Form::properties(array('style' => 'max-width:250px;'));
+                                                            Form::properties(array('style' => 'max-width:200px;'));
                                                             Form::style('form-grey');
                                                             Form::commit();
                                                             ?>
@@ -668,7 +668,9 @@
                                             </td>
                                         </tr>
                                     </table>
+
                                     <table id="list-ddc" title="Daftar Nomor Klasifikasi" link_r="<?php echo $link_r_ddc ?>"></table>
+
                                 </fieldset>
                             </td>
                         </tr>
@@ -735,8 +737,8 @@
                                 Form::style('button-mid-solid-bluesky');
                                 Form::commit();
                                 Form::create('submit', 'btnSave');
+                                Form::value('Next to Step 5');
                                 Form::style('button-mid-solid-bluesky');
-                                Form::style('action_next');
                                 Form::commit();
                                 ?>
                             </td>
@@ -809,6 +811,8 @@
                 required: status
             });
         };
+        
+        //buat seleksi authro
 
         /* Multiselect */
         $("#language").multiselect({
@@ -942,6 +946,7 @@
                 $("#option_author").multiselect('refresh');
             }, 'json');
         });
+
         $('#option_author').live('change', function() {
             var id = $(this).val();
             if (id === "-1") {
@@ -950,6 +955,7 @@
                 $('#form-add-author').fadeOut('slow');
             }
         });
+
         $('#btnAddAuthor').live('click', function() {
             var id = $('#option_author').val();
             form_requaired_validation('#description_author', true);
@@ -1092,7 +1098,6 @@
 
         $(listId4).flexigrid(option4);
 
-
         /* FLEXYGRID DDC */
         var listId5 = '#list-ddc';
         var title5 = $(listId5).attr('title');
@@ -1129,7 +1134,7 @@
             showTableToggleBtn: true,
             resizable: false,
             singleSelect: true,
-            width: screen.width * 0.7,
+            width: screen.width * 0.67,
             height: 300,
             onSubmit: function() {
                 var dt = $('#fAdd').serializeArray();
@@ -1153,11 +1158,13 @@
                 $('#ddcLevel2').html(o);
             }, 'json');
         });
+
         $('#btnFilterDdc').live('click', function() {
             $('#list-ddc').flexOptions({
                 newp: 1
             }).flexReload();
         });
+
         $('#list-ddc tbody tr[id*="row"]').live('click', function() {
             var id = '';
             var class_number = '';
@@ -1194,8 +1201,8 @@
 
         var opts = {
             cssClass: 'el-rte',
-            height: 400,
-            width: 800,
+            height: 600,
+            width: screen.width * 0.67,
             toolbar: 'web2pyToolbar',
             cssfiles: ['css/elrte-inner.css']
         };
@@ -1212,12 +1219,18 @@
             var stepStatus = $('#stepStatus').val();
             var curentTab = 0;
 
+            alert(stepStatus);
+
             if (stepStatus === '1') {
                 var publisher = $('#publisher').val();
                 if (publisher === '') {
                     curentTab = 1;
                     alert('Silahkan pilih penerbit buku!');
                 } else {
+                    /* Cek Author */
+                    $.get('getAuhtorPrimaryTemp', function(o) {
+                        console.log(o);
+                    }, 'json');
                     curentTab = parseInt(stepStatus) + 1;
                 }
             } else if (stepStatus === '2') {
@@ -1277,8 +1290,7 @@
 
 
     });
-
-
+        
     function generateCatalogue() {
         var contentRow1 = '';
         var contentRow2 = '';
