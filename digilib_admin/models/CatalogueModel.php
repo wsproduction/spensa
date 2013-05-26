@@ -314,8 +314,8 @@ class CatalogueModel extends Model {
     }
 
     public function saveLanguageBook($bookid) {
-        $languagetemp = $this->selectLanguageTempBySession();
-        if ($languagetemp) {
+        $languagetemp = explode(',',$this->method->post('language_hide'));
+        if (count($languagetemp)) {
             $prepare = '';
             foreach ($languagetemp as $rowlanguage) {
                 $prepare .= '
@@ -334,7 +334,7 @@ class CatalogueModel extends Model {
                                 1)
                             ),
                             "' . $bookid . '",
-                            "' . $rowlanguage['book_language'] . '"
+                            "' . $rowlanguage . '"
                          );';
             }
             $sth = $this->db->prepare($prepare);
@@ -940,24 +940,6 @@ class CatalogueModel extends Model {
         $sth = $this->db->prepare('
             SELECT * FROM digilib_book_language_temp WHERE digilib_book_language_temp.book_language_temp_id IN (' . $id . ')');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->execute();
-        return $sth->fetchAll();
-    }
-
-    public function selectLanguageTempBySession() {
-        Session::init();
-        $sth = $this->db->prepare('
-                            SELECT 
-                                digilib_book_language_temp.book_language_temp_id,
-                                digilib_book_language_temp.book_language_temp_session,
-                                digilib_book_language_temp.book_language
-                            FROM
-                                digilib_book_language_temp
-                            WHERE
-                                digilib_book_language_temp.book_language_temp_session = :session
-                         ');
-        $sth->setFetchMode(PDO::FETCH_ASSOC);
-        $sth->bindValue(':session', Session::id());
         $sth->execute();
         return $sth->fetchAll();
     }

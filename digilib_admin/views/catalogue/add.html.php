@@ -73,6 +73,9 @@
                             <td valign="top" style="padding: 8px 0 0 0;">:</td>
                             <td>
                                 <?php
+                                Form::create('hidden', 'language_hide');
+                                Form::commit();
+                                
                                 Form::create('select', 'language');
                                 Form::tips('Pilih Bahasa');
                                 Form::option($language);
@@ -811,25 +814,127 @@
                 required: status
             });
         };
-     
+
         var set_callnumber = function(row2, row3) {
-            alert(row2.indexOf('.'));/* Mecari jumlah huruf dalam kalimat */
-            $('.print_row_2').text(row2.substr(0,3));
-            $('.print_row_3').text(row3.substr(0,1));
+            /* alert(row2.indexOf('.')); Mecari jumlah huruf dalam kalimat */
+            $('.print_row_2').text(row2.substr(0, 3));
+            $('.print_row_3').text(row3.substr(0, 1));
         };
-        
+
         var setting_callnumber = function(author, title) {
             var author_count = author['count'];
             var author_primary = author['primary'];
             var author_primary_status = author_primary['status'];
             var author_primary_name = author_primary['name'];
-            
+
             if (author_count > 0 && author_count <= 3) {
                 set_callnumber(author_primary_name['first_name'], title);
             } else {
                 set_callnumber(title, null);
             }
+        };
+
+        var generateCatalogue = function() {
+            var contentRow1 = '';
+            var contentRow2 = '';
+            var contentRow3 = '';
+
+            var tempJudul = $('#title').val();
+            var tempAnakJudul = $('#sub_title').val();
+            var tempJudulBahasaLain = $('#foreign_title').val();
+            var tempEdisi = $('#edition').val();
+            var tempCetakan = $('#print_out').val();
+            var tempKota = $('#city option:selected').text();
+            var tempPenerbit = $('#publisher option:selected').text();
+            var tempTahun = $('#year option:selected').text();
+
+            var tempHalamanRomawi = $('#roman_count').val();
+            var tempHalamanAngka = $('#page_count').val();
+            var tempIlustrasi = $('#ilustration').is(':checked');
+            var tempLebar = $('#width').val();
+
+            var tempBiblliografi = $('#bibliography').val();
+            var tempIndex = $('#ilustration').is(':checked');
+            var tempISBN = $('#isbn').val();
+
+            var judul = tempJudul;
+            var anakJudul = '';
+            var judulBahasaLain = '';
+            var author = '<span class="viewListAuthorTemp"></span>';
+            var edisi = '';
+            var cetakan = '';
+            var penerbit = '';
+
+            var halamanRomawi = '';
+            var halamanAngka = '';
+            var ilustrasi = '';
+            var lebar = '';
+
+            var biblliografi = '';
+            var index = '';
+            var ISBN = '';
+
+            var sparator1 = '';
+            var sparator2 = '';
+
+            if (tempAnakJudul !== '')
+                anakJudul = ' : ' + tempAnakJudul;
+
+            if (tempJudulBahasaLain !== '')
+                judulBahasaLain = ' = ' + tempJudulBahasaLain;
+
+            if (tempEdisi !== '')
+                edisi = '.&HorizontalLine; Ed. ' + tempEdisi;
+
+            if (tempEdisi !== '' && tempCetakan !== '')
+                sparator1 = ',';
+
+            if (tempCetakan !== '')
+                cetakan = ' cet. ' + tempCetakan;
+
+            if (tempHalamanRomawi !== '')
+                halamanRomawi = tempHalamanRomawi;
+
+            if (tempHalamanRomawi !== '' && tempHalamanAngka != '')
+                sparator2 = ',';
+
+            if (tempHalamanAngka !== '')
+                halamanAngka = ' ' + tempHalamanAngka + ' hlm.';
+
+            if (tempIlustrasi)
+                ilustrasi = ' : ilus.';
+
+            if (tempLebar !== '')
+                lebar = ' ; ' + tempLebar + ' cm&DiacriticalAcute;';
+
+            if (tempBiblliografi !== '')
+                biblliografi = 'Biblliografi : ' + tempBiblliografi + ' <br>';
+
+            if (tempIndex)
+                index = 'Indeks <br>';
+
+            if (tempISBN !== '')
+                ISBN = 'ISBN ' + tempISBN + ' <br>';
+
+            penerbit = '.&HorizontalLine; ' + tempKota + ' : ' + tempPenerbit + ', ' + tempTahun + '. ';
+
+            contentRow1 = judul + anakJudul + judulBahasaLain + author + edisi + sparator1 + cetakan + penerbit;
+
+            contentRow2 = halamanRomawi + sparator2 + halamanAngka + ilustrasi + lebar;
+
+            contentRow3 = biblliografi + index + ISBN;
+
+            $('.contentRow1').html(contentRow1);
+            $('.contentRow2').html(contentRow2);
+            $('.contentRow3').html(contentRow3);
             
+            /*
+            $.get('getAuhtorTemp', {
+                sa: $('#sessionAuthor').val()
+            }, function(o) {
+                $('.viewListAuthorTemp').html(o);
+            }, 'json');
+            */
         };
 
         /* Multiselect */
@@ -867,7 +972,6 @@
                     width: 40,
                     sortable: true,
                     align: 'center'
-
                 }, {
                     display: 'Nama Penerbit',
                     name: 'publisher_name',
@@ -1237,8 +1341,14 @@
 
             var stepStatus = $('#stepStatus').val();
             var curentTab = 0;
-
-            alert(stepStatus);
+            
+            /* Set Language ID to hidden form #language_hidden */
+            var array_of_checked_values = $("#language").multiselect("getChecked").map(function(){
+                return this.value;	
+            }).get();
+            $('#language_hide').val(array_of_checked_values.join(','));            
+            
+            /* alert(stepStatus); */
 
             if (stepStatus === '1') {
                 var publisher = $('#publisher').val();
@@ -1246,9 +1356,12 @@
                     curentTab = 1;
                     alert('Silahkan pilih penerbit buku!');
                 } else {
-                    /* Cek Author */
+                    /* *
+                     * Cek Author 
+                     * NB : Seharusnya tab selanjutnya dibuka jika proses cek selesai.
+                     * */
                     $.get('getAuhtorPrimaryTemp', function(o) {
-                        setting_callnumber(o, 'Semelekete');
+                        setting_callnumber(o, $('#title').val());
                     }, 'json');
                     curentTab = parseInt(stepStatus) + 1;
                 }
@@ -1258,10 +1371,12 @@
                     curentTab = 2;
                     alert('Silahkan tentukan nomor klasifikasi!');
                 } else {
+                    generateCatalogue();
                     curentTab = parseInt(stepStatus) + 1;
                 }
             } else if (stepStatus === '4') {
                 frmID = $(this);
+                
                 msgID = $('#message');
                 $(frmID).ajaxSubmit({
                     success: function(o) {
@@ -1277,7 +1392,8 @@
                         }
                     }
                 });
-
+                
+               /* frmID.submit(); */
             } else {
                 curentTab = parseInt(stepStatus) + 1;
             }
@@ -1309,105 +1425,4 @@
 
 
     });
-
-    function generateCatalogue() {
-        var contentRow1 = '';
-        var contentRow2 = '';
-        var contentRow3 = '';
-
-        var tempJudul = $('#title').val();
-        var tempAnakJudul = $('#sub_title').val();
-        var tempJudulBahasaLain = $('#foreign_title').val();
-        var tempEdisi = $('#edition').val();
-        var tempCetakan = $('#print_out').val();
-        var tempKota = $('#city option:selected').text();
-        var tempPenerbit = $('#publisher option:selected').text();
-        var tempTahun = $('#year option:selected').text();
-
-        var tempHalamanRomawi = $('#roman_count').val();
-        var tempHalamanAngka = $('#page_count').val();
-        var tempIlustrasi = $('#ilustration').is(':checked');
-        var tempLebar = $('#width').val();
-
-        var tempBiblliografi = $('#bibliography').val();
-        var tempIndex = $('#ilustration').is(':checked');
-        var tempISBN = $('#isbn').val();
-
-        var judul = tempJudul;
-        var anakJudul = '';
-        var judulBahasaLain = '';
-        var author = '<span class="viewListAuthorTemp"></span>';
-        var edisi = '';
-        var cetakan = '';
-        var penerbit = '';
-
-        var halamanRomawi = '';
-        var halamanAngka = '';
-        var ilustrasi = '';
-        var lebar = '';
-
-        var biblliografi = '';
-        var index = '';
-        var ISBN = '';
-
-        var sparator1 = '';
-        var sparator2 = '';
-
-        if (tempAnakJudul !== '')
-            anakJudul = ' : ' + tempAnakJudul;
-
-        if (tempJudulBahasaLain !== '')
-            judulBahasaLain = ' = ' + tempJudulBahasaLain;
-
-        if (tempEdisi !== '')
-            edisi = '.&HorizontalLine; Ed. ' + tempEdisi;
-
-        if (tempEdisi !== '' && tempCetakan !== '')
-            sparator1 = ',';
-
-        if (tempCetakan !== '')
-            cetakan = ' cet. ' + tempCetakan;
-
-        if (tempHalamanRomawi !== '')
-            halamanRomawi = tempHalamanRomawi;
-
-        if (tempHalamanRomawi !== '' && tempHalamanAngka != '')
-            sparator2 = ',';
-
-        if (tempHalamanAngka !== '')
-            halamanAngka = ' ' + tempHalamanAngka + ' hlm.';
-
-        if (tempIlustrasi)
-            ilustrasi = ' : ilus.';
-
-        if (tempLebar !== '')
-            lebar = ' ; ' + tempLebar + ' cm&DiacriticalAcute;';
-
-        if (tempBiblliografi !== '')
-            biblliografi = 'Biblliografi : ' + tempBiblliografi + ' <br>';
-
-        if (tempIndex)
-            index = 'Indeks <br>';
-
-        if (tempISBN !== '')
-            ISBN = 'ISBN ' + tempISBN + ' <br>';
-
-        penerbit = '.&HorizontalLine; ' + tempKota + ' : ' + tempPenerbit + ', ' + tempTahun + '. ';
-
-        contentRow1 = judul + anakJudul + judulBahasaLain + author + edisi + sparator1 + cetakan + penerbit;
-
-        contentRow2 = halamanRomawi + sparator2 + halamanAngka + ilustrasi + lebar;
-
-        contentRow3 = biblliografi + index + ISBN;
-
-        $('.contentRow1').html(contentRow1);
-        $('.contentRow2').html(contentRow2);
-        $('.contentRow3').html(contentRow3);
-
-        $.get('getAuhtorTemp', {
-            sa: $('#sessionAuthor').val()
-        }, function(o) {
-            $('.viewListAuthorTemp').html(o);
-        }, 'json');
-    }
 </script>

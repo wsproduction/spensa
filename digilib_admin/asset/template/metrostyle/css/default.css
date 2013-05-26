@@ -21,16 +21,13 @@ root {
     background-color: #fff;
     width: 160px;
     height: 54px;
-    left: 55%;
-    top: 40%;
+    left: 44%;
+    top: 5%;
     position: absolute;
     z-index: 9999;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
-    -moz-box-shadow:    0px 0px 10px 1px #ccc;
-    -webkit-box-shadow: 0px 0px 10px 1px #ccc;
-    box-shadow:         0px 0px 10px 1px #ccc;
     display: none;
 }
 
@@ -46,8 +43,12 @@ root {
     float: right;
 }
 
-.print_row_2, .print_row_3 {
+.print_row_2 {
     text-transform: uppercase;
+}
+
+.print_row_3 {
+    text-transform: lowercase;
 }
 
 label.error {
