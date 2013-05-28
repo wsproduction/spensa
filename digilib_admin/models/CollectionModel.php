@@ -19,6 +19,7 @@ class CollectionModel extends Model {
                         digilib_book_register.book_id,
                         digilib_book_register.book_entry,
                         digilib_book_condition.book_condition,
+                        digilib_book_register.book_count_barcode_print,
                         (SELECT COUNT(dbh.borrowed_history_id) AS FIELD_1 FROM digilib_borrowed_history dbh WHERE dbh.borrowed_history_book = digilib_book_register.book_register_id) AS total_borrowed,
                         (SELECT dbh.borrowed_history_star FROM digilib_borrowed_history dbh WHERE dbh.borrowed_history_book = digilib_book_register.book_register_id ORDER BY dbh.borrowed_history_star DESC LIMIT 1) AS last_borrowed,
                         digilib_book.book_title,
@@ -52,7 +53,31 @@ class CollectionModel extends Model {
         $sth->execute();
         return $sth->fetchAll();
     }
-    
+        
+    public function saveTempPrintBarcode($bookid = 0, $sessionid = 0) {
+        $sth = $this->db->prepare('
+                    INSERT INTO
+                        digilib_book_temp_barcodeprint(
+                        book_temp_barcodeprint,
+                        book_temp_barcodeprint_register,
+                        book_temp_barcodeprint_session)
+                      VALUES(
+                        (SELECT IF(
+                            (SELECT COUNT(dbtb.book_temp_barcodeprint) 
+                            FROM digilib_book_temp_barcodeprint AS dbtb) > 0, 
+                                (SELECT dbtb.book_temp_barcodeprint 
+                                FROM digilib_book_temp_barcodeprint AS dbtb 
+                                ORDER BY dbtb.book_temp_barcodeprint DESC LIMIT 1) + 1,
+                            1)
+                        ),
+                        :book_id,
+                        :session_id)
+                    ');
+        $sth->bindValue(':book_id', $bookid);
+        $sth->bindValue(':session_id', $sessionid);
+        return $sth->execute();
+    }
+
     public function countAllCollection() {
         $query = $this->method->post('query', false);
         $qtype = $this->method->post('qtype', false);

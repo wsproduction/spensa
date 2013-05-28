@@ -18,8 +18,8 @@ class Collection extends Controller {
         $this->view->link_c = $this->content->setLink('collection/add');
         $this->view->link_r = $this->content->setLink('collection/read');
         $this->view->link_d = $this->content->setLink('collection/delete');
-        $this->view->link_p = $this->content->setLink('collection/addprint');
-        $this->view->link_pl = $this->content->setLink('catalogue/printlistbarcode');
+        $this->view->link_p = $this->content->setLink('collection/addprintbarcode');
+        $this->view->link_pl = $this->content->setLink('collection/printlistbarcode');
         $this->view->render('collection/index');
     }
 
@@ -65,29 +65,34 @@ class Collection extends Controller {
             $xml .= "<total>$total</total>";
 
             foreach ($listData as $row) {
-                
+
                 $author = $this->content->parsingAuthor($row['book_id']);
                 $callnumber_extention = $this->content->callNumberExtention($author, $row['book_title']);
-                
+
                 $last_borrowed = '-';
                 if (!empty($row['last_borrowed']))
                     $last_borrowed = date('d.m.Y', strtotime($row['last_borrowed']));
-                
+
                 $foreign_title = '';
                 if (!empty($row['book_foreign_title']))
                     $foreign_title = ' / ' . $row['book_foreign_title'];
-                
-                $resource= '-';
+
+                $resource = '-';
                 if (!empty($row['resource'])) {
                     $resource = $row['resource'];
                 }
-                
+
                 $fund = '-';
                 if (!empty($row['fund'])) {
                     $fund = $row['fund'];
                 }
-                
-                $description  = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
+
+                $count_barcode_print = '0';
+                if (!empty($row['book_count_barcode_print'])) {
+                    $count_barcode_print = $row['book_count_barcode_print'];
+                }
+
+                $description = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
                 $description .= '<br><b>' . $row['book_title'] . $foreign_title . '.</b> ';
                 $description .= '<br><font style="font-style:italic;color:#666;">' . $this->content->sortAuthor($author) . '</font>';
                 $description .= '<font style="font-style:italic;color:#666;"> ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . '</font>';
@@ -102,6 +107,7 @@ class Collection extends Controller {
                 $xml .= "<cell><![CDATA[" . $row['total_borrowed'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $last_borrowed . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . date('d.m.Y', strtotime($row['book_entry'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $count_barcode_print . "]]></cell>";
                 $xml .= "<cell><![CDATA[<a href=''>Edit</a>]]></cell>";
                 $xml .= "</row>";
             }
@@ -122,6 +128,29 @@ class Collection extends Controller {
 
     public function delete() {
         $this->model->delete();
+    }
+
+    public function addPrintBarcode() {
+        if ($this->method->isAjax()) {
+            Session::init();
+            $sessionid = Session::id();
+            $tempid = $this->method->post('id');
+            foreach (explode(',', $tempid) as $key => $value) {
+                $this->model->saveTempPrintBarcode($value, $sessionid);
+            }
+            echo json_encode(true);
+        } else {
+            echo json_encode(false);
+        }
+    }
+
+    public function printListBarcode() {
+        Web::setTitle('Daftar Print Barcode');
+        $this->view->link_r = $this->content->setLink('catalogue/readprintlistbarcode');
+        $this->view->link_p = $this->content->setLink('catalogue/printbarcode');
+        $this->view->link_d = $this->content->setLink('catalogue/deleteprintlistbarcode');
+        $this->view->link_da = $this->content->setLink('catalogue/deleteprintlistbarcodeall');
+        $this->view->render('catalogue/printlistbarcode');
     }
 
     public function printBarcode() {

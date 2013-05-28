@@ -143,6 +143,9 @@
 
                 <script>
                     $(function() {
+                        
+                        $('.left-panel').css('height', screen.height * 0.765);
+                        
                         /* Left Menu */
                         $('.dropdown a[href=#]').live('click', function() {
                             $(this).next('ul').slideToggle('slow');

@@ -1,7 +1,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
         <center>
-            <table id="list" title="<?php echo Web::getTitle(); ?>" link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_d="<?php echo $link_d; ?>" link_pl="<?php echo $link_pl; ?>" style="display: none;">
+            <table id="list" title="<?php echo Web::getTitle(); ?>" link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_d="<?php echo $link_d; ?>" link_p="<?php echo $link_p; ?>" link_pl="<?php echo $link_pl; ?>" style="display: none;">
             </table>            
         </center>
     </div>
@@ -15,7 +15,7 @@
             dataType: 'xml',
             colModel: [{
                     display: 'Nomor Induk',
-                    name: 'book_id',
+                    name: 'book_register_id',
                     width: 80,
                     sortable: true,
                     align: 'center'
@@ -68,6 +68,13 @@
                     align: 'center',
                     hide: true
                 }, {
+                    display: 'Jml. Print Barcode',
+                    name: 'book_entry_date',
+                    width: 100,
+                    sortable: true,
+                    align: 'center',
+                    hide: true
+                }, {
                     display: 'Option',
                     name: 'option',
                     width: 80,
@@ -89,7 +96,7 @@
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $('#list .trSelected td[abbr=book_id] div').each(function() {
+                                $('#list .trSelected td[abbr=book_register_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
 
@@ -108,6 +115,35 @@
                 }, {
                     separator: true
                 }, {
+                    name: 'Tambah Ke Daftar Print',
+                    bclass: 'issue',
+                    onpress: function() {
+                        var leng = $('#list .trSelected').length;
+                        var conf = confirm('Print ' + leng + ' items?');
+
+                        if (conf) {
+                            if (leng > 0) {
+                                var tempId = [];
+                                $('#list .trSelected td[abbr=book_register_id] div').each(function() {
+                                    tempId.push(parseInt($(this).text()));
+                                });
+
+                                $(this).loadingProgress('start');
+                                $.post($('#list').attr('link_p'), {
+                                    id: tempId.join(',')
+                                }, function(o) {
+                                    $(this).loadingProgress('stop');
+                                    if (o) {
+                                        alert(leng + ' Item has saved.');
+                                        $('#list').flexReload();
+                                    } else {
+                                        alert('Process saved failed.');
+                                    }
+                                }, 'json');
+                            }
+                        }
+                    }
+                }, {
                     name: 'Lihat Daftar Print',
                     bclass: 'card',
                     onpress: function() {
@@ -116,7 +152,7 @@
                 }],
             searchitems: [{
                     display: 'ID',
-                    name: 'book_id',
+                    name: 'book_register_id',
                     isdefault: true
                 }, {
                     display: 'Judul Buku',

@@ -26,15 +26,22 @@
                 }, {
                     display: 'Nomor Induk Buku',
                     name: 'members_name',
-                    width: 180,
+                    width: 100,
                     sortable: true,
-                    align: 'left'
+                    align: 'center'
                 }, {
                     display: 'Keterangan Buku',
                     name: 'gender_title',
-                    width: 300,
+                    width: 450,
                     sortable: true,
-                    align: 'center'
+                    align: 'left'
+                }, {
+                    display: 'Jml. Print Barcode',
+                    name: 'book_entry_date',
+                    width: 100,
+                    sortable: true,
+                    align: 'center',
+                    hide: true
                 }],
             buttons: [{
                     name: 'Hapus',
