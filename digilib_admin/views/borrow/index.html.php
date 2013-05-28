@@ -1,8 +1,9 @@
 <div class="maincontent">
     <div class="maincontentinner">
-        <table id="borrow-list" title="<?php echo Web::getTitle(); ?>" link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_d="<?php echo $link_d; ?>" style="display: none;">
-        </table>
-
+        <center>
+            <table id="borrow-list" title="<?php echo Web::getTitle(); ?>" link_c="<?php echo $link_c; ?>" link_r="<?php echo $link_r; ?>" link_d="<?php echo $link_d; ?>" style="display: none;">
+            </table>            
+        </center>
     </div>
 </div>
 
