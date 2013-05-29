@@ -633,33 +633,7 @@ class Catalogue extends Controller {
             echo $xml;
         }
     }
-
-    public function readPrintlistBarcode() {
-
-        if ($this->method->isAjax()) {
-            $page = $this->method->post('page', 1);
-            $listData = $this->model->selectPrintListBarcode($page);
-            $total = $this->model->countPrintListBarcode();
-
-            header("Content-type: text/xml");
-            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-            $xml .= "<rows>";
-            $xml .= "<page>$page</page>";
-            $xml .= "<total>$total</total>";
-
-            foreach ($listData as $row) {
-                $xml .= "<row id='" . $row['book_temp_barcodeprint'] . "'>";
-                $xml .= "<cell><![CDATA[" . $row['book_temp_barcodeprint'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['book_temp_barcodeprint_register'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . $row['book_title'] . "]]></cell>";
-                $xml .= "</row>";
-            }
-
-            $xml .= "</rows>";
-            echo $xml;
-        }
-    }
-
+    
     public function update($id = 0) {
         if ($this->model->updateSave($id)) {
             $ket = array(1, 0, $this->message->saveSucces());

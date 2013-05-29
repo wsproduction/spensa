@@ -109,7 +109,7 @@
                     </center>
                 </div>
                 
-                <div align="right">
+                <div align="right" style="margin-top: 10px;">
                     <?php
                     Form::create('button', 'bSimpanCart');
                     Form::value('Simpan');
@@ -430,7 +430,7 @@
             showTableToggleBtn: false,
             resizable: false,
             width: '100%',
-            height: '300',
+            height: '250',
             onSubmit: function() {
                 var dt = $('#fSearchBookInfo').serializeArray();
                 $('#borrowed-cart-temporer-list').flexOptions({

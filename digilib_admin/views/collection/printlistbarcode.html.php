@@ -24,17 +24,59 @@
                     sortable: true,
                     align: 'center'
                 }, {
-                    display: 'Nomor Induk Buku',
-                    name: 'members_name',
-                    width: 100,
+                    display: 'Nomor Induk',
+                    name: 'book_register_id',
+                    width: 80,
                     sortable: true,
                     align: 'center'
                 }, {
                     display: 'Keterangan Buku',
-                    name: 'gender_title',
+                    name: 'book_title',
                     width: 450,
                     sortable: true,
                     align: 'left'
+                }, {
+                    display: 'Asal',
+                    name: 'resource_name',
+                    width: 100,
+                    sortable: true,
+                    align: 'center',
+                    hide: true
+                }, {
+                    display: 'Sumber',
+                    name: 'fund_name',
+                    width: 100,
+                    sortable: true,
+                    align: 'center',
+                    hide: true
+                }, {
+                    display: 'Kondisi Buku',
+                    name: 'book_quantity',
+                    width: 60,
+                    sortable: true,
+                    align: 'center',
+                    hide: true
+                }, {
+                    display: 'Jumlah Peminjam',
+                    name: 'length_borrowed',
+                    width: 90,
+                    sortable: true,
+                    align: 'center',
+                    hide: true
+                }, {
+                    display: 'Terakhir Dipinjam',
+                    name: 'book_entry_date',
+                    width: 80,
+                    sortable: true,
+                    align: 'center',
+                    hide: true
+                }, {
+                    display: 'Tanggal Input',
+                    name: 'book_entry_date',
+                    width: 80,
+                    sortable: true,
+                    align: 'center',
+                    hide: true
                 }, {
                     display: 'Jml. Print Barcode',
                     name: 'book_entry_date',

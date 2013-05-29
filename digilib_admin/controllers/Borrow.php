@@ -18,7 +18,7 @@ class Borrow extends Controller {
         Web::setTitle('Daftar Peminjaman Buku');
         $this->view->link_r = $this->content->setLink('borrow/read');
         $this->view->link_c = $this->content->setLink('borrow/add');
-        $this->view->link_d = $this->content->setLink('borrow/delete');
+        $this->view->link_d = $this->content->setLink('borrow/deleteborrowhistory');
         $this->view->render('borrow/index');
     }
 

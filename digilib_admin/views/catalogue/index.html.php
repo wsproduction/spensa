@@ -105,14 +105,6 @@
                             }
                         }
                     }
-                }, {
-                    separator: true
-                }, {
-                    name: 'Lihat Daftar Print',
-                    bclass: 'card',
-                    onpress: function() {
-                        window.location = $('#list').attr('link_pl');
-                    }
                 }],
             searchitems: [{
                     display: 'ID',

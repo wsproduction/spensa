@@ -16,7 +16,7 @@
             <div id="tab_detail">
                 <ul>
                     <li><a href="#tabs-1">1. Rincian Buku</a></li>
-                    <li><a href="#tabs-2">2. Koleksi Buku</a></li>
+                    <li><a href="#tabs-2">2. Katalog Buku</a></li>
                 </ul>
                 <div id="tabs-1">
                     <?php
@@ -29,7 +29,7 @@
                      * 
                      */
                     ?>
-                    <table style="width: 100%;" class="detail_form" cellspacing="0" cellpadding="0">
+                    <table style="width: 100%;" class="table-detail" cellspacing="0" cellpadding="0">
                         <tr>
                             <td style="width: 250px;">
                                 <div class="label-ina">ID Buku</div>
@@ -306,6 +306,9 @@
                     </table>
                 </div>
                 <div id="tabs-2" align="center">
+                    KATALOG IS UNDERCONSTRUCTION
+                </div>
+                <div id="tabs-3" align="center" style="display: none;">
                     <table id="list-collection" link_r="<?php echo $link_r_collection; ?>" link_p="<?php echo $link_p_collection; ?>" link_pl="<?php echo $link_pl_collection; ?>"></table>
                 </div>
             </div>
