@@ -105,9 +105,46 @@ class CatalogueModel extends Model {
 
     public function selectByID($id) {
         $sth = $this->db->prepare('
-                            SELECT *
+                            SELECT 
+                                digilib_book.book_id,
+                                digilib_book.book_title,
+                                digilib_book.book_foreign_title,
+                                digilib_book.book_publisher,
+                                digilib_book.book_publishing,
+                                digilib_book.book_edition,
+                                digilib_book.book_copy,
+                                digilib_book.book_isbn,
+                                digilib_book.book_roman_number,
+                                digilib_book.book_pages_number,
+                                digilib_book.book_bibliography,
+                                digilib_book.book_ilustration,
+                                digilib_book.book_index,
+                                digilib_book.book_width,
+                                digilib_book.book_height,
+                                digilib_book.book_weight,
+                                digilib_book.book_accounting_symbol,
+                                digilib_book.book_price,
+                                digilib_book.book_resource,
+                                digilib_book.book_fund,
+                                digilib_book.book_review,
+                                digilib_book.book_classification,
+                                digilib_book.book_cover,
+                                digilib_book.book_file,
+                                digilib_book.book_entry,
+                                digilib_book.book_entry_update,
+                                digilib_ddc.ddc_classification_number,
+                                (SELECT COUNT(digilib_book_register.book_register_id) AS FIELD_1 FROM digilib_book_register WHERE digilib_book_register.book_id = digilib_book.book_id) AS book_quantity,
+                                (SELECT digilib_book_fund.book_fund_title FROM digilib_book_fund WHERE digilib_book_fund.book_fund_id = digilib_book.book_fund) AS fund,
+                                (SELECT digilib_book_resource.book_resource_title FROM digilib_book_resource WHERE digilib_book_resource.book_resource_id = digilib_book.book_resource) AS resource,
+                                (SELECT COUNT(digilib_book_register.book_id) AS FIELD_1 FROM digilib_borrowed_history INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id) WHERE digilib_book_register.book_id = digilib_book.book_id) AS count_borrowed,
+                                digilib_publisher.publisher_name,
+                                public_city.city_name
                             FROM
                                 digilib_book
+                                INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id)
+                                INNER JOIN digilib_publisher_office ON (digilib_book.book_publisher = digilib_publisher_office.publisher_office_id)
+                                INNER JOIN digilib_publisher ON (digilib_publisher_office.publisher_office_name = digilib_publisher.publisher_id)
+                                INNER JOIN public_city ON (digilib_publisher_office.publisher_office_city = public_city.city_id)
                             WHERE
                                 digilib_book.book_id=:id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
@@ -1552,6 +1589,7 @@ class CatalogueModel extends Model {
 
     public function selectBookLanguageByBookId($bookid = 0) {
         $prepare = 'SELECT 
+                        digilib_book_language.book_language,
                         public_language.language_name
                       FROM
                         digilib_book_language

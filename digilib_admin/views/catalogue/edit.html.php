@@ -43,6 +43,7 @@
                                 Form::create('text', 'title');
                                 Form::tips('Masukan Judul Buku');
                                 Form::size(100);
+                                Form::value($dataEdit['book_title']);
                                 Form::validation()->requaired('* Judul harus diisi.');
                                 Form::style('form-grey');
                                 Form::commit();
@@ -60,6 +61,7 @@
                                 Form::create('text', 'foreign_title');
                                 Form::tips('Masukan judul dalam bahasa asing');
                                 Form::size(100);
+                                Form::value($dataEdit['book_foreign_title']);
                                 Form::style('form-grey');
                                 Form::commit();
                                 ?>
@@ -74,8 +76,9 @@
                             <td>
                                 <?php
                                 Form::create('hidden', 'language_hide');
+                                Form::value($language_tempid);
                                 Form::commit();
-                                
+
                                 Form::create('select', 'language');
                                 Form::tips('Pilih Bahasa');
                                 Form::option($language);
@@ -96,6 +99,7 @@
                                 Form::create('text', 'edition');
                                 Form::tips('Masukan Edisi Buku Keberapa?');
                                 Form::size(100);
+                                Form::value($dataEdit['book_edition']);
                                 Form::style('form-grey');
                                 Form::commit();
                                 ?>
@@ -113,6 +117,7 @@
                                 Form::tips('Masukan Cetakan Buku Keberapa?');
                                 Form::inputType()->numeric();
                                 Form::size(5);
+                                Form::value($dataEdit['book_copy']);
                                 Form::style('form-grey');
                                 Form::commit();
                                 ?>
@@ -128,6 +133,7 @@
                                 Form::create('text', 'isbn');
                                 Form::tips('Masukan ISBN (<i>International Standard Book Number</i>)<br>* Hanya nomor dan strip yang diijinkan.<br>Contoh: 978-3-16-148410-0');
                                 Form::size(20);
+                                Form::value($dataEdit['book_isbn']);
                                 Form::inputType()->numeric('-x');
                                 Form::style('form-grey');
                                 Form::commit();
@@ -145,6 +151,7 @@
                                 Form::create('text', 'roman_count');
                                 Form::tips('Masukan nomor halaman romawi terakhir. Contoh: vii');
                                 Form::size(5);
+                                Form::value($dataEdit['book_roman_number']);
                                 Form::inputType()->alpha(true);
                                 Form::style('form-grey');
                                 Form::commit();
@@ -162,6 +169,7 @@
                                 Form::create('text', 'page_count');
                                 Form::tips('Masukan nomor halaman angka. Contoh: 120');
                                 Form::size(5);
+                                Form::value($dataEdit['book_pages_number']);
                                 Form::validation()->number('* Periksa angka dengan benar.');
                                 Form::validation()->min(1);
                                 Form::inputType()->numeric();
@@ -180,6 +188,7 @@
                                 Form::create('text', 'bibliography');
                                 Form::tips('Masukan halaman rentang halaman bibliografi.<br>Example : 103-107');
                                 Form::size(15);
+                                Form::value($dataEdit['book_bibliography']);
                                 Form::inputType()->numeric('-');
                                 Form::style('form-grey');
                                 Form::commit();
@@ -226,6 +235,7 @@
                                 Form::create('text', 'width');
                                 Form::tips('Masukan ukuran lebar buku.');
                                 Form::size(10);
+                                Form::value($dataEdit['book_width']);
                                 Form::inputType()->numeric('.');
                                 Form::style('form-grey');
                                 Form::commit();
@@ -234,6 +244,7 @@
                                 Form::tips('Masukan ukuran tinggi buku.');
                                 Form::size(10);
                                 Form::inputType()->numeric('.');
+                                Form::value($dataEdit['book_height']);
                                 Form::style('form-grey');
                                 Form::commit();
                                 echo 'Cm';
@@ -251,6 +262,7 @@
                                 Form::create('text', 'weight');
                                 Form::tips('Masukan berat buku.');
                                 Form::size(10);
+                                Form::value($dataEdit['book_weight']);
                                 Form::inputType()->numeric('.');
                                 Form::style('form-grey');
                                 Form::commit();
@@ -269,6 +281,7 @@
                                 Form::create('text', 'quantity');
                                 Form::tips('Masukan jumlah eksemplar.');
                                 Form::size(10);
+                                Form::value($dataEdit['book_quantity']);
                                 Form::inputType()->numeric();
                                 Form::validation()->requaired('* Jumlah eksemplar harus diisi.');
                                 Form::style('form-grey');
@@ -286,13 +299,14 @@
                                 <?php
                                 Form::create('select', 'accounting_symbol');
                                 Form::tips('Pilih mata uang.');
-                                Form::option($accounting_symbol, ' ');
+                                Form::option($accounting_symbol, ' ', $dataEdit['book_accounting_symbol']);
                                 Form::style('form-grey');
                                 Form::commit();
 
                                 Form::create('text', 'price');
                                 Form::tips('Masukan harga buku.');
                                 Form::size(20);
+                                Form::value($dataEdit['book_price']);
                                 Form::inputType()->numeric();
                                 Form::properties(array('style' => 'text-align:right;'));
                                 Form::style('form-grey');
@@ -310,13 +324,13 @@
                                 <?php
                                 Form::create('select', 'resource');
                                 Form::tips('Select Resource');
-                                Form::option($book_resource, ' ');
+                                Form::option($book_resource, ' ', $dataEdit['book_resource']);
                                 Form::style('form-grey');
                                 Form::commit();
                                 echo ' / ';
                                 Form::create('select', 'fund');
                                 Form::tips('Pilih sumber dana');
-                                Form::option($book_fund, ' ');
+                                Form::option($book_fund, ' ', $dataEdit['book_fund']);
                                 Form::style('form-grey');
                                 Form::commit();
                                 ?>
@@ -927,21 +941,33 @@
             $('.contentRow1').html(contentRow1);
             $('.contentRow2').html(contentRow2);
             $('.contentRow3').html(contentRow3);
-            
+
             /*
-            $.get('getAuhtorTemp', {
-                sa: $('#sessionAuthor').val()
-            }, function(o) {
-                $('.viewListAuthorTemp').html(o);
-            }, 'json');
-            */
+             $.get('getAuhtorTemp', {
+             sa: $('#sessionAuthor').val()
+             }, function(o) {
+             $('.viewListAuthorTemp').html(o);
+             }, 'json');
+             */
         };
 
-        /* Multiselect */
+        /* MULTISELECT JQUERY */
+        
         $("#language").multiselect({
             selectedText: "# dari # dipilih",
             noneSelectedText: 'Pilih bahasa'
         }).multiselectfilter();
+        
+        /* Auto Selected #language */
+        var $language = $('#language');
+        var temp_language = $('#language_hide').val();
+        var valArr = temp_language.split(',');
+        var i = 0, size = valArr.length;
+        for (i; i < size; i++) {
+            $language.multiselect("widget").find(":checkbox[value='" + valArr[i] + "']").attr("checked", "checked");
+            $("option[value='" + valArr[i] + "']", $language).attr("selected", 1);
+            $language.multiselect("refresh");
+        }
 
         $("#option_author").multiselect({
             multiple: false,
@@ -1341,13 +1367,13 @@
 
             var stepStatus = $('#stepStatus').val();
             var curentTab = 0;
-            
+
             /* Set Language ID to hidden form #language_hidden */
-            var array_of_checked_values = $("#language").multiselect("getChecked").map(function(){
-                return this.value;	
+            var array_of_checked_values = $("#language").multiselect("getChecked").map(function() {
+                return this.value;
             }).get();
-            $('#language_hide').val(array_of_checked_values.join(','));            
-            
+            $('#language_hide').val(array_of_checked_values.join(','));
+
             /* alert(stepStatus); */
 
             if (stepStatus === '1') {
@@ -1376,7 +1402,7 @@
                 }
             } else if (stepStatus === '4') {
                 frmID = $(this);
-                
+
                 msgID = $('#message');
                 $(frmID).ajaxSubmit({
                     success: function(o) {
@@ -1392,8 +1418,8 @@
                         }
                     }
                 });
-                
-               /* frmID.submit(); */
+
+                /* frmID.submit(); */
             } else {
                 curentTab = parseInt(stepStatus) + 1;
             }

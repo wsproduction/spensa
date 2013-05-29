@@ -120,10 +120,8 @@ class Catalogue extends Controller {
             $this->view->link_back = $this->content->setLink('catalogue');
             $this->view->session_id_temp = Session::id() . date('YmdHis');
 
-            $this->model->clearLanguageTemp();
             $this->view->language = $this->optionLanguage();
-            $this->view->link_r_language = $this->content->setLink('catalogue/readlanguagetemp');
-            $this->view->link_d_language = $this->content->setLink('catalogue/deletelanguagetemp');
+            $this->view->language_tempid = $this->bookLanguageId($listData['book_id']);
 
             $this->view->accounting_symbol = $this->optionAccountingSymbol();
             $this->view->book_resource = $this->optionBookResource();
@@ -149,6 +147,21 @@ class Catalogue extends Controller {
         } else {
             $this->view->render('default/message/pnf');
         }
+    }
+    
+    public function bookLanguageId($book_id) {
+        $language_id = '';
+        $list = $this->model->selectBookLanguageByBookId($book_id);
+        $list_count = count($list);
+        $idx =1;
+        foreach ($list as $value) {
+            $language_id .= $value['book_language'];
+            if ($list_count!=$idx) {
+                $language_id .= ',';
+            }
+            $idx++;
+        }
+        return $language_id;
     }
 
     public function detail($id = 0) {
