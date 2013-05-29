@@ -111,11 +111,40 @@ class Catalogue extends Controller {
     public function edit($id = 0) {
         Web::setTitle('Edit Catalogue');
         $this->view->id = $id;
-        $this->view->link_back = $this->content->setLink('catalogue');
+        
         $data = $this->model->selectByID($id);
         if ($data) {
             $listData = $data[0];
             $this->view->dataEdit = $listData;
+
+            $this->view->link_back = $this->content->setLink('catalogue');
+            $this->view->session_id_temp = Session::id() . date('YmdHis');
+
+            $this->model->clearLanguageTemp();
+            $this->view->language = $this->optionLanguage();
+            $this->view->link_r_language = $this->content->setLink('catalogue/readlanguagetemp');
+            $this->view->link_d_language = $this->content->setLink('catalogue/deletelanguagetemp');
+
+            $this->view->accounting_symbol = $this->optionAccountingSymbol();
+            $this->view->book_resource = $this->optionBookResource();
+            $this->view->book_fund = $this->optionBookFund();
+
+            $this->view->country = $this->optionCountry();
+            $this->view->link_province = $this->content->setLink('catalogue/optionprovince');
+            $this->view->link_city = $this->content->setLink('catalogue/optioncity');
+            $this->view->link_r_publisher = $this->content->setLink('catalogue/readpublisher');
+            $this->view->years = $this->model->listYear();
+
+            $this->model->clearAuthorTemp();
+            $this->view->author_description = $this->optionAuthorDescription();
+            $this->view->link_author = $this->content->setLink('catalogue/optionauthor');
+            $this->view->link_r_author_temp = $this->content->setLink('catalogue/readauthortemp');
+            $this->view->link_d_author_temp = $this->content->setLink('catalogue/deleteauthortemp');
+
+            $this->view->ddc_level1 = $this->optionDdc(1);
+            $this->view->link_ddc_level2 = $this->content->setLink('catalogue/optionddclevel2');
+            $this->view->link_r_ddc = $this->content->setLink('catalogue/readddc');
+
             $this->view->render('catalogue/edit');
         } else {
             $this->view->render('default/message/pnf');
@@ -633,7 +662,7 @@ class Catalogue extends Controller {
             echo $xml;
         }
     }
-    
+
     public function update($id = 0) {
         if ($this->model->updateSave($id)) {
             $ket = array(1, 0, $this->message->saveSucces());
@@ -799,7 +828,7 @@ class Catalogue extends Controller {
         $count_author_temp = count($list_author_temp);
         $primary_status = false;
         $primary_name = array();
-        
+
         foreach ($list_author_temp as $value) {
             if ($value['book_author_temp_primary']) {
                 $primary_status = true;

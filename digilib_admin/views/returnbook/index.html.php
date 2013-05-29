@@ -81,7 +81,7 @@
                         if (conf) {
                             if (leng > 0) {
                                 var tempId = [];
-                                $('#return-list .trSelected td[abbr=language_id] div').each(function() {
+                                $('#return-list .trSelected td[abbr=borrowed_history_id] div').each(function() {
                                     tempId.push(parseInt($(this).text()));
                                 });
 

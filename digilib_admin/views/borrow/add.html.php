@@ -1,23 +1,96 @@
 <div class="maincontent">
     <div class="maincontentinner">
+        <div class="headtitle">
+            <div class="widgettitle"><?php echo Web::getTitle(); ?></div>
+            <div class="btn-group">
+                <a href="#" class="dropdown">Aksi</a>
+                <ul>
+                    <li><a href="<?php echo $link_back; ?>">Kembali</a></li>
+                </ul>
+            </div>
+            <div class="cls">&nbsp;</div>
+        </div>
 
-        <div style="margin-bottom: 10px;">
-            <fieldset>
-                <legend>Data Anggota</legend>
-                <div class="borrowed-info">
-                    <div class="float-left">
-                        <?php Form::begin('fSearchInfoMember', 'borrow/readmemberinfo', 'post'); ?>
+        <div class="widgetcontent">
+            <div style="margin-bottom: 10px;">
+                <fieldset>
+                    <legend>Data Anggota</legend>
+                    <div class="borrowed-info">
+                        <div class="float-left">
+                            <?php Form::begin('fSearchInfoMember', 'borrow/readmemberinfo', 'post'); ?>
+                            <table>
+                                <tr>
+                                    <td style="width: 120px;">
+                                        <div class="label-ina">Identitas Anggota</div>
+                                        <div class="label-eng">Member ID</div>
+                                    </td>
+                                    <td>:</td>
+                                    <td>
+                                        <?php
+                                        Form::create('text', 'memberid');
+                                        Form::size(30);
+                                        Form::validation()->requaired();
+                                        Form::style('form-grey');
+                                        Form::commit();
+                                        ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>
+                                        <?php
+                                        Form::create('button', 'bSubmit');
+                                        Form::value('Cari');
+                                        Form::style('button-mid-solid-orange');
+                                        Form::commit();
+                                        ?>
+                                    </td>
+                                </tr>
+                            </table>
+                            <?php Form::end(); ?>
+                        </div>
+                        <div class="float-right">
+                            <div class="members-info"></div>
+                            <div class="cls"></div>
+                        </div>
+                        <div class="cls"></div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div>
+                <center>
+                    <table id="borowed-history-list" title="Riwayat Peminjaman" link_r="<?php echo $link_rbh; ?>" link_d="<?php echo $link_dbh; ?>" style="display: none;">
+                    </table>
+                </center>
+            </div>
+
+            <div id="borrowed-cart">
+                <div id="view-cart">
+                    <fieldset>
+                        <legend>Data Buku</legend>
+                        <?php
+                        Form::begin('fSearchBookInfo', 'borrow/readbookinfo', 'post');
+
+                        Form::create('hidden', 'borrowedtype');
+                        Form::value(0);
+                        Form::commit();
+                        Form::create('hidden', 'memberidtemp');
+                        Form::value(0);
+                        Form::commit();
+                        ?>
                         <table>
                             <tr>
-                                <td style="width: 120px;">
-                                    <div class="label-ina">Identitas Anggota</div>
-                                    <div class="label-eng">Member ID</div>
+                                <td width="150">
+                                    <div class="label-ina">Nomor Indux Buku</div>
+                                    <div class="label-eng">Book Register</div>
                                 </td>
                                 <td>:</td>
                                 <td>
                                     <?php
-                                    Form::create('text', 'memberid');
-                                    Form::size(30);
+                                    Form::create('text', 'bookregister');
+                                    Form::size(40);
                                     Form::validation()->requaired();
                                     Form::style('form-grey');
                                     Form::commit();
@@ -29,102 +102,41 @@
                                 <td>&nbsp;</td>
                                 <td>
                                     <?php
-                                    Form::create('button', 'bSubmit');
-                                    Form::value('Cari');
-                                    Form::style('button-mid-solid-orange');
+                                    Form::create('submit', 'bSubmit');
+                                    Form::value('Tambah');
+                                    Form::style('button-mid-solid-green');
                                     Form::commit();
                                     ?>
                                 </td>
                             </tr>
                         </table>
                         <?php Form::end(); ?>
+                    </fieldset>
+
+                    <div class="view-cart-list">
+                        <center>
+                            <table id="borrowed-cart-temporer-list" title="" link_r="<?php echo $link_rct; ?>" link_d="<?php echo $link_dct; ?>" style="display: none;">
+                            </table>
+                        </center>
                     </div>
-                    <div class="float-right">
-                        <div class="members-info"></div>
-                        <div class="cls"></div>
+
+                    <div align="right" style="margin-top: 10px;">
+                        <?php
+                        Form::create('button', 'bSimpanCart');
+                        Form::value('Simpan');
+                        Form::style('button-mid-solid-blue');
+                        Form::properties(array('link' => $link_checkout, 'link_invoice' => $link_invoice));
+                        Form::commit();
+                        Form::create('button', 'bCancelCart');
+                        Form::value('Batal');
+                        Form::style('button-mid-solid-red');
+                        Form::commit();
+                        ?>
                     </div>
-                    <div class="cls"></div>
                 </div>
-            </fieldset>
-        </div>
-
-        <div>
-            <center>
-                <table id="borowed-history-list" title="Riwayat Peminjaman" link_r="<?php echo $link_rbh; ?>" link_d="<?php echo $link_dbh; ?>" style="display: none;">
-                </table>
-            </center>
-        </div>
-
-        <div id="borrowed-cart">
-            <div id="view-cart">
-                <fieldset>
-                    <legend>Data Buku</legend>
-                    <?php
-                    Form::begin('fSearchBookInfo', 'borrow/readbookinfo', 'post');
-
-                    Form::create('hidden', 'borrowedtype');
-                    Form::value(0);
-                    Form::commit();
-                    Form::create('hidden', 'memberidtemp');
-                    Form::value(0);
-                    Form::commit();
-                    ?>
-                    <table>
-                        <tr>
-                            <td width="150">
-                                <div class="label-ina">Nomor Indux Buku</div>
-                                <div class="label-eng">Book Register</div>
-                            </td>
-                            <td>:</td>
-                            <td>
-                                <?php
-                                Form::create('text', 'bookregister');
-                                Form::size(40);
-                                Form::validation()->requaired();
-                                Form::style('form-grey');
-                                Form::commit();
-                                ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>
-                                <?php
-                                Form::create('submit', 'bSubmit');
-                                Form::value('Tambah');
-                                Form::style('button-mid-solid-green');
-                                Form::commit();
-                                ?>
-                            </td>
-                        </tr>
-                    </table>
-                    <?php Form::end(); ?>
-                </fieldset>
-
-                <div class="view-cart-list">
-                    <center>
-                        <table id="borrowed-cart-temporer-list" title="" link_r="<?php echo $link_rct; ?>" link_d="<?php echo $link_dct; ?>" style="display: none;">
-                        </table>
-                    </center>
+                <div id="view-invoice">
+                    <iframe frameborder="0"></iframe>
                 </div>
-                
-                <div align="right" style="margin-top: 10px;">
-                    <?php
-                    Form::create('button', 'bSimpanCart');
-                    Form::value('Simpan');
-                    Form::style('button-mid-solid-blue');
-                    Form::properties(array('link' => $link_checkout, 'link_invoice' => $link_invoice));
-                    Form::commit();
-                    Form::create('button', 'bCancelCart');
-                    Form::value('Batal');
-                    Form::style('button-mid-solid-red');
-                    Form::commit();
-                    ?>
-                </div>
-            </div>
-            <div id="view-invoice">
-                <iframe frameborder="0"></iframe>
             </div>
         </div>
     </div>

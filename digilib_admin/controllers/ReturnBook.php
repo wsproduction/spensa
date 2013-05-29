@@ -263,7 +263,7 @@ class ReturnBook extends Controller {
 
     public function delete() {
         $res = false;
-        if ($this->model->delete()) {
+        if ($this->model->deleteSave()) {
             $res = true;
         }
         echo json_encode($res);

@@ -424,4 +424,16 @@ class ReturnBookModel extends Model {
         return $sth->execute();
     }
 
+    public function deleteSave() {
+        $id = $this->method->post('id');
+        $sth = $this->db->prepare('UPDATE
+                                        digilib_borrowed_history
+                                    SET
+                                        borrowed_history_status = 0
+                                    WHERE
+                                        digilib_borrowed_history.borrowed_history_id IN (' . $id . ')
+                                  ');
+        return $sth->execute();
+    }
+
 }
