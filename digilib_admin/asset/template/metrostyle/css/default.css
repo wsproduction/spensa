@@ -592,6 +592,13 @@ fieldset legend {
     padding: 6px;
 }
 
+.form-readonly {
+    border: 1px solid #ccc;
+    background-color: #f4f4f4;
+    padding: 6px;
+    color: #666;
+}
+
 .button-mid-solid-blue {
     padding: 6px 10px;
     border: 1px solid #0a6bce;

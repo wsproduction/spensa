@@ -206,6 +206,9 @@
                                 Form::create('checkbox', 'ilustration');
                                 Form::value(1);
                                 Form::style('form-grey');
+                                if ($dataEdit['book_ilustration']) {
+                                    Form::properties(array('checked' => 'checked'));
+                                }
                                 Form::commit();
                                 ?>
                             </td>
@@ -220,6 +223,9 @@
                                 Form::create('checkbox', 'index');
                                 Form::value(1);
                                 Form::style('form-grey');
+                                if ($dataEdit['book_index']) {
+                                    Form::properties(array('checked' => 'checked'));
+                                }
                                 Form::commit();
                                 ?>
                             </td>
@@ -279,12 +285,12 @@
                             <td>
                                 <?php
                                 Form::create('text', 'quantity');
-                                Form::tips('Masukan jumlah eksemplar.');
                                 Form::size(10);
                                 Form::value($dataEdit['book_quantity']);
                                 Form::inputType()->numeric();
                                 Form::validation()->requaired('* Jumlah eksemplar harus diisi.');
-                                Form::style('form-grey');
+                                Form::style('form-readonly');
+                                Form::properties(array('readonly' => 'readonly'));
                                 Form::commit();
                                 ?>
                             </td>
@@ -306,7 +312,7 @@
                                 Form::create('text', 'price');
                                 Form::tips('Masukan harga buku.');
                                 Form::size(20);
-                                Form::value($dataEdit['book_price']);
+                                Form::value(number_format($dataEdit['book_price'], 0, '.', ','));
                                 Form::inputType()->numeric();
                                 Form::properties(array('style' => 'text-align:right;'));
                                 Form::style('form-grey');
@@ -397,7 +403,7 @@
                                                 <?php
                                                 Form::create('select', 'country');
                                                 Form::tips('Select Country');
-                                                Form::option($country, ' ');
+                                                Form::option($country, ' ', $dataEdit['country_id']);
                                                 Form::validation()->requaired();
                                                 Form::properties(array('link' => $link_province, 'style' => 'max-width:200px;'));
                                                 Form::style('form-grey');
@@ -408,7 +414,10 @@
                                                 <?php
                                                 Form::create('hidden', 'publisher');
                                                 Form::validation()->requaired();
-                                                Form::style('form-grey');
+                                                Form::value($dataEdit['book_publisher']);
+                                                Form::commit();
+                                                Form::create('hidden', 'publisher_page_position');
+                                                Form::value($publisher_page_position);
                                                 Form::commit();
                                                 ?>
                                                 <table id="publisher-list" title="Daftar Penerbit" link_r="<?php echo $link_r_publisher; ?>"></table>
@@ -425,6 +434,7 @@
                                                 Form::create('select', 'province');
                                                 Form::tips('Select Country');
                                                 Form::validation()->requaired();
+                                                Form::option($province, ' ', $dataEdit['province_id']);
                                                 Form::properties(array('link' => $link_city, 'style' => 'max-width:200px;'));
                                                 Form::style('form-grey');
                                                 Form::commit();
@@ -442,6 +452,7 @@
                                                 Form::create('select', 'city');
                                                 Form::tips('Select City');
                                                 Form::validation()->requaired();
+                                                Form::option($city, ' ', $dataEdit['city_id']);
                                                 Form::properties(array('style' => 'max-width:200px;'));
                                                 Form::style('form-grey');
                                                 Form::commit();
@@ -458,7 +469,7 @@
                                                 <?php
                                                 Form::create('select', 'year');
                                                 Form::tips('Years');
-                                                Form::option($years, ' ');
+                                                Form::option($years, ' ', $dataEdit['book_publishing']);
                                                 Form::validation()->requaired();
                                                 Form::style('form-grey');
                                                 Form::commit();
@@ -631,7 +642,7 @@
                                             <td>
                                                 <?php
                                                 Form::create('select', 'ddcLevel1');
-                                                Form::option($ddc_level1, ' ');
+                                                Form::option($ddc_level1, ' ', $dataEdit['ddc_idl1']);
                                                 Form::properties(array('link' => $link_ddc_level2));
                                                 Form::validation()->requaired('* Level 1 harus diisi.');
                                                 Form::style('form-grey');
@@ -952,12 +963,12 @@
         };
 
         /* MULTISELECT JQUERY */
-        
+
         $("#language").multiselect({
             selectedText: "# dari # dipilih",
             noneSelectedText: 'Pilih bahasa'
         }).multiselectfilter();
-        
+
         /* Auto Selected #language */
         var $language = $('#language');
         var temp_language = $('#language_hide').val();
@@ -988,6 +999,7 @@
         var listId3 = '#publisher-list';
         var title3 = $(listId3).attr('title');
         var link_r3 = $(listId3).attr('link_r');
+        var fist_load3 = true;
 
         var option3 = {
             url: link_r3,
@@ -996,29 +1008,31 @@
                     display: 'ID',
                     name: 'publisher_office_id',
                     width: 40,
-                    sortable: true,
+                    sortable: false,
                     align: 'center'
                 }, {
                     display: 'Nama Penerbit',
                     name: 'publisher_name',
                     width: 200,
-                    sortable: true,
+                    sortable: false,
                     align: 'left'
                 }, {
                     display: 'Keterangan',
                     name: 'publisher_description',
                     width: 300,
+                    sortable: false,
                     align: 'left'
                 }, {
                     display: 'Alamat',
                     name: 'publisher_office_address',
                     width: 400,
+                    sortable: false,
                     align: 'left'
                 }, {
                     display: 'Kantor',
                     name: 'publisher_office_department_name',
                     width: 60,
-                    sortable: true,
+                    sortable: false,
                     align: 'left'
                 }],
             nowrap: false,
@@ -1035,10 +1049,21 @@
             height: 150,
             onSubmit: function() {
                 var dt = $('#fAdd').serializeArray();
-                $(listId3).flexOptions({
-                    params: dt
-                });
+                if (fist_load3) {
+                    fist_load3 = false;
+                    $(listId3).flexOptions({
+                        params: dt,
+                        newp: $('#publisher_page_position').val()
+                    });
+                } else {
+                    $(listId3).flexOptions({
+                        params: dt
+                    });
+                }
                 return true;
+            },
+            onSuccess: function() {
+                $('#publisher-list #row' + $('#publisher').val()).addClass('trSelected');
             }
         };
 

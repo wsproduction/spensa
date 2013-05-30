@@ -111,7 +111,7 @@ class Catalogue extends Controller {
     public function edit($id = 0) {
         Web::setTitle('Edit Catalogue');
         $this->view->id = $id;
-        
+
         $data = $this->model->selectByID($id);
         if ($data) {
             $listData = $data[0];
@@ -128,9 +128,12 @@ class Catalogue extends Controller {
             $this->view->book_fund = $this->optionBookFund();
 
             $this->view->country = $this->optionCountry();
+            $this->view->province = $this->listProvince($listData['country_id']);
+            $this->view->city = $this->listCity($listData['province_id']);
             $this->view->link_province = $this->content->setLink('catalogue/optionprovince');
             $this->view->link_city = $this->content->setLink('catalogue/optioncity');
             $this->view->link_r_publisher = $this->content->setLink('catalogue/readpublisher');
+            $this->view->publisher_page_position = $this->getPublisherPagePostion($listData['book_publisher'], $listData['city_id']);
             $this->view->years = $this->model->listYear();
 
             $this->model->clearAuthorTemp();
@@ -148,15 +151,36 @@ class Catalogue extends Controller {
             $this->view->render('default/message/pnf');
         }
     }
-    
+
+    public function getPublisherPagePostion($office_id, $city_id) {
+        $list = $this->model->selectPositionRowPublisher($office_id, $city_id);
+        $data = 1;
+        if (count($list)) {
+            $res = $list[0];
+            $rp = 15;
+            $position = $res['position'];
+            $count_publisher = $res['count_publisher'];
+            $total_page = ceil($count_publisher / $rp);
+
+            $page = 0;
+
+            while ($position > ($page * $rp) && $total_page >= $page) {
+                $page++;
+            }
+
+            $data = $page;
+        }
+        return $data;
+    }
+
     public function bookLanguageId($book_id) {
         $language_id = '';
         $list = $this->model->selectBookLanguageByBookId($book_id);
         $list_count = count($list);
-        $idx =1;
+        $idx = 1;
         foreach ($list as $value) {
             $language_id .= $value['book_language'];
-            if ($list_count!=$idx) {
+            if ($list_count != $idx) {
                 $language_id .= ',';
             }
             $idx++;
@@ -1172,14 +1196,32 @@ class Catalogue extends Controller {
         echo json_encode($option);
     }
 
+    public function listProvince($countryid) {
+        $data = $this->model->selectProvinceByCountryId($countryid);
+        $list = array();
+        foreach ($data as $value) {
+            $list[$value['province_id']] = $value['province_name'];
+        }
+        return $list;
+    }
+
     public function optionCity() {
         $countryid = $this->method->get('id');
-        $listcity = $this->model->selectCityByProvinceId($countryid);
+        $listcity = $this->listCity($countryid);
         $option = '<option value=""></option>';
-        foreach ($listcity as $value) {
-            $option .= '<option value="' . $value['city_id'] . '">' . $value['city_name'] . '</option>';
+        foreach ($listcity as $key => $value) {
+            $option .= '<option value="' . $key . '">' . $value . '</option>';
         }
         echo json_encode($option);
+    }
+
+    public function listCity($provinceid) {
+        $data = $this->model->selectCityByProvinceId($provinceid);
+        $list = array();
+        foreach ($data as $value) {
+            $list[$value['city_id']] = $value['city_name'];
+        }
+        return $list;
     }
 
     public function addAuthorTemp() {

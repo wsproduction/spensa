@@ -138,13 +138,23 @@ class CatalogueModel extends Model {
                                 (SELECT digilib_book_resource.book_resource_title FROM digilib_book_resource WHERE digilib_book_resource.book_resource_id = digilib_book.book_resource) AS resource,
                                 (SELECT COUNT(digilib_book_register.book_id) AS FIELD_1 FROM digilib_borrowed_history INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id) WHERE digilib_book_register.book_id = digilib_book.book_id) AS count_borrowed,
                                 digilib_publisher.publisher_name,
-                                public_city.city_name
+                                public_city.city_name,
+                                public_city.city_id,
+                                public_province.province_id,
+                                public_country.country_id,
+                                digilib_ddc.ddc_id AS ddc_idl3,
+                                digilib_ddc1.ddc_id AS ddc_idl2,
+                                digilib_ddc2.ddc_id AS ddc_idl1
                             FROM
                                 digilib_book
                                 INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id)
+                                INNER JOIN digilib_ddc digilib_ddc1 ON (digilib_ddc.ddc_parent = digilib_ddc1.ddc_id)
+                                INNER JOIN digilib_ddc digilib_ddc2 ON (digilib_ddc1.ddc_parent = digilib_ddc2.ddc_id)
                                 INNER JOIN digilib_publisher_office ON (digilib_book.book_publisher = digilib_publisher_office.publisher_office_id)
                                 INNER JOIN digilib_publisher ON (digilib_publisher_office.publisher_office_name = digilib_publisher.publisher_id)
                                 INNER JOIN public_city ON (digilib_publisher_office.publisher_office_city = public_city.city_id)
+                                INNER JOIN public_province ON (public_city.city_province = public_province.province_id)
+                                INNER JOIN public_country ON (public_province.province_country = public_country.country_id)
                             WHERE
                                 digilib_book.book_id=:id');
         $sth->setFetchMode(PDO::FETCH_ASSOC);
@@ -1465,10 +1475,15 @@ class CatalogueModel extends Model {
                                 (SELECT COUNT(digilib_book_register.book_register_id) AS FIELD_1 FROM digilib_book_register WHERE digilib_book_register.book_id = digilib_book.book_id) AS book_quantity,
                                 (SELECT digilib_book_fund.book_fund_title FROM digilib_book_fund WHERE digilib_book_fund.book_fund_id = digilib_book.book_fund) AS fund,
                                 (SELECT digilib_book_resource.book_resource_title FROM digilib_book_resource WHERE digilib_book_resource.book_resource_id = digilib_book.book_resource) AS resource,
-                                (SELECT COUNT(digilib_book_register.book_id) AS FIELD_1 FROM digilib_borrowed_history INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id) WHERE digilib_book_register.book_id = digilib_book.book_id) AS count_borrowed
+                                (SELECT COUNT(digilib_book_register.book_id) AS FIELD_1 FROM digilib_borrowed_history INNER JOIN digilib_book_register ON (digilib_borrowed_history.borrowed_history_book = digilib_book_register.book_register_id) WHERE digilib_book_register.book_id = digilib_book.book_id) AS count_borrowed,
+                                digilib_ddc.ddc_id AS ddc_idl3,
+                                digilib_ddc1.ddc_id AS ddc_idl2,
+                                digilib_ddc2.ddc_id AS ddc_idl1
                               FROM
                                 digilib_book
                                 INNER JOIN digilib_ddc ON (digilib_book.book_classification = digilib_ddc.ddc_id)
+                                INNER JOIN digilib_ddc digilib_ddc1 ON (digilib_ddc.ddc_parent = digilib_ddc1.ddc_id)
+                                INNER JOIN digilib_ddc digilib_ddc2 ON (digilib_ddc1.ddc_parent = digilib_ddc2.ddc_id)
                             WHERE
                                 digilib_book.book_id IN (' . $id . ')
                         ');
@@ -1617,6 +1632,28 @@ class CatalogueModel extends Model {
 
         $sth = $this->db->prepare($prepare);
         $sth->bindValue(':ddcid', $ddcid);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectPositionRowPublisher($office_id, $city_id) {
+        $prepare = ' SELECT x.publisher_office_id, 
+                            x.position,
+                            (SELECT COUNT(c.publisher_office_id) FROM  digilib_publisher_office c WHERE c.publisher_office_city = :city_id) AS count_publisher
+                     FROM (SELECT dpo.publisher_office_id,
+                                  @rownum := @rownum + 1 AS position
+                           FROM digilib_publisher_office dpo
+                           JOIN (SELECT @rownum := 0) r
+                           WHERE dpo.publisher_office_city = :city_id
+                           ORDER BY dpo.publisher_office_id) x
+                      WHERE x.publisher_office_id = :office_id';
+
+        $sth = $this->db->prepare($prepare);
+        
+        $sth->bindValue(':city_id', $city_id);
+        $sth->bindValue(':office_id', $office_id);
+        
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
