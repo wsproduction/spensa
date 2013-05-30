@@ -413,7 +413,6 @@
                                             <td rowspan="4" valign="top" align="center" id="view_info_publisher">
                                                 <?php
                                                 Form::create('hidden', 'publisher');
-                                                Form::validation()->requaired();
                                                 Form::value($dataEdit['book_publisher']);
                                                 Form::commit();
                                                 Form::create('hidden', 'publisher_page_position');
@@ -658,6 +657,7 @@
                                             <td>
                                                 <?php
                                                 Form::create('select', 'ddcLevel2');
+                                                Form::option($ddc_level2, ' ', $dataEdit['ddc_idl2']);
                                                 Form::validation()->requaired('* Level 2 harus diisi.');
                                                 Form::style('form-grey');
                                                 Form::commit();
@@ -697,6 +697,15 @@
                                         </tr>
                                     </table>
 
+                                    <?php
+                                    Form::create('hidden', 'ddcid');
+                                    Form::value($dataEdit['ddc_idl3']);
+                                    Form::commit();
+                                    Form::create('hidden', 'ddc_page_position');
+                                    Form::value($ddc_page_position);
+                                    Form::commit();
+                                    ?>
+
                                     <table id="list-ddc" title="Daftar Nomor Klasifikasi" link_r="<?php echo $link_r_ddc ?>"></table>
 
                                 </fieldset>
@@ -704,10 +713,6 @@
                         </tr>
                         <tr>
                             <td style="padding-top: 10px;">
-                                <?php
-                                Form::create('hidden', 'ddcid');
-                                Form::commit();
-                                ?>
                                 <fieldset>
                                     <legend>Call Number</legend>
                                     <div>
@@ -1276,6 +1281,7 @@
         var listId5 = '#list-ddc';
         var title5 = $(listId5).attr('title');
         var link_r5 = $(listId5).attr('link_r');
+        var fist_load5 = true;
 
         var option5 = {
             url: link_r5,
@@ -1312,10 +1318,21 @@
             height: 300,
             onSubmit: function() {
                 var dt = $('#fAdd').serializeArray();
-                $(listId5).flexOptions({
-                    params: dt
-                });
+                if (fist_load5) {
+                    fist_load5 = false;
+                    $(listId5).flexOptions({
+                        params: dt,
+                        newp: $('#ddc_page_position').val()
+                    });
+                } else {
+                    $(listId5).flexOptions({
+                        params: dt
+                    });
+                }
                 return true;
+            },
+            onSuccess: function() {
+                $('#list-ddc #row' + $('#ddcid').val()).addClass('trSelected');
             }
         };
 

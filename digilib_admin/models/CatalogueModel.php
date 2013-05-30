@@ -1659,4 +1659,26 @@ class CatalogueModel extends Model {
         return $sth->fetchAll();
     }
 
+    public function selectPositionRowDdc($ddc_idl3, $ddc_idl2) {
+        $prepare = ' SELECT x.ddc_id, 
+                            x.position,
+                            (SELECT COUNT(c.ddc_id) FROM  digilib_ddc c WHERE c.ddc_parent = :ddc_idl2) AS count_ddc
+                     FROM (SELECT dpo.ddc_id,
+                                  @rownum := @rownum + 1 AS position
+                           FROM digilib_ddc dpo
+                           JOIN (SELECT @rownum := 0) r
+                           WHERE dpo.ddc_parent = :ddc_idl2
+                           ORDER BY dpo.ddc_id) x
+                      WHERE x.ddc_id = :ddc_idl3';
+
+        $sth = $this->db->prepare($prepare);
+        
+        $sth->bindValue(':ddc_idl3', $ddc_idl3);
+        $sth->bindValue(':ddc_idl2', $ddc_idl2);
+        
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
 }

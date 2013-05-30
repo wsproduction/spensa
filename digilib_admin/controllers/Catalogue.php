@@ -143,6 +143,8 @@ class Catalogue extends Controller {
             $this->view->link_d_author_temp = $this->content->setLink('catalogue/deleteauthortemp');
 
             $this->view->ddc_level1 = $this->optionDdc(1);
+            $this->view->ddc_level2 = $this->listDdcLevel2($listData['ddc_idl1']);
+            $this->view->ddc_page_position = $this->getDdcPagePostion($listData['ddc_idl3'], $listData['ddc_idl2']);
             $this->view->link_ddc_level2 = $this->content->setLink('catalogue/optionddclevel2');
             $this->view->link_r_ddc = $this->content->setLink('catalogue/readddc');
 
@@ -160,6 +162,27 @@ class Catalogue extends Controller {
             $rp = 15;
             $position = $res['position'];
             $count_publisher = $res['count_publisher'];
+            $total_page = ceil($count_publisher / $rp);
+
+            $page = 0;
+
+            while ($position > ($page * $rp) && $total_page >= $page) {
+                $page++;
+            }
+
+            $data = $page;
+        }
+        return $data;
+    }
+
+    public function getDdcPagePostion($ddc_idl3, $ddc_idl2) {
+        $list = $this->model->selectPositionRowDdc($ddc_idl3, $ddc_idl2);
+        $data = 1;
+        if (count($list)) {
+            $res = $list[0];
+            $rp = 15;
+            $position = $res['position'];
+            $count_publisher = $res['count_ddc'];
             $total_page = ceil($count_publisher / $rp);
 
             $page = 0;
@@ -1299,13 +1322,22 @@ class Catalogue extends Controller {
 
     public function optionDdcLevel2() {
         $parentid = $this->method->get('id');
-        $listddc = $this->model->selectDdcByParentId($parentid);
+        $listddc = $this->listDdcLevel2($parentid);
         $optionddc = '<option value=""></option>';
-        foreach ($listddc as $rowddc) {
-            $optionddc .= '<option value="' . $rowddc['ddc_id'] . '">' . '[' . $rowddc['ddc_classification_number'] . ']  ' . $rowddc['ddc_title'] . '</option>';
+        foreach ($listddc as $key => $value) {
+            $optionddc .= '<option value="' . $key . '">' . $value . '</option>';
         }
 
         echo json_encode($optionddc);
+    }
+
+    public function listDdcLevel2($parentid) {
+        $list = $this->model->selectDdcByParentId($parentid);
+        $data = array();
+        foreach ($list as $value) {
+            $data[$value['ddc_id']] = '[' . $value['ddc_classification_number'] . ']  ' . $value['ddc_title'];
+        }
+        return $data;
     }
 
     public function addPrintBarcode() {
