@@ -137,6 +137,7 @@ class Catalogue extends Controller {
             $this->view->years = $this->model->listYear();
 
             $this->model->clearAuthorTemp();
+            $this->model->loadAuthorTemp($listData['book_id']);
             $this->view->author_description = $this->optionAuthorDescription();
             $this->view->link_author = $this->content->setLink('catalogue/optionauthor');
             $this->view->link_r_author_temp = $this->content->setLink('catalogue/readauthortemp');
@@ -1256,10 +1257,19 @@ class Catalogue extends Controller {
             if ($listAuthor) {
                 $dataAuthor = $listAuthor[0];
                 $authorid = $dataAuthor['author_id'];
-                if ($this->model->saveAuthorTemp($authorid)) {
-                    $res = true;
+
+                if (count($this->model->selectAuthorTempByAuthorId($authorid))) {
+                    if ($this->model->saveUpdateAuthorTemp($authorid)) {
+                        $res = true;
+                    } else {
+                        $res = false;
+                    }
                 } else {
-                    $res = false;
+                    if ($this->model->saveAuthorTemp($authorid)) {
+                        $res = true;
+                    } else {
+                        $res = false;
+                    }
                 }
             } else {
                 if ($this->model->saveAuthor()) {
@@ -1274,10 +1284,18 @@ class Catalogue extends Controller {
                 }
             }
         } else {
-            if ($this->model->saveAuthorTemp($authorid)) {
-                $res = true;
+            if (count($this->model->selectAuthorTempByAuthorId($authorid))) {
+                if ($this->model->saveUpdateAuthorTemp($authorid)) {
+                    $res = true;
+                } else {
+                    $res = false;
+                }
             } else {
-                $res = false;
+                if ($this->model->saveAuthorTemp($authorid)) {
+                    $res = true;
+                } else {
+                    $res = false;
+                }
             }
         }
 
@@ -1294,6 +1312,12 @@ class Catalogue extends Controller {
         }
 
         if ($this->model->deleteAuthorTemp($id)) {
+
+            /*
+             * Jika data author 0 atau baru saja diinput, ketika di temporary author di hapus
+             * maka di tabel author juga akan di hapus.
+             */
+
             $this->model->deleteAuthor($authorid);
             $res = true;
         }

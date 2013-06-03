@@ -1150,7 +1150,7 @@
                     var front_degree = $('#front_degree_author').val();
                     var back_degree = $('#back_degree_author').val();
 
-                    $.post('addauthortemp', {
+                    $.post('../addauthortemp', {
                         other: 'yes',
                         desc_author: desc_author,
                         first_name: first_name,
@@ -1167,7 +1167,7 @@
                 }
             } else {
                 if ($('#description_author').valid() && $('#option_author').valid()) {
-                    $.post('addauthortemp', {
+                    $.post('../addauthortemp', {
                         other: 'no',
                         val: id
                     }, function(o) {
@@ -1186,7 +1186,7 @@
 
         $('#list-author-selected a[href=#setprimary]').live('click', function() {
             var id = $(this).attr('rel');
-            $.post('setprimaryauthor', {
+            $.post('../setprimaryauthor', {
                 val: id
             }, function(o) {
                 if (o) {

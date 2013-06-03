@@ -361,7 +361,7 @@ class CatalogueModel extends Model {
     }
 
     public function saveLanguageBook($bookid) {
-        $languagetemp = explode(',',$this->method->post('language_hide'));
+        $languagetemp = explode(',', $this->method->post('language_hide'));
         if (count($languagetemp)) {
             $prepare = '';
             foreach ($languagetemp as $rowlanguage) {
@@ -391,10 +391,13 @@ class CatalogueModel extends Model {
 
     public function saveAuthorBook($bookid) {
         $authortemp = $this->selectAuthorTempBySession();
+
         if ($authortemp) {
             $prepare = '';
             foreach ($authortemp as $rowauthor) {
-                $prepare .= '
+                if ($rowauthor['book_author_temp_isnew']) {
+                    echo $rowauthor['book_author_temp_isnew'] . ',';
+                    $prepare .= '
                         INSERT INTO
                             digilib_book_aurthor(
                             book_aurthor_id,
@@ -413,6 +416,16 @@ class CatalogueModel extends Model {
                             "' . $bookid . '",
                             "' . $rowauthor['book_author_temp_name'] . '",
                             "' . $rowauthor['book_author_temp_primary'] . '");';
+                } else {
+                    if ($rowauthor['book_author_temp_isdelete']) {
+                        $prepare .= 'DELETE
+                                 FROM
+                                    digilib_book_aurthor
+                                 WHERE
+                                    digilib_book_aurthor.book_aurthor_book = "' . $bookid . '" AND 
+                                    digilib_book_aurthor.book_aurthor_name = "' . $rowauthor['book_author_temp_name'] . '"; ';
+                    }
+                }
             }
             $sth = $this->db->prepare($prepare);
             if ($sth->execute()) {
@@ -1078,7 +1091,9 @@ class CatalogueModel extends Model {
                         book_author_temp_id,
                         book_author_temp_session,
                         book_author_temp_name,
-                        book_author_temp_primary)
+                        book_author_temp_primary,
+                        book_author_temp_isnew,
+                        book_author_temp_isdelete)
                     VALUES(
                         (SELECT IF(
                             (SELECT COUNT(dbat.book_author_temp_id) 
@@ -1090,6 +1105,8 @@ class CatalogueModel extends Model {
                         ),
                         :session,
                         :author,
+                        0,
+                        1,
                         0)
                 ');
 
@@ -1128,7 +1145,8 @@ class CatalogueModel extends Model {
                         INNER JOIN digilib_author ON (digilib_book_author_temp.book_author_temp_name = digilib_author.author_id)
                         INNER JOIN digilib_author_description ON (digilib_author.author_description = digilib_author_description.author_description_id)
                     WHERE
-                        digilib_book_author_temp.book_author_temp_session = :session ';
+                        digilib_book_author_temp.book_author_temp_session = :session AND
+                        digilib_book_author_temp.book_author_temp_isdelete = 0 ';
         if ($query)
             $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
         $prepare .= ' ORDER BY ' . $sortname . ' ' . $sortorder;
@@ -1153,7 +1171,9 @@ class CatalogueModel extends Model {
                     FROM
                         digilib_book_author_temp
                     WHERE
-                        digilib_book_author_temp.book_author_temp_session = :session ';
+                        digilib_book_author_temp.book_author_temp_session = :session AND
+                        digilib_book_author_temp.book_author_temp_isdelete = 0
+                        ';
         if ($query)
             $prepare .= ' AND ' . $qtype . ' LIKE "%' . $query . '%" ';
 
@@ -1167,7 +1187,12 @@ class CatalogueModel extends Model {
     }
 
     public function deleteAuthorTemp($id) {
-        $sth = $this->db->prepare('DELETE FROM digilib_book_author_temp WHERE digilib_book_author_temp.book_author_temp_id IN (' . $id . ')');
+        $sth = $this->db->prepare('UPDATE
+                                    digilib_book_author_temp
+                                  SET
+                                    book_author_temp_isdelete = 1
+                                  WHERE
+                                    digilib_book_author_temp.book_author_temp_id IN (' . $id . ')');
         return $sth->execute();
     }
 
@@ -1320,6 +1345,8 @@ class CatalogueModel extends Model {
                                 digilib_book_author_temp.book_author_temp_session,
                                 digilib_book_author_temp.book_author_temp_name,
                                 digilib_book_author_temp.book_author_temp_primary,
+                                digilib_book_author_temp.book_author_temp_isnew,
+                                digilib_book_author_temp.book_author_temp_isdelete,
                                 digilib_author.author_firstname,
                                 digilib_author.author_lastname
                             FROM
@@ -1650,10 +1677,10 @@ class CatalogueModel extends Model {
                       WHERE x.publisher_office_id = :office_id';
 
         $sth = $this->db->prepare($prepare);
-        
+
         $sth->bindValue(':city_id', $city_id);
         $sth->bindValue(':office_id', $office_id);
-        
+
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
@@ -1672,13 +1699,100 @@ class CatalogueModel extends Model {
                       WHERE x.ddc_id = :ddc_idl3';
 
         $sth = $this->db->prepare($prepare);
-        
+
         $sth->bindValue(':ddc_idl3', $ddc_idl3);
         $sth->bindValue(':ddc_idl2', $ddc_idl2);
-        
+
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->execute();
         return $sth->fetchAll();
+    }
+
+    public function selectAuthorBookByBookId($book_id = 0) {
+        $prepare = ' SELECT 
+                        digilib_book_aurthor.book_aurthor_id,
+                        digilib_book_aurthor.book_aurthor_book,
+                        digilib_book_aurthor.book_aurthor_name,
+                        digilib_book_aurthor.book_aurthor_primary
+                      FROM
+                        digilib_book_aurthor
+                      WHERE
+                        digilib_book_aurthor.book_aurthor_book = :book_id ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->bindValue(':book_id', $book_id);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function selectAuthorTempByAuthorId($author_id = 0) {
+        Session::init();
+        $prepare = ' SELECT *
+                        FROM
+                          digilib_book_author_temp
+                        WHERE
+                          digilib_book_author_temp.book_author_temp_session = :session_id AND 
+                          digilib_book_author_temp.book_author_temp_name = :author_id ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->bindValue(':session_id', Session::id());
+        $sth->bindValue(':author_id', $author_id);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function saveUpdateAuthorTemp($author_id = 0) {
+        Session::init();
+        $prepare = '  UPDATE
+                        digilib_book_author_temp
+                      SET
+                        book_author_temp_isdelete = 0
+                      WHERE
+                          digilib_book_author_temp.book_author_temp_session = :session_id AND 
+                          digilib_book_author_temp.book_author_temp_name = :author_id ';
+
+        $sth = $this->db->prepare($prepare);
+        $sth->bindValue(':session_id', Session::id());
+        $sth->bindValue(':author_id', $author_id);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        return $sth->execute();
+    }
+
+    public function loadAuthorTemp($book_id = 0) {
+        Session::init();
+        $list = $this->selectAuthorBookByBookId($book_id);
+        $prepare = '';
+        foreach ($list as $value) {
+            $prepare .= ' INSERT INTO
+                            digilib_book_author_temp(
+                            book_author_temp_id,
+                            book_author_temp_session,
+                            book_author_temp_name,
+                            book_author_temp_primary,
+                            book_author_temp_isnew,
+                            book_author_temp_isdelete)
+                         VALUES (
+                            (SELECT IF(
+                                (SELECT COUNT(dbat.book_author_temp_id) 
+                                 FROM digilib_book_author_temp AS dbat) > 0, 
+                                    (SELECT dbat.book_author_temp_id 
+                                     FROM digilib_book_author_temp AS dbat 
+                                     ORDER BY dbat.book_author_temp_id DESC LIMIT 1) + 1,
+                                1)
+                            ),
+                            :session_id,
+                            "' . $value['book_aurthor_name'] . '",
+                            "' . $value['book_aurthor_primary'] . '",
+                            0,
+                            0
+                         );';
+        }
+        
+        $sth = $this->db->prepare($prepare);
+        $sth->bindValue(':session_id', Session::id());
+        return $sth->execute();
     }
 
 }

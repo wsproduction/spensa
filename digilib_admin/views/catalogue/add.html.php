@@ -1160,7 +1160,7 @@
                 }, {
                     display: 'Nama',
                     name: 'author_name',
-                    width: 250,
+                    width: 180,
                     sortable: true,
                     align: 'left'
                 }, {
@@ -1393,7 +1393,7 @@
                     }
                 });
                 
-               /* frmID.submit(); */
+                /*frmID.submit();*/ 
             } else {
                 curentTab = parseInt(stepStatus) + 1;
             }
