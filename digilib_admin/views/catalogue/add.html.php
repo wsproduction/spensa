@@ -28,7 +28,7 @@
                     <li><a href="#tabs-2">2. Keterangan Penanggung Jawab</a></li>
                     <li><a href="#tabs-3">3. Klasifikasi Buku</a></li>
                     <li><a href="#tabs-4">4. Resensi Buku</a></li>
-                    <li><a href="#tabs-5">5. Katalog</a></li>
+                    <li><a href="#tabs-5">5. Pratinjau Katalog</a></li>
                 </ul>
                 <div id="tabs-1">
                     <table style="width: 100%;" class="table-form">

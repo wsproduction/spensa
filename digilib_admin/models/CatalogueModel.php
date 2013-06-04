@@ -362,6 +362,7 @@ class CatalogueModel extends Model {
 
     public function saveLanguageBook($bookid) {
         $languagetemp = explode(',', $this->method->post('language_hide'));
+        $this->clearLanguageTemp($bookid);
         if (count($languagetemp)) {
             $prepare = '';
             foreach ($languagetemp as $rowlanguage) {
@@ -396,7 +397,6 @@ class CatalogueModel extends Model {
             $prepare = '';
             foreach ($authortemp as $rowauthor) {
                 if ($rowauthor['book_author_temp_isnew']) {
-                    echo $rowauthor['book_author_temp_isnew'] . ',';
                     $prepare .= '
                         INSERT INTO
                             digilib_book_aurthor(
@@ -428,11 +428,8 @@ class CatalogueModel extends Model {
                 }
             }
             $sth = $this->db->prepare($prepare);
-            if ($sth->execute()) {
-                return true;
-            } else {
-                return false;
-            }
+
+            return $sth->execute();
         }
     }
 
@@ -488,24 +485,118 @@ class CatalogueModel extends Model {
     }
 
     public function updateSave($id = 0) {
+        Session::init();
+
+        $title = $this->method->post('title');
+        $foreign_title = $this->method->post('foreign_title');
+        $publisher = $this->method->post('publisher');
+        $year = $this->method->post('year');
+        $edition = $this->method->post('edition');
+        $print_out = $this->method->post('print_out');
+        $isbn = $this->method->post('isbn');
+        $roman_count = $this->method->post('roman_count');
+        $page_count = $this->method->post('page_count');
+        $bibliography = $this->method->post('bibliography');
+        $ilustration = $this->method->post('ilustration', 0);
+        $index = $this->method->post('index', 0);
+        $width = $this->method->post('width');
+        $height = $this->method->post('height');
+        $weight = $this->method->post('weight');
+        $accounting_symbol = $this->method->post('accounting_symbol');
+        $price = $this->method->post('price');
+        $resource = $this->method->post('resource');
+        $fund = $this->method->post('fund');
+        $reviews = $this->method->post('reviews');
+        $classification = $this->method->post('ddcid');
+
         $sth = $this->db->prepare('
-                    UPDATE
-                        digilib_writer
-                    SET
-                        writer_name = :name,
-                        writer_profile = :profile
-                    WHERE
-                        digilib_writer.writer_id = :id
+                      UPDATE
+                        digilib_book
+                      SET
+                        book_title = :title,
+                        book_foreign_title = :foreign_title,
+                        book_publisher = :publisher,
+                        book_publishing = :publishing,
+                        book_edition = :edition,
+                        book_copy = :copy,
+                        book_isbn = :isbn,
+                        book_roman_number = :roman_number,
+                        book_pages_number = :pages_number,
+                        book_bibliography = :bibliography,
+                        book_ilustration = :ilustration,
+                        book_index = :index,
+                        book_width = :width,
+                        book_height = :height,
+                        book_weight = :weight,
+                        book_accounting_symbol = :accounting_symbol,
+                        book_price = :price,
+                        book_resource = :resource,
+                        book_fund = :fund,
+                        book_review = :review,
+                        book_classification = :classification_number,
+                        book_cover = NULL,
+                        book_file = NULL,
+                        book_entry_update = NOW()
+                      WHERE
+                        digilib_book.book_id = :id
                 ');
 
-        $name = trim($_POST['name']);
-        $address = trim($_POST['profile']);
+        $sth->bindValue(':id', $id);
+        $sth->bindValue(':title', $title);
+        $sth->bindValue(':foreign_title', $foreign_title);
+        $sth->bindValue(':publisher', $publisher);
+        $sth->bindValue(':publishing', $year);
+        $sth->bindValue(':edition', $edition);
+        $sth->bindValue(':copy', $print_out);
+        $sth->bindValue(':isbn', $isbn);
+        $sth->bindValue(':roman_number', $roman_count);
+        $sth->bindValue(':pages_number', $page_count);
+        $sth->bindValue(':bibliography', $bibliography);
+        $sth->bindValue(':ilustration', $ilustration);
+        $sth->bindValue(':index', $index);
+        $sth->bindValue(':width', $width);
+        $sth->bindValue(':height', $height);
+        $sth->bindValue(':weight', $weight);
+        $sth->bindValue(':accounting_symbol', $accounting_symbol, PDO::PARAM_NULL);
+        $sth->bindValue(':price', str_replace(',', '', $price));
+        $sth->bindValue(':resource', $resource, PDO::PARAM_NULL);
+        $sth->bindValue(':fund', $fund, PDO::PARAM_NULL);
+        $sth->bindValue(':review', $reviews);
+        $sth->bindValue(':classification_number', $classification);
 
-        return $sth->execute(array(
-                    ':name' => $name,
-                    ':profile' => $address,
-                    ':id' => $id
-        ));
+        if ($sth->execute()) {
+
+            $lastBookID = $id;
+            
+            $this->saveLanguageBook($lastBookID);
+            $this->saveAuthorBook($lastBookID);
+            $this->updateAuthorStatus();
+
+            /* $upload = Src::plugin()->PHPUploader();
+              if ($this->method->files('cover', 'tmp_name')) {
+              $upload->SetFileName($this->method->files('cover', 'name'));
+              $upload->ChangeFileName('cover_' . date('Ymd') . time());
+              $upload->SetTempName($this->method->files('cover', 'tmp_name'));
+              $upload->SetUploadDirectory(Web::path() . 'asset/upload/images/'); //Upload directory, this should be writable
+              if ($upload->UploadFile()) {
+              $this->saveCover($lastBookID, $upload->GetFileName());
+              }
+              }
+
+              if ($this->method->files('file', 'tmp_name')) {
+              $upload->SetFileName($this->method->files('file', 'name'));
+              $upload->ChangeFileName('ebook_' . date('Ymd') . time());
+              $upload->SetTempName($this->method->files('file', 'tmp_name'));
+              $upload->SetUploadDirectory(Web::path() . 'asset/upload/file/'); //Upload directory, this should be writable
+              if ($upload->UploadFile()) {
+              $this->saveFile($lastBookID, $upload->GetFileName());
+              }
+              }
+             */
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function saveCover($id, $cover) {
@@ -893,11 +984,14 @@ class CatalogueModel extends Model {
         return $count['cnt'];
     }
 
-    public function clearLanguageTemp() {
-        Session::init();
-        $sth = $this->db->prepare('DELETE FROM digilib_book_language_temp WHERE digilib_book_language_temp.book_language_temp_session = :sessoion');
-        $sth->bindValue(':sessoion', Session::id());
-        $sth->execute();
+    public function clearLanguageTemp($bookid) {
+        $sth = $this->db->prepare('DELETE
+                                    FROM
+                                      digilib_book_language
+                                    WHERE
+                                      digilib_book_language.book_id  = :bookid');
+        $sth->bindValue(':bookid', $bookid);
+        return $sth->execute();
     }
 
     public function selectLanguageByName($name) {
@@ -1789,7 +1883,7 @@ class CatalogueModel extends Model {
                             0
                          );';
         }
-        
+
         $sth = $this->db->prepare($prepare);
         $sth->bindValue(':session_id', Session::id());
         return $sth->execute();

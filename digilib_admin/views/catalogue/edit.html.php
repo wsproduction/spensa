@@ -15,7 +15,7 @@
         <div class="widgetcontent">
             <div id="message"></div>
             <?php
-            Form::begin('fAdd', 'catalogue/create', 'post', true);
+            Form::begin('fAdd', 'catalogue/update/' . $dataEdit['book_id'], 'post', true);
 
             Form::create('hidden', 'stepStatus');
             Form::value(0);
@@ -28,7 +28,7 @@
                     <li><a href="#tabs-2">2. Keterangan Penanggung Jawab</a></li>
                     <li><a href="#tabs-3">3. Klasifikasi Buku</a></li>
                     <li><a href="#tabs-4">4. Resensi Buku</a></li>
-                    <li><a href="#tabs-5">5. Katalog</a></li>
+                    <li><a href="#tabs-5">5. Pratinjau Katalog</a></li>
                 </ul>
                 <div id="tabs-1">
                     <table style="width: 100%;" class="table-form">
@@ -968,10 +968,16 @@
         };
 
         /* MULTISELECT JQUERY */
-
         $("#language").multiselect({
             selectedText: "# dari # dipilih",
-            noneSelectedText: 'Pilih bahasa'
+            noneSelectedText: 'Pilih bahasa',
+            click: function(event, ui) {
+                /* Set Language ID to hidden form #language_hidden */
+                var array_of_checked_values = $("#language").multiselect("getChecked").map(function() {
+                    return this.value;
+                }).get();
+                $('#language_hide').val(array_of_checked_values.join(','));
+            }
         }).multiselectfilter();
 
         /* Auto Selected #language */
@@ -1410,12 +1416,6 @@
             var stepStatus = $('#stepStatus').val();
             var curentTab = 0;
 
-            /* Set Language ID to hidden form #language_hidden */
-            var array_of_checked_values = $("#language").multiselect("getChecked").map(function() {
-                return this.value;
-            }).get();
-            $('#language_hide').val(array_of_checked_values.join(','));
-
             /* alert(stepStatus); */
 
             if (stepStatus === '1') {
@@ -1428,7 +1428,7 @@
                      * Cek Author 
                      * NB : Seharusnya tab selanjutnya dibuka jika proses cek selesai.
                      * */
-                    $.get('getAuhtorPrimaryTemp', function(o) {
+                    $.get('../getAuhtorPrimaryTemp', function(o) {
                         setting_callnumber(o, $('#title').val());
                     }, 'json');
                     curentTab = parseInt(stepStatus) + 1;
@@ -1449,11 +1449,11 @@
                 $(frmID).ajaxSubmit({
                     success: function(o) {
                         var parOut = o.replace('<div id="LCS_336D0C35_8A85_403a_B9D2_65C292C39087_communicationDiv"></div>', '');
+                        console.log(parOut);
                         if (parOut) {
                             var obj = eval('(' + parOut + ')');
                             $(msgID).html($.base64.decode(obj.html)).fadeIn('slow');
-                            $(frmID)[0].reset();
-                            $('#language-list').flexReload();
+                            /* $(frmID)[0].reset(); */
                             $('#publisher-list').flexReload();
                             $('#list-author-selected').flexReload();
                             $('#list-ddc').flexReload();

@@ -726,11 +726,11 @@ class Catalogue extends Controller {
 
     public function update($id = 0) {
         if ($this->model->updateSave($id)) {
-            $ket = array(1, 0, $this->message->saveSucces());
+            $ket = '{sucess:1, reset:1, html: "' . base64_encode($this->message->saveSucces()) . '"}';
         } else {
-            $ket = array(0, 0, $this->message->saveError());
+            $ket = '{sucess:0, reset:0, html: "' . base64_encode($this->message->saveError()) . '" }';
         }
-        echo json_encode($ket);
+        echo $ket;
     }
 
     public function delete() {
