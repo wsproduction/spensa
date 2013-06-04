@@ -425,4 +425,71 @@ class PublisherModel extends Model {
         return $sth->fetchAll();
     }
 
+    public function selectPublisherOfficeByPublisherId($id = 0) {
+        $sth = $this->db->prepare('SELECT 
+                                    digilib_publisher_office.publisher_office_id,
+                                    digilib_publisher_office.publisher_office_name,
+                                    digilib_publisher_office.publisher_office_address,
+                                    digilib_publisher_office.publisher_office_city,
+                                    digilib_publisher_office.publisher_office_zipcode,
+                                    digilib_publisher_office.publisher_office_phone,
+                                    digilib_publisher_office.publisher_office_fax,
+                                    digilib_publisher_office.publisher_office_email,
+                                    digilib_publisher_office.publisher_office_website,
+                                    digilib_publisher_office.publisher_office_department,
+                                    digilib_publisher_office.publisher_office_entry,
+                                    digilib_publisher_office.publisher_office_entry_update
+                                  FROM
+                                    digilib_publisher_office
+                                  WHERE
+                                    digilib_publisher_office.publisher_office_name = :id');
+        $sth->bindValue(':id', $id);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function loadPublisherOfficeTemp($id = 0) {
+        Session::init();
+        $listoffice = $this->selectPublisherOfficeByPublisherId($id);
+        
+        $prepare = '';
+        foreach ($listoffice as $value) {
+            $prepare .= 'INSERT INTO
+                                    digilib_publisher_office_temp(
+                                    publisher_office_temp_id,
+                                    publisher_office_temp_address,
+                                    publisher_office_temp_city,
+                                    publisher_office_temp_zipcode,
+                                    publisher_office_temp_phone,
+                                    publisher_office_temp_fax,
+                                    publisher_office_temp_email,
+                                    publisher_office_temp_website,
+                                    publisher_office_temp_department,
+                                    publisher_office_temp_session)
+                                VALUES(
+                                    (SELECT IF(
+                                        (SELECT COUNT(dpot.publisher_office_temp_id) 
+                                            FROM digilib_publisher_office_temp AS dpot) > 0, 
+                                            (SELECT dpot.publisher_office_temp_id 
+                                                FROM digilib_publisher_office_temp AS dpot
+                                                ORDER BY dpot.publisher_office_temp_id DESC LIMIT 1) + 1,
+                                        1)
+                                    ),
+                                    "' . $value['publisher_office_address'] . '",
+                                    "' . $value['publisher_office_city'] . '",
+                                    "' . $value['publisher_office_zipcode'] . '",
+                                    "' . $value['publisher_office_phone'] . '",
+                                    "' . $value['publisher_office_fax'] . '",
+                                    "' . $value['publisher_office_email'] . '",
+                                    "' . $value['publisher_office_website'] . '",
+                                    "' . $value['publisher_office_department'] . '",
+                                    :session);';
+        }
+        
+        $sth = $this->db->prepare($prepare);
+        $sth->bindValue(':session',Session::id());
+        return $sth->execute();
+    }
+
 }

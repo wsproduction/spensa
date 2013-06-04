@@ -18,7 +18,7 @@
             Form::begin('fAdd', 'publisher/create', 'post');
             ?>
             <div>
-                <table>
+                <table style="width: 100%;" class="table-form">
                     <tr>
                         <td style="width: 200px;">
                             <div class="label-ina">Nama</div>
@@ -56,7 +56,7 @@
                         <td colspan="3">
                             <fieldset>
                                 <legend>Keterangan Kantor</legend>
-                                <div class="float-left" style="width: 600">
+                                <div>
                                     <table>
                                         <tr>
                                             <td style="width: 185px;" valign="top">
@@ -225,8 +225,10 @@
                                         </tr>
                                     </table>
                                 </div>
-                                <div class="float-left" style="border-left: 1px dashed #ccc;padding-left: 10px;margin-left: 10px;">
-                                    <table title="Daftar Alamat Kantor" id="list-office" link_r="<?php echo $link_r_office; ?>" link_d="<?php echo $link_d_office; ?>"></table>
+                                <div style="border-top: 1px dashed #ccc;padding-top: 10px;margin-top: 10px;">
+                                    <center>
+                                        <table title="Daftar Alamat Kantor" id="list-office" link_r="<?php echo $link_r_office; ?>" link_d="<?php echo $link_d_office; ?>"></table>
+                                    </center>
                                 </div>
                                 <div class="cl"></div>
                             </fieldset>
@@ -283,9 +285,9 @@
                 }, {
                     display: 'Keterangan Kantor',
                     name: 'publisher_office_department_name',
-                    width: 90,
+                    width: 180,
                     sortable: true,
-                    align: 'left'
+                    align: 'center'
                 }, {
                     display: 'Alamat',
                     name: 'publisher_office_temp_address',
@@ -332,8 +334,8 @@
             rp: 15,
             showTableToggleBtn: false,
             resizable: false,
-            width: screen.width * 0.47,
-            height: 340
+            width: screen.width * 0.73,
+            height: 250
         };
 
         $(listId2).flexigrid(option2);

@@ -80,7 +80,7 @@ class Catalogue extends Controller {
         $this->view->link_back = $this->content->setLink('catalogue');
         $this->view->session_id_temp = Session::id() . date('YmdHis');
 
-        $this->model->clearLanguageTemp();
+        //$this->model->clearLanguageTemp();
         $this->view->language = $this->optionLanguage();
         $this->view->link_r_language = $this->content->setLink('catalogue/readlanguagetemp');
         $this->view->link_d_language = $this->content->setLink('catalogue/deletelanguagetemp');

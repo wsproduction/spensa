@@ -46,11 +46,12 @@ class Publisher extends Controller {
         $this->view->link_r_office = $this->content->setLink('publisher/readoffice');
         $this->view->link_d_office = $this->content->setLink('publisher/deleteoffice');
         $this->view->link_add_office = $this->content->setLink('publisher/addofficetemp');
-        
+
         $data = $this->model->selectByID($id);
         if ($data) {
             $listData = $data[0];
             $this->view->dataEdit = $listData;
+            $this->model->loadPublisherOfficeTemp($id);
             $this->view->render('publisher/edit');
         } else {
             $this->view->render('default/message/pnf');
@@ -81,16 +82,16 @@ class Publisher extends Controller {
 
             foreach ($listData AS $row) {
 
-                $link_detail = URL::link($this->content->setLink('publisher/detail/' . $row['publisher_id']), 'Detail',false);
-                $link_edit = URL::link($this->content->setLink('publisher/edit/' . $row['publisher_id']), 'Edit',false);
+                $link_detail = URL::link($this->content->setLink('publisher/detail/' . $row['publisher_id']), 'Detail', false);
+                $link_edit = URL::link($this->content->setLink('publisher/edit/' . $row['publisher_id']), 'Edit', false);
 
                 $xml .= "<row id='" . $row['publisher_id'] . "'>";
                 $xml .= "<cell><![CDATA[" . $row['publisher_id'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['publisher_name'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['publisher_description'] . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $row['publisher_office'] . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . date('d/m/Y',  strtotime($row['publisher_entry'])) . "]]></cell>";
-                $xml .= "<cell><![CDATA[" . date('d/m/Y',  strtotime($row['publisher_entry_update'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($row['publisher_entry'])) . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . date('d/m/Y', strtotime($row['publisher_entry_update'])) . "]]></cell>";
                 $xml .= "<cell><![CDATA[" . $link_detail . " | " . $link_edit . "]]></cell>";
                 $xml .= "</row>";
             }
@@ -152,7 +153,7 @@ class Publisher extends Controller {
         }
         echo json_encode($res);
     }
-    
+
     public function optionDepartment() {
         $option = array();
         $list = $this->model->selectDepartment();
@@ -161,7 +162,7 @@ class Publisher extends Controller {
         }
         return $option;
     }
-    
+
     public function optionCountry() {
         $option = array();
         $list = $this->model->selectCountry();
@@ -170,7 +171,7 @@ class Publisher extends Controller {
         }
         return $option;
     }
-    
+
     public function optionProvince($id) {
         $option = array();
         $list = $this->model->selectProvinceByCountryId($id);
@@ -179,7 +180,7 @@ class Publisher extends Controller {
         }
         return $option;
     }
-    
+
     public function getProvince() {
         $countryid = $this->method->get('id');
         $list = $this->optionProvince($countryid);
@@ -189,7 +190,7 @@ class Publisher extends Controller {
         }
         echo json_encode($option);
     }
-    
+
     public function optionCity($id) {
         $option = array();
         $list = $this->model->selectCityByProvinceId($id);
@@ -198,7 +199,7 @@ class Publisher extends Controller {
         }
         return $option;
     }
-    
+
     public function getCity() {
         $provinceid = $this->method->get('id');
         $list = $this->optionCity($provinceid);
@@ -208,7 +209,7 @@ class Publisher extends Controller {
         }
         echo json_encode($option);
     }
-    
+
     public function addOfficeTemp() {
         if ($this->model->saveOfficeTemp()) {
             $res = true;
