@@ -17,16 +17,18 @@
                             Form::create('select', 'month');
                             Form::properties(array('style' => 'width:120px;'));
                             Form::option($month_option);
+                            Form::style('form-grey');
                             Form::commit();
                             echo ' ';
                             Form::create('select', 'year');
                             Form::properties(array('style' => 'width:80px;'));
                             Form::option($year_option);
+                            Form::style('form-grey');
                             Form::commit();
                             echo ' ';
                             Form::create('submit', 'bSubmit');
                             Form::value('Cari');
-                            Form::style('action_search');
+                            Form::style('button-mid-solid-orange');
                             Form::commit();
                             ?>
                         </td>
