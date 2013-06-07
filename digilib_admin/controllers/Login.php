@@ -13,8 +13,10 @@ class Login extends Controller {
             $data_user = $data_user[0];
             Session::init();
             Session::set('loginStatus', 1);
-            Session::set('userName', $data_user['full_name']);
-            Session::set('userGroup', $data_user['user_group_name']);
+            Session::set('user_id', $data_user['user_id']);
+            Session::set('user_full_name', $data_user['full_name']);
+            Session::set('user_photo', $data_user['photo']);
+            Session::set('user_group', $data_user['user_group_name']);
             $ket = array(1,$this->content->setLink('dashboard'));
         } else {
             $ket = array(0,$this->message->loginError());

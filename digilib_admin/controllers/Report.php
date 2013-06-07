@@ -152,7 +152,7 @@ class Report extends Controller {
             //Close and output PDF document
             $pdf->Output('pinalty_' . date('dmYHis') . '.pdf', 'I');
         } else {
-            echo 'Maaf Data Pada Periode Ini Tidak Ditemukan';
+            echo $this->message->dataNotFound();
         }
     }
 
@@ -269,7 +269,7 @@ class Report extends Controller {
             //Close and output PDF document
             $pdf->Output('pinalty_' . date('dmYHis') . '.pdf', 'I');
         } else {
-            echo 'Maaf Data Pada Periode Ini Tidak Ditemukan';
+            echo $this->message->dataNotFound();
         }
     }
 
@@ -394,7 +394,7 @@ class Report extends Controller {
             //Close and output PDF document
             $pdf->Output('pinalty_' . date('dmYHis') . '.pdf', 'I');
         } else {
-            echo 'Maaf Data Pada Periode Ini Tidak Ditemukan';
+            echo $this->message->dataNotFound();
         }
     }
 

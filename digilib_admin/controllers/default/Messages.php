@@ -22,6 +22,10 @@ class Messages extends Controller {
         return Message::render('message/login_error');
     }
     
+    public function dataNotFound() {
+        return Message::render('message/data_not_found');
+    }
+    
     public function tesModel() {
         $this->model->tes();
     }

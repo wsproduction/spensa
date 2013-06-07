@@ -334,7 +334,7 @@
             rp: 15,
             showTableToggleBtn: false,
             resizable: false,
-            width: screen.width * 0.73,
+            width: screen.width * 0.71,
             height: 250
         };
 

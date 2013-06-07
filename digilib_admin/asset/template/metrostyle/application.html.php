@@ -57,14 +57,14 @@
                     <div class="user-logged-info">
                         <div class="photo">
                             <?php
-                            echo Src::image('photo.png');
+                            echo Src::image(Session::get('user_photo'), URL::getService() . '://' . Web::getHost() . '/web/src/' . Web::$webFolder . '/asset/upload/images/user');
                             ?>
                         </div>
                         <div class="user-info">
-                            <h5>Hi, Warman Suganda</h5>
+                            <h5>Hi, <?php echo Session::get('user_full_name'); ?></h5>
                             <ul>
-                                <li><a href="">Edit Profile</a></li>
-                                <li><a href="">Account Setting</a></li>
+                                <li><a href="http://<?php echo $nav_link; ?>/user/profile">Edit Profile</a></li>
+                                <li><a href="http://<?php echo $nav_link; ?>/user/account">Account Setting</a></li>
                                 <li><a href="http://<?php echo $nav_link; ?>/login/stop">Sign Out</a></li>
                             </ul>
                         </div>
@@ -81,6 +81,7 @@
                                     <div class="nav-title">NAVIGATION</div>
                                     <ul class="nav">
                                         <li><a href="http://<?php echo $nav_link; ?>/dashboard" class="ic-black-home bg-medium">Beranda</a></li>
+                                        <li><a href="http://<?php echo $nav_link; ?>/information" class="ic-black-cogwheel bg-medium">Info Perpsustakaan</a></li>
                                         <li class="dropdown">
                                             <a href="#" class="ic-black-cargo bg-medium">Data Master</a>
                                             <ul>

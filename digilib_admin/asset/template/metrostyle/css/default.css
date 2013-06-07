@@ -151,6 +151,11 @@ fieldset legend {
     height: 80px;
 }
 
+.user-logged-info .photo img {
+    width: 80px;
+    height: 80px;
+}
+
 .user-logged-info .user-info {
     float: left;
     margin: 0 0 0 10px;
@@ -547,6 +552,10 @@ fieldset legend {
     background: url(../images/black-charts.png) no-repeat;
 }
 
+.ic-black-cogwheel {
+    background: url(../images/black-cogwheel.png) no-repeat;
+}
+
 .ic-grey-arrow1 {
     background: url(../images/arrow1.png) no-repeat;
 }
@@ -714,6 +723,7 @@ div.box_message {
     padding: 5px 5px 5px 70px;
     min-height: 50px;
     margin: 5px 0 10px 0;
+    text-align: left;
 }
 
 div.error {

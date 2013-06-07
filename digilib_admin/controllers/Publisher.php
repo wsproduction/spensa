@@ -5,8 +5,7 @@ class Publisher extends Controller {
     public function __construct() {
         parent::__construct();
         $this->content->accessRight();
-        $this->view->topMenu = $this->content->topMenu();
-
+        
         Src::plugin()->jQueryValidation();
         Src::plugin()->jQueryAlphaNumeric();
         Src::plugin()->poshytip();
