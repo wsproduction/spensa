@@ -556,6 +556,10 @@ fieldset legend {
     background: url(../images/black-cogwheel.png) no-repeat;
 }
 
+.ic-black-info {
+    background: url(../images/black-info.png) no-repeat;
+}
+
 .ic-grey-arrow1 {
     background: url(../images/arrow1.png) no-repeat;
 }

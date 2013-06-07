@@ -8,6 +8,7 @@ class User extends Controller {
         
         Src::plugin()->jQueryValidation();
         Src::plugin()->poshytip();
+        Src::plugin()->jQueryAlphaNumeric();
     }
 
     public function index() {
@@ -27,6 +28,11 @@ class User extends Controller {
         $this->view->render('user/profile');
     }
 
+    public function account() {
+        Web::setTitle('Account Setting');        
+        $this->view->render('user/account');
+    }
+
     public function listGender() {
         $list = $this->model->selectAllGender();
         $gender = array();
@@ -34,6 +40,32 @@ class User extends Controller {
             $gender[$value['gender_id']] = $value['gender_title'];
         }
         return $gender;
+    }
+    
+    public function updateProfile() {
+        if ($this->model->updateProfileSave()) {
+            $ket = array(1, 1, $this->message->saveSucces()); // sucess, reset, message
+        } else {
+            $ket = array(0, 0, $this->message->saveError()); // no sucess, no reset, message
+        }
+        echo json_encode($ket);
+    }
+    
+    public function updateAccount() {
+        if ($this->model->updateAccountSave()) {
+            $ket = array(1, 1, $this->message->saveSucces()); // sucess, reset, message
+        } else {
+            $ket = array(0, 0, $this->message->saveError()); // no sucess, no reset, message
+        }
+        echo json_encode($ket);
+    }
+    
+    public function cekCurentPassword() {
+        $res = false;
+        if (count($this->model->selectCurentPasswrod()) == 1) {
+            $res = true;
+        }
+        echo json_encode($res);
     }
     
 }

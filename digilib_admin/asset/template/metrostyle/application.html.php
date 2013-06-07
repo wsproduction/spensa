@@ -81,7 +81,7 @@
                                     <div class="nav-title">NAVIGATION</div>
                                     <ul class="nav">
                                         <li><a href="http://<?php echo $nav_link; ?>/dashboard" class="ic-black-home bg-medium">Beranda</a></li>
-                                        <li><a href="http://<?php echo $nav_link; ?>/information" class="ic-black-cogwheel bg-medium">Info Perpsustakaan</a></li>
+                                        <li><a href="http://<?php echo $nav_link; ?>/about" class="ic-black-cogwheel bg-medium">Tentang Perpsustakaan</a></li>
                                         <li class="dropdown">
                                             <a href="#" class="ic-black-cargo bg-medium">Data Master</a>
                                             <ul>
