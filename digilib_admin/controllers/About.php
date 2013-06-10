@@ -9,15 +9,21 @@ class About extends Controller {
         Src::plugin()->jQueryValidation();
         Src::plugin()->poshytip();
         Src::plugin()->jQueryAlphaNumeric();
+        Src::plugin()->elrte();
     }
 
     public function index() {
-        Web::setTitle('About');
+        Web::setTitle('Tentang Perpustakaan');
+        $list = $this->model->selectAbout();
+        if (count($list)) {
+            $data = $list[0];
+            $this->view->dataEdit = $data;
+        }
         $this->view->render('about/index');
     }
 
-    public function updateProfile() {
-        if ($this->model->updateProfileSave()) {
+    public function update() {
+        if ($this->model->updateSave()) {
             $ket = array(1, 1, $this->message->saveSucces()); // sucess, reset, message
         } else {
             $ket = array(0, 0, $this->message->saveError()); // no sucess, no reset, message

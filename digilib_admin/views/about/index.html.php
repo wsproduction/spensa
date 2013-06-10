@@ -9,7 +9,7 @@
         <div class="widgetcontent">
             <div id="message"></div>
             <?php
-            Form::begin('fAdd', 'user/updateaccount', 'post');
+            Form::begin('fAdd', 'about/update', 'post');
             ?>
             <div>
                 <table>
@@ -25,7 +25,7 @@
                             Form::tips("<div class='tips-ina'>Masukan Nama Lengkap</div><div class='tips-eng'>Enter Fullname</div>");
                             Form::size(40);
                             Form::validation()->requaired();
-                            Form::validation()->remote('cekcurentpassword', 'post');
+                            Form::value($dataEdit['digilib_name']);
                             Form::style('form-grey');
                             Form::commit();
                             ?>
@@ -38,13 +38,12 @@
                         <td>:</td>
                         <td>
                             <?php
-                            Form::create('text', 'confirm_new_password');
+                            Form::create('text', 'email');
                             Form::tips("<div class='tips-ina'>Masukan Nama Lengkap</div><div class='tips-eng'>Enter Fullname</div>");
                             Form::size(40);
-                            Form::validation()->requaired();
-                            Form::validation()->rangeLength(6, 30);
-                            Form::validation()->equalTo('#new_password');
+                            Form::validation()->email();
                             Form::style('form-grey');
+                            Form::value($dataEdit['digilib_email']);
                             Form::commit();
                             ?>
                         </td>
@@ -56,13 +55,11 @@
                         <td>:</td>
                         <td>
                             <?php
-                            Form::create('text', 'confirm_new_password');
+                            Form::create('text', 'website');
                             Form::tips("<div class='tips-ina'>Masukan Nama Lengkap</div><div class='tips-eng'>Enter Fullname</div>");
                             Form::size(40);
-                            Form::validation()->requaired();
-                            Form::validation()->rangeLength(6, 30);
-                            Form::validation()->equalTo('#new_password');
                             Form::style('form-grey');
+                            Form::value($dataEdit['digilib_website']);
                             Form::commit();
                             ?>
                         </td>
@@ -75,13 +72,12 @@
                         <td>:</td>
                         <td>
                             <?php
-                            Form::create('text', 'confirm_new_password');
+                            Form::create('text', 'agency_name');
                             Form::tips("<div class='tips-ina'>Masukan Nama Lengkap</div><div class='tips-eng'>Enter Fullname</div>");
                             Form::size(40);
                             Form::validation()->requaired();
-                            Form::validation()->rangeLength(6, 30);
-                            Form::validation()->equalTo('#new_password');
                             Form::style('form-grey');
+                            Form::value($dataEdit['digilib_agency_name']);
                             Form::commit();
                             ?>
                         </td>
@@ -98,6 +94,7 @@
                             Form::tips("<div class='tips-ina'>Masukan Alamat</div><div class='tips-eng'>Enter Address</div>");
                             Form::size(80, 4);
                             Form::style('form-grey');
+                            Form::value($dataEdit['digilib_address']);
                             Form::commit();
                             ?>
                         </td>
@@ -110,13 +107,12 @@
                         <td>:</td>
                         <td>
                             <?php
-                            Form::create('text', 'confirm_new_password');
+                            Form::create('text', 'head_of_library');
                             Form::tips("<div class='tips-ina'>Masukan Nama Lengkap</div><div class='tips-eng'>Enter Fullname</div>");
                             Form::size(40);
                             Form::validation()->requaired();
-                            Form::validation()->rangeLength(6, 30);
-                            Form::validation()->equalTo('#new_password');
                             Form::style('form-grey');
+                            Form::value($dataEdit['digilib_head_of_library']);
                             Form::commit();
                             ?>
                         </td>
@@ -128,13 +124,11 @@
                         <td>:</td>
                         <td>
                             <?php
-                            Form::create('text', 'confirm_new_password');
+                            Form::create('text', 'nip');
                             Form::tips("<div class='tips-ina'>Masukan Nama Lengkap</div><div class='tips-eng'>Enter Fullname</div>");
                             Form::size(40);
-                            Form::validation()->requaired();
-                            Form::validation()->rangeLength(6, 30);
-                            Form::validation()->equalTo('#new_password');
                             Form::style('form-grey');
+                            Form::value($dataEdit['digilib_nip']);
                             Form::commit();
                             ?>
                         </td>
@@ -147,10 +141,11 @@
                         <td valign="top">:</td>
                         <td>
                             <?php
-                            Form::create('textarea', 'address');
+                            Form::create('textarea', 'vision');
                             Form::tips("<div class='tips-ina'>Masukan Alamat</div><div class='tips-eng'>Enter Address</div>");
                             Form::size(60, 6);
                             Form::style('form-grey');
+                            Form::value($dataEdit['digilib_vision']);
                             Form::commit();
                             ?>
                         </td>
@@ -163,10 +158,11 @@
                         <td valign="top">:</td>
                         <td>
                             <?php
-                            Form::create('textarea', 'address');
+                            Form::create('textarea', 'mission');
                             Form::tips("<div class='tips-ina'>Masukan Alamat</div><div class='tips-eng'>Enter Address</div>");
                             Form::size(60, 6);
                             Form::style('form-grey');
+                            Form::value($dataEdit['digilib_mision']);
                             Form::commit();
                             ?>
                         </td>
@@ -174,15 +170,16 @@
                     <tr>
                         <td valign="top">
                             <div class="label-ina">Aturan Peminjaman Buku</div>
-                            <div class="label-eng">Borrowing Rule Book</div>
+                            <div class="label-eng">Rule Borrowing</div>
                         </td>
                         <td valign="top">:</td>
                         <td>
                             <?php
-                            Form::create('textarea', 'address');
+                            Form::create('textarea', 'rule_borrowing');
                             Form::tips("<div class='tips-ina'>Masukan Alamat</div><div class='tips-eng'>Enter Address</div>");
                             Form::size(80, 4);
                             Form::style('form-grey');
+                            Form::value($dataEdit['digilib_rule_borrowing']);
                             Form::commit();
                             ?>
                         </td>
@@ -214,6 +211,22 @@
 
 <script>
     $(function() {
+        
+        /* WYSIWYG elRTE */
+        elRTE.prototype.options.panels.web2pyPanel = [
+            'bold', 'italic', 'underline', 'insertorderedlist', 'insertunorderedlist'
+        ];
+        elRTE.prototype.options.toolbars.web2pyToolbar = ['web2pyPanel'];
+
+        var opts = {
+            cssClass: 'el-rte',
+            height: 180,
+            width: 600,
+            toolbar: 'web2pyToolbar',
+            cssfiles: ['css/elrte-inner.css']
+        };
+
+        $('#rule_borrowing').elrte(opts);
 
         /* SUBMIT ACTIONS */
         $('#fAdd').live('submit', function() {
@@ -228,7 +241,7 @@
                 $(this).loadingProgress('stop');
                 if (o[0]) {
                     if (o[1]) {
-                        $(frmID)[0].reset();
+                        /* $(frmID)[0].reset(); */
                     }
                 }
                 $(msgID).html(o[2]).fadeIn('slow');
