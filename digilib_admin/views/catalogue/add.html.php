@@ -75,7 +75,7 @@
                                 <?php
                                 Form::create('hidden', 'language_hide');
                                 Form::commit();
-                                
+
                                 Form::create('select', 'language');
                                 Form::tips('Pilih Bahasa');
                                 Form::option($language);
@@ -753,28 +753,26 @@
                         <tr>
                             <td>
                                 <div class="confFrameCatalogue">
-                                    <table  class="confCatalogue">
+                                    <table  class="confCatalogue" border="1">
                                         <tr>
-                                            <td class="confCallNumber" valign="top">
+                                            <td class="confCallNumber" valign="top" align="center">
                                                 <div style="height: 20px;" class="print_row_1"></div>
                                                 <div style="height: 20px;" class="print_row_2"></div>
                                                 <div style="height: 20px;" class="print_row_3"></div>
                                             </td>
-                                            <td valign="top">
-                                                <div>
-                                                    <div class="authorName"></div>
-                                                    <div class="confContent">
-                                                        <span style="color: #fff;">AAA</span>
-                                                        <span class="contentRow1"></span>
-                                                    </div>
-                                                    <div style="padding-left: 60px;" class="contentRow2">xi, 160 hlm. : ilus. ; 21 cm</div>
-                                                    <div style="padding-left: 60px;margin-top: 20px;" class="contentRow3"></div>
-                                                    <div style="margin-top: 30px;">
-                                                        <div style="float: left;width: 50%">1. KATALOG</div>
-                                                        <div style="float: left;width: 50%">I. Judul</div>
-                                                    </div>
+                                            <td valign="top" class="confCatalogueContent">
+                                                <div class="authorName"></div>
+                                                <div class="confContent">
+                                                    <span style="color: #fff;">AAA</span>
+                                                    <span class="contentRow1"></span>
                                                 </div>
-                                            </td>
+                                                <div style="padding-left: 60px;" class="contentRow2">xi, 160 hlm. : ilus. ; 21 cm</div>
+                                                <div style="padding-left: 60px;margin-top: 20px;" class="contentRow3"></div>
+                                                <div style="margin-top: 30px;">
+                                                    <div style="float: left;width: 50%">1. KATALOG</div>
+                                                    <div style="float: left;width: 50%">I. Judul</div>
+                                                </div>
+                                                </div>
                                         </tr>
                                     </table>
                                 </div>
@@ -840,7 +838,6 @@
             var contentRow3 = '';
 
             var tempJudul = $('#title').val();
-            var tempAnakJudul = $('#sub_title').val();
             var tempJudulBahasaLain = $('#foreign_title').val();
             var tempEdisi = $('#edition').val();
             var tempCetakan = $('#print_out').val();
@@ -876,9 +873,6 @@
 
             var sparator1 = '';
             var sparator2 = '';
-
-            if (tempAnakJudul !== '')
-                anakJudul = ' : ' + tempAnakJudul;
 
             if (tempJudulBahasaLain !== '')
                 judulBahasaLain = ' = ' + tempJudulBahasaLain;
@@ -927,14 +921,14 @@
             $('.contentRow1').html(contentRow1);
             $('.contentRow2').html(contentRow2);
             $('.contentRow3').html(contentRow3);
-            
+
             /*
-            $.get('getAuhtorTemp', {
-                sa: $('#sessionAuthor').val()
-            }, function(o) {
-                $('.viewListAuthorTemp').html(o);
-            }, 'json');
-            */
+             $.get('getAuhtorTemp', {
+             sa: $('#sessionAuthor').val()
+             }, function(o) {
+             $('.viewListAuthorTemp').html(o);
+             }, 'json');
+             */
         };
 
         /* Multiselect */
@@ -1341,13 +1335,13 @@
 
             var stepStatus = $('#stepStatus').val();
             var curentTab = 0;
-            
+
             /* Set Language ID to hidden form #language_hidden */
-            var array_of_checked_values = $("#language").multiselect("getChecked").map(function(){
-                return this.value;	
+            var array_of_checked_values = $("#language").multiselect("getChecked").map(function() {
+                return this.value;
             }).get();
-            $('#language_hide').val(array_of_checked_values.join(','));            
-            
+            $('#language_hide').val(array_of_checked_values.join(','));
+
             /* alert(stepStatus); */
 
             if (stepStatus === '1') {
@@ -1376,7 +1370,7 @@
                 }
             } else if (stepStatus === '4') {
                 frmID = $(this);
-                
+
                 msgID = $('#message');
                 $(frmID).ajaxSubmit({
                     success: function(o) {
@@ -1392,8 +1386,8 @@
                         }
                     }
                 });
-                
-                /*frmID.submit();*/ 
+
+                /*frmID.submit();*/
             } else {
                 curentTab = parseInt(stepStatus) + 1;
             }

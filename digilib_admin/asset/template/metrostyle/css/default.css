@@ -771,3 +771,24 @@ div.succes div.description_message_succes {
     font-size: 12px;
     text-shadow: 1px 1px 1px #fff;
 }
+
+/* Katalog Foramat */
+.confFrameCatalogue {
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 492px;
+    height: 296px;
+}
+
+.confCatalogue {
+    width: 100%;
+}
+
+.confCallNumber {
+    width: 50px;
+}
+
+.confCatalogueContent {
+    padding-top: 20px;
+    
+}
