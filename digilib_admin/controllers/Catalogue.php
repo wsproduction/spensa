@@ -756,7 +756,7 @@ class Catalogue extends Controller {
         $list = array();
         if ($data) {
             foreach ($data as $value) {
-                $list[$value['accounting_symbol_id']] = $value['accounting_symbol_title'] . ' (' . $value['accounting_symbol'] . ')';
+                $list[$value['accounting_symbol_id']] = $value['accounting_symbol'] . ' / ' . $value['accounting_symbol_title'];
             }
         }
         return $list;
@@ -908,7 +908,10 @@ class Catalogue extends Controller {
         $outAuthor = '';
         $countAuthor = 0;
         $tempCount = 0;
-
+        
+        var_dump($this->dataAuthorTempDescription);
+        
+        /*
         foreach ($this->dataAuthorTempDescription as $keyAD => $valueAD) {
             $res = $this->parsingAuthorTemp($keyAD);
 
@@ -922,8 +925,9 @@ class Catalogue extends Controller {
 
         if ($countAuthor > 0)
             $keteranganAuthor = ' / ' . $outAuthor;
-
+            
         echo json_encode($keteranganAuthor);
+         */
     }
 
     public function printBarcode() {

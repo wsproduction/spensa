@@ -592,6 +592,10 @@ fieldset legend {
     background: url('../images/1357896914_report.png') no-repeat center left;
 }
 
+.flexigrid div.fbutton .tick {
+    background: url('../images/1365067343_tick-circle-frame.png') no-repeat center left;
+}
+
 .bg-medium {
     -moz-background-size: auto 16px;
     -o-background-size: auto 16px;
@@ -773,11 +777,25 @@ div.succes div.description_message_succes {
 }
 
 /* Katalog Foramat */
+.confCatalogueTitle {
+    padding: 10px;
+    width: 500px;
+    font-family: "Times New Roman";
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: center;
+}
+
 .confFrameCatalogue {
     border: 1px solid #ccc;
     padding: 10px;
-    width: 492px;
+    width: 500px;
     height: 296px;
+    font-family: "Times New Roman";
+    font-size: 12pt;
+    text-align: left;
+    background: url('../images/black-vector-circle.png') no-repeat;
+    background-position: bottom 10px center;
 }
 
 .confCatalogue {
@@ -786,9 +804,9 @@ div.succes div.description_message_succes {
 
 .confCallNumber {
     width: 50px;
+    padding: 4px;
 }
 
 .confCatalogueContent {
-    padding-top: 20px;
-    
+    padding: 24px 4px 4px 4px;
 }

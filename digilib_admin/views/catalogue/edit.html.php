@@ -781,30 +781,26 @@
                 <div id="tabs-5">
                     <table style="width: 100%"> 
                         <tr>
-                            <td>
+                            <td align="center">
+                                <div class="confCatalogueTitle">KATALOG UTAMA</div>
                                 <div class="confFrameCatalogue">
                                     <table  class="confCatalogue">
                                         <tr>
-                                            <td class="confCallNumber" valign="top">
+                                            <td class="confCallNumber" valign="top" align="center">
                                                 <div style="height: 20px;" class="print_row_1"></div>
                                                 <div style="height: 20px;" class="print_row_2"></div>
                                                 <div style="height: 20px;" class="print_row_3"></div>
                                             </td>
-                                            <td valign="top">
-                                                <div>
-                                                    <div class="authorName"></div>
-                                                    <div class="confContent">
-                                                        <span style="color: #fff;">AAA</span>
-                                                        <span class="contentRow1"></span>
-                                                    </div>
-                                                    <div style="padding-left: 60px;" class="contentRow2">xi, 160 hlm. : ilus. ; 21 cm</div>
-                                                    <div style="padding-left: 60px;margin-top: 20px;" class="contentRow3"></div>
-                                                    <div style="margin-top: 30px;">
-                                                        <div style="float: left;width: 50%">1. KATALOG</div>
-                                                        <div style="float: left;width: 50%">I. Judul</div>
-                                                    </div>
+                                            <td valign="top" class="confCatalogueContent">
+                                                <div class="authorName">SUGANDA, Warman</div>
+                                                <div class="contentRow1"></div>
+                                                <div class="contentRow2">xi, 160 hlm. : ilus. ; 21 cm</div>
+                                                <div style="margin-top: 20px;" class="contentRow3"></div>
+                                                <div style="margin-top: 30px;">
+                                                    <div style="float: left;width: 50%">1. KATALOG</div>
+                                                    <div style="float: left;width: 50%">I. Judul</div>
                                                 </div>
-                                            </td>
+                                                </div>
                                         </tr>
                                     </table>
                                 </div>
@@ -838,6 +834,8 @@
 
 <script type="text/javascript">
     $(function() {
+        var publisher_name = '';
+        var author_primary;
 
         var form_requaired_validation = function(id, status) {
             $(id).rules("add", {
@@ -853,15 +851,22 @@
 
         var setting_callnumber = function(author, title) {
             var author_count = author['count'];
-            var author_primary = author['primary'];
-            var author_primary_status = author_primary['status'];
-            var author_primary_name = author_primary['name'];
+            var author_pri = author['primary'];
+            var author_primary_status = author_pri['status'];
+            var author_primary_name = author_pri['name'];
 
             if (author_count > 0 && author_count <= 3) {
+                author_primary = author_primary_name;
                 set_callnumber(author_primary_name['first_name'], title);
             } else {
                 set_callnumber(title, null);
             }
+        };
+
+        var ucfirst = function(str) {
+            var lowerall = str.toLowerCase();
+            var firstLetter = lowerall.substr(0, 1);
+            return firstLetter.toUpperCase() + lowerall.substr(1);
         };
 
         var generateCatalogue = function() {
@@ -869,23 +874,26 @@
             var contentRow2 = '';
             var contentRow3 = '';
 
+            var left_sparator = '<span style="color: #fff;">Aaa</span>';
+
             var tempJudul = $('#title').val();
-            var tempAnakJudul = $('#sub_title').val();
             var tempJudulBahasaLain = $('#foreign_title').val();
             var tempEdisi = $('#edition').val();
             var tempCetakan = $('#print_out').val();
             var tempKota = $('#city option:selected').text();
-            var tempPenerbit = $('#publisher option:selected').text();
+            var tempPenerbit = publisher_name;
             var tempTahun = $('#year option:selected').text();
 
             var tempHalamanRomawi = $('#roman_count').val();
             var tempHalamanAngka = $('#page_count').val();
             var tempIlustrasi = $('#ilustration').is(':checked');
-            var tempLebar = $('#width').val();
+            var tempLebar = $('#width').val() + ' x ' + $('#height').val();
 
             var tempBiblliografi = $('#bibliography').val();
-            var tempIndex = $('#ilustration').is(':checked');
+            var tempIndex = $('#index').is(':checked');
             var tempISBN = $('#isbn').val();
+            var temp_accounting_symbol = $('#accounting_symbol option:selected').text();
+            var temp_harga = $('#price').val();
 
             var judul = tempJudul;
             var anakJudul = '';
@@ -903,12 +911,15 @@
             var biblliografi = '';
             var index = '';
             var ISBN = '';
+            var harga = '';
 
             var sparator1 = '';
             var sparator2 = '';
 
-            if (tempAnakJudul !== '')
-                anakJudul = ' : ' + tempAnakJudul;
+            var author_pri = '';
+
+            if (author_primary !== '')
+                author_pri = author_primary['last_name'].toUpperCase() + ', ' + author_primary['first_name'];
 
             if (tempJudulBahasaLain !== '')
                 judulBahasaLain = ' = ' + tempJudulBahasaLain;
@@ -920,7 +931,7 @@
                 sparator1 = ',';
 
             if (tempCetakan !== '')
-                cetakan = ' cet. ' + tempCetakan;
+                cetakan = ' Cet. ' + tempCetakan;
 
             if (tempHalamanRomawi !== '')
                 halamanRomawi = tempHalamanRomawi;
@@ -938,15 +949,22 @@
                 lebar = ' ; ' + tempLebar + ' cm&DiacriticalAcute;';
 
             if (tempBiblliografi !== '')
-                biblliografi = 'Biblliografi : ' + tempBiblliografi + ' <br>';
+                biblliografi = left_sparator + 'Biblliografi : P. ' + tempBiblliografi + '. <br>';
 
             if (tempIndex)
-                index = 'Indeks <br>';
+                index = left_sparator + 'Indeks <br>';
 
             if (tempISBN !== '')
-                ISBN = 'ISBN ' + tempISBN + ' <br>';
+                ISBN = left_sparator + 'ISBN : ' + tempISBN;
 
-            penerbit = '.&HorizontalLine; ' + tempKota + ' : ' + tempPenerbit + ', ' + tempTahun + '. ';
+            if (temp_accounting_symbol !== '' && temp_harga !== '') {
+                var accounting_symbol = temp_accounting_symbol.split('/');
+                ISBN += ' : ' + accounting_symbol[0] + ' ' + temp_harga;
+            }
+
+            ISBN += '<br>';
+
+            penerbit = '.&HorizontalLine; ' + ucfirst(tempKota) + ' : ' + tempPenerbit + ', ' + tempTahun + '. ';
 
             contentRow1 = judul + anakJudul + judulBahasaLain + author + edisi + sparator1 + cetakan + penerbit;
 
@@ -954,17 +972,16 @@
 
             contentRow3 = biblliografi + index + ISBN;
 
-            $('.contentRow1').html(contentRow1);
-            $('.contentRow2').html(contentRow2);
+            $('.authorName').html(author_pri);
+            $('.contentRow1').html(left_sparator + contentRow1);
+            $('.contentRow2').html(left_sparator + contentRow2);
             $('.contentRow3').html(contentRow3);
 
-            /*
-             $.get('getAuhtorTemp', {
-             sa: $('#sessionAuthor').val()
-             }, function(o) {
-             $('.viewListAuthorTemp').html(o);
-             }, 'json');
-             */
+            $.get('../getAuhtorTemp', {
+                sa: $('#sessionAuthor').val()
+            }, function(o) {
+                $('.viewListAuthorTemp').html(o);
+            }, 'json');
         };
 
         /* MULTISELECT JQUERY */
@@ -1074,7 +1091,9 @@
                 return true;
             },
             onSuccess: function() {
-                $('#publisher-list #row' + $('#publisher').val()).addClass('trSelected');
+                var id = $('#publisher').val();
+                $('#publisher-list #row' + id).addClass('trSelected');
+                publisher_name = $('#row' + id + ' td').next('td').children('div').html();
             }
         };
 
@@ -1338,7 +1357,11 @@
                 return true;
             },
             onSuccess: function() {
-                $('#list-ddc #row' + $('#ddcid').val()).addClass('trSelected');
+                var id = $('#ddcid').val();
+                var class_number;
+                $('#list-ddc #row' + id).addClass('trSelected');
+                class_number = $('#row' + id + ' td[abbr=ddc_classification_number] div').html();
+                $('.print_row_1').html(class_number);
             }
         };
 
@@ -1371,7 +1394,7 @@
                 class_number = $('#row' + id + ' td[abbr=ddc_classification_number] div').html();
             }
             $('#ddcid').val(id);
-            $('#preview_call_number .print_row_1').html(class_number);
+            $('.print_row_1').html(class_number);
         });
 
         /* TABS INPUT*/
@@ -1439,7 +1462,7 @@
                     curentTab = 2;
                     alert('Silahkan tentukan nomor klasifikasi!');
                 } else {
-                    generateCatalogue();
+                    /* generateCatalogue(); */
                     curentTab = parseInt(stepStatus) + 1;
                 }
             } else if (stepStatus === '4') {

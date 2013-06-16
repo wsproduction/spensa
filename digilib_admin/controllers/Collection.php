@@ -24,9 +24,20 @@ class Collection extends Controller {
     }
 
     public function add() {
-        Web::setTitle('Add author');
+        Web::setTitle('Tambah Data Koleksi');
+        $this->view->option_book_condition = $this->optionBookCondition();
         $this->view->link_back = $this->content->setLink('author');
-        $this->view->render('author/add');
+        $this->view->link_filter = $this->content->setLink('collection/filter');
+        $this->view->render('collection/add');
+    }
+    
+    public function optionBookCondition() {
+        $list = $this->model->selectAllBookCondition();
+        $option = array();
+        foreach ($list as $value) {
+            $option[$value['book_condition_id']] = $value['book_condition'];
+        }
+        return $option;
     }
 
     public function edit($id = 0) {
@@ -41,6 +52,14 @@ class Collection extends Controller {
         } else {
             $this->view->render('default/message/pnf');
         }
+    }
+    
+    public function delete() {
+        $res = false;
+        if ($this->model->delete()) {
+            $res = true;
+        }
+        echo json_encode($res);
     }
 
     public function create() {
@@ -124,10 +143,6 @@ class Collection extends Controller {
             $ket = array(0, 0, $this->message->saveError());
         }
         echo json_encode($ket);
-    }
-
-    public function delete() {
-        $this->model->delete();
     }
 
     public function addPrintBarcode() {
@@ -336,6 +351,55 @@ class Collection extends Controller {
             $pdf->Output('Barcode_' . date('dmYHis') . '.pdf', 'I');
         } else {
             echo 'Maaf Daftar Print Tidak Ditemukan!';
+        }
+    }
+    
+    public function filter() {
+
+        if ($this->method->isAjax()) {
+            $page = $this->method->post('page', 1);
+            $listData = $this->model->selectAllCatalogue($page);
+            $total = $this->model->countAllCatalogue();
+
+            header("Content-type: text/xml");
+            $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            $xml .= "<rows>";
+            $xml .= "<page>$page</page>";
+            $xml .= "<total>$total</total>";
+
+
+            foreach ($listData as $row) {
+
+                $author = $this->content->parsingAuthor($row['book_id']);
+                $callnumber_extention = $this->content->callNumberExtention($author, $row['book_title']);
+
+                $foreign_title = '';
+                if (!empty($row['book_foreign_title']))
+                    $foreign_title = ' / ' . $row['book_foreign_title'];
+
+                $resource = '-';
+                if (!empty($row['resource'])) {
+                    $resource = $row['resource'];
+                }
+
+                $fund = '-';
+                if (!empty($row['fund'])) {
+                    $fund = $row['fund'];
+                }
+
+                $description = '<b>' . $row['ddc_classification_number'] . $callnumber_extention . '</b>';
+                $description .= '<br><b>' . $row['book_title'] . $foreign_title . '.</b> ';
+                $description .= '<br><font style="font-style:italic;color:#666;">' . $this->content->sortAuthor($author) . '</font>';
+                $description .= '<font style="font-style:italic;color:#666;"> ' . ucwords(strtolower($row['city_name'])) . ' : ' . $row['publisher_name'] . ', ' . $row['book_publishing'] . '</font>';
+
+                $xml .= "<row id='" . $row['book_id'] . "'>";
+                $xml .= "<cell><![CDATA[" . $row['book_id'] . "]]></cell>";
+                $xml .= "<cell><![CDATA[" . $description . ".]]></cell>";
+                $xml .= "</row>";
+            }
+
+            $xml .= "</rows>";
+            echo $xml;
         }
     }
 

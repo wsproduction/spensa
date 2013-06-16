@@ -1291,7 +1291,7 @@
                 class_number = $('#row' + id + ' td[abbr=ddc_classification_number] div').html();
             }
             $('#ddcid').val(id);
-            $('#preview_call_number .print_row_1').html(class_number);
+            $('.print_row_1').html(class_number);
         });
 
         /* TABS INPUT*/
